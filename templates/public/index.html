@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+      <section
+        id="home" class="hero-section d-flex align-items-center text-center text-white">
+        <div class="container mt-5">
+          <h1 class="display-3 fw-bold mb-3">
+            Descubre la niebla oculta de Mongua
+          </h1>
+          <p class="lead mb-4 mx-auto hero-subtitle">
+            Senderismo, cultura y el Páramo de Ocetá. Donde los Andes tocan el
+            cielo.
+          </p>
+          <div class="d-flex justify-content-center gap-3">
+            <a href="#journey" class="btn btn-brand btn-lg">Empieza tu viaje</a>
+            <a href="#destinations" class="btn btn-outline-light btn-lg">Ver destinos</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="explore" class="container py-5 mt-5">
+        <div class="row align-items-center mb-5">
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="display-5 fw-bold text-dark">
+              Explora el alma de Mongua
+            </h2>
+          </div>
+          <div class="col-lg-6 text-muted">
+            <p class="mb-0">
+              Vive los senderos ancestrales, las lagunas silenciosas y la
+              calidez de la cultura boyacense. Monagua te ofrece un viaje al
+              corazón de la naturaleza y la tradición, guiándote por paisajes
+              que el tiempo parece no haber tocado.
+            </p>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-4">
+            <article class="card card-hover h-100 p-4 shadow-sm border-light">
+              <div class="card-body">
+             <img src="{% static 'img/icono_hoja.png' %}" alt="Icono de naturaleza" class="icono-box-img" style="width: 60px; height: 60px;">
+    
+              <h3 class="h5 fw-bold">Naturaleza</h3>
+             <p class="text-muted mb-0">
+              Sumérgete en los paisajes vírgenes de los Andes, el hogar de
+              frailejones únicos en el mundo.
+              </p>
+         </div>
+            </article>
+        </div>
+
+          <div class="col-md-4">
+            <article class="card card-hover h-100 p-4 shadow-sm border-light">
+              <div class="card-body">
+              <img src="{% static 'img/icono_iglesia.png' %}" alt="Icono de cultura" class="icono-box-img" style="width: 60px; height: 60px;">
+               <h3 class="h5 fw-bold">Cultura</h3>
+               <p class="text-muted mb-0">
+                  Conecta con artesanos locales, descubre antiguas tradiciones
+                  Muiscas y teje tu propia historia.
+                </p>
+              </div>
+            </article>
+          </div>
+          <div class="col-md-4">
+            <article class="card card-hover h-100 p-4 shadow-sm border-light">
+              <div class="card-body">
+               <img src="{% static 'img/icono_aventura.png' %}" alt="Icono de aventura" class="icono-box-img" style="width: 60px; height: 60px;">
+               <h3 class="h5 fw-bold">Aventura</h3>
+               <p class="text-muted mb-0">
+                  Ponte a prueba en senderos que atraviesan bosques de niebla
+                  hasta alcanzar las cumbres del páramo.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="experiences" class="py-5 bg-light mt-5">
+        <div class="container py-4">
+          <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+              <span
+                class="text-brand fw-bold small text-uppercase tracking-wide"
+                >Experiencias</span
+              >
+              <h2 class="fw-bold display-6 mb-0">Tours destacados</h2>
+            </div>
+            <a
+              href="#all-tours"
+              class="text-brand text-decoration-none fw-medium d-none d-md-block"
+              >Ver todos los tours &rarr;</a
+            >
+          </div>
+
+          <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+              <article class="card card-hover h-100 shadow-sm">
+                <img
+                  src="{% static 'img/Fondo4.jpg' %}"
+                  class="card-img-top tour-img"
+                  alt="Laguna Negra"
+                />
+                <div class="card-body d-flex flex-column p-4">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <h3 class="h5 fw-bold mb-0">Laguna Negra</h3>
+                    <span class="badge text-dark badge-price">$45 COL</span>
+                  </div>
+                  <p class="card-text text-muted small mb-4">
+                    Caminata guiada hacia la mística laguna negra, rodeada de
+                    flora nativa y el silencio absoluto de la montaña.
+                  </p>
+                  <div
+                    class="mt-auto d-flex justify-content-between align-items-center"
+                  >
+                    <span class="text-muted small">🕒 4 Horas</span>
+                    <a href="#" class="btn btn-brand btn-sm px-3">Reservar</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+              <article class="card card-hover h-100 shadow-sm">
+                <img
+                  src="{% static 'img/paramo_oseta.jpg' %}"
+                  class="card-img-top tour-img"
+                  alt="Páramo de Ocetá"
+                />
+                <div class="card-body d-flex flex-column p-4">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <h3 class="h5 fw-bold mb-0">Páramo de Ocetá</h3>
+                    <span class="badge text-dark badge-price">$60 COL</span>
+                  </div>
+                  <p class="card-text text-muted small mb-4">
+                    Explora el páramo más hermoso del mundo. Déjate sorprender
+                    por la "Ciudad de Piedra" y los valles de frailejones.
+                  </p>
+                  <div
+                    class="mt-auto d-flex justify-content-between align-items-center"
+                  >
+                    <span class="text-muted small">🕒 Día completo</span>
+                    <a href="#" class="btn btn-brand btn-sm px-3">Reservar</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+              <article class="card card-hover h-100 shadow-sm">
+                <img
+                  src="{% static 'img/estatua_piedra.jpg' %}"
+                  class="card-img-top tour-img"
+                  alt="Artesanías Ancestrales"
+                />
+                <div class="card-body d-flex flex-column p-4">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <h3 class="h5 fw-bold mb-0">Artesanías Ancestrales</h3>
+                    <span class="badge text-dark badge-price">$30 COL</span>
+                  </div>
+                  <p class="card-text text-muted small mb-4">
+                    Visita un taller local. Aprende a tejer la lana y moldear el
+                    barro con los maestros artesanos de Mongua.
+                  </p>
+                  <div
+                    class="mt-auto d-flex justify-content-between align-items-center"
+                  >
+                    <span class="text-muted small">🕒 3 Horas</span>
+                    <a href="#" class="btn btn-brand btn-sm px-3">Reservar</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="location" class="container py-5 my-5">
+        <div
+          class="row align-items-center bg-light rounded-4 p-4 p-lg-5 shadow-sm"
+        >
+          <div class="col-lg-6 mb-4 mb-lg-0 pe-lg-5">
+            <span class="text-brand fw-bold small text-uppercase"
+              >📍 BOYACÁ, COLOMBIA</span
+            >
+            <h2 class="fw-bold my-3">
+              Encuéntranos en el corazón de las montañas
+            </h2>
+            <p class="text-muted">
+              Mongua es una joya escondida ubicada a pocas horas de Tunja.
+              Rodeada por las majestuosas montañas de Boyacá, es la puerta de
+              entrada perfecta al Páramo de Ocetá. Escapa del ruido de la ciudad
+              y respira el aire más puro de Colombia.
+            </p>
+            <a
+              href="https://maps.app.goo.gl/ykSVW1iNgkrckGiu9"
+              class="text-dark fw-bold text-decoration-underline mt-2 d-inline-block"
+              >Cómo llegar</a
+            >
+          </div>
+          <div class="col-lg-6">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7939.44689722954!2d-72.80508830970857!3d5.752890876917691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6a4bd38f07ed2f%3A0x9f906e8745ffd73a!2zTW9uZ3VhLCBNb25nw7xhLCBCb3lhY8Oh!5e0!3m2!1ses-419!2sco!4v1773235132107!5m2!1ses-419!2sco" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </section>
+
+      <!-- Datos para la animación de fondo en Java.js -->
+      <script id="datos-imagenes" type="application/json">
+        [
+            "{% static 'img/Fondo.jpg' %}",
+            "{% static 'img/Fondo2.jpg' %}",
+            "{% static 'img/Fondo3.jpg' %}",
+            "{% static 'img/Fondo4.jpg' %}"
+        ]
+      </script>
+
+</div>
+    {% endblock content %}
+
