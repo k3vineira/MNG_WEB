@@ -1,0 +1,294 @@
+{% load static %}
+
+<!-- ════════════════════════════════════
+     PANEL DE ACCESIBILIDAD — Monagua
+     Solo Bootstrap 5 + Bootstrap Icons
+════════════════════════════════════ -->
+
+<!-- ── Botón flotante ── -->
+<button id="a11y-btn"
+        class="btn btn-success rounded-circle position-fixed d-flex align-items-center justify-content-center p-0 shadow"
+        style="bottom:1.5rem;right:1.5rem;z-index:1060;width:44px;height:44px"
+        onclick="A11y.togglePanel()"
+        aria-label="Abrir panel de accesibilidad"
+        aria-expanded="false"
+        aria-controls="a11y-panel"
+        title="Accesibilidad">
+  <i class="bi bi-universal-access fs-5"></i>
+</button>
+
+<!-- ── Panel ── -->
+<div id="a11y-panel"
+     class="position-fixed bg-dark text-white rounded-3 shadow-lg overflow-hidden"
+     style="bottom:5rem;right:1.5rem;width:300px;z-index:1055;display:none"
+     role="dialog" aria-label="Panel de accesibilidad" aria-modal="true">
+
+  <!-- Pestañas -->
+  <ul class="nav nav-tabs nav-fill bg-black border-0" id="a11yTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active text-white border-0 py-2 small fw-bold"
+              id="tab-visual" data-bs-toggle="tab" data-bs-target="#pane-visual"
+              type="button" role="tab" aria-selected="true">
+        Visual
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link text-secondary border-0 py-2 small fw-bold"
+              id="tab-avanzado" data-bs-toggle="tab" data-bs-target="#pane-avanzado"
+              type="button" role="tab" aria-selected="false">
+        Avanzado
+      </button>
+    </li>
+  </ul>
+
+  <!-- Cabecera -->
+  <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom border-secondary">
+    <div class="d-flex align-items-center gap-2">
+      <span class="rounded-circle bg-success d-inline-block flex-shrink-0" style="width:8px;height:8px"></span>
+      <span class="fw-semibold small">Accesibilidad</span>
+    </div>
+    <button class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:.7rem" onclick="A11y.resetAll()">
+      ↺ Restablecer
+    </button>
+  </div>
+
+  <!-- Contenido pestañas -->
+  <div class="tab-content p-3">
+
+    <!-- TAB VISUAL -->
+    <div class="tab-pane fade show active" id="pane-visual" role="tabpanel">
+
+      <!-- Tema -->
+      <p class="text-uppercase text-secondary fw-bold mb-2" style="font-size:.65rem;letter-spacing:.1em">Tema de color</p>
+      <div class="d-flex gap-2 mb-3">
+        <button class="btn btn-sm flex-fill d-flex flex-column align-items-center gap-1 border border-success py-2 a11y-chip active"
+                data-t="default" onclick="A11y.setTheme('default')">
+          <span class="rounded-circle border" style="width:24px;height:24px;background:#1a2e1c"></span>
+          <span style="font-size:.65rem">Oscuro</span>
+        </button>
+        <button class="btn btn-sm flex-fill d-flex flex-column align-items-center gap-1 border border-secondary py-2 a11y-chip"
+                data-t="light" onclick="A11y.setTheme('light')">
+          <span class="rounded-circle border" style="width:24px;height:24px;background:#eef2ee"></span>
+          <span style="font-size:.65rem">Claro</span>
+        </button>
+        <button class="btn btn-sm flex-fill d-flex flex-column align-items-center gap-1 border border-secondary py-2 a11y-chip"
+                data-t="dim" onclick="A11y.setTheme('dim')">
+          <span class="rounded-circle border" style="width:24px;height:24px;background:#3a3d4a"></span>
+          <span style="font-size:.65rem">Tenue</span>
+        </button>
+      </div>
+
+      <!-- Brillo -->
+      <p class="text-uppercase text-secondary fw-bold mb-2" style="font-size:.65rem;letter-spacing:.1em">Brillo de página</p>
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <span style="font-size:.8rem">🌑</span>
+        <input type="range" class="form-range flex-grow-1"
+               id="a11y-brightness-slider" min="50" max="120" value="100" step="1"
+               aria-label="Brillo de página"
+               oninput="A11y.setBrightness(this.value)">
+        <span style="font-size:.8rem">🌕</span>
+        <span class="text-warning fw-bold ms-1" style="font-size:.7rem;min-width:2.5rem;text-align:right" id="a11y-brightness-val">100%</span>
+      </div>
+
+      <!-- Tamaño texto -->
+      <p class="text-uppercase text-secondary fw-bold mb-2" style="font-size:.65rem;letter-spacing:.1em">Tamaño de texto</p>
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-secondary fw-bold" style="font-size:.7rem">A</span>
+        <input type="range" class="form-range flex-grow-1"
+               id="a11y-font-slider" min="80" max="160" value="100" step="1"
+               aria-label="Tamaño de texto"
+               oninput="A11y.setFontSize(this.value)">
+        <span class="text-secondary fw-bold" style="font-size:1rem">A</span>
+        <span class="text-warning fw-bold ms-1" style="font-size:.7rem;min-width:2.5rem;text-align:right" id="a11y-font-val">100%</span>
+      </div>
+    </div>
+
+    <!-- TAB AVANZADO -->
+    <div class="tab-pane fade" id="pane-avanzado" role="tabpanel">
+      <p class="text-uppercase text-secondary fw-bold mb-2" style="font-size:.65rem;letter-spacing:.1em">Opciones de usabilidad</p>
+
+      <!-- Cursor grande -->
+      <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-secondary">
+        <div>
+          <div class="small fw-medium">Cursor grande</div>
+          <div class="text-secondary" style="font-size:.68rem">Aumenta el tamaño del puntero</div>
+        </div>
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" role="switch" id="a11y-tog-cursor"
+                 onchange="A11y.toggleFeature('big-cursor', this.checked)">
+        </div>
+      </div>
+
+      <!-- Foco visible -->
+      <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-secondary">
+        <div>
+          <div class="small fw-medium">Foco visible</div>
+          <div class="text-secondary" style="font-size:.68rem">Resalta el elemento activo al navegar</div>
+        </div>
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" role="switch" id="a11y-tog-focus"
+                 onchange="A11y.toggleFeature('show-focus', this.checked)">
+        </div>
+      </div>
+
+      <!-- Resaltar enlaces -->
+      <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-secondary">
+        <div>
+          <div class="small fw-medium">Resaltar enlaces</div>
+          <div class="text-secondary" style="font-size:.68rem">Subraya y colorea todos los vínculos</div>
+        </div>
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" role="switch" id="a11y-tog-links"
+                 onchange="A11y.toggleFeature('highlight-links', this.checked)">
+        </div>
+      </div>
+
+      <!-- Sin animaciones -->
+      <div class="d-flex align-items-center justify-content-between py-2">
+        <div>
+          <div class="small fw-medium">Sin animaciones</div>
+          <div class="text-secondary" style="font-size:.68rem">Desactiva transiciones y efectos</div>
+        </div>
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" role="switch" id="a11y-tog-motion"
+                 onchange="A11y.toggleFeature('no-motion', this.checked)">
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-content -->
+
+  <!-- Estado -->
+  <div class="d-flex align-items-center gap-2 px-3 py-2 border-top border-secondary bg-black">
+    <span class="rounded-circle bg-success d-inline-block flex-shrink-0" style="width:6px;height:6px"></span>
+    <span class="text-secondary" style="font-size:.62rem">Configuración guardada automáticamente</span>
+  </div>
+
+</div><!-- /a11y-panel -->
+
+<!-- Toast -->
+<div id="a11y-toast"
+     class="position-fixed toast align-items-center text-white bg-success border-0"
+     style="bottom:5rem;right:23rem;z-index:1070"
+     role="status" aria-live="polite" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body small fw-semibold" id="a11y-toast-msg"></div>
+  </div>
+</div>
+
+<script>
+const A11y = (() => {
+  const DEFAULTS = { theme:'default', brightness:100, fontSize:100, bigCursor:false, showFocus:false, hlLinks:false, noMotion:false };
+  let state = { ...DEFAULTS };
+  let toastEl = null;
+
+  function save() { try { localStorage.setItem('a11y_state', JSON.stringify(state)); } catch(_){} }
+  function load() { try { const r=localStorage.getItem('a11y_state'); if(r) state={...DEFAULTS,...JSON.parse(r)}; } catch(_){} }
+
+  function applyAll() {
+    applyTheme(state.theme);
+    applyBrightness(state.brightness);
+    applyFontSize(state.fontSize);
+    applyFeature('big-cursor',      state.bigCursor);
+    applyFeature('show-focus',      state.showFocus);
+    applyFeature('highlight-links', state.hlLinks);
+    applyFeature('no-motion',       state.noMotion);
+    syncUI();
+  }
+
+  function syncUI() {
+    document.querySelectorAll('.a11y-chip').forEach(c => {
+      c.classList.toggle('border-success', c.dataset.t === state.theme);
+      c.classList.toggle('border-secondary', c.dataset.t !== state.theme);
+    });
+    setSlider('a11y-brightness-slider','a11y-brightness-val', state.brightness, '%');
+    setSlider('a11y-font-slider','a11y-font-val', state.fontSize, '%');
+    setCheck('a11y-tog-cursor', state.bigCursor);
+    setCheck('a11y-tog-focus',  state.showFocus);
+    setCheck('a11y-tog-links',  state.hlLinks);
+    setCheck('a11y-tog-motion', state.noMotion);
+  }
+
+  function setSlider(sId, vId, val, sfx) {
+    const sl=document.getElementById(sId), vl=document.getElementById(vId);
+    if(sl) sl.value=val; if(vl) vl.textContent=val+sfx;
+  }
+  function setCheck(id, checked) { const el=document.getElementById(id); if(el) el.checked=checked; }
+
+  function togglePanel() {
+    const panel = document.getElementById('a11y-panel');
+    const btn   = document.getElementById('a11y-btn');
+    const isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : 'block';
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  }
+
+  function applyTheme(t) {
+    document.body.classList.remove('theme-light','theme-dim');
+    if(t==='light') document.body.classList.add('theme-light');
+    else if(t==='dim') document.body.classList.add('theme-dim');
+  }
+  function setTheme(t) { state.theme=t; applyTheme(t); syncUI(); save(); toast('Tema aplicado'); }
+
+  function applyBrightness(val) {
+    let tag=document.getElementById('a11y-brightness-style');
+    if(!tag){ tag=document.createElement('style'); tag.id='a11y-brightness-style'; document.head.appendChild(tag); }
+    tag.textContent = val==100 ? '' : `html{filter:brightness(${val}%)!important}`;
+  }
+  function setBrightness(val) { val=Number(val); state.brightness=val; applyBrightness(val); setSlider('a11y-brightness-slider','a11y-brightness-val',val,'%'); save(); }
+
+  function applyFontSize(val) { document.documentElement.style.fontSize=(val/100*16)+'px'; }
+  function setFontSize(val) { val=Number(val); state.fontSize=val; applyFontSize(val); setSlider('a11y-font-slider','a11y-font-val',val,'%'); save(); }
+
+  function applyFeature(f,on) { document.body.classList.toggle(f,on); }
+  function toggleFeature(f,on) {
+    applyFeature(f,on);
+    const map={'big-cursor':'bigCursor','show-focus':'showFocus','highlight-links':'hlLinks','no-motion':'noMotion'};
+    if(map[f]) state[map[f]]=on;
+    save(); toast(on?'Activado':'Desactivado');
+  }
+
+  function resetAll() {
+    state={...DEFAULTS};
+    try{localStorage.removeItem('a11y_state');}catch(_){}
+    document.body.classList.remove('theme-light','theme-dim','big-cursor','show-focus','highlight-links','no-motion');
+    const bs=document.getElementById('a11y-brightness-style'); if(bs) bs.textContent='';
+    document.documentElement.style.fontSize='';
+    syncUI(); toast('Configuración restablecida');
+  }
+
+  function toast(msg) {
+    const el=document.getElementById('a11y-toast-msg');
+    if(el) el.textContent=msg;
+    if(!toastEl) toastEl = new bootstrap.Toast(document.getElementById('a11y-toast'),{delay:2000});
+    toastEl.show();
+  }
+
+  function initKeyboard() {
+    document.addEventListener('keydown', e => {
+      if(!e.altKey) return;
+      const k=e.key.toLowerCase();
+      if(k==='a'){ e.preventDefault(); togglePanel(); }
+      else if(k==='+'||k==='='){ e.preventDefault(); const v=Math.min(160,state.fontSize+5); setFontSize(v); }
+      else if(k==='-'||k==='_'){ e.preventDefault(); const v=Math.max(80,state.fontSize-5); setFontSize(v); }
+      else if(k==='t'){ e.preventDefault(); setTheme(state.theme==='light'?'default':'light'); }
+      else if(k==='r'){ e.preventDefault(); resetAll(); }
+    });
+  }
+
+  function initOutsideClick() {
+    document.addEventListener('click', e => {
+      const panel=document.getElementById('a11y-panel'), btn=document.getElementById('a11y-btn');
+      if(panel && panel.style.display!=='none' && !panel.contains(e.target) && !btn.contains(e.target)){
+        panel.style.display='none'; btn.setAttribute('aria-expanded','false');
+      }
+    });
+  }
+
+  function init() { load(); applyAll(); initKeyboard(); initOutsideClick(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
+
+  return { togglePanel, setTheme, setBrightness, setFontSize, toggleFeature, resetAll };
+})();
+</script>
