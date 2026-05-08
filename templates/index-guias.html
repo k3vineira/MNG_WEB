@@ -1,0 +1,143 @@
+{% extends 'base-guias.html' %}
+{% load static %}
+
+{% block title %}Gestión de Guías | Monagua{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/estilos.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Top Bar ── -->
+<div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+  <div>
+    <h2 class="fw-bold mb-0 text-success" style="font-size:1.6rem">Gestión de Guías</h2>
+    <p class="text-muted mb-0 small">Registra, edita y administra el personal de guías locales.</p>
+  </div>
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <span class="badge bg-white text-secondary border d-none d-md-inline-flex align-items-center gap-1 px-3 py-2">
+      <i class="bi bi-calendar3 text-success"></i>
+      <span id="currentDate">{{ fecha }}</span>
+    </span>
+    <button class="btn btn-success btn-sm d-flex align-items-center gap-1"
+            id="btn-nuevo-guia"
+            data-bs-toggle="modal"
+            data-bs-target="#modalGuia"
+            onclick="abrirModalNuevo()">
+      <i class="bi bi-plus-circle-fill"></i> Nuevo Guía
+    </button>
+  </div>
+</div>
+
+<!-- ── KPI Cards ── -->
+<div class="row g-3 mb-4">
+  <!-- Activos -->
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <span class="bg-success bg-opacity-10 text-success rounded p-2 fs-5 mb-2 d-inline-block">
+          <i class="bi bi-person-check-fill"></i>
+        </span>
+        <div class="text-muted small">Guías Activos</div>
+        <div class="fw-bold fs-5 text-success">{{ total_guias_activos|default:'0' }}</div>
+        <div class="text-muted" style="font-size:.75rem"><i class="bi bi-arrow-up-right text-success"></i> Disponibles para asignar</div>
+      </div>
+    </div>
+  </div>
+  <!-- Total -->
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <span class="bg-primary bg-opacity-10 text-primary rounded p-2 fs-5 mb-2 d-inline-block">
+          <i class="bi bi-person-lines-fill"></i>
+        </span>
+        <div class="text-muted small">Total Guías</div>
+        <div class="fw-bold fs-5 text-primary">{{ total_guias|default:'0' }}</div>
+        <div class="text-muted" style="font-size:.75rem"><i class="bi bi-person-fill text-primary"></i> Registros en el sistema</div>
+      </div>
+    </div>
+  </div>
+  <!-- Asignados -->
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <span class="bg-warning bg-opacity-10 text-warning rounded p-2 fs-5 mb-2 d-inline-block">
+          <i class="bi bi-clipboard2-check-fill"></i>
+        </span>
+        <div class="text-muted small">Asignados a Tours</div>
+        <div class="fw-bold fs-5 text-warning">{{ guias_asignados|default:'0' }}</div>
+        <div class="text-muted" style="font-size:.75rem"><i class="bi bi-map-fill text-warning"></i> En servicios activos</div>
+      </div>
+    </div>
+  </div>
+  <!-- Inactivos -->
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <span class="bg-danger bg-opacity-10 text-danger rounded p-2 fs-5 mb-2 d-inline-block">
+          <i class="bi bi-person-x-fill"></i>
+        </span>
+        <div class="text-muted small">Guías Inactivos</div>
+        <div class="fw-bold fs-5 text-danger">{{ total_guias_inactivos|default:'0' }}</div>
+        <div class="text-muted" style="font-size:.75rem"><i class="bi bi-dash-circle text-danger"></i> Dados de baja</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Barra de filtros ── -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <div class="row g-2 align-items-center">
+      <!-- Búsqueda -->
+      <div class="col-12 col-md-5">
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-white border-end-0">
+            <i class="bi bi-search text-muted"></i>
+          </span>
+          <input type="text"
+                 id="inputBuscar"
+                 class="form-control border-start-0"
+                 placeholder="Buscar por nombre, especialidad o contacto…"
+                 oninput="filtrarTabla()">
+        </div>
+      </div>
+      <!-- Filtro estado -->
+      <div class="col-6 col-md">
+        <select id="filtroEstado" class="form-select form-select-sm" onchange="filtrarTabla()">
+          <option value="">Todos los estados</option>
+          <option value="Activo">Activos</option>
+          <option value="Inactivo">Inactivos</option>
+        </select>
+      </div>
+      <!-- Filtro especialidad -->
+      <div class="col-6 col-md">
+        <select id="filtroEspecialidad" class="form-select form-select-sm" onchange="filtrarTabla()">
+          <option value="">Todas las especialidades</option>
+          <option value="Alta Montaña">Alta Montaña</option>
+          <option value="Flora y Fauna">Flora y Fauna</option>
+          <option value="Cultura Local">Cultura Local</option>
+          <option value="Turismo de Aventura">Turismo de Aventura</option>
+          <option value="Avifauna">Avifauna</option>
+          <option value="Historia y Patrimonio">Historia y Patrimonio</option>
+        </select>
+      </div>
+      <!-- Filtro disponibilidad -->
+      <div class="col-6 col-md">
+        <select id="filtroDisponibilidad" class="form-select form-select-sm" onchange="filtrarTabla()">
+          <option value="">Toda disponibilidad</option>
+          <option value="Disponible">Disponible</option>
+          <option value="Ocupado">Ocupado</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include 'partials/guias_table.html' %}
+
+{% include 'partials/guias_modals.html' %}
+{% include 'partials/guias_assign_modal.html' %}
+
+{% endblock %}
