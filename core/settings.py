@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'catalogo',
     'usuarios',
     'comunidad',
-    'IA',
+    'asistente',
     'pagos',
     'promociones',
     'reservas',

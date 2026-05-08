@@ -11,26 +11,3 @@ def inicio(request):
     }
     return render(request, 'public/index.html', context)
 
-def destinos(request):
-    return render(request, 'public/destinos.html')
-
-def paquetes(request):
-    return render(request, 'public/paquetes.html')
-
-def detalle_paquete(request, pk):
-    return render(request, 'public/detalle_paquete.html')
-
-def promociones(request):
-    return render(request, 'public/promociones.html')
-
-def blog(request):
-    return render(request, 'public/blog.html')
-
-def blog_detalle(request, pk):
-    return render(request, 'public/blog_detalle.html')
-
-def nosotros(request):
-    return render(request, 'public/nosotros.html')
-
-def terminos(request):
-    return render(request, 'public/terminos.html')
