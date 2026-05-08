@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'catalogo',
     'usuarios',
     'comunidad',
-    'IA',
+    'asistente',
     'pagos',
     'promociones',
     'reservas',
@@ -48,7 +48,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
