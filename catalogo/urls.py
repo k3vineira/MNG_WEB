@@ -2,6 +2,8 @@ from django.urls import path
 from . import views # Importas tu archivo de vistas
 
 urlpatterns = [
+    path('nuestros-destinos/', views.destinos, name='destinos'),
+    
     #categorias
     path('categorias/', views.CategoriaListView.as_view(), name='listar_categorias'),
     path('categorias/nueva/', views.CategoriaCreateView.as_view(), name='crear_categoria'),

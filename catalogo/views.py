@@ -17,7 +17,7 @@ def destinos(request):
     if precio_max:
         destinos_list = destinos_list.filter(precio__lte=precio_max)
     
-    return render(request, 'destinos.html', {'destinos': destinos_list})
+    return render(request, 'usuario/destinos.html', {'destinos': destinos_list})
 
 #PAQUETES
 class PaqueteListView(ListView):
