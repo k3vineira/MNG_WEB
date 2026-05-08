@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class AsistenteConfig(AppConfig):
-    name = 'Asistente'
+class IAConfig(AppConfig):
+    name = 'IA'
