@@ -17,12 +17,12 @@ class ReservaListView(ListView):
     context_object_name = 'reservas'
 class ReservaCreateView(CreateView):
     model = Reserva
-    fields = ['paquete', 'usuario', 'fecha_reserva', 'estado']
+    fields = ['cliente', 'paquete', 'horario', 'num_personas', 'estado', 'observaciones']
     template_name = 'admin/reservas/agregar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 class ReservaUpdateView(UpdateView):
     model = Reserva
-    fields = ['paquete', 'usuario', 'fecha_reserva', 'estado']
+    fields = ['cliente', 'paquete', 'horario', 'num_personas', 'estado', 'observaciones']
     template_name = 'admin/reservas/editar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 class ReservaDeleteView(DeleteView):
@@ -38,12 +38,12 @@ class CancelacionListView(ListView):
     context_object_name = 'cancelaciones'
 class CancelacionCreateView(CreateView):
     model = Cancelacion
-    fields = ['reserva', 'fecha_cancelacion', 'motivo']
+    fields = ['reserva', 'motivo', 'penalidad']
     template_name = 'admin/cancelaciones/agregar_cancelacion.html'
     success_url = reverse_lazy('listar_cancelaciones')
 class CancelacionUpdateView(UpdateView):
     model = Cancelacion
-    fields = ['reserva', 'fecha_cancelacion', 'motivo']
+    fields = ['reserva', 'motivo', 'penalidad']
     template_name = 'admin/cancelaciones/editar_cancelacion.html'
     success_url = reverse_lazy('listar_cancelaciones')
 class CancelacionDeleteView(DeleteView):
@@ -57,11 +57,13 @@ def guardar_reserva(request):
     if request.method == 'POST':
         paquete_id = request.POST.get('paquete_id')
         num_personas = request.POST.get('num_personas')
+        horario = request.POST.get('horario')
         observaciones = request.POST.get('observaciones', '')
         paquete = get_object_or_404(Paquete, id=paquete_id)
         reserva = Reserva.objects.create(
             cliente=request.user.cliente,
             paquete=paquete,
+            horario=horario,
             num_personas=num_personas,
             observaciones=observaciones
         )
@@ -74,5 +76,3 @@ def guardar_reserva(request):
 def reservas_view(request):
     paquetes = Paquete.objects.all()
     return render(request, 'usuario/reservas.html', {'paquetes': paquetes})
-
-

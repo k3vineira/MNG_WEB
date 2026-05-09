@@ -5,10 +5,6 @@ app_name = 'public'
 
 urlpatterns = [
     path('', views.inicio, name='inicio'),
-    ]
-
-
-urlpatterns = [
     path('nuestros-destinos/', views.destinos, name='destinos'),
     
     #categorias
