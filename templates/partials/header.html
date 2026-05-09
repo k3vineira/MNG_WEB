@@ -1,0 +1,52 @@
+{% load static %}
+    <header>
+   <nav  class="navbar w-100 position-fixed py-0 px-2 z-index-3 top-0 navbar-custom bg-transparent  ">
+
+    <a class="navbar-brand d-flex flex-column align-items-center ms-5" href="/">
+        <img src="{% static 'img/Logo.png' %}" alt="Monagua Logo" height="70" />
+        
+        <span class="nombre-empresa fw-bold text-uppercase text-white mt-1 fs-6">
+            Agencia de Viajes y Turismo
+        </span>
+        <span class="d-block fw-bold text-uppercase text-white fs-6">Monagua</span>
+      </a>
+
+
+<ul class="nav mx-auto gap-3 me-1 ">
+  <li class="nav-item">
+    <a class="nav-link fs-6 active" aria-current="page" href="/">Inicio</a>
+  </li>
+  <li class="nav-item">
+  <a class="nav-link fs-6" href="{% url 'destinos' %}">Destinos</a>
+</li>
+  <li class="nav-item">
+    <a class="nav-link fs-6" href="#">Experiencias</a>
+
+    <li class="nav-item">
+    <a class="nav-link fs-6" href="#contacto">Contacto</a>
+  </li>
+      <li class="nav-item">
+    <a class="nav-link fs-6" href="{% url 'nosotros' %}">Nosotros</a>
+  </li>
+
+    <li class="nav-item">
+    <a class="nav-link fs-6" href="{% url 'crear_pqrs' %}">PQRS</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link fs-6" href="{% url 'blog' %}">Blog</a>
+  </li>
+</ul>
+
+<div class="d-flex ms-auto gap-3 me-5">
+  {% if not user.is_authenticated %}
+  <a href="{% url 'login' %}" class="btn btn-sm btn-outline-success me-2 px-3 py-1">Iniciar sesión</a>
+  {% endif %}
+  <button class="btn btn-sm btn-outline-secondary " type="button">Reserva ahora</button>
+  {% if user.is_authenticated %}
+  <a class="btn btn-success btn-lg rounded-pill shadow-sm fas fa-user-circle me-2" href="{% url 'detalles' %}" type="button"></a>
+  {% endif %}
+</div>
+
+      </nav>
+    </header>
+    
