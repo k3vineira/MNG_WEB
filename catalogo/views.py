@@ -52,24 +52,24 @@ class PaqueteDeleteView(DeleteView):
 
 #ACTIVIDADES
 
-class ActividadListView(ListView):
+class ActividadesListView(ListView):
     model = Actividades
     template_name = 'admin/actividades/actividades.html' 
     context_object_name = 'actividades'
 
-class ActividadCreateView(CreateView):
+class ActividadesCreateView(CreateView):
     model = Actividades
     fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud']
     template_name = 'admin/actividades/agregar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
 
-class ActividadUpdateView(UpdateView):
+class ActividadesUpdateView(UpdateView):
     model = Actividades
     fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud']
     template_name = 'admin/actividades/editar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
 
-class ActividadDeleteView(DeleteView):
+class ActividadesDeleteView(DeleteView):
     model = Actividades
     template_name = 'admin/actividades/eliminar_actividad.html'
     success_url = reverse_lazy('listar_actividades')

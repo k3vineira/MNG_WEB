@@ -1,6 +1,6 @@
 from django.db import models
 from usuarios.models import Cliente
-from catalogo.models import Paquete, Horario
+from catalogo.models import Paquete
 
 class Reserva(models.Model):
     ESTADO_CHOICES = [
@@ -11,11 +11,9 @@ class Reserva(models.Model):
     ]
     cliente      = models.ForeignKey(Cliente, on_delete=models.PROTECT, related_name='reservas')
     paquete      = models.ForeignKey(Paquete, on_delete=models.PROTECT)
-    horario      = models.ForeignKey(Horario, on_delete=models.PROTECT, null=True, blank=True)
     num_personas = models.PositiveIntegerField(default=1)
     estado       = models.CharField(max_length=15, choices=ESTADO_CHOICES, default='pendiente')
     fecha_reserva= models.DateTimeField(auto_now_add=True)
-    observaciones= models.TextField(blank=True)
 
     def __str__(self):
         return f"Reserva #{self.pk} — {self.cliente} | {self.paquete}"
