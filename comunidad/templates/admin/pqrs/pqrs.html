@@ -1,0 +1,90 @@
+{% extends 'base-admin.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-end p-3 shadow-sm" 
+         style="background-color: var(--verde-bosque); border-radius: 8px 8px 0 0; border-bottom: 2px solid rgba(255,255,255,0.2);">
+        <h3 class="text-white mb-0 fw-bold">Administración de PQRS</h3>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Solicitante</th>
+                        <th>Tipo</th>
+                        <th>Asunto</th>
+                        <th>Documento</th>
+                        <th>Evidencia</th>
+                        <th style="width: 150px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for pqr in todas_las_pqrs %}
+                    <tr>
+                        <td>{{ pqr.nombre_solicitante }}<br><small class="text-muted">{{ pqr.email }}</small></td>
+                        <td>
+                            <span class="badge {% if pqr.tipo == 'Queja' or pqr.tipo == 'Reclamo' %}bg-danger{% else %}bg-info{% endif %}">
+                                {{ pqr.tipo }}
+                            </span>
+                        </td>
+                        <td>{{ pqr.asunto }}</td>
+                        <td>{{ pqr.documento }}</td>
+                        <td>
+                            {% if pqr.evidencia %}
+                                <a href="{{ pqr.evidencia.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">Ver archivo</a>
+                            {% else %}
+                                <span class="text-muted small">Sin adjunto</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pqr.respuesta and pqr.respuesta.strip %}
+                                <button type="button" class="btn btn-success btn-sm w-100 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
+                                    <i class="bi "></i> Respondido
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-danger btn-sm w-100 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
+                                    <i class="bi bi-chat-dots"></i> Contestar
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <div class="modal fade" id="modalContestar{{ pqr.id }}" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form action="{% url 'contestar_pqrs' pqr.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="modal-header bg-light">
+                              <h5 class="modal-title">Contestar a: {{ pqr.nombre_solicitante }}</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                              <p class="mb-1 text-muted small">ASUNTO:</p>
+                              <p class="fw-bold mb-3">{{ pqr.asunto }}</p>
+                              <p class="mb-1 text-muted small">DESCRIPCIÓN:</p>
+                              <p class="mb-3 border p-2 rounded bg-light">{{ pqr.descripcion }}</p>
+                              
+                              <label class="form-label fw-bold">Tu respuesta:</label>
+                              <textarea name="respuesta" class="form-control" rows="5" placeholder="Escribe aquí la solución para el turista..." required>{{ pqr.respuesta|default:'' }}</textarea>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                              <button type="submit" class="btn btn-success" style="background-color: var(--verde-bosque)">Guardar Respuesta</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                  {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">No se han recibido PQRS hasta el momento.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

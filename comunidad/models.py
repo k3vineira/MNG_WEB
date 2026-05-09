@@ -1,26 +1,18 @@
 from django.db import models
-from usuarios.models import Cliente
-from catalogo.models import Paquete
 
+# Create your models here.
 class Calificacion(models.Model):
     cliente   = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     paquete   = models.ForeignKey(Paquete, on_delete=models.CASCADE)
-    puntaje   = models.PositiveSmallIntegerField()   # 1–5
+    puntaje   = models.PositiveSmallIntegerField()   
     comentario= models.TextField(blank=True)
     fecha     = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('cliente', 'paquete')
 
-class Favorito(models.Model):
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='favoritos')
-    paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE)
-    fecha   = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        unique_together = ('cliente', 'paquete')
-
-class BlogNoticia(models.Model):
+class Blog(models.Model):
     titulo             = models.CharField(max_length=200)
     contenido          = models.TextField()
     resumen            = models.CharField(max_length=300, blank=True)
@@ -35,7 +27,7 @@ class BlogNoticia(models.Model):
     def __str__(self):
         return self.titulo
 
-class Pqrs(models.Model):
+class PQRS(models.Model):
     TIPO_CHOICES = [
         ('peticion',    'Petición'),
         ('queja',       'Queja'),

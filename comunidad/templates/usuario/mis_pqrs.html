@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="main-wrapper mt-5" style="margin-left: 280px; background-color: #f4f7f5; min-height: 100vh; padding: 40px;">
+    <div class="container">
+        <div class="d-flex align-items-center mb-5 p-4 bg-white shadow-sm rounded-4 border-start border-4" style="border-color: #3B643F !important;">
+            <div class="icon-shape bg-light p-3 rounded-circle me-3">
+                <i class="bi bi-chat-quote-fill fs-3" style="color: #3B643F;"></i>
+            </div>
+            <div>
+                <h2 class="fw-bold mb-0" style="color: #1a251e;">Mis Solicitudes</h2>
+                <p class="text-muted mb-0">Seguimiento de tus PQRS y respuestas de Monagua</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for p in pqrs %}
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                    <div class="card-header bg-white border-0 py-3 px-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-uppercase fw-bold small tracking-wider text-muted">Ticket #{{ p.id }}</span>
+                            <span class="badge rounded-pill {% if p.respuesta %}bg-success-subtle text-success{% else %}bg-warning-subtle text-dark{% endif %} px-3 py-2">
+                                <i class="bi {% if p.respuesta %}bi-check-circle-fill{% else %}bi-clock-history{% endif %} me-1"></i>
+                                {% if p.respuesta %}Resuelto{% else %}En revisión{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4 pt-0">
+                        <h4 class="fw-bold mb-2">{{ p.asunto }}</h4>
+                        <div class="bg-light p-3 rounded-3 mb-4">
+                            <p class="mb-0 text-dark" style="font-size: 0.95rem;">
+                                <i class="bi bi-person-circle me-2"></i><strong>Tu mensaje:</strong><br>
+                                <span class="ms-4 d-block mt-1">{{ p.descripcion}}</span>
+                            </p>
+                        </div>
+                        
+                        {% if p.respuesta %}
+                        <div class="p-4 rounded-4 border-0 position-relative" style="background-color: #f1f8f1;">
+                            <div class="position-absolute top-0 start-0 h-100 rounded-start" style="width: 5px; background-color: #3B643F;"></div>
+                            <p class="mb-2">
+                                <strong style="color: #3B643F;"><i class="bi bi-patch-check-fill me-2"></i>Respuesta oficial de Monagua:</strong>
+                            </p>
+                            <p class="mb-0 fs-6 text-dark" style="line-height: 1.6;">{{ p.respuesta }}</p>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-3">
+                            <div class="spinner-grow spinner-grow-sm text-warning me-2" role="status"></div>
+                            <span class="text-muted small">Nuestro equipo está revisando tu caso...</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-footer bg-light border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                        <button class="btn btn-link btn-sm text-decoration-none p-0 text-success fw-bold">Imprimir soporte</button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5 bg-white shadow-sm rounded-4">
+                <img src="{% static 'img/empty_pqrs.svg' %}" alt="Sin datos" class="mb-4" width="150" onerror="this.src='https://illustrations.popsy.co/green/not-found.svg'">
+                <h4 class="fw-bold">No tienes solicitudes activas</h4>
+                <p class="text-muted">Si tienes dudas o sugerencias, estamos listos para escucharte.</p>
+                <a href="{% url 'crear_pqrs' %}" class="btn btn-brand px-4 rounded-pill mt-2">
+                    <i class="bi bi-plus-lg me-2"></i>Nueva Solicitud
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
