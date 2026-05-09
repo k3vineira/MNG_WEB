@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Mis Pagos | Monagua{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Eliminamos el espacio del header fijo y ajustamos el fondo */
+    body { padding-top: 0 !important; background-color: #f8f9fa; }
+
+    .sidebar-monagua {
+        width: 280px;
+        background-color: #1a251e;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        padding: 2rem 1.5rem;
+        transition: all 0.3s ease;
+        border-right: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .main-wrapper {
+        margin-left: 280px;
+        min-height: 100vh;
+    }
+
+    .nav-sidebar .nav-link {
+        color: rgba(255,255,255,0.7);
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: 0.2s;
+    }
+
+    .nav-sidebar .nav-link:hover {
+        color: #fff;
+        background: rgba(255,255,255,0.08);
+    }
+
+    .nav-sidebar .nav-link.active {
+        color: #fff;
+        background: #3B643F;
+        font-weight: 500;
+    }
+
+    @media (max-width: 992px) {
+        .sidebar-monagua { transform: translateX(-100%); }
+        .main-wrapper { margin-left: 0; }
+    }
+</style>
+{% endblock %}
+
+{# Ocultamos la navegación y el pie de página #}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="sidebar-monagua">
+    <div class="sidebar-logo text-center mb-4">
+        <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="60">
+        <h5 class="text-white mt-3 fw-bold mb-0">MONAGUA</h5>
+    </div>
+
+    <nav class="nav flex-column nav-sidebar">
+        <a href="/" class="nav-link">
+            <i class="bi bi-house"></i> Inicio
+        </a>
+        <a href="{% url 'dashboard' %}" class="nav-link">
+            <i class="bi bi-grid"></i> Dashboard
+        </a>
+        <a href="{% url 'mis_pagos' %}" class="nav-link active">
+            <i class="bi bi-calendar-check"></i> Mis Reservas
+        </a>
+        <a href="{% url 'comentarios' %}" class="nav-link">
+            <i class="bi bi-chat-left-text"></i> Mis Reseñas
+        </a>
+        <a href="{% url 'detalles' %}" class="nav-link">
+            <i class="bi bi-person"></i> Mi Perfil
+        </a>
+        <hr class="border-secondary my-4">
+        <form action="{% url 'logout_usuario' %}" method="post" class="px-2">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger btn-sm w-100 rounded-pill">
+                <i class="bi bi-power me-2"></i> Cerrar Sesión
+            </button>
+        </form>
+    </nav>
+</div>
+
+<div class="main-wrapper">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+            <h2 class="titulo-principal mb-4">Mis Reservas, Pagos y Facturas</h2>
+            <div class="table-responsive tabla-pagos p-3">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Referencia</th>
+                            <th>Tour</th>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pago in pagos %}
+                        <tr>
+                            <td><strong>#MON-{{ pago.id }}</strong></td>
+                            <td>{{ pago.tour.nombre }}</td>
+                            <td>{{ pago.fecha_reserva|date:"d/m/Y" }}</td>
+                            <td>${{ pago.total_pagado }}</td>
+                            <td>
+                                <span class="status-badge status-{{ pago.estado|lower }}">
+                                    {{ pago.get_estado_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'descargar_recibo' pago.id %}" class="btn-download">
+                                    <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">Aún no has realizado ningún pago.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

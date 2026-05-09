@@ -34,3 +34,29 @@ __pycache__/
 *.pyc
 venv/
 .envd
+core/__pycache__/settings.cpython-314.pyc
+core/__pycache__/urls.cpython-314.pyc
+
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.env
+
+# Django
+db.sqlite3
+media/
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+db.sqlite3
+venv/
+__pycache__/
+*.pyc

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    :root {
+        --monagua-bg: #f8f9fa;
+        --monagua-primary: #3B643F;
+        --monagua-dark: #1a251e;
+    }
+    body { padding-top: 0 !important; background-color: var(--monagua-bg); }
+    .sidebar-monagua { width: 260px; background-color: var(--monagua-dark); z-index: 1040; }
+    .main-content { margin-left: 260px; min-height: 100vh; }
+    .invoice-card { border: none; border-radius: 15px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    .invoice-header { background-color: var(--monagua-primary); color: white; border-radius: 15px 15px 0 0; padding: 30px; }
+    .line-item { border-bottom: 1px solid #eee; padding: 15px 0; }
+    .btn-download { background-color: var(--monagua-primary); color: white; border-radius: 8px; transition: 0.3s; text-decoration: none; }
+    .btn-download:hover { background-color: #2c4a2f; color: white; transform: translateY(-2px); }
+    @media (max-width: 991.98px) { .sidebar-monagua { display: none; } .main-content { margin-left: 0; } }
+    @media print { .no-print { display: none; } .invoice-card { box-shadow: none; border: 1px solid #ddd; } }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block user_menu_fixed %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<aside class="sidebar-monagua position-fixed top-0 start-0 h-100 p-4 d-flex flex-column no-print">
+    <a href="/" class="mb-5"><img src="{% static 'img/logo_monagua.png' %}" width="50" alt="Logo"></a>
+    <nav class="nav flex-column gap-2">
+        <a class="nav-link text-white-50" href="/"><i class="bi bi-house me-2"></i> Inicio</a>
+        <a class="nav-link text-white fw-bold" href="#"><i class="bi bi-file-earmark-text me-2"></i> Mi Factura</a>
+    </nav>
+</aside>
+
+<main class="main-content">
+    <header class="bg-white px-4 py-3 border-bottom d-flex justify-content-between align-items-center no-print">
+        <h2 class="h5 fw-bold m-0 text-success">Comprobante de Pago</h2>
+        <div class="d-flex gap-2">
+            <button onclick="window.print()" class="btn btn-outline-secondary btn-sm rounded-3">
+                <i class="bi bi-printer me-1"></i> Imprimir
+            </button>
+            <a href="{% url 'descargar_factura' %}" class="btn btn-success btn-sm rounded-3">
+                <i class="bi bi-download me-1"></i> Descargar PDF
+            </a>
+        </div>
+    </header>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="invoice-card overflow-hidden">
+                    <div class="invoice-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="fw-bold mb-1">MONAGUA</h3>
+                            <p class="small mb-0 opacity-75">Experiencias de Montaña</p>
+                        </div>
+                        <div class="text-end">
+                            <h4 class="mb-0">FACTURA</h4>
+                            <p class="small mb-0 opacity-75">#{{ nro_factura }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4 p-md-5">
+                        <div class="row mb-5">
+                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                <p class="text-muted small text-uppercase fw-bold mb-2">Facturado a:</p>
+                                <h6 class="fw-bold mb-1">{{ cliente_nombre }}</h6>
+                                <p class="text-secondary small mb-0">{{ cliente_email }}</p>
+                            </div>
+                            <div class="col-sm-6 text-sm-end">
+                                <p class="text-muted small text-uppercase fw-bold mb-2">Detalles del pago:</p>
+                                <p class="small mb-1"><strong>Fecha:</strong> {{ fecha_emision }}</p>
+                                <p class="small mb-0"><strong>Método:</strong> {{ metodo_pago }}</p>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 small text-uppercase">Descripción</th>
+                                        <th class="border-0 small text-uppercase text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="py-3">
+                                            <span class="fw-bold d-block">{{ paquete_nombre }}</span>
+                                            <small class="text-muted">Reserva confirmada para tour guiado</small>
+                                        </td>
+                                        <td class="py-3 text-end fw-bold">${{ subtotal }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row justify-content-end mt-4">
+                            <div class="col-md-5">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Total Pagado:</span>
+                                    <span class="fw-bold text-success fs-4">${{ total }} COP</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light border-0 p-4 text-center">
+                        <p class="small text-muted mb-0">¡Gracias por confiar en Monagua para tu próxima aventura!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

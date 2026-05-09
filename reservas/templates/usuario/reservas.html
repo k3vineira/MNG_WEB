@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<main class="container" style="margin-top: 100px;">
+<main class="container pt-5 mt-5">
   <div class="row g-4 align-items-stretch justify-content-center mb-5">
     <!-- SECCIÓN DE IMAGEN -->
     <div class="col-md-5">
@@ -35,7 +35,7 @@
               <h5 class="fw-bold">Inicia sesión o regístrate</h5>
               <p class="small mb-3">Para realizar una reserva necesitas tener una cuenta en Monagua.</p>
               <div class="d-flex gap-2 justify-content-center">
-                <a href="{% url 'login' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-confirmar btn-sm text-white">
+                <a href="{% url 'login' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-success btn-sm">
                   Iniciar Sesión
                 </a>
                 <a href="{% url 'registro' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-outline-success btn-sm">
@@ -96,7 +96,7 @@
             </div>
 
             <div class="d-grid">
-              <button class="btn btn-confirmar py-2 fw-bold w-100" type="submit" {% if not user.is_authenticated %}disabled{% endif %}>
+              <button class="btn btn-success py-2 fw-bold w-100" type="submit" {% if not user.is_authenticated %}disabled{% endif %}>
                 Reservar ahora
               </button>
             </div>
@@ -154,8 +154,6 @@
     z-index: 10; display: flex; align-items: center; justify-content: center;
     border-radius: 0 0 1rem 1rem;
   }
-  .btn-confirmar { background-color: #2c6e3c; color: white; border: none; }
-  .btn-confirmar:hover { background-color: #1e4a2a; color: white; }
   .link-verde { color: #2c6e3c; font-weight: bold; }
 </style>
 {% endblock %}

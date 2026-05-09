@@ -1,7 +1,8 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
 from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Paquete, Actividades, Categoria
+
 
 
 def destinos(request):
@@ -19,7 +20,7 @@ def destinos(request):
     
     return render(request, 'usuario/destinos.html', {'destinos': destinos_list})
 
-#PAQUETES
+
 class PaqueteListView(ListView):
     model = Paquete
     template_name = 'admin/paquetes/paquetes.html' 
@@ -96,4 +97,10 @@ class CategoriaDeleteView(DeleteView):
     model = Categoria
     template_name = 'admin/categorias/eliminar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
-    
+
+def reservas(request):
+    # Lógica para obtener las reservas del usuario
+    context = {
+        'reservas': []  # Reemplaza con la lógica real
+    }
+    return render(request, 'usuario/reservas.html', context)

@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Monagua</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <style>
+        :root {
+            --verde-monagua: #406d46;
+            --verde-hover: #2e4f32;
+        }
+
+        body {
+            background: url('{% static "img/Fondo.jpg" %}') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        .auth-nav {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 1rem;
+        }
+
+        .auth-nav-item {
+            color: #adb5bd;
+            text-decoration: none;
+            font-weight: 600;
+            padding-bottom: 4px;
+            border-bottom: 3px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .auth-nav-item.active {
+            color: #212529;
+            border-bottom-color: #212529; 
+        }
+
+        @media (min-width: 768px) {
+            .divider-vertical {
+                border-right: 2px solid #dee2e6;
+                height: 100%;
+            }
+        }
+
+        .form-control, .form-select {
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .card {
+            max-width: 850px;
+            width: 95%;
+        }
+
+        .text-custom-green {
+            color: var(--verde-monagua);
+            transition: color 0.3s ease;
+        }
+
+        @media (max-height: 720px) {
+            .card { padding: 1.5rem !important; }
+            img { max-height: 60px !important; }
+            h4 { font-size: 1.2rem; }
+            .mb-2 { margin-bottom: 0.5rem !important; }
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column justify-content-center align-items-center py-4">
+
+    <div class="card p-4 rounded-4 border-0 shadow-lg bg-white">
+        
+        <div class="text-center mb-2">
+            <img src="{% static 'img/Logo.png' %}" class="img-fluid mb-1" style="max-height: 75px; object-fit: contain;">
+            <h4 class="fw-bold text-dark mb-0">Bienvenido</h4>
+            <p class="text-muted mb-2" style="font-size: 0.8rem;">Ingresa tus datos para acceder a tu experiencia en Monagua.</p>
+        </div>
+
+        <div class="d-flex justify-content-center gap-4 auth-nav mb-3">
+            <a href="{% url 'usuarios:login' %}" class="auth-nav-item">Iniciar Sesión</a>
+            <a href="#" class="auth-nav-item active">Regístrate</a>
+        </div>
+
+        <form id="formularioRegistro" method="POST">
+            {% csrf_token %}
+            {# Mantener redirección tras registro si existe #}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+            <div class="row g-0">
+                <!-- Columna Izquierda -->
+                <div class="col-md-6 pe-md-4 divider-vertical">
+                    <div class="mb-2">
+                        <input type="text" name="username" value="{{ form.username.value|default:'' }}" 
+                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.username.errors %}is-invalid{% endif %}" 
+                               placeholder="Nombre de Usuario" required>
+                        {% if form.username.errors %}<div class="invalid-feedback ms-3">{{ form.username.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-2">
+                        <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" 
+                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.first_name.errors %}is-invalid{% endif %}" 
+                               placeholder="Nombres" required>
+                        {% if form.first_name.errors %}<div class="invalid-feedback ms-3">{{ form.first_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-2">
+                        <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" 
+                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.last_name.errors %}is-invalid{% endif %}" 
+                               placeholder="Apellidos" required>
+                        {% if form.last_name.errors %}<div class="invalid-feedback ms-3">{{ form.last_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-2">
+                        <select name="tipo_documento" class="form-select rounded-pill border-secondary-subtle shadow-sm text-secondary {% if form.tipo_documento.errors %}is-invalid{% endif %}" required>
+                            <option value="" selected disabled>Tipo De Documento</option>
+                            <option value="Cédula de Ciudadanía" {% if form.tipo_documento.value == "Cédula de Ciudadanía" %}selected{% endif %}>Cédula de Ciudadanía</option>
+                            <option value="Cédula de Extranjería" {% if form.tipo_documento.value == "Cédula de Extranjería" %}selected{% endif %}>Cédula de Extranjería</option>
+                            <option value="Pasaporte" {% if form.tipo_documento.value == "Pasaporte" %}selected{% endif %}>Pasaporte</option>
+                        </select>
+                        {% if form.tipo_documento.errors %}<div class="invalid-feedback ms-3">{{ form.tipo_documento.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-2">
+                        <input type="text" name="numero_documento" value="{{ form.numero_documento.value|default:'' }}" 
+                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.numero_documento.errors %}is-invalid{% endif %}" 
+                               placeholder="Número de Documento" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        {% if form.numero_documento.errors %}<div class="invalid-feedback ms-3">{{ form.numero_documento.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-2">
+                        <input type="tel" name="telefono" value="{{ form.telefono.value|default:'' }}" 
+                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.telefono.errors %}is-invalid{% endif %}" 
+                               placeholder="Número de Teléfono" 
+                               required maxlength="10"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        {% if form.telefono.errors %}<div class="invalid-feedback ms-3">{{ form.telefono.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Columna Derecha -->
+                <div class="col-md-6 ps-md-4">
+                    <div class="mb-2">
+                        <input type="text" name="residencia" value="{{ form.residencia.value|default:'' }}" 
+                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.residencia.errors %}is-invalid{% endif %}" 
+                               placeholder="Lugar de Residencia" required>
+                        {% if form.residencia.errors %}<div class="invalid-feedback ms-3">{{ form.residencia.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-2">
+                        <input type="email" name="email" value="{{ form.email.value|default:'' }}" 
+                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.email.errors %}is-invalid{% endif %}" 
+                               placeholder="Correo Electrónico" required>
+                        {% if form.email.errors %}<div class="invalid-feedback ms-3">{{ form.email.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-2">
+                        <input type="password" id="pass1" name="password1" 
+                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.password1.errors %}is-invalid{% endif %}" 
+                               placeholder="Contraseña" required minlength="6">
+                        {% if form.password1.errors %}<div class="invalid-feedback ms-3">{{ form.password1.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="mb-2">
+                        <input type="password" id="pass2" name="password2" 
+                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.password2.errors %}is-invalid{% endif %}" 
+                               placeholder="Confirmar Contraseña" required minlength="6">
+                        {% if form.password2.errors %}<div class="invalid-feedback ms-3">{{ form.password2.errors.0 }}</div>{% endif %}
+                    </div>
+                    
+                    <div class="form-check mt-3">
+                        <input type="checkbox" class="form-check-input border-secondary-subtle shadow-sm" id="terminos" required>
+                        <label class="form-check-label text-muted" style="font-size: 0.8rem;" for="terminos">
+                            He leído y acepto los <a href="{% url 'usuarios:terminos' %}" class="text-custom-green fw-bold text-decoration-none">Términos y Condiciones</a>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            {# Mostrar errores que no pertenecen a un campo específico (ej: validaciones de seguridad o duplicados) #}
+            {% if form.non_field_errors %}
+            <div class="mt-3">
+                {% for error in form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissible fade show py-2 mb-2" role="alert" style="font-size: 0.8rem;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
+                    <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if messages %}
+            <div class="mt-3">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show py-2 mb-2" role="alert" style="font-size: 0.8rem;">
+                    {{ message }}
+                    <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="text-center mt-3">
+                <div id="mensajeError" class="alert alert-danger alert-dismissible fade show py-2 d-none mb-2" role="alert" style="font-size: 0.8rem;">
+                    Las contraseñas no coinciden.
+                    <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm py-2">
+                    Crear Cuenta
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-cerrar alertas después de 5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                let alerts = document.querySelectorAll('.alert:not(.alert-danger)'); // No cerramos errores críticos automáticamente si prefieres
+                alerts.forEach(alert => {
+                    let bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+
+        const formulario = document.getElementById('formularioRegistro');
+        const mensajeError = document.getElementById('mensajeError');
+
+        formulario.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const pass1 = document.getElementById('pass1').value;
+            const pass2 = document.getElementById('pass2').value;
+
+            if (pass1 !== pass2) {
+                mensajeError.classList.remove('d-none');
+            } else {
+                mensajeError.classList.add('d-none');
+                formulario.submit(); 
+            }
+        });
+    </script>
+</body>
+</html>

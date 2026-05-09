@@ -1,10 +1,9 @@
 from django.db import models
-from usuarios.models import Cliente
-from catalogo.models import Paquete
 
+# Create your models here.
 class Calificacion(models.Model):
-    cliente   = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    paquete   = models.ForeignKey(Paquete, on_delete=models.CASCADE)
+    cliente = models.ForeignKey('usuarios.Cliente', on_delete=models.CASCADE)
+    paquete = models.ForeignKey('catalogo.Paquete', on_delete=models.CASCADE)
     puntaje   = models.PositiveSmallIntegerField()   
     comentario= models.TextField(blank=True)
     fecha     = models.DateTimeField(auto_now_add=True)
@@ -40,7 +39,7 @@ class PQRS(models.Model):
         ('en_proceso', 'En Proceso'),
         ('cerrado',    'Cerrado'),
     ]
-    cliente   = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='pqrs')
+    cliente   = models.ForeignKey('usuarios.Cliente', on_delete=models.CASCADE, related_name='pqrs')
     tipo      = models.CharField(max_length=15, choices=TIPO_CHOICES)
     asunto    = models.CharField(max_length=200)
     descripcion = models.TextField()

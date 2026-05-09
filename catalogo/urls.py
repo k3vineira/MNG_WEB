@@ -1,7 +1,10 @@
 from django.urls import path
-from . import views # Importas tu archivo de vistas
+from . import views
+
+app_name = 'catalogo'
 
 urlpatterns = [
+    path('', views.inicio, name='inicio'),
     path('nuestros-destinos/', views.destinos, name='destinos'),
     
     #categorias

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+        .hero-terms {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("{% static 'img/Fondo.jpg' %}");
+            background-size: cover; background-position: center;
+            color: white; padding: 80px 0; text-align: center;
+        }
+        .content-card {
+            background: white; border-radius: 15px; border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: -50px; padding: 40px;
+        }
+        .sidebar-sticky { position: sticky; top: 20px; }
+        .nav-terms .nav-link { color: #666; border-left: 3px solid #eee; margin-bottom: 5px; transition: 0.3s; }
+        .nav-terms .nav-link:hover, .nav-terms .nav-link.active { color: #0d6efd; border-left-color: #0d6efd; background: #f0f7ff; }
+        h3 { color: #0d6efd; font-weight: 600; margin-top: 30px; }
+        p { line-height: 1.8; text-align: justify; }
+        .icon-circle { width: 40px; height: 40px; background: #e7f1ff; color: #0d6efd; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; }
+</style>
+
+<section class="hero-terms">
+    <div class="container">
+        <h1 class="fw-bold">Términos y Condiciones</h1>
+        <p class="lead text-light opacity-75 d-flex justify-content-center align-items-center">Tu seguridad y confianza son nuestra prioridad en cada destino</p>
+    </div>
+</section>
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="sidebar-sticky card p-3 shadow-sm border-0">
+                <h6 class="fw-bold mb-3">CONTENIDO</h6>
+                <nav class="nav flex-column nav-terms">
+                    <a class="nav-link small" href="#introduccion">1. Introducción</a>
+                    <a class="nav-link small" href="#reservas">2. Reservas y Pagos</a>
+                    <a class="nav-link small" href="#cancelaciones">3. Cancelaciones</a>
+                    <a class="nav-link small" href="#responsabilidades">4. Responsabilidades</a>
+                    <a class="nav-link small" href="#privacidad">5. Protección de Datos</a>
+                </nav>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="card content-card">
+                <div class="text-end mb-4">
+                    <span class="badge bg-light text-muted border px-3 py-2">Última actualización: 26 de Marzo, 2026</span>
+                </div>
+
+                <div id="introduccion">
+                    <h3><div class="icon-circle"><i class="bi bi-info-circle"></i></div>Introducción</h3>
+                    <p>Bienvenido a <strong>Monagua Agencia de Viajes y Turismo</strong>. Al utilizar nuestros servicios y plataforma web, usted acepta cumplir con los términos detallados a continuación. Estos términos regulan la relación contractual entre el cliente y nuestra agencia radicada en Sogamoso, Boyacá.</p>
+                </div>
+
+                <hr class="my-4">
+
+                <div id="reservas">
+                    <h3><div class="icon-circle"><i class="bi bi-wallet2"></i></div>Reservas y Pagos</h3>
+                    <p>Toda reserva de paquetes turísticos o tours individuales se considerará confirmada únicamente tras el pago del anticipo correspondiente (mínimo el 30% del valor total). Monagua se reserva el derecho de ajustar precios ante cambios imprevistos en tasas gubernamentales o costos de proveedores externos.</p>
+                    <ul>
+                        <li>Los pagos pueden realizarse vía PSE, transferencia bancaria o en nuestros puntos físicos.</li>
+                        <li>El saldo restante debe ser cancelado 48 horas antes de iniciar la experiencia turística.</li>
+                    </ul>
+                </div>
+
+                <hr class="my-4">
+
+                <div id="cancelaciones">
+                    <h3><div class="icon-circle"><i class="bi bi-x-circle"></i></div>Políticas de Cancelación</h3>
+                    <p>Entendemos que los planes pueden cambiar. Sin embargo, para mantener la logística con nuestros guías y transportadores regionales, aplicamos las siguientes penalidades:</p>
+                    <table class="table table-bordered small mt-3">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Antelación</th>
+                                <th>Reembolso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Más de 15 días</td>
+                                <td>90% del valor pagado</td>
+                            </tr>
+                            <tr>
+                                <td>Entre 5 y 14 días</td>
+                                <td>50% del valor pagado</td>
+                            </tr>
+                            <tr>
+                                <td>Menos de 48 horas</td>
+                                <td>Sin reembolso (No-Show)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr class="my-4">
+
+                <div id="responsabilidades">
+                    <h3><div class="icon-circle"><i class="bi bi-shield-check"></i></div>Responsabilidades</h3>
+                    <p>Monagua actúa como intermediario entre el cliente y los prestadores de servicios (hoteles, transporte, guías). No nos hacemos responsables por retrasos climáticos, cierres viales o situaciones de fuerza mayor que alteren el itinerario original, aunque brindaremos asistencia total para reprogramaciones.</p>
+                </div>
+                
+                <div class="mt-5 p-4 bg-light rounded text-center">
+                    <p class="mb-0">¿Tiene dudas sobre nuestros términos?</p>
+                    <a href="mailto:contacto@monagua.com" class="btn btn-primary mt-2">Contactar Soporte Jurídico</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

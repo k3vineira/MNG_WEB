@@ -1,43 +1,33 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 class Usuario(AbstractUser):
-    ROL_CHOICES = [
-        ('admin',  'Administrador'),
-        ('guia',   'Guía Turístico'),
-        ('cliente','Cliente'),
-    ]
-    rol      = models.CharField(max_length=10, choices=ROL_CHOICES, default='cliente')
+    tipo_documento = models.CharField(max_length=20, blank=True)
+    numero_documento = models.CharField(max_length=20, unique=True, null=True)
     telefono = models.CharField(max_length=15, blank=True)
-    foto     = models.ImageField(upload_to='perfiles/', blank=True, null=True)
+    residencia = models.CharField(max_length=100, blank=True)
+    imagen_perfil = models.ImageField(upload_to='perfiles/', null=True, blank=True, verbose_name='Imagen de Perfil')
 
-    def __str__(self):
-        return f"{self.get_full_name()} ({self.rol})"
-
-class Cliente(models.Model):
-    usuario      = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='perfil_cliente')
-    documento    = models.CharField(max_length=20, unique=True)
-    fecha_nacimiento = models.DateField(null=True, blank=True)
-    direccion    = models.CharField(max_length=200, blank=True)
-
-    def __str__(self):
-        return str(self.usuario)
-
-class GuiaTuristico(models.Model):
-    usuario      = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='perfil_guia')
-    licencia     = models.CharField(max_length=50, blank=True)
-    especialidad = models.CharField(max_length=100, blank=True)
-    activo       = models.BooleanField(default=True)
-
-    def __str__(self):
-        return str(self.usuario)
-
-class Auditoria(models.Model):
-    usuario  = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True)
-    accion   = models.CharField(max_length=200)
-    modulo   = models.CharField(max_length=50)
-    fecha    = models.DateTimeField(auto_now_add=True)
-    ip       = models.GenericIPAddressField(null=True, blank=True)
-
+    es_guia = models.BooleanField(default=False)
+    es_turista = models.BooleanField(default=False)
+    
     class Meta:
-        ordering = ['-fecha']
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
+        
+class Cliente(models.Model):
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='cliente')
+    telefono = models.CharField(max_length=15, blank=True)
+    pais_origen = models.CharField(max_length=50, blank=True)
+    
+    def __str__(self):
+        return f"{self.usuario.first_name} {self.usuario.last_name}"
+    
+class GuiaTuristico(models.Model): 
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='guia')
+    licencia_turismo = models.CharField(max_length=50, blank=True)
+    experiencia_años = models.PositiveIntegerField(default=0)
+    biografia = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"Guía: {self.usuario.username}"
