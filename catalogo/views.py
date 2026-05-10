@@ -2,16 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Paquete, Actividades, Categoria
-from promociones.models import Promocion
-from comunidad.models import Blog
 
-
-def inicio(request):
-    return render(request, 'public/inicio.html', {  # ← cambiar index.html por inicio.html
-        'paquetes_destacados': Paquete.objects.filter(activo=True).order_by('-id')[:3],
-        'promociones_activas': Promocion.objects.filter(activo=True)[:3],
-        'blog_reciente': Blog.objects.order_by('-fecha_publicacion')[:3],
-    })
 
 
 def destinos(request):

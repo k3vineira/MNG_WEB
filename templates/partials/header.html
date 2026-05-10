@@ -17,7 +17,7 @@
     <a class="nav-link fs-6 active" aria-current="page" href="/">Inicio</a>
   </li>
   <li class="nav-item">
-  <a class="nav-link fs-6" href="{% url 'destinos' %}">Destinos</a>
+  <a class="nav-link fs-6" href="#">Destinos</a>
 </li>
   <li class="nav-item">
     <a class="nav-link fs-6" href="#">Experiencias</a>
@@ -26,24 +26,24 @@
     <a class="nav-link fs-6" href="#contacto">Contacto</a>
   </li>
       <li class="nav-item">
-    <a class="nav-link fs-6" href="{% url 'nosotros' %}">Nosotros</a>
+    <a class="nav-link fs-6" href="#">Nosotros</a>
   </li>
 
     <li class="nav-item">
-    <a class="nav-link fs-6" href="{% url 'crear_pqrs' %}">PQRS</a>
+    <a class="nav-link fs-6" href="#">PQRS</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link fs-6" href="{% url 'blog' %}">Blog</a>
+    <a class="nav-link fs-6" href="#">Blog</a>
   </li>
 </ul>
 
 <div class="d-flex ms-auto gap-3 me-5">
   {% if not user.is_authenticated %}
-  <a href="{% url 'login' %}" class="btn btn-sm btn-outline-success me-2 px-3 py-1">Iniciar sesión</a>
+  <a href="#" class="btn btn-sm btn-outline-success me-2 px-3 py-1">Iniciar sesión</a>
   {% endif %}
   <button class="btn btn-sm btn-outline-secondary " type="button">Reserva ahora</button>
   {% if user.is_authenticated %}
-  <a class="btn btn-success btn-lg rounded-pill shadow-sm fas fa-user-circle me-2" href="{% url 'detalles' %}" type="button"></a>
+  <a class="btn btn-success btn-lg rounded-pill shadow-sm fas fa-user-circle me-2" href="#" type="button"></a>
   {% endif %}
 </div>
 
