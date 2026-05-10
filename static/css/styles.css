@@ -1,0 +1,10 @@
+/* Efecto Especial: Fundido a Negro */
+#carouselExampleFade {
+  background-color: #000;
+}
+#carouselExampleFade .carousel-item {
+  /* Hacemos la transición un poco más larga y suave (1.5 segundos) */
+  transition: opacity 1.5s ease-in-out !important;
+}
+
+

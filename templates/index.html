@@ -2,23 +2,56 @@
 {% load static %}
 {% block content %}
 
-
-      <section
-        id="home" class="hero-section d-flex align-items-center text-center text-white">
-        <div class="container mt-5">
-          <h1 class="display-3 fw-bold mb-3">
-            Descubre la niebla oculta de Mongua
-          </h1>
-          <p class="lead mb-4 mx-auto hero-subtitle">
-            Senderismo, cultura y el Páramo de Ocetá. Donde los Andes tocan el
-            cielo.
-          </p>
-          <div class="d-flex justify-content-center gap-3">
-            <a href="#journey" class="btn btn-brand btn-lg">Empieza tu viaje</a>
-            <a href="#destinations" class="btn btn-outline-light btn-lg">Ver destinos</a>
-          </div>
+<div id="carouselExampleFade" class="carousel slide carousel-fade vh-100 bg-black" data-bs-ride="carousel" data-bs-interval="10000">
+  <div class="carousel-inner h-100">
+    <div class="carousel-item active h-100">
+      <img src="{% static 'img/Fondo.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 1">
+      <!-- Capa de viñeta (bordes oscuros) -->
+      <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); pointer-events: none;"></div>
+      <!-- Recuadro con transparencia -->
+      <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
+        <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
+          <h1 class="display-3 fw-bold text-white">Bienvenidos a Mongua</h1>
+          <p class="lead text-white mb-0">Naturaleza y Tradición en el corazón de Boyacá</p>
         </div>
-      </section>
+      </div>
+    </div>
+    <div class="carousel-item h-100">
+      <img src="{% static 'img/Fondo2.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 2">
+      <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); pointer-events: none;"></div>
+      <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
+        <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
+          <h2 class="display-4 fw-bold text-white">Páramo de Ocetá</h2>
+          <p class="lead text-white mb-0">Explora senderos ancestrales y paisajes únicos</p>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item h-100">
+      <img src="{% static 'img/Fondo4.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 3">
+      <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); pointer-events: none;"></div>
+      <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
+        <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
+          <h2 class="display-4 fw-bold text-white">Cultura y Aventura</h2>
+          <p class="lead text-white mb-0">Vive experiencias que conectan con la tierra</p>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item h-100">
+      <img src="{% static 'img/Fondo3.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 4">
+      <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); pointer-events: none;"></div>
+      <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
+        <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
+          <h2 class="display-4 fw-bold text-white">Páramo de Ocetá</h2>
+          <p class="lead text-white mb-0">Explora senderos y paisajes únicos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 
       <section id="explore" class="container py-5 mt-5">
         <div class="row align-items-center mb-5">
@@ -212,15 +245,7 @@
         </div>
       </section>
 
-      <!-- Datos para la animación de fondo en Java.js -->
-      <script id="datos-imagenes" type="application/json">
-        [
-            "{% static 'img/Fondo.jpg' %}",
-            "{% static 'img/Fondo2.jpg' %}",
-            "{% static 'img/Fondo3.jpg' %}",
-            "{% static 'img/Fondo4.jpg' %}"
-        ]
-      </script>
+
 
 </div>
     {% endblock content %}
