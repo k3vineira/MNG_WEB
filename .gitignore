@@ -5,9 +5,9 @@ db.sqlite3
 db.sqlite3-journal
 media
 
-# # Django Migrations
-# **/migrations/*.py
-# !**/migrations/__init__.py
+# Django Migrations
+**/migrations/*.py
+!**/migrations/__init__.py
 
 # Assets
 node_modules/
@@ -25,39 +25,6 @@ venv.bak/
 # Python
 *.pyc
 __pycache__/
-**/__pycache__/
 *.pyo
 *.pyd
 .Python
-
-__pycache__/
-*.pyc
-venv/
-.envd
-core/__pycache__/settings.cpython-314.pyc
-core/__pycache__/urls.cpython-314.pyc
-
-
-# Python
-__pycache__/
-*.py[cod]
-
-# Virtual environment
-venv/
-.env
-
-# Django
-db.sqlite3
-media/
-
-# VSCode
-.vscode/
-
-# OS
-.DS_Store
-Thumbs.db
-db.sqlite3
-venv/
-__pycache__/
-*.pyc
-core/__pycache__/urls.cpython-314.pyc
