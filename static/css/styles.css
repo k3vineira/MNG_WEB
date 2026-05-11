@@ -1,3 +1,11 @@
+/* ══════════════ VARIABLES GLOBALES DE COLOR ══════════════ */
+:root {
+  /* Sobrescribimos el color 'success' de Bootstrap para todo el proyecto */
+  --bs-success: #1a261f;
+  --bs-success-rgb: 26, 38, 31;
+  --primary-green: #1a261f;
+}
+
 /* Efecto Especial: Fundido a Negro */
 #carouselExampleFade {
   background-color: #000;
@@ -33,7 +41,6 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
   border-bottom-left-radius: 24px; /* Redondeado elegante */
   border-bottom-right-radius: 24px;
-  overflow: hidden; /* Asegura que el efecto glass siga la curva */
   transition: all 0.3s ease;
 }
 
@@ -45,14 +52,14 @@
 }
 
 .navbar-glass .nav-link:hover {
-  background: rgba(44, 110, 60, 0.15); /* Verde translúcido */
+  background: rgba(26, 38, 31, 0.15); /* Verde marca translúcido */
   backdrop-filter: blur(5px);
-  color: #2c6e3c !important; /* Color de la marca */
+  color: var(--primary-green) !important;
 }
 
 /* ══════════════ FOOTER CUSTOM ══════════════ */
 .footer-monagua {
-  background: linear-gradient(135deg, #1e4a2a 0%, #2c6e3c 100%);
+  background: #1a261f;
   color: rgba(255, 255, 255, 0.85);
 }
 
@@ -98,7 +105,7 @@
 
 /* ══════════════ FULLSCREEN PREMIUM MENU ══════════════ */
 .offcanvas-premium {
-  background-color: rgba(44, 110, 60, 0.6) !important; /* Verde marca con transparencia */
+  background-color: rgba(26, 38, 31, 0.6) !important; /* Nuevo verde con transparencia */
   backdrop-filter: blur(20px) saturate(180%); /* Efecto vidrio esmerilado Apple Style */
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Borde suave de "cristal" */

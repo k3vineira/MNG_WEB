@@ -1,4 +1,4 @@
-{% extends 'base-admin.html' %}
+{% extends 'admin/base-admin.html' %}
 {% load static %}
 
 {% block title %}Dashboard | Monagua Admin{% endblock %}
@@ -7,6 +7,12 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* Alturas fijas para evitar que Chart.js dispare bucles de ResizeObserver */
+    .chart-container { position: relative; height: 300px; width: 100%; }
+    .chart-container-sm { position: relative; height: 200px; width: 100%; }
+    .table-responsive { max-height: 500px; overflow-y: auto; }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -18,10 +24,10 @@
     <p class="text-muted mb-0 small">Visión general del negocio y métricas clave.</p>
   </div>
   <div class="d-flex align-items-center gap-2 flex-wrap">
-    <a href="{% url 'gestion_promociones' %}" class="btn btn-outline-success btn-sm rounded-pill d-none d-lg-inline-flex align-items-center gap-1">
+    <a href="#" class="btn btn-outline-success btn-sm rounded-pill d-none d-lg-inline-flex align-items-center gap-1">
       <i class="bi bi-megaphone-fill"></i> Banners
     </a>
-    <a href="{% url 'comentarios' %}" class="btn btn-outline-secondary btn-sm rounded-pill d-none d-lg-inline-flex align-items-center gap-1">
+    <a href="#" class="btn btn-outline-secondary btn-sm rounded-pill d-none d-lg-inline-flex align-items-center gap-1">
       <i class="bi bi-chat-left-text"></i> Comentarios
     </a>
     <span class="badge bg-white text-secondary border d-none d-md-inline-flex align-items-center gap-1 px-3 py-2">
@@ -109,7 +115,7 @@
         <div class="text-muted small">Anuncios / Banners</div>
         <div class="fw-bold fs-5" style="color:#6366f1">{{ total_promociones|default:"0" }}</div>
         <div style="font-size:.75rem">
-          <a href="{% url 'gestion_promociones' %}" class="text-decoration-none text-muted">
+          <a href="#" class="text-decoration-none text-muted">
             Configurar <i class="bi bi-arrow-right"></i>
           </a>
         </div>
@@ -130,8 +136,8 @@
         </div>
         <span class="badge bg-success">{{ "now"|date:"Y" }}</span>
       </div>
-      <div class="card-body">
-        <canvas id="chartIngresos" height="110"></canvas>
+      <div class="card-body p-3">
+        <div class="chart-container"><canvas id="chartIngresos"></canvas></div>
       </div>
     </div>
   </div>
@@ -142,8 +148,8 @@
         <div class="fw-semibold">Estado de Reservas</div>
         <div class="text-muted small">Distribución actual</div>
       </div>
-      <div class="card-body d-flex flex-column align-items-center">
-        <canvas id="chartEstado" height="160"></canvas>
+      <div class="card-body d-flex flex-column align-items-center p-3">
+        <div class="chart-container"><canvas id="chartEstado"></canvas></div>
         <div class="d-flex justify-content-center gap-3 mt-3" style="font-size:.72rem;color:#666">
           <span class="d-flex align-items-center gap-1">
             <span class="rounded-1 bg-success d-inline-block" style="width:10px;height:10px"></span> Confirmadas
@@ -275,11 +281,15 @@
           <td style="min-width:130px">
             <div class="d-flex align-items-center gap-2">
               <div class="progress flex-grow-1" style="height:5px">
+                {% if tour.numero_reservas > 0 %}
+                  {% widthratio tour.numero_reservas max_reservas|default:tour.numero_reservas 100 as percentage %}
+                {% endif %}
                 <div class="progress-bar bg-success"
-                     style="width:{% if max_reservas and max_reservas > 0 %}{{ tour.numero_reservas }}{% else %}0{% endif %}%;border-radius:99px">
+                     style="width: {{ percentage|default:0 }}%; border-radius:99px"
+                     role="progressbar">
                 </div>
               </div>
-              <small class="text-muted">{{ tour.numero_reservas }}</small>
+              <small class="text-muted">{{ percentage|default:0 }}%</small>
             </div>
           </td>
           <td>
@@ -309,7 +319,8 @@
 document.getElementById('currentDate').textContent =
   new Date().toLocaleDateString('es-CO', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
 
-const C = { green:'#198754', greenLight:'rgba(25,135,84,.12)', amber:'#f59e0b', rose:'#dc3545', gray:'#f0f0f0', muted:'#aaa' };
+/* Actualizamos las constantes de las gráficas para que coincidan con el nuevo color */
+const C = { green:'#1a261f', greenLight:'rgba(26,38,31,.12)', amber:'#f59e0b', rose:'#dc3545', gray:'#f0f0f0', muted:'#aaa' };
 
 const ingresosData = {{ ingresos_mensuales|default:"[0,0,0,0,0,0,0,0,0,0,0,0]"|safe }};
 const reservasConf = {{ reservas_confirmadas|default:0 }};
@@ -379,21 +390,27 @@ document.getElementById('btnExportPdf').addEventListener('click', async function
     const pW=pdf.internal.pageSize.getWidth(), pH=pdf.internal.pageSize.getHeight();
     const ratio=pW/canvas.width, totalH=canvas.height*ratio;
     let posY=0, pg=1, totalPages=Math.ceil(totalH/pH);
+    
+    // Safe guard to prevent infinite loops in PDF generation
+    let loopLimit = 0;
     const header = (n,t) => {
       pdf.setFillColor(33,37,41); pdf.rect(0,0,pW,10,'F');
       pdf.setTextColor(255,255,255); pdf.setFontSize(8); pdf.setFont('helvetica','bold');
       pdf.text('MONAGUA — Tablero de Rendimiento', 8, 6.5);
       pdf.text('Generado: '+new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'})+'   Pág '+n+'/'+t, pW-8, 6.5, {align:'right'});
     };
-    while (posY < totalH) {
+    while (posY < totalH - 1 && loopLimit < 50) {
       if (pg > 1) pdf.addPage();
       header(pg, totalPages);
       const sliceH = Math.min(pH-10, totalH-posY);
+      if (sliceH <= 0) break;
+      
       const sc = document.createElement('canvas');
       sc.width = canvas.width; sc.height = Math.round(sliceH/ratio);
       sc.getContext('2d').drawImage(canvas, 0, Math.round(posY/ratio), canvas.width, sc.height, 0, 0, sc.width, sc.height);
       pdf.addImage(sc.toDataURL('image/jpeg',.92),'JPEG',0,10,pW,sliceH);
       posY += sliceH; pg++;
+      loopLimit++;
     }
     pdf.save('monagua-dashboard-'+new Date().toISOString().slice(0,10)+'.pdf');
   } catch(e) { console.error(e); alert('Error al generar el PDF.'); }

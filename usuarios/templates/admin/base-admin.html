@@ -4,18 +4,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Admin Panel | Monagua{% endblock %}</title>
+  <title>{% block title %}Panel Admin | Monagua{% endblock %}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   {% block extra_head %}{% endblock %}
+  <style>
+    /* Diseño responsivo nativo para evitar bucles de layout */
+    html { overflow-y: scroll; } /* Fuerza la barra de scroll para evitar saltos de ancho */
+
+    #mainSidebar {
+      width: 240px;
+      z-index: 1040;
+      transition: transform .3s ease;
+      transform: translateX(-100%);
+    }
+
+    #mainContent {
+      margin-left: 0 !important;
+      /* ELIMINADO: transition de margin-left para evitar bucles con Chart.js */
+      min-height: 100vh;
+    }
+
+    @media (min-width: 992px) {
+      #mainSidebar { transform: translateX(0) !important; }
+      #mainContent { margin-left: 240px !important; }
+      #sidebar-toggle, #sidebar-overlay { display: none !important; }
+    }
+    /* Clase de activación para móvil controlada por JS */
+    body.sidebar-open #mainSidebar { transform: translateX(0); }
+    body.sidebar-open #sidebar-overlay { display: block !important; }
+  </style>
 </head>
 <body class="bg-light" style="font-family:'Poppins',sans-serif">
 
 <!-- ── Botón hamburguesa (solo móvil) ── -->
 <button id="sidebar-toggle"
         class="btn btn-success position-fixed d-lg-none"
-        style="top:12px;left:12px;z-index:1045;width:42px;height:42px;border-radius:10px;padding:0"
+        style="top:12px;left:12px;z-index:1045;width:42px;height:42px;border-radius:10px;padding:0;display:flex;align-items:center;justify-content:center"
         aria-label="Abrir menú" aria-expanded="false" aria-controls="mainSidebar">
   <i class="bi bi-list fs-5"></i>
 </button>
@@ -28,8 +54,7 @@
 <!-- ══════════════ SIDEBAR ══════════════ -->
 <aside id="mainSidebar"
        class="d-flex flex-column bg-dark text-white position-fixed top-0 start-0 h-100"
-       style="width:240px;z-index:1040;overflow-y:auto;transition:transform .3s;transform:translateX(-100%)">
-
+       style="overflow-y:auto;">
   <!-- Brand -->
   <a href="/" class="d-flex align-items-center gap-2 p-3 text-decoration-none border-bottom border-secondary">
     <img src="{% static 'img/logo_monagua.png' %}" alt="Logo Monagua"
@@ -46,69 +71,23 @@
 
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1" style="font-size:.65rem;letter-spacing:.1em">Principal</div>
 
-    <a href="{% url 'usuarios:inicio' %}"
+    <a href="{% url 'usuarios:dashboard' %}"
        class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'usuarios:inicio' %}bg-success text-white{% else %}text-white-50{% endif %}">
+              {% if request.resolver_match.url_name == 'dashboard' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-grid-1x2-fill"></i> Dashboard
     </a>
 
     <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-graph-up-arrow"></i> Estadísticas
-    </a>
-
-    <a href="{% url '#' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == '' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-chat-left-dots-fill"></i> Comentarios
     </a>
 
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Gestión</div>
 
-    <a href="{% url '' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == '' %}bg-success text-white{% else %}text-white-50{% endif %}">
+    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
       <i class="bi bi-box-seam-fill"></i> Paquetes Turísticos
     </a>
 
-    <a href="{% url '' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == '' %}bg-success text-white{% else %}text-white-50{% endif %}">
-      <i class="bi bi-journal-text"></i> Blog
-    </a>
-
-    <a href="{% url '' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == '' %}bg-success text-white{% else %}text-white-50{% endif %}">
-      <i class="bi bi-tags-fill"></i> Categorías
-    </a>
-
-    <a href="{% url '' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == '' %}bg-success text-white{% else %}text-white-50{% endif %}">
-      <i class="bi bi-bicycle"></i> Actividades
-    </a>
-
-    <a href="{% url '' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == '' %}bg-success text-white{% else %}text-white-50{% endif %}">
-      <i class="bi bi-calendar-check-fill"></i> Reservas
-    </a>
-
-    <a href="{% url '' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == '' %}bg-success text-white{% else %}text-white-50{% endif %}">
-      <i class="bi bi-envelope-fill"></i> PQRS
-    </a>
-
-    <a href="{% url '' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == '' %}bg-success text-white{% else %}text-white-50{% endif %}">
-      <i class="bi bi-people-fill"></i> Guías y Usuarios
-    </a>
-
-    <a href="{% url '' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if 'promociones' in request.path %}bg-success text-white{% else %}text-white-50{% endif %}">
+    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
       <i class="bi bi-megaphone-fill"></i> Promociones
     </a>
 
@@ -135,7 +114,7 @@
         <div class="text-success" style="font-size:.7rem">Super Admin</div>
       </div>
     </div>
-    <form action="{% url 'logout_usuario' %}" method="post">
+    <form action="{% url 'usuarios:logout' %}" method="post">
       {% csrf_token %}
       <button type="submit" class="btn btn-outline-danger btn-sm w-100">
         <i class="bi bi-power"></i> Cerrar Sesión
@@ -148,7 +127,7 @@
 {% include 'partials/accesibilidad.html' %}
 
 <!-- ══════════════ CONTENIDO PRINCIPAL ══════════════ -->
-<main id="mainContent" class="p-4" style="margin-left:240px;min-height:100vh;transition:margin .3s">
+<main id="mainContent" class="p-4">
   {% block content %}{% endblock %}
 </main>
 
@@ -165,50 +144,26 @@
   const ICON_OPEN  = '<i class="bi bi-list fs-5"></i>';
   const ICON_CLOSE = '<i class="bi bi-x-lg fs-5"></i>';
 
-  function openSidebar() {
-    sb.style.transform = 'translateX(0)';
-    ov.classList.remove('d-none');
-    btn.innerHTML = ICON_CLOSE;
-    btn.setAttribute('aria-expanded', 'true');
-    btn.setAttribute('aria-label', 'Cerrar menú');
-  }
-
-  function closeSidebar() {
-    sb.style.transform = 'translateX(-100%)';
-    ov.classList.add('d-none');
-    btn.innerHTML = ICON_OPEN;
-    btn.setAttribute('aria-expanded', 'false');
-    btn.setAttribute('aria-label', 'Abrir menú');
-  }
-
-  function checkViewport() {
-    if (window.innerWidth >= 992) {
-      // Desktop: sidebar siempre visible
-      sb.style.transform = 'translateX(0)';
-      content.style.marginLeft = '240px';
-      btn.classList.add('d-none');
-      ov.classList.add('d-none');
+  function toggleSidebar(forceClose = false) {
+    const isOpen = document.body.classList.contains('sidebar-open');
+    if (isOpen || forceClose) {
+      document.body.classList.remove('sidebar-open');
+      btn.innerHTML = ICON_OPEN;
+      btn.setAttribute('aria-expanded', 'false');
     } else {
-      // Móvil: sidebar oculto, sin margen
-      closeSidebar();
-      content.style.marginLeft = '0';
-      btn.classList.remove('d-none');
+      document.body.classList.add('sidebar-open');
+      btn.innerHTML = ICON_CLOSE;
+      btn.setAttribute('aria-expanded', 'true');
     }
   }
 
-  btn.addEventListener('click', () => {
-    sb.style.transform === 'translateX(0)' ? closeSidebar() : openSidebar();
-  });
-
-  ov.addEventListener('click', closeSidebar);
+  btn.addEventListener('click', () => toggleSidebar());
+  ov.addEventListener('click', () => toggleSidebar(true));
 
   // Cerrar al hacer clic en un link en móvil
   sb.querySelectorAll('a').forEach(link =>
-    link.addEventListener('click', () => { if (window.innerWidth < 992) closeSidebar(); })
+    link.addEventListener('click', () => { if (window.innerWidth < 992) toggleSidebar(true); })
   );
-
-  window.addEventListener('resize', checkViewport);
-  checkViewport();
 })();
 </script>
 {% block extra_js %}{% endblock %}

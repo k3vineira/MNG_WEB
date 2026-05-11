@@ -1,0 +1,41 @@
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña - Gestor SENA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { height: 100vh; display: flex; align-items: center; justify-content: center; background-color: var(--bs-body-bg); }
+        .tarjeta-login { max-width: 400px; width: 100%; }
+    </style>
+</head>
+<body>
+    
+    <div class="tarjeta-login p-4 rounded-4 shadow-lg border border-secondary-subtle bg-body-tertiary">
+        <div class="text-center mb-4 mt-2">
+            <h3 class="fw-bold color-negro-suave-fn mb-1">Recuperar Acceso</h3>
+            <p class="text-muted small">Ingresa tu correo electrónico registrado y te enviaremos las instrucciones.</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-muted text-uppercase">Correo Electrónico:</label>
+                <input type="email" name="email" class="form-control form-control-lg border-secondary-subtle bg-body text-body shadow-none fs-6" placeholder="ejemplo@sena.edu.co" required autofocus>
+            </div>
+
+            <button type="submit" class="btn text-white fw-bold w-100 shadow-sm py-2 mb-3" style="background-color: #39A900; font-size: 1.1rem;">Enviar Enlace</button>
+            
+            <div class="text-center">
+                <a href="{% url 'login' %}" class="small text-decoration-none fw-bold text-muted">Volver al Login</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
