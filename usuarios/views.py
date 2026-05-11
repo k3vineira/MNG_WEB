@@ -19,7 +19,7 @@ def inicio_usuarios(request):
     context = {
         'titulo': 'Bienvenido a Monagua',
     }
-    return render(request, 'usuarios/index-admin.html', context)
+    return render(request, 'turista/index_turista.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='usuarios:inicio')
