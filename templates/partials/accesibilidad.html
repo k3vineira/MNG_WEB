@@ -1,67 +1,61 @@
 {% load static %}
 
-<!-- Botón flotante accesibilidad -->
-<button id="a11y-btn" class="btn btn-success rounded-circle position-fixed d-flex align-items-center justify-content-center shadow p-0"
-        style="bottom:1.5rem;right:1.5rem;z-index:1060;width:44px;height:44px"
-        onclick="A11y.toggle()" aria-label="Accesibilidad" aria-expanded="false" aria-controls="a11y-panel">
+<!-- Botón flotante -->
+<button id="a11y-btn" onclick="A11y.toggle()" aria-label="Accesibilidad" aria-expanded="false"
+  class="btn btn-success rounded-circle position-fixed shadow p-0 d-flex align-items-center justify-content-center"
+  style="bottom:1.5rem;right:1.5rem;z-index:1060;width:44px;height:44px">
   <i class="bi bi-universal-access fs-5"></i>
 </button>
 
 <!-- Panel -->
-<div id="a11y-panel" class="position-fixed bg-dark text-white rounded-3 shadow-lg overflow-hidden"
-     style="bottom:5rem;right:1.5rem;width:290px;z-index:1055;display:none"
-     role="dialog" aria-label="Accesibilidad" aria-modal="true">
+<div id="a11y-panel" class="position-fixed bg-dark text-white rounded-3 shadow-lg overflow-hidden d-none"
+  style="bottom:5rem;right:1.5rem;width:290px;z-index:1055" role="dialog" aria-modal="true">
 
-  <ul class="nav nav-tabs nav-fill bg-black border-0">
-    <li class="nav-item"><button class="nav-link active text-white border-0 py-2 small fw-bold" data-bs-toggle="tab" data-bs-target="#a11y-visual">Visual</button></li>
-    <li class="nav-item"><button class="nav-link text-secondary border-0 py-2 small fw-bold" data-bs-toggle="tab" data-bs-target="#a11y-avanzado">Avanzado</button></li>
+  <!-- Tabs -->
+  <ul class="nav nav-tabs nav-fill border-0 bg-black" role="tablist">
+    <li class="nav-item"><button class="nav-link active text-white border-0 py-2 small fw-bold" data-bs-toggle="tab" data-bs-target="#av" role="tab">Visual</button></li>
+    <li class="nav-item"><button class="nav-link text-secondary border-0 py-2 small fw-bold" data-bs-toggle="tab" data-bs-target="#aa" role="tab">Avanzado</button></li>
   </ul>
 
+  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary">
-    <span class="small fw-semibold">Accesibilidad</span>
+    <span class="small fw-semibold"><span class="rounded-circle bg-success d-inline-block me-1" style="width:7px;height:7px"></span>Accesibilidad</span>
     <button class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:.7rem" onclick="A11y.reset()">↺ Restablecer</button>
   </div>
 
+  <!-- Contenido -->
   <div class="tab-content p-3">
 
     <!-- Visual -->
-    <div class="tab-pane fade show active" id="a11y-visual">
+    <div class="tab-pane fade show active" id="av">
       <p class="text-secondary mb-2" style="font-size:.6rem;text-transform:uppercase;letter-spacing:.1em">Tema</p>
       <div class="d-flex gap-2 mb-3">
-        <button class="btn btn-sm flex-fill border a11y-chip" data-t="default" onclick="A11y.setTheme('default')">
-          <span class="rounded-circle d-block mx-auto mb-1 border" style="width:20px;height:20px;background:#1a2e1c"></span>
-          <span style="font-size:.62rem">Oscuro</span>
+          <button class="btn btn-sm flex-fill border a11y-chip" data-t="default" onclick="A11y.setTheme('default')">
+          <span class="rounded-circle d-block mx-auto mb-1 border" style="width:20px;height:20px;background:#1a2e1c"></span><span style="font-size:.62rem">Oscuro</span>
         </button>
         <button class="btn btn-sm flex-fill border a11y-chip" data-t="light" onclick="A11y.setTheme('light')">
-          <span class="rounded-circle d-block mx-auto mb-1 border" style="width:20px;height:20px;background:#eef2ee"></span>
-          <span style="font-size:.62rem">Claro</span>
+          <span class="rounded-circle d-block mx-auto mb-1 border" style="width:20px;height:20px;background:#eef2ee"></span><span style="font-size:.62rem">Claro</span>
         </button>
         <button class="btn btn-sm flex-fill border a11y-chip" data-t="dim" onclick="A11y.setTheme('dim')">
-          <span class="rounded-circle d-block mx-auto mb-1 border" style="width:20px;height:20px;background:#3a3d4a"></span>
-          <span style="font-size:.62rem">Tenue</span>
+          <span class="rounded-circle d-block mx-auto mb-1 border" style="width:20px;height:20px;background:#3a3d4a"></span><span style="font-size:.62rem">Tenue</span>
         </button>
       </div>
 
       <p class="text-secondary mb-1" style="font-size:.6rem;text-transform:uppercase;letter-spacing:.1em">Brillo</p>
       <div class="d-flex align-items-center gap-2 mb-3">
-        <span style="font-size:.8rem">🌑</span>
-        <input type="range" class="form-range flex-grow-1" id="sl-bright" min="50" max="120" value="100" oninput="A11y.setBrightness(this.value)">
-        <span style="font-size:.8rem">🌕</span>
-        <span class="text-warning fw-bold" style="font-size:.7rem;min-width:2.2rem;text-align:right" id="val-bright">100%</span>
+        <span>🌑</span><input type="range" class="form-range flex-grow-1" id="sl-bright" min="50" max="120" value="100" oninput="A11y.setBrightness(this.value)"><span>🌕</span>
+        <span class="text-warning fw-bold" style="font-size:.7rem;min-width:2rem" id="val-bright">100%</span>
       </div>
 
       <p class="text-secondary mb-1" style="font-size:.6rem;text-transform:uppercase;letter-spacing:.1em">Texto</p>
       <div class="d-flex align-items-center gap-2">
-        <small class="text-secondary fw-bold">A</small>
-        <input type="range" class="form-range flex-grow-1" id="sl-font" min="80" max="160" value="100" oninput="A11y.setFont(this.value)">
-        <span class="text-secondary fw-bold">A</span>
-        <span class="text-warning fw-bold" style="font-size:.7rem;min-width:2.2rem;text-align:right" id="val-font">100%</span>
+        <small class="text-secondary fw-bold">A</small><input type="range" class="form-range flex-grow-1" id="sl-font" min="80" max="160" value="100" oninput="A11y.setFont(this.value)"><span class="text-secondary fw-bold">A</span>
+        <span class="text-warning fw-bold" style="font-size:.7rem;min-width:2rem" id="val-font">100%</span>
       </div>
     </div>
 
     <!-- Avanzado -->
-    <div class="tab-pane fade" id="a11y-avanzado">
-      {% for item in "1234" %}{% endfor %}
+    <div class="tab-pane fade" id="aa">
       <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
         <div><div class="small">Cursor grande</div><div class="text-secondary" style="font-size:.65rem">Aumenta el puntero</div></div>
         <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" role="switch" id="tog-cursor" onchange="A11y.feat('big-cursor',this.checked)"></div>
@@ -71,7 +65,7 @@
         <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" role="switch" id="tog-focus" onchange="A11y.feat('show-focus',this.checked)"></div>
       </div>
       <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
-        <div><div class="small">Resaltar enlaces</div><div class="text-secondary" style="font-size:.65rem">Colorea todos los vínculos</div></div>
+        <div><div class="small">Resaltar enlaces</div><div class="text-secondary" style="font-size:.65rem">Colorea los vínculos</div></div>
         <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" role="switch" id="tog-links" onchange="A11y.feat('highlight-links',this.checked)"></div>
       </div>
       <div class="d-flex justify-content-between align-items-center py-2">
@@ -79,81 +73,65 @@
         <div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" role="switch" id="tog-motion" onchange="A11y.feat('no-motion',this.checked)"></div>
       </div>
     </div>
-
   </div>
 
-  <div class="d-flex align-items-center gap-2 px-3 py-2 bg-black border-top border-secondary">
+  <!-- Footer -->
+  <div class="d-flex align-items-center gap-2 px-3 py-2 border-top border-secondary bg-black">
     <span class="rounded-circle bg-success d-inline-block" style="width:6px;height:6px"></span>
     <span class="text-secondary" style="font-size:.6rem">Guardado automáticamente</span>
   </div>
 </div>
 
-<div id="a11y-toast" class="position-fixed toast text-white bg-success border-0" style="bottom:5rem;right:22rem;z-index:1070" role="status" aria-live="polite" aria-atomic="true">
-  <div class="toast-body small fw-semibold" id="a11y-toast-msg"></div>
+<!-- Toast -->
+<div id="a11y-toast" class="toast position-fixed text-white bg-success border-0"
+  style="bottom:5.5rem;right:1.5rem;z-index:1070" role="status" aria-live="polite" data-bs-delay="2000">
+  <div class="d-flex"><div class="toast-body small fw-semibold" id="a11y-toast-msg"></div>
+  <button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>
 </div>
 
+<style>
+  body.no-motion *,.no-motion *::before,.no-motion *::after{animation:none!important;transition:none!important}
+  body.highlight-links a{text-decoration:underline!important;color:#58a6ff!important}
+  body.show-focus *:focus-visible{outline:3px solid #3fb950!important;outline-offset:3px!important}
+  body.big-cursor,body.big-cursor *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2322c55e' opacity='.35'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2322c55e'/%3E%3C/svg%3E") 16 16,crosshair!important}
+  .a11y-chip.active{border-color:#22c55e!important;background:rgba(34,197,94,.15)!important}
+</style>
+
 <script>
-const A11y = (() => {
-  const D = { theme:'default', bright:100, font:100, bigCursor:false, showFocus:false, hlLinks:false, noMotion:false };
-  let s = { ...D }, t = null;
+const A11y=(()=>{
+  const D={theme:'default',bright:100,font:100,bigCursor:false,showFocus:false,hlLinks:false,noMotion:false};
+  let s={...D},_t=null;
+  const save=()=>{try{localStorage.setItem('a11y',JSON.stringify(s));}catch(_){}};
+  const load=()=>{try{const r=localStorage.getItem('a11y');if(r)s={...D,...JSON.parse(r)};}catch(_){}};
 
-  const save = () => { try { localStorage.setItem('a11y', JSON.stringify(s)); } catch(_){} };
-  const load = () => { try { const r = localStorage.getItem('a11y'); if (r) s = {...D,...JSON.parse(r)}; } catch(_){} };
+  const applyTheme=v=>{document.body.classList.remove('theme-light','theme-dim');if(v==='light')document.body.classList.add('theme-light');else if(v==='dim')document.body.classList.add('theme-dim');};
+  const applyBright=v=>{let el=document.getElementById('a11y-bright-style');if(!el){el=document.createElement('style');el.id='a11y-bright-style';document.head.appendChild(el);}el.textContent=+v===100?'':`html{filter:brightness(${v}%)!important}`;};
+  const applyFont=v=>document.documentElement.style.fontSize=(v/100*16)+'px';
+  const applyFeat=(f,on)=>document.body.classList.toggle(f,on);
 
-  const applyTheme = v => { document.body.classList.remove('theme-light','theme-dim'); if (v==='light') document.body.classList.add('theme-light'); else if (v==='dim') document.body.classList.add('theme-dim'); };
-  const applyBright = v => { let el = document.getElementById('a11y-bright-style'); if (!el) { el = document.createElement('style'); el.id='a11y-bright-style'; document.head.appendChild(el); } el.textContent = v==100 ? '' : `html{filter:brightness(${v}%)!important}`; };
-  const applyFont = v => { document.documentElement.style.fontSize = (v/100*16)+'px'; };
-  const applyFeat = (f,on) => document.body.classList.toggle(f, on);
-
-  const syncUI = () => {
-    document.querySelectorAll('.a11y-chip').forEach(c => c.classList.toggle('border-success', c.dataset.t === s.theme));
-    [['sl-bright','val-bright',s.bright],['sl-font','val-font',s.font]].forEach(([sl,vl,v]) => { const e=document.getElementById(sl); if(e) e.value=v; const ev=document.getElementById(vl); if(ev) ev.textContent=v+'%'; });
-    [['tog-cursor',s.bigCursor],['tog-focus',s.showFocus],['tog-links',s.hlLinks],['tog-motion',s.noMotion]].forEach(([id,v]) => { const e=document.getElementById(id); if(e) e.checked=v; });
+  const syncUI=()=>{
+    document.querySelectorAll('.a11y-chip').forEach(c=>c.classList.toggle('active',c.dataset.t===s.theme));
+    [['sl-bright','val-bright',s.bright],['sl-font','val-font',s.font]].forEach(([sl,vl,v])=>{const e=document.getElementById(sl);if(e)e.value=v;const ev=document.getElementById(vl);if(ev)ev.textContent=v+'%';});
+    [['tog-cursor',s.bigCursor],['tog-focus',s.showFocus],['tog-links',s.hlLinks],['tog-motion',s.noMotion]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.checked=v;});
   };
 
-  const toast = msg => {
-    const el = document.getElementById('a11y-toast-msg'); if (el) el.textContent = msg;
-    if (!t) t = new bootstrap.Toast(document.getElementById('a11y-toast'), {delay:2000});
-    t.show();
-  };
+  const toast=msg=>{const el=document.getElementById('a11y-toast'),me=document.getElementById('a11y-toast-msg');if(!el||!me)return;me.textContent=msg;if(!_t)_t=new bootstrap.Toast(el,{delay:2000});_t.show();};
 
-  const setTheme = v => { s.theme=v; applyTheme(v); syncUI(); save(); toast('Tema aplicado'); };
-  const setBrightness = v => { s.bright=+v; applyBright(+v); document.getElementById('val-bright').textContent=v+'%'; save(); };
-  const setFont = v => { s.font=+v; applyFont(+v); document.getElementById('val-font').textContent=v+'%'; save(); };
-  const feat = (f,on) => { applyFeat(f,on); const m={'big-cursor':'bigCursor','show-focus':'showFocus','highlight-links':'hlLinks','no-motion':'noMotion'}; if(m[f]) s[m[f]]=on; save(); toast(on?'Activado':'Desactivado'); };
+  const toggle=()=>{const p=document.getElementById('a11y-panel'),b=document.getElementById('a11y-btn'),open=p.classList.contains('d-none');p.classList.toggle('d-none',!open);b.setAttribute('aria-expanded',open);if(open)setTimeout(()=>{const f=p.querySelector('button,input');if(f)f.focus();},50);};
+  const setTheme=v=>{s.theme=v;applyTheme(v);syncUI();save();toast('Tema aplicado');};
+  const setBrightness=v=>{s.bright=+v;applyBright(+v);const e=document.getElementById('val-bright');if(e)e.textContent=v+'%';save();};
+  const setFont=v=>{s.font=+v;applyFont(+v);const e=document.getElementById('val-font');if(e)e.textContent=v+'%';save();};
+  const feat=(f,on)=>{applyFeat(f,on);const m={'big-cursor':'bigCursor','show-focus':'showFocus','highlight-links':'hlLinks','no-motion':'noMotion'};if(m[f])s[m[f]]=on;save();toast(on?'Activado':'Desactivado');};
+  const reset=()=>{s={...D};try{localStorage.removeItem('a11y');}catch(_){}document.body.classList.remove('theme-light','theme-dim','big-cursor','show-focus','highlight-links','no-motion');const bs=document.getElementById('a11y-bright-style');if(bs)bs.textContent='';document.documentElement.style.fontSize='';syncUI();toast('Restablecido');};
 
-  const toggle = () => {
-    const p = document.getElementById('a11y-panel'), b = document.getElementById('a11y-btn');
-    const open = p.style.display === 'none'; p.style.display = open ? 'block' : 'none'; b.setAttribute('aria-expanded', open);
-  };
-
-  const reset = () => {
-    s = {...D}; try { localStorage.removeItem('a11y'); } catch(_){}
-    document.body.classList.remove('theme-light','theme-dim','big-cursor','show-focus','highlight-links','no-motion');
-    const bs = document.getElementById('a11y-bright-style'); if(bs) bs.textContent='';
-    document.documentElement.style.fontSize='';
-    syncUI(); toast('Restablecido');
-  };
-
-  const init = () => {
-    load();
-    applyTheme(s.theme); applyBright(s.bright); applyFont(s.font);
-    applyFeat('big-cursor',s.bigCursor); applyFeat('show-focus',s.showFocus); applyFeat('highlight-links',s.hlLinks); applyFeat('no-motion',s.noMotion);
+  const init=()=>{
+    load();applyTheme(s.theme);applyBright(s.bright);applyFont(s.font);
+    applyFeat('big-cursor',s.bigCursor);applyFeat('show-focus',s.showFocus);applyFeat('highlight-links',s.hlLinks);applyFeat('no-motion',s.noMotion);
     syncUI();
-    document.addEventListener('click', e => {
-      const p=document.getElementById('a11y-panel'), b=document.getElementById('a11y-btn');
-      if (p && p.style.display!=='none' && !p.contains(e.target) && !b.contains(e.target)) { p.style.display='none'; b.setAttribute('aria-expanded','false'); }
-    });
-    document.addEventListener('keydown', e => {
-      if (!e.altKey) return;
-      const k = e.key.toLowerCase();
-      if (k==='a') { e.preventDefault(); toggle(); }
-      else if (k==='t') { e.preventDefault(); setTheme(s.theme==='light'?'default':'light'); }
-      else if (k==='r') { e.preventDefault(); reset(); }
-    });
+    document.addEventListener('click',e=>{const p=document.getElementById('a11y-panel'),b=document.getElementById('a11y-btn');if(p&&!p.classList.contains('d-none')&&!p.contains(e.target)&&!b.contains(e.target)){p.classList.add('d-none');b.setAttribute('aria-expanded','false');}});
+    document.addEventListener('keydown',e=>{if(!e.altKey)return;const k=e.key.toLowerCase();if(k==='a'){e.preventDefault();toggle();}else if(k==='t'){e.preventDefault();setTheme(s.theme==='light'?'default':'light');}else if(k==='r'){e.preventDefault();reset();}else if(k==='+'||k==='='){e.preventDefault();const v=Math.min(160,s.font+5);setFont(v);const sl=document.getElementById('sl-font');if(sl)sl.value=v;}else if(k==='-'||k==='_'){e.preventDefault();const v=Math.max(80,s.font-5);setFont(v);const sl=document.getElementById('sl-font');if(sl)sl.value=v;}});
   };
-
-  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
-  return { toggle, setTheme, setBrightness, setFont, feat, reset };
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
+  return{toggle,setTheme,setBrightness,setFont,feat,reset};
 })();
 </script>
