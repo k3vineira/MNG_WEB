@@ -140,3 +140,5 @@ def perfil_view(request):
         return redirect('usuarios:detalles')
 
     return render(request, 'private/perfil.html')
+
+
