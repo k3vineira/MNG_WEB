@@ -1,0 +1,155 @@
+<!-- Modal Registrar/Editar Guía -->
+<div class="modal fade" id="modalGuia" tabindex="-1" aria-labelledby="modalGuiaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold" id="modalGuiaLabel">
+          <i class="bi bi-person-badge-fill me-2"></i>
+          <span id="modalTitulo">Registrar Nuevo Guía</span>
+        </h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      
+      <div class="modal-loading d-none text-center p-4" id="modalLoadingSpinner">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Cargando…</span>
+        </div>
+        <p class="mt-2 text-muted small">Cargando datos del guía…</p>
+      </div>
+
+      <form id="formGuia" method="POST" action="{% url 'usuarios:guias_guardar' %}">
+
+        {% csrf_token %}
+        <input type="hidden" name="guia_id" id="inputGuiaId" />
+        <div class="modal-body p-4" id="modalFormBody">
+          <h6 class="text-success fw-bold border-bottom pb-2 mb-3"><i class="bi bi-person-circle me-1"></i> Información Personal</h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Nombre *</label>
+              <input type="text" class="form-control bg-light border-0 shadow-none" name="nombre" id="inputNombre" placeholder="Ej. Carlos" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Apellido *</label>
+              <input type="text" class="form-control bg-light border-0 shadow-none" name="apellido" id="inputApellido" placeholder="Ej. Suárez" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Correo Electrónico *</label>
+              <input type="email" class="form-control bg-light border-0 shadow-none" name="correo" id="inputCorreo" placeholder="guia@email.com" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Teléfono *</label>
+              <input type="tel" class="form-control bg-light border-0 shadow-none" name="telefono" id="inputTelefono" placeholder="+57 300 000 0000" required />
+            </div>
+            <div class="col-md-12">
+              <label class="form-label small fw-bold">Número de Documento</label>
+              <input type="text" class="form-control bg-light border-0 shadow-none" name="documento" id="inputDocumento" placeholder="CC / Pasaporte" />
+            </div>
+          </div>
+
+          <h6 class="text-success fw-bold border-bottom pb-2 mb-3"><i class="bi bi-award me-1"></i> Perfil Profesional</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Especialidad *</label>
+              <select class="form-select bg-light border-0 shadow-none" name="especialidad" id="inputEspecialidad" required>
+                <option value="">Seleccionar…</option>
+                <option value="Alta Montaña">Alta Montaña</option>
+                <option value="Flora y Fauna">Flora y Fauna</option>
+                <option value="Cultura Local">Cultura Local</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Disponibilidad *</label>
+              <select class="form-select bg-light border-0 shadow-none" name="disponibilidad" id="inputDisponibilidad" required>
+                <option value="Disponible">Disponible</option>
+                <option value="Ocupado">Ocupado</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Años de Experiencia</label>
+              <input type="number" class="form-control bg-light border-0 shadow-none" name="experiencia" id="inputExperiencia" min="0" max="50" placeholder="Ej. 5" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Idiomas que habla</label>
+              <input type="text" class="form-control bg-light border-0 shadow-none" name="idiomas" id="inputIdiomas" placeholder="Ej. Español, Inglés" />
+            </div>
+            <div class="col-md-12">
+              <label class="form-label small fw-bold">Certificaciones / Formación</label>
+              <textarea class="form-control bg-light border-0 shadow-none" name="certificaciones" id="inputCertificaciones" rows="2" placeholder="Ej. Certificado en primeros auxilios…"></textarea>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label small fw-bold">Notas adicionales</label>
+              <textarea class="form-control bg-light border-0 shadow-none" name="notas" id="inputNotas" rows="2" placeholder="Información extra relevante…"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 p-4 pt-0">
+          <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success px-4 rounded-pill fw-bold" id="btnGuardar">
+            <i class="bi bi-floppy-fill me-1"></i>
+            <span id="btnGuardarTexto">Guardar Guía</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmar Baja -->
+<div class="modal fade" id="modalBaja" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Baja</h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle mb-4" style="width: 64px; height: 64px;">
+          <i class="bi bi-person-x-fill fs-2"></i>
+        </div>
+        <p class="mb-1 text-dark">
+          ¿Estás seguro de que deseas marcar como <strong>Inactivo</strong> al guía<br />
+          <strong id="nombreGuiaBaja" class="text-danger"></strong>?
+        </p>
+        <p class="small text-muted mt-2">El guía dejará de aparecer en futuras asignaciones, pero su historial se conservará.</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center gap-2 p-4 pt-0">
+        <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+        <form id="formBaja" method="POST" action="{% url 'usuarios:guias_baja_reactivar' id=0 estado='desactivar' %}" style="display:inline;">
+          {% csrf_token %}
+          <input type="hidden" name="guia_id" id="inputBajaId" />
+          <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold"><i class="bi bi-person-dash-fill me-1"></i> Dar de Baja</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Reactivar Guía -->
+<div class="modal fade" id="modalReactivar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-person-check-fill me-2"></i>Reactivar Guía</h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle mb-4" style="width: 64px; height: 64px;">
+          <i class="bi bi-person-check-fill fs-2"></i>
+        </div>
+        <p class="mb-1 text-dark">
+          ¿Deseas reactivar al guía<br />
+          <strong id="nombreGuiaReactivar" class="text-success"></strong>?
+        </p>
+        <p class="small text-muted mt-2">Volverá a aparecer como opción disponible para asignar a nuevos tours.</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center gap-2 p-4 pt-0">
+        <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+        <form id="formReactivar" method="POST" action="{% url 'usuarios:guias_baja_reactivar' id=0 estado='activar' %}" style="display:inline;">
+          {% csrf_token %}
+          <input type="hidden" name="guia_id" id="inputReactivarId" />
+          <button type="submit" class="btn btn-success px-4 rounded-pill fw-bold"><i class="bi bi-person-check-fill me-1"></i> Reactivar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
