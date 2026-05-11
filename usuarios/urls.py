@@ -14,4 +14,11 @@ urlpatterns = [
     path('registro/', views.registro_view, name='registro'),
     path('terminos/', views.terminos_view, name='terminos'),
     path('perfil/', views.perfil_view, name='detalles'),
+    
+    # Rutas de Gestión de Personal y Guías
+    path('gestion-guias/', views.gestion_guias, name='gestion_guias'),
+    path('gestion-guias/<int:id>/', views.gestion_guias, name='gestion_guias_sel'),
+    path('asignar-rol-guia/<int:user_id>/', views.asignar_rol_guia, name='asignar_rol_guia'),
+    path('guia-estado/<int:id>/<str:estado>/', views.guias_baja_reactivar, name='guias_baja_reactivar'),
+    path('guias-guardar/', views.guias_guardar, name='guias_guardar'),
 ]
