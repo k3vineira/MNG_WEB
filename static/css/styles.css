@@ -7,4 +7,131 @@
   transition: opacity 1.5s ease-in-out !important;
 }
 
+/* Componente Reutilizable: Tarjetas de Sostenibilidad */
+.card-sustainability {
+  min-height: 550px;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+  border: none !important;
+}
 
+.card-sustainability:hover {
+  transform: scale(1.02);
+  box-shadow: 0 1rem 3rem rgba(0,0,0,0.175) !important;
+}
+
+.overlay-gradient {
+  background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.8) 100%);
+}
+
+/* ══════════════ NAVBAR GLASSMORPHISM (SNOW WHITE) ══════════════ */
+.navbar-glass {
+  background-color: rgba(255, 255, 255, 0.6) !important; /* Blanco Nieve translúcido */
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-bottom-left-radius: 24px; /* Redondeado elegante */
+  border-bottom-right-radius: 24px;
+  overflow: hidden; /* Asegura que el efecto glass siga la curva */
+  transition: all 0.3s ease;
+}
+
+/* Efecto de Vidrio Verde al pasar el cursor */
+.navbar-glass .nav-link {
+  transition: all 0.3s ease;
+  border-radius: 50px;
+  padding: 0.5rem 1rem !important;
+}
+
+.navbar-glass .nav-link:hover {
+  background: rgba(44, 110, 60, 0.15); /* Verde translúcido */
+  backdrop-filter: blur(5px);
+  color: #2c6e3c !important; /* Color de la marca */
+}
+
+/* ══════════════ FOOTER CUSTOM ══════════════ */
+.footer-monagua {
+  background: linear-gradient(135deg, #1e4a2a 0%, #2c6e3c 100%);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.footer-monagua h5 {
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-monagua a {
+  transition: all 0.3s ease;
+}
+
+.footer-monagua a:hover {
+  color: #ffffff !important;
+  transform: translateX(5px);
+}
+
+.form-footer {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff !important;
+}
+
+.form-footer::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ══════════════ MENÚ SECUNDARIO PREMIUM ══════════════ */
+.nav-secondary-link {
+  color: #4a4a4a;
+  text-decoration: none;
+  font-size: 1.05rem;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: inline-block;
+}
+
+.nav-secondary-link:hover {
+  color: #000;
+  transform: translateX(8px);
+}
+
+/* ══════════════ FULLSCREEN PREMIUM MENU ══════════════ */
+.offcanvas-premium {
+  background-color: rgba(44, 110, 60, 0.6) !important; /* Verde marca con transparencia */
+  backdrop-filter: blur(20px) saturate(180%); /* Efecto vidrio esmerilado Apple Style */
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Borde suave de "cristal" */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-main-link {
+  color: #ffffff; /* Blanco para contraste sobre vidrio verde */
+  text-decoration: none;
+  line-height: 1.1;
+  transition: opacity 0.3s ease;
+  display: block;
+}
+
+.nav-main-link:hover {
+  color: #000;
+  opacity: 0.6;
+}
+
+/* Ajuste para que los links secundarios se vean más ligeros */
+.nav-secondary-menu .nav-secondary-link {
+  color: rgba(255, 255, 255, 0.7); /* Blanco traslúcido */
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.nav-secondary-menu .nav-secondary-link:hover {
+  color: #ffffff !important;
+}
+
+/* ══════════════ ESPACIADO EDITORIAL (APPLE STYLE) ══════════════ */
+.py-editorial {
+  padding-top: 8rem !important;
+  padding-bottom: 8rem !important;
+}

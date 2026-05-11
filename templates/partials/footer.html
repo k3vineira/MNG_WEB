@@ -1,58 +1,63 @@
-   {% load static %}
+{% load static %}
 
-
-<footer class="footer" id="contacto">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-5">
-                <h5><i><h5><a href="/"><img src="{% static 'img/Logo.png' %}" alt="Logo de MONAGUA" style="max-height: 50px; width: auto;">
-                </a>
-                </h5></i> MONAGUA.</h5>
-                <div class="row">
-                    <div class="col-6">
-                        <ul class="list-unstyled">
-                            <li><a href="/">Inicio</a></li>
-                            <li><a href="/destinos/">Destinos</a></li>
-                            <li><a href="/panes-turisticos/">Panes Turisticos</a></li>
-                            <li><a href="/blog/">Blog</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-6">
-                        <ul class="list-unstyled">
-                            <li><a href="https://wa.me/573223465191" target="_blank">Contacto</a></li>
-                            <li><a href="/terminos-legales/">Terminos Legales</a></li>
-                            <li><a href="/pQRS/">PQRS</a></li>
-                            <li><a href="/nosotros/">Nosotros</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <ul class="nav">
-                    <li class="nav-item"><a href="https://wa.me/573223465191" class="nav-link" target="_blank"><i class="fab fa-whatsapp fa-lg"></i></a></li>
-                    <li class="nav-item"><a href="#" class="nav-link ps-0"><i class="fab fa-facebook fa-lg"></i></a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="fab fa-twitter fa-lg"></i></a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="fab fa-github fa-lg"></i></a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="fab fa-instagram fa-lg"></i></a></li>
-                </ul>
-            </div>
-
-            <div class="col-md-2 text-md-end">
-                <h5>Contactanos</h5>
-                <hr class="d-none d-md-block ms-auto" style="width: 50px; border-top: 2px solid #ffffff; opacity: 1;">
-            </div>
-
-            <div class="col-md-5">
-                <form>
-                    <div class="mb-3">
-                        <input type="email" class="form-control" placeholder="Introducir Email">
-                    </div>
-                    <div class="mb-3">
-                        <textarea class="form-control" placeholder="Mensaje" rows="3"></textarea>
-                    </div>
-                    <div class="text-end">
-                        <button type="button" class="btn btn-outline-custom btn-lg">Enviar</button>
-                    </div>
-                </form>
-            </div>
+<footer class="footer-monagua py-5" id="contacto">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Columna 1: Brand & Social -->
+      <div class="col-lg-4">
+        <a href="/" class="d-flex align-items-center gap-2 mb-3 text-decoration-none">
+          <img src="{% static 'img/Logo.png' %}" alt="Logo de MONAGUA" style="max-height: 60px;">
+          <span class="h4 mb-0 text-white fw-bold">MONAGUA</span>
+        </a>
+        <p class="small mb-4">Descubre la magia de Mongua y Boyacá con nosotros. Experiencias únicas en el corazón de la naturaleza.</p>
+        <div class="d-flex gap-3">
+          <a href="https://wa.me/573223465191" class="text-white opacity-75 h5" target="_blank"><i class="bi bi-whatsapp"></i></a>
+          <a href="#" class="text-white opacity-75 h5"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="text-white opacity-75 h5"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="text-white opacity-75 h5"><i class="bi bi-twitter-x"></i></a>
         </div>
+      </div>
+
+      <!-- Columna 2: Quick Links -->
+      <div class="col-lg-4">
+        <div class="row">
+          <div class="col-6">
+            <h5 class="small mb-4">Explora</h5>
+            <ul class="list-unstyled d-flex flex-column gap-2 small">
+              <li><a href="/" class="text-white-50">Inicio</a></li>
+              <li><a href="/destinos/" class="text-white-50">Destinos</a></li>
+              <li><a href="/panes-turisticos/" class="text-white-50">Planes</a></li>
+              <li><a href="/blog/" class="text-white-50">Blog</a></li>
+            </ul>
+          </div>
+          <div class="col-6">
+            <h5 class="small mb-4">Soporte</h5>
+            <ul class="list-unstyled d-flex flex-column gap-2 small">
+              <li><a href="/nosotros/" class="text-white-50">Nosotros</a></li>
+              <li><a href="/terminos-legales/" class="text-white-50">Legal</a></li>
+              <li><a href="/pQRS/" class="text-white-50">PQRS</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna 3: Formulario -->
+      <div class="col-lg-4">
+        <h5 class="small mb-4">Escríbenos</h5>
+        <form>
+          <div class="mb-2">
+            <input type="email" class="form-control form-control-sm form-footer" placeholder="Tu correo electrónico">
+          </div>
+          <div class="mb-3">
+            <textarea class="form-control form-control-sm form-footer" placeholder="¿En qué podemos ayudarte?" rows="3"></textarea>
+          </div>
+          <button type="button" class="btn btn-light btn-sm w-100 fw-bold">Enviar Mensaje</button>
+        </form>
+      </div>
     </div>
+    <hr class="my-5 opacity-25">
+    <div class="text-center small opacity-50">
+      &copy; 2024 MONAGUA Agencia de Viajes. Todos los derechos reservados.
+    </div>
+  </div>
 </footer>

@@ -1,52 +1,96 @@
 {% load static %}
-<div class="collapse" id="navbarToggleExternalContent">
-  <div class="bg-dark p-4">
-    <h5 class="text-white h4">Collapsed content</h5>
-    <span class="text-muted">Toggleable via the navbar brand.</span>
+
+<!-- ── Menú Fullscreen Overlay ── -->
+<div class="offcanvas offcanvas-top h-100 offcanvas-premium" tabindex="-1" id="menuPremium" aria-labelledby="menuPremiumLabel">
+  <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom border-dark border-opacity-10">
+    <a class="navbar-brand m-0 d-flex align-items-center text-dark" href="/">
+      <span class="fw-bold me-2">MONAGUA</span>
+      <img src="{% static 'img/Logo.png' %}" alt="Monagua" width="60" height="60" class="object-fit-contain">
+    </a>
+
+    <div class="d-flex align-items-center gap-4">
+      <a class="nav-link text-dark fw-semibold d-none d-sm-block small" href="#">Ingreso</a>
+      <a class="nav-link text-dark" href="#">
+        <i class="bi bi-cart3 fs-5"></i>
+      </a>
+      <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Cuerpo del Menú -->
+  <div class="offcanvas-body d-flex align-items-center">
+    <div class="container-fluid px-md-5">
+      <div class="row align-items-start">
+        
+        <!-- Columna Izquierda: Menú Principal -->
+        <div class="col-lg-7 offset-lg-1 mb-5 mb-lg-0">
+          <nav class="d-flex flex-column gap-3 gap-md-4">
+            <a href="#" class="nav-main-link display-3 fw-bold">Reservas</a>
+            <a href="#" class="nav-main-link display-3 fw-bold">Domicilios o Pick-up</a>
+            <a href="#" class="nav-main-link display-3 fw-bold">Mercado, vinos y licores</a>
+            <a href="#" class="nav-main-link display-3 fw-bold">Experiencias</a>
+          </nav>
+        </div>
+
+        <!-- Columna Derecha: Menú Secundario -->
+        <div class="col-lg-3 nav-secondary-menu mt-lg-4">
+          <ul class="nav flex-column gap-3">
+            <li><a class="nav-secondary-link" href="#">Conózcanos</a></li>
+            <li><a class="nav-secondary-link" href="#">Impacto y sostenibilidad</a></li>
+            <li><a class="nav-secondary-link" href="#">Contacto</a></li>
+            <li><a class="nav-secondary-link" href="#">Trabaje con nosotros</a></li>
+            <li><a class="nav-secondary-link" href="#">Bonos de regalo</a></li>
+            <li><a class="nav-secondary-link" href="#">Noticias Takami</a></li>
+            <li><a class="nav-secondary-link" href="#">PQRS</a></li>
+            <li><a class="nav-secondary-link" href="#">Sus ideas para Takami.co</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
 
-<nav class="navbar bg-light px-3 py-2">
-  <div class="container-fluid d-flex flex-nowrap align-items-center justify-content-between">
+<!-- ── Navbar Principal ── -->
+<nav class="navbar navbar-glass border-bottom px-3 py-2 fixed-top">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
     
-    <a class="navbar-brand m-0" href="#">
-      <img src="/docs/5.2/assets/brand/bootstrap-logo.svg" alt="Bootstrap" width="100" height="24">
+    <a class="navbar-brand m-0 d-flex align-items-center text-dark" href="/">
+      <span class="fw-bold me-2">MONAGUA</span>
+      <img src="{% static 'img/Logo.png' %}" alt="Monagua" width="50" height="50">
     </a>
 
-    <ul class="nav justify-content-center d-none d-lg-flex m-0">
-      <li class="nav-item">
-        <a class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" href="#">
-          <span>💳</span> Bonos
+    <!-- Links centrales rápidos -->
+    <ul class="nav justify-content-center d-none d-lg-flex m-0 gap-5">
+      <li>
+        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="#">
+          <i class="bi bi-ticket-perforated fs-6"></i>BONOS
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" href="#">
-          <span>📅</span> Reservas
+      <li>
+        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="#">
+          <i class="bi bi-calendar-check fs-6"></i>RESERVAS
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" href="#">
-          <span>🛵</span> Domicilio
+      <li>
+        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="#">
+          <i class="bi bi-bicycle fs-6"></i>DOMICILIO
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" href="#">
-          <span>🛍️</span> Pick-up
+      <li>
+        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="#">
+          <i class="bi bi-shop fs-6"></i>PICK-UP
         </a>
       </li>
     </ul>
 
     <div class="d-flex align-items-center gap-3">
-      
-      <a class="nav-link text-dark text-nowrap fw-semibold d-none d-sm-block" href="#">
-        Ingreso
-      </a>
-      
+      <a class="nav-link text-dark fw-semibold d-none d-sm-block small" href="{% url 'usuarios:login' %}">Ingreso</a>
       <a class="nav-link text-dark" href="#">
-        🛒
+        <i class="bi bi-cart3 fs-5"></i>
       </a>
       
-      <button class="navbar-toggler border-0 shadow-none d-block" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuPremium" aria-controls="menuPremium">
         <span class="navbar-toggler-icon"></span>
       </button>
 

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<section class="vh-100 w-100 overflow-hidden">
+  <div class="row g-0 vh-100">
+    
+    <!-- Columna Izquierda: Imagen de Naturaleza (Oculta en móviles) -->
+    <div class="col-lg-6 d-none d-lg-block position-relative" 
+         style="background-image: url('{% static 'img/Fondo.jpg' %}'); background-size: cover; background-position: center;">
+      <!-- Reutilizamos el gradiente del proyecto -->
+      <div class="position-absolute top-0 start-0 w-100 h-100 overlay-gradient opacity-50"></div>
+    </div>
+
+    <!-- Columna Derecha: Formulario Minimalista -->
+    <div class="col-lg-6 bg-white d-flex align-items-center justify-content-center p-4 p-md-5 vh-100 overflow-auto">
+      <div class="w-100" style="max-width: 420px;">
+        
+        <!-- Cabecera Editorial -->
+        <div class="mb-5">
+          <h1 class="display-4 fw-bold text-dark mb-1">¡Hola!</h1>
+          <p class="text-muted mb-4 small fw-medium">Bienvenido de vuelta a las montañas de Mongua.</p>
+          <h2 class="h4 fw-bold text-dark">Inicia sesión</h2>
+        </div>
+
+        <!-- Formulario -->
+        <form method="POST" action="{% url 'usuarios:login' %}" class="mb-4">
+          {% csrf_token %}
+          
+          {% if form.errors or messages %}
+          <div class="alert alert-danger border-0 rounded-4 small mb-4" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i> Credenciales incorrectas. Inténtalo de nuevo.
+          </div>
+          {% endif %}
+
+          <!-- Input Usuario -->
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-secondary ps-3">Correo o Usuario</label>
+            <input type="text" name="username" class="form-control rounded-pill py-3 px-4 bg-light border-0 shadow-none" 
+                   placeholder="aventura@monagua.com" required>
+          </div>
+
+          <!-- Input Password -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between px-3">
+              <label class="form-label small fw-semibold text-secondary">Contraseña</label>
+              <a href="#" class="small text-muted text-decoration-none">¿La olvidaste?</a>
+            </div>
+            <input type="password" name="password" class="form-control rounded-pill py-3 px-4 bg-light border-0 shadow-none" 
+                   placeholder="••••••••" required>
+          </div>
+
+          <!-- Botón "Pill" -->
+          <div class="d-grid pt-2">
+            <button type="submit" class="btn btn-success rounded-pill py-3 fw-bold shadow-sm transition-all">
+              Iniciar Aventura
+            </button>
+          </div>
+        </form>
+
+        <!-- Pie de Formulario -->
+        <div class="text-center">
+          <p class="small text-muted mb-0">¿Aún no tienes cuenta? 
+            <a href="{% url 'usuarios:registro' %}" class="text-success fw-bold text-decoration-none ms-1">Únete ahora</a>
+          </p>
+        </div>
+
+        <!-- Branding Sutil en móvil -->
+        <div class="text-center mt-5 d-lg-none">
+          <img src="{% static 'img/Logo.png' %}" alt="Logo Monagua" width="40">
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
