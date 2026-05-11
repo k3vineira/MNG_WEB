@@ -60,3 +60,4 @@ db.sqlite3
 venv/
 __pycache__/
 *.pyc
+core/__pycache__/urls.cpython-314.pyc
