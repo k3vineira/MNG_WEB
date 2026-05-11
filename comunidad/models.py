@@ -15,9 +15,7 @@ class Calificacion(models.Model):
 class Blog(models.Model):
     titulo             = models.CharField(max_length=200)
     contenido          = models.TextField()
-    resumen            = models.CharField(max_length=300, blank=True)
     imagen             = models.ImageField(upload_to='blog/', blank=True, null=True)
-    categoria          = models.CharField(max_length=80, blank=True)
     fecha_publicacion  = models.DateTimeField(auto_now_add=True)
     publicado          = models.BooleanField(default=True)
 

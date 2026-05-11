@@ -47,7 +47,7 @@
           {% endif %}
 
           <!-- EL FORMULARIO COMIENZA AQUÍ PARA ENVOLVER TODO -->
-          <form action="{% if paquete %}{% url 'guardar_reserva' paquete.id %}{% else %}#{% endif %}" method="POST">
+          <form action="{% if paquete %}{% url 'reservas:guardar_reserva' paquete.id %}{% else %}#{% endif %}" method="POST">
             {% csrf_token %}
 
             <div class="mb-3">
