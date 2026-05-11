@@ -44,7 +44,6 @@ class Paquete(models.Model):
 
 
 class PaqueteActividad(models.Model):
-    # PK personalizada que solicitaste
     codigo_paquete_act = models.AutoField(primary_key=True)
     
     codigo_paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE)
