@@ -1,3 +1,4 @@
+from django.urls import reverse_lazy
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -21,6 +22,8 @@ def destinos(request):
     return render(request, 'usuario/destinos.html', {'destinos': destinos_list})
 
 
+
+#PAQUETES
 class PaqueteListView(ListView):
     model = Paquete
     template_name = 'admin/paquetes/paquetes.html' 
@@ -54,6 +57,7 @@ class PaqueteDeleteView(DeleteView):
 #ACTIVIDADES
 
 class ActividadesListView(ListView):
+
     model = Actividades
     template_name = 'admin/actividades/actividades.html' 
     context_object_name = 'actividades'
@@ -65,6 +69,7 @@ class ActividadesCreateView(CreateView):
     success_url = reverse_lazy('listar_actividades')
 
 class ActividadesUpdateView(UpdateView):
+
     model = Actividades
     fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud']
     template_name = 'admin/actividades/editar_actividad.html'
@@ -99,8 +104,9 @@ class CategoriaDeleteView(DeleteView):
     success_url = reverse_lazy('listar_categorias')
 
 def reservas(request):
-    # Lógica para obtener las reservas del usuario
+
     context = {
         'reservas': []  # Reemplaza con la lógica real
     }
     return render(request, 'usuario/reservas.html', context)
+    
