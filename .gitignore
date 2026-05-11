@@ -8,9 +8,6 @@ media
 # Django Migrations
 **/migrations/*.py
 !**/migrations/__init__.py
-# Django Migrations
-**/migrations/*.py
-!**/migrations/__init__.py
 
 # Assets
 node_modules/
@@ -31,7 +28,3 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
-<<<<<<< HEAD
-.python-
-=======
->>>>>>> fe522fbcef832dd9fbddfc49384b4f07af70c017
