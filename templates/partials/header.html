@@ -1,1 +1,56 @@
 {% load static %}
+<div class="collapse" id="navbarToggleExternalContent">
+  <div class="bg-dark p-4">
+    <h5 class="text-white h4">Collapsed content</h5>
+    <span class="text-muted">Toggleable via the navbar brand.</span>
+  </div>
+</div>
+
+<nav class="navbar bg-light px-3 py-2">
+  <div class="container-fluid d-flex flex-nowrap align-items-center justify-content-between">
+    
+    <a class="navbar-brand m-0" href="#">
+      <img src="/docs/5.2/assets/brand/bootstrap-logo.svg" alt="Bootstrap" width="100" height="24">
+    </a>
+
+    <ul class="nav justify-content-center d-none d-lg-flex m-0">
+      <li class="nav-item">
+        <a class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" href="#">
+          <span>💳</span> Bonos
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" href="#">
+          <span>📅</span> Reservas
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" href="#">
+          <span>🛵</span> Domicilio
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" href="#">
+          <span>🛍️</span> Pick-up
+        </a>
+      </li>
+    </ul>
+
+    <div class="d-flex align-items-center gap-3">
+      
+      <a class="nav-link text-dark text-nowrap fw-semibold d-none d-sm-block" href="#">
+        Ingreso
+      </a>
+      
+      <a class="nav-link text-dark" href="#">
+        🛒
+      </a>
+      
+      <button class="navbar-toggler border-0 shadow-none d-block" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+    </div>
+
+  </div>
+</nav>
