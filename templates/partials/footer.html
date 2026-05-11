@@ -1,0 +1,63 @@
+{% load static %}
+
+<footer class="footer-monagua py-5" id="contacto">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Columna 1: Brand & Social -->
+      <div class="col-lg-4">
+        <a href="/" class="d-flex align-items-center gap-2 mb-3 text-decoration-none">
+          <img src="{% static 'img/Logo.png' %}" alt="Logo de MONAGUA" style="max-height: 60px;">
+          <span class="h4 mb-0 text-white fw-bold">MONAGUA</span>
+        </a>
+        <p class="small mb-4">Descubre la magia de Mongua y Boyacá con nosotros. Experiencias únicas en el corazón de la naturaleza.</p>
+        <div class="d-flex gap-3">
+          <a href="https://wa.me/573223465191" class="text-white opacity-75 h5" target="_blank"><i class="bi bi-whatsapp"></i></a>
+          <a href="#" class="text-white opacity-75 h5"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="text-white opacity-75 h5"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="text-white opacity-75 h5"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+
+      <!-- Columna 2: Quick Links -->
+      <div class="col-lg-4">
+        <div class="row">
+          <div class="col-6">
+            <h5 class="small mb-4">Explora</h5>
+            <ul class="list-unstyled d-flex flex-column gap-2 small">
+              <li><a href="/" class="text-white-50">Inicio</a></li>
+              <li><a href="/destinos/" class="text-white-50">Destinos</a></li>
+              <li><a href="/panes-turisticos/" class="text-white-50">Planes</a></li>
+              <li><a href="/blog/" class="text-white-50">Blog</a></li>
+            </ul>
+          </div>
+          <div class="col-6">
+            <h5 class="small mb-4">Soporte</h5>
+            <ul class="list-unstyled d-flex flex-column gap-2 small">
+              <li><a href="/nosotros/" class="text-white-50">Nosotros</a></li>
+              <li><a href="/terminos-legales/" class="text-white-50">Legal</a></li>
+              <li><a href="/pQRS/" class="text-white-50">PQRS</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna 3: Formulario -->
+      <div class="col-lg-4">
+        <h5 class="small mb-4">Escríbenos</h5>
+        <form>
+          <div class="mb-2">
+            <input type="email" class="form-control form-control-sm form-footer" placeholder="Tu correo electrónico">
+          </div>
+          <div class="mb-3">
+            <textarea class="form-control form-control-sm form-footer" placeholder="¿En qué podemos ayudarte?" rows="3"></textarea>
+          </div>
+          <button type="button" class="btn btn-light btn-sm w-100 fw-bold">Enviar Mensaje</button>
+        </form>
+      </div>
+    </div>
+    <hr class="my-5 opacity-25">
+    <div class="text-center small opacity-50">
+      &copy; 2024 MONAGUA Agencia de Viajes. Todos los derechos reservados.
+    </div>
+  </div>
+</footer>

@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -129,3 +128,5 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_ROOT = BASE_DIR / 'media'
+
+LOGIN_URL = '/usuarios/login/'
