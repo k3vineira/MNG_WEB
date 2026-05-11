@@ -1,0 +1,51 @@
+{% load static %}
+<aside id="sidebar" class="d-flex flex-column bg-dark text-white position-fixed top-0 start-0 h-100" style="width:230px;z-index:1040;overflow-y:auto;transition:transform .3s">
+
+  <a href="/" class="d-flex align-items-center gap-2 p-3 text-decoration-none border-bottom border-secondary">
+    <img src="{% static 'img/logo_monagua.png' %}" alt="Logo" class="rounded-circle border border-success" width="38" height="38" style="object-fit:cover">
+    <div>
+      <div class="fw-bold text-white small">MONAGUA</div>
+      <div class="text-success" style="font-size:.6rem;letter-spacing:2px">ADMIN PANEL</div>
+    </div>
+  </a>
+
+  <nav class="flex-grow-1 py-2 px-2">
+    {% with n=request.resolver_match.url_name %}
+
+    <div class="text-secondary px-2 py-1 mb-1" style="font-size:.6rem;text-transform:uppercase;letter-spacing:.1em">Principal</div>
+    <a href="{% url 'administrador' %}"   class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if n == 'administrador' %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="#"                            class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 text-white-50"><i class="bi bi-graph-up-arrow"></i> Estadísticas</a>
+    <a href="{% url 'comentarios' %}"     class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if n == 'comentarios' %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-chat-left-dots-fill"></i> Comentarios</a>
+
+    <div class="text-secondary px-2 py-1 mt-2 mb-1" style="font-size:.6rem;text-transform:uppercase;letter-spacing:.1em">Gestión</div>
+    <a href="{% url 'admin_paquetes' %}"     class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if n == 'admin_paquetes' %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-box-seam-fill"></i> Paquetes</a>
+    <a href="{% url 'admin_blog' %}"         class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if n == 'admin_blog' %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-journal-text"></i> Blog</a>
+    <a href="{% url 'admin_categorias' %}"   class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if n == 'admin_categorias' %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-tags-fill"></i> Categorías</a>
+    <a href="{% url 'admin_actividades' %}"  class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if n == 'admin_actividades' %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-bicycle"></i> Actividades</a>
+    <a href="{% url 'admin_reservas' %}"     class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if n == 'admin_reservas' %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-calendar-check-fill"></i> Reservas</a>
+    <a href="{% url 'lista_pqrs' %}"         class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if n == 'lista_pqrs' %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-envelope-fill"></i> PQRS</a>
+    <a href="{% url 'gestion_usuarios' %}"   class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if n == 'gestion_usuarios' %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-people-fill"></i> Guías y Usuarios</a>
+    <a href="{% url 'gestion_promociones' %}" class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 {% if 'promociones' in request.path %}bg-success text-white{% else %}text-white-50{% endif %}"><i class="bi bi-megaphone-fill"></i> Promociones</a>
+
+    <div class="text-secondary px-2 py-1 mt-2 mb-1" style="font-size:.6rem;text-transform:uppercase;letter-spacing:.1em">Sistema</div>
+    <a href="#" class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 text-white-50"><i class="bi bi-bell-fill"></i> Notificaciones</a>
+    <a href="#" class="d-flex align-items-center gap-2 px-2 py-2 rounded text-decoration-none mb-1 text-white-50"><i class="bi bi-gear-fill"></i> Configuración</a>
+
+    {% endwith %}
+  </nav>
+
+  <div class="p-3 border-top border-secondary">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}" alt="" class="rounded-circle border border-success" width="32" height="32" style="object-fit:cover">
+      <div>
+        <div class="text-white small fw-semibold">{{ user.first_name|default:'Administrador' }}</div>
+        <div class="text-success" style="font-size:.65rem">Super Admin</div>
+      </div>
+    </div>
+    <form action="{% url 'logout_usuario' %}" method="post">
+      {% csrf_token %}
+      <button class="btn btn-outline-danger btn-sm w-100"><i class="bi bi-power"></i> Cerrar Sesión</button>
+    </form>
+  </div>
+
+</aside>
