@@ -1,6 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from .models import PQRS, Blog
 
 
@@ -47,3 +48,16 @@ class BlogDeleteView(DeleteView):
     model = Blog
     template_name = 'admin/blog/eliminar_blog.html'
     success_url = reverse_lazy('comunidad:listar_blog')
+
+@login_required
+def resenas_view(request):
+    """
+    Vista para visualizar las reseñas del usuario.
+    Sigue el patrón MVT y permite gestionar comentarios propios.
+    """
+    context = {
+        'resenas': [], # Aquí se filtrarían las reseñas del usuario: Resena.objects.filter(usuario=request.user)
+        'total_resenas': 0,
+        'promedio': 0.0,
+    }
+    return render(request, 'private/comentarios.html', context)
