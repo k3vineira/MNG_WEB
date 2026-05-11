@@ -81,6 +81,12 @@
       <i class="bi bi-chat-left-dots-fill"></i> Comentarios
     </a>
 
+    <a href="{% url 'usuarios:gestion_guias' %}"
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'gestion_guias' %}bg-success text-white{% else %}text-white-50{% endif %}">
+      <i class="bi bi-people-fill"></i> Usuarios y Guías
+    </a>
+
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Gestión</div>
 
     <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
