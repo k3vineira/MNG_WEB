@@ -8,6 +8,9 @@ media
 # Django Migrations
 **/migrations/*.py
 !**/migrations/__init__.py
+# Django Migrations
+**/migrations/*.py
+!**/migrations/__init__.py
 
 # Assets
 node_modules/
