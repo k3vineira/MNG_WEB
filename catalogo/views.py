@@ -9,7 +9,6 @@ from .models import Paquete, Actividades, Categoria
 def destinos(request):
     destinos_list = Paquete.objects.all()
 
-    # Captura de datos del buscador
     busqueda = request.GET.get('q', '').strip()
     precio_max = request.GET.get('precio_max')
 
