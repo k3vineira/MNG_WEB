@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<main class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 fw-bold text-success text-uppercase">Ofertas de Temporada</h1>
+            <p class="text-muted">Explora Mongua con precios especiales</p>
+            <hr class="mx-auto" style="width: 80px; height: 4px; background-color: #418d76; border: none; opacity: 1;">
+        </div>
+    </div>
+
+    <section class="row g-4">
+        {% for promo in promociones %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="ratio ratio-4x3 position-relative">
+                    {% if promo.paquete.imagen %}
+                        <img src="{{ promo.paquete.imagen.url }}" class="card-img-top object-fit-cover" alt="{{ promo.nombre }}">
+                    {% else %}
+                        <img src="{% static 'img/Lagunanegra.png' %}" class="card-img-top object-fit-cover" alt="Monagua">
+                    {% endif %}
+                    
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-danger fs-5 shadow">-{{ promo.descuento }}%</span>
+                    </div>
+                </div>
+
+                <div class="card-body text-center d-flex flex-column">
+                    <h5 class="fw-bold text-uppercase text-dark">{{ promo.nombre }}</h5>
+                    <p class="small text-muted flex-grow-1">{{ promo.descripcion }}</p>
+                    
+                    <div class="mb-3">
+                        <h4 class="text-success fw-bold">¡Precio Especial!</h4>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Válido hasta: {{ promo.fecha_fin|date:"d/m/Y" }}</p>
+                    </div>
+
+                    <a href="{% url 'reservas' %}?paquete_id={{ promo.paquete.id }}" class="btn btn-success w-100 mb-2 shadow-sm fw-bold">
+                        RESERVAR AHORA
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h3 class="text-muted">No hay promociones disponibles en este momento.</h3>
+            <a href="{% url 'destinos' %}" class="btn btn-success mt-3">Explorar destinos</a>
+        </div>
+        {% endfor %}
+    </section>
+</main>
+{% endblock %}

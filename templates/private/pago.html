@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    :root {
+        --monagua-bg: #f8f9fa;
+        --monagua-primary: #3B643F;
+        --monagua-primary-hover: #2c4a2f;
+        --monagua-dark: #1a251e;
+        --monagua-accent: #4ade80;
+    }
+
+    body { padding-top: 0 !important; background-color: var(--monagua-bg); }
+
+    .sidebar-monagua {
+        width: 260px; 
+        background-color: var(--monagua-dark); 
+        z-index: 1040; 
+    }
+
+    .main-content { 
+        margin-left: 260px; 
+        min-height: 100vh;
+    }
+
+    .nav-link-custom {
+        color: rgba(255,255,255,0.7);
+        transition: 0.3s;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        text-decoration: none;
+    }
+
+    .nav-link-custom:hover, .nav-link-custom.activo {
+        color: #fff;
+        background: rgba(255,255,255,0.1);
+    }
+
+    .nav-link-custom.activo {
+        border-left: 4px solid var(--monagua-accent);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--monagua-accent) !important;
+    }
+
+    .btn-confirmar-fijo {
+        background-color: var(--monagua-primary) !important;
+        color: white !important;
+        border: none !important;
+        transition: 0.3s !important;
+    }
+
+    .btn-confirmar-fijo:hover {
+        background-color: var(--monagua-primary-hover) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .form-django-custom input:focus {
+        outline: none;
+        border-color: var(--monagua-primary);
+        box-shadow: 0 0 0 0.2rem rgba(59, 100, 63, 0.1);
+    }
+
+    @media (max-width: 991.98px) {
+        .sidebar-monagua { display: none; }
+        .main-content { margin-left: 0; }
+    }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block user_menu_fixed %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<aside class="sidebar-monagua position-fixed top-0 start-0 h-100 p-4 d-flex flex-column">
+    <a href="/" class="d-flex align-items-center mb-5 text-decoration-none">
+        <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="50" height="50">
+    </a>
+    
+    <nav class="nav flex-column flex-grow-1">
+        <a class="nav-link nav-link-custom d-flex align-items-center gap-3" href="/">
+            <i class="bi bi-compass"></i> Inicio
+        </a>
+        <a class="nav-link nav-link-custom d-flex align-items-center gap-3" href='#'>
+            <i class="bi bi-chat-square-text"></i> Reseñas
+        </a>
+        <a class="nav-link nav-link-custom activo d-flex align-items-center gap-3" href="{% url 'detalles' %}">
+            <i class="bi bi-person-circle"></i> Perfil
+        </a>
+    </nav>
+    <div class="mt-auto p-3 bg-white bg-opacity-10 rounded-3 text-center">
+        <small class="text-white-50"><i class="bi bi-shield-lock me-1"></i> Pago Seguro</small>
+    </div>
+</aside>
+
+<main class="main-content min-vh-100">
+    <header class="bg-white px-4 py-3 border-bottom shadow-sm sticky-top d-flex justify-content-between align-items-center">
+        <h2 class="h5 fw-bold m-0 text-success">Finalizar Reserva</h2>
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}" alt="Perfil" class="rounded-circle" width="35" height="35" style="object-fit: cover;">
+    </header>
+
+    <div class="container py-5">
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-7 col-md-10">
+                <!-- Visualización de Métodos de Pago Aceptados -->
+                <div class="mb-4">
+                    <p class="small fw-bold text-muted text-uppercase mb-2" style="letter-spacing: 1px;">Métodos de pago aceptados:</p>
+                    <div class="metodos-pago-container mt-0 py-2 border-top-0">
+                        {% for metodo in metodos_pago %}
+                        <div class="metodo-pago-item bg-white shadow-sm">
+                            <i class="bi {{ metodo.icono }} text-success"></i>
+                            <span>{{ metodo.nombre }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-success bg-opacity-10 border-0 p-4 text-center">
+                        <i class="bi bi-bank fs-1 text-success mb-2"></i>
+                        <h5 class="fw-bold m-0 text-uppercase text-success" style="letter-spacing: 1px;">Transferencia Bancaria</h5>
+                        <p class="text-muted small mb-0">Completa tu pago vía Nequi o Daviplata</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST" enctype="multipart/form-data" class="form-django-custom">
+                            {% csrf_token %}
+                            
+                            <div class="row g-3">
+                                {% for field in form %}
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold small text-secondary mb-1">{{ field.label }}</label>
+                                        {{ field }}
+                                        {% if field.errors %}
+                                            <div class="text-danger small mt-1">{{ field.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+
+                                <div class="col-12 mt-4">
+                                    <div class="alert alert-light border text-center py-2 rounded-3">
+                                        <small class="text-muted">
+                                            <i class="bi bi-shield-lock-fill me-1 text-success"></i> Tus datos están protegidos por cifrado SSL
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-confirmar-fijo w-100 py-3 fw-bold rounded-3 shadow-sm">
+                                        CONFIRMAR Y ENVIAR COMPROBANTE
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 mt-4 border-start border-success border-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fw-bold mb-0">Total a pagar</h6>
+                                <small class="text-muted">Concepto: Reserva Tour Monagua</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="h4 fw-bold text-success m-0">$3.058,30</span>
+                                <small class="d-block text-muted" style="font-size: 0.6rem;">COP</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

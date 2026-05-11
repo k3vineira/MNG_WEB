@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Mi Panel | Monagua{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Eliminamos el espacio que dejaba el header fijo para que el panel inicie desde arriba */
+    body { padding-top: 0 !important; background-color: #f8f9fa; }
+    
+    .sidebar-monagua {
+        width: 280px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        padding: 2rem 1.5rem;
+        transition: all 0.3s ease;
+        border-right: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .main-wrapper {
+        margin-left: 280px;
+        min-height: 100vh;
+    }
+
+    .nav-sidebar .nav-link {
+        color: rgba(255,255,255,0.7);
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: 0.2s;
+    }
+
+    .nav-sidebar .nav-link:hover {
+        color: #fff;
+        background: rgba(255,255,255,0.08);
+    }
+
+    .nav-sidebar .nav-link.active {
+        color: #fff;
+        background: #3B643F;
+        font-weight: 500;
+    }
+
+    .sidebar-logo {
+        padding-bottom: 2rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 992px) {
+        .sidebar-monagua { transform: translateX(-100%); }
+        .main-wrapper { margin-left: 0; }
+    }
+
+    .container-dashboard { max-width: 1000px; margin: 0 auto; }
+</style>
+{% endblock %}
+
+{# Sobrescribimos los bloques para ocultar el header y footer en esta vista #}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="sidebar-monagua bg-success">
+    <div class="sidebar-logo text-center">
+        <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="60">
+        <h5 class="text-white mt-3 fw-bold mb-0">MONAGUA</h5>
+        <small class="text-success text-uppercase" style="letter-spacing: 2px; font-size: 0.65rem;">Experiencias</small>
+    </div>
+
+    <nav class="nav flex-column nav-sidebar">
+        <a href="/" class="nav-link">
+            <i class="bi bi-house"></i> Inicio
+        </a>
+        <a href="{% url 'dashboard' %}" class="nav-link active">
+            <i class="bi bi-grid"></i> Dashboard
+        </a>
+        <a href="{% url 'mis_pagos_view' %}" class="nav-link">
+            <i class="bi bi-calendar-check"></i> Mis Reservas
+        </a>
+        <a href="{% url 'comentarios' %}" class="nav-link">
+            <i class="bi bi-chat-left-text"></i> Mis Reseñas
+        </a>
+        <a href="{% url 'detalles' %}#seccion-pqrs" class="nav-link">
+    <i class="bi bi-patch-question"></i> Mis PQRS
+</a>
+        <a href="{% url 'detalles' %}" class="nav-link">
+            <i class="bi bi-person"></i> Mi Perfil
+        </a>
+        <hr class="border-secondary my-4">
+        <form action="{% url 'logout_usuario' %}" method="post" class="px-2">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger btn-sm w-100 rounded-pill">
+                <i class="bi bi-power me-2"></i> Cerrar Sesión
+            </button>
+        </form>
+    </nav>
+</div>
+
+<div class="main-wrapper">
+    <div class="container container-dashboard py-5">
+    <!-- Encabezado de Bienvenida -->
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-8">
+            <h1 class="fw-bold text-brand mb-1">¡Hola, {{ user.first_name|default:user.username }}!</h1>
+            <p class="text-muted fs-5">Bienvenido a tu centro de control en Monagua. Gestiona tus próximas aventuras desde aquí.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="/" class="btn btn-outline-secondary btn-sm mb-3"><i class="bi bi-arrow-left"></i> Volver al Inicio</a>
+            <div class="d-inline-block p-2 bg-white rounded-circle shadow-sm">
+                <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}" 
+                     alt="Avatar" class="rounded-circle border border-2 border-success" 
+                     width="80" height="80" style="object-fit: cover;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Principales -->
+    <div class="row g-4">
+        <!-- Mis Reservas -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm card-hover">
+                <div class="card-body text-center p-4">
+                    <div class="icono-box mb-3 mx-auto">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    <h5 class="fw-bold">Mis Pagos y Reservas</h5>
+                    <p class="text-muted small">Tienes <strong>{{ reservas_count }}</strong> reservas registradas. Revisa estados y descarga comprobantes.</p>
+                    <a href="{% url 'mis_pagos_view' %}" class="btn btn-brand w-100 mt-2">Ir a mis pagos</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mi Perfil -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm card-hover">
+                <div class="card-body text-center p-4">
+                    <div class="icono-box mb-3 mx-auto">
+                        <i class="bi bi-person-gear"></i>
+                    </div>
+                    <h5 class="fw-bold">Configuración de Perfil</h5>
+                    <p class="text-muted small">Actualiza tu información de contacto, residencia y foto de perfil para un mejor servicio.</p>
+                    <a href="{% url 'detalles' %}" class="btn btn-brand w-100 mt-2">Editar Perfil</a>
+                </div>
+            </div>
+        </div>
+            <!-- Mis PQRS -->
+        <div class="col-md-6 col-lg-3">
+        <div class="card h-100 border-0 shadow-sm card-hover">
+            <div class="card-body text-center p-4">
+                <div class="icono-box mb-3 mx-auto bg-success bg-opacity-10 text-success">
+                    <i class="bi bi-chat-left-text"></i>
+                </div>
+                <h6 class="fw-bold">Mis PQRS</h6>
+                <p class="text-muted" style="font-size: 0.75rem;">Consulta el estado y respuestas de tus solicitudes.</p>
+                <a href="{% url 'mis_pqrs' %}" class="btn btn-brand btn-sm w-100 mt-2">Ver mis PQRS</a>
+            </div>
+        </div>
+    </div>
+
+        <!-- Explorar -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm card-hover">
+                <div class="card-body text-center p-4">
+                    <div class="icono-box mb-3 mx-auto">
+                        <i class="bi bi-compass"></i>
+                    </div>
+                    <h5 class="fw-bold">Próxima Aventura</h5>
+                    <p class="text-muted small">¿Listo para volver al Páramo? Revisa los nuevos paquetes y promociones disponibles.</p>
+                    <a href="{% url 'destinos' %}" class="btn btn-brand w-100 mt-2">Ver Destinos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nota de Soporte -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="p-4 bg-light rounded-4 border-start border-4 border-success shadow-sm">
+                <h6 class="fw-bold mb-2"><i class="bi bi-info-circle me-2 text-success"></i>¿Tienes alguna duda con tu experiencia?</h6>
+                <p class="mb-0 text-muted small">Si necesitas ayuda personalizada o tienes problemas con una reserva, utiliza nuestro formulario de <strong>Contacto</strong> al final de la página. Estamos para ayudarte.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

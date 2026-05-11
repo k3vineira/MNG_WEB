@@ -9,7 +9,47 @@
     </a>
 
     <div class="d-flex align-items-center gap-4">
-      <a class="nav-link text-dark fw-semibold d-none d-sm-block small" href="#">Ingreso</a>
+      {% if user.is_authenticated %}
+        <!-- Caso: Usuario Logueado (Dropdown en Menú Premium) -->
+        <div class="dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 btn btn-outline-success rounded-pill px-3 py-1" 
+             href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if user.imagen_perfil %}
+              <img src="{{ user.imagen_perfil.url }}" alt="Avatar" width="28" height="28" class="rounded-circle object-fit-cover">
+            {% else %}
+              <i class="bi bi-person-circle fs-5"></i>
+            {% endif %}
+            <span>Hola, {{ user.first_name|default:user.username }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4" aria-labelledby="offcanvasNavbarDropdown">
+            <li class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column">
+              <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Rol de Usuario</span>
+              <span class="small fw-semibold text-dark">
+                {% if user.is_superuser %}Administrador{% elif user.is_staff %}Staff{% elif user.es_guia %}Guía Turístico{% else %}Viajero{% endif %}
+              </span>
+            </li>
+            <li><a class="dropdown-item py-2 fw-bold text-success" href="{% url 'usuarios:detalles' %}"><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a></li>
+            {% if user.is_staff %}
+              <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'usuarios:dashboard' %}"><i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin</a></li>
+            {% endif %}
+            {% if user.es_turista or user.is_staff %}
+              <li><a class="dropdown-item py-2" href="/mis-viajes/"><i class="bi bi-map me-2"></i>Mis Viajes</a></li>
+              <li><a class="dropdown-item py-2" href="{% url 'reservas:listar_reservas' %}"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a></li>
+              <li><a class="dropdown-item py-2" href="/guardados/"><i class="bi bi-bookmark me-2"></i>Guardados</a></li>
+              <li><a class="dropdown-item py-2" href="/mis-comentarios/"><i class="bi bi-chat-left-text me-2"></i>Comentarios</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form action="{% url 'usuarios:logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item text-danger py-2">Cerrar Sesión</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      {% else %}
+        <a class="nav-link btn btn-outline-success rounded-pill px-4 py-2" href="{% url 'usuarios:login' %}">Acceder</a>
+      {% endif %}
       <a class="nav-link text-dark" href="#">
         <i class="bi bi-cart3 fs-5"></i>
       </a>
@@ -25,9 +65,14 @@
         <!-- Columna Izquierda: Menú Principal -->
         <div class="col-lg-7 offset-lg-1 mb-5 mb-lg-0">
           <nav class="d-flex flex-column gap-3 gap-md-4">
-            <a href="#" class="nav-main-link display-3 fw-bold">Reservas</a>
-            <a href="#" class="nav-main-link display-3 fw-bold">Domicilios o Pick-up</a>
-            <a href="#" class="nav-main-link display-3 fw-bold">Mercado, vinos y licores</a>
+            <a href="/" class="nav-main-link display-3 fw-bold">Inicio</a>
+            {% if user.is_authenticated %}
+              <a href="{% url 'usuarios:detalles' %}" class="nav-main-link display-3 fw-bold text-success">Mi Perfil</a>
+              {% if user.es_turista %}
+                <a href="{% url 'reservas:listar_reservas' %}" class="nav-main-link display-3 fw-bold">Mis Reservas</a>
+              {% endif %}
+            {% endif %}
+            <a href="#" class="nav-main-link display-3 fw-bold">Destinos</a>
             <a href="#" class="nav-main-link display-3 fw-bold">Experiencias</a>
           </nav>
         </div>
@@ -35,14 +80,14 @@
         <!-- Columna Derecha: Menú Secundario -->
         <div class="col-lg-3 nav-secondary-menu mt-lg-4">
           <ul class="nav flex-column gap-3">
-            <li><a class="nav-secondary-link" href="#">Conózcanos</a></li>
-            <li><a class="nav-secondary-link" href="#">Impacto y sostenibilidad</a></li>
-            <li><a class="nav-secondary-link" href="#">Contacto</a></li>
-            <li><a class="nav-secondary-link" href="#">Trabaje con nosotros</a></li>
-            <li><a class="nav-secondary-link" href="#">Bonos de regalo</a></li>
-            <li><a class="nav-secondary-link" href="#">Noticias Takami</a></li>
-            <li><a class="nav-secondary-link" href="#">PQRS</a></li>
-            <li><a class="nav-secondary-link" href="#">Sus ideas para Takami.co</a></li>
+            <li><a class="nav-secondary-link" href="#"><i class="bi bi-envelope me-2"></i>Contacto</a></li>
+            {% if user.is_authenticated %}
+              <li><a class="nav-secondary-link" href="#"><i class="bi bi-question-circle me-2"></i>Soporte</a></li>
+              <li><a class="nav-secondary-link" href="#"><i class="bi bi-shield-lock me-2"></i>Privacidad</a></li>
+            {% endif %}
+            <li><a class="nav-secondary-link" href="#"><i class="bi bi-people me-2"></i>Nosotros</a></li>
+            <li><a class="nav-secondary-link" href="#"><i class="bi bi-chat-left-dots me-2"></i>PQRS</a></li>
+            <li><a class="nav-secondary-link" href="{% url 'comunidad:listar_blog' %}"><i class="bi bi-journal-text me-2"></i>Blog</a></li>
           </ul>
         </div>
 
@@ -61,31 +106,76 @@
     </a>
 
     <!-- Links centrales rápidos -->
-    <ul class="nav justify-content-center d-none d-lg-flex m-0 gap-5">
+    <ul class="nav justify-content-center d-none d-lg-flex m-0 gap-4">
       <li>
-        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="#">
-          <i class="bi bi-ticket-perforated fs-6"></i>BONOS
+        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="/">
+          <i class="bi bi-house-door fs-6"></i>INICIO
         </a>
       </li>
       <li>
         <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="#">
-          <i class="bi bi-calendar-check fs-6"></i>RESERVAS
+          <i class="bi bi-geo-alt fs-6"></i>DESTINOS
         </a>
       </li>
       <li>
         <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="#">
-          <i class="bi bi-bicycle fs-6"></i>DOMICILIO
+          <i class="bi bi-stars fs-6"></i>EXPERIENCIAS
         </a>
       </li>
       <li>
         <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="#">
-          <i class="bi bi-shop fs-6"></i>PICK-UP
+          <i class="bi bi-envelope fs-6"></i>CONTACTO
+        </a>
+      </li>
+      <li>
+        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="{% url 'comunidad:listar_blog' %}">
+          <i class="bi bi-journal-text fs-6"></i>BLOG
         </a>
       </li>
     </ul>
 
     <div class="d-flex align-items-center gap-3">
-      <a class="nav-link text-dark fw-semibold d-none d-sm-block small" href="{% url 'usuarios:login' %}">Ingreso</a>
+      {% if user.is_authenticated %}
+        <!-- Caso: Usuario Logueado (Dropdown en Navbar Principal) -->
+        <div class="dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 btn btn-outline-success rounded-pill px-3 py-1" 
+             href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if user.imagen_perfil %}
+              <img src="{{ user.imagen_perfil.url }}" alt="{{ user.username }}" width="28" height="28" class="rounded-circle object-fit-cover">
+            {% else %}
+              <i class="bi bi-person-circle fs-5"></i>
+            {% endif %}
+            <span class="d-none d-md-inline">Hola, {{ user.first_name|default:user.username }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4" aria-labelledby="navbarDropdown">
+            <li class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column">
+              <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Rol de Usuario</span>
+              <span class="small fw-semibold text-dark">
+                {% if user.is_superuser %}Administrador{% elif user.is_staff %}Staff{% elif user.es_guia %}Guía Turístico{% else %}Viajero{% endif %}
+              </span>
+            </li>
+            <li><a class="dropdown-item py-2 fw-bold text-success" href="{% url 'usuarios:detalles' %}"><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a></li>
+            {% if user.is_staff %}
+              <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'usuarios:dashboard' %}"><i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin</a></li>
+            {% endif %}
+            {% if user.es_turista or user.is_staff %}
+              <li><a class="dropdown-item py-2" href="/mis-viajes/"><i class="bi bi-map me-2"></i>Mis Viajes</a></li>
+              <li><a class="dropdown-item py-2" href="{% url 'reservas:listar_reservas' %}"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a></li>
+              <li><a class="dropdown-item py-2" href="/guardados/"><i class="bi bi-bookmark me-2"></i>Guardados</a></li>
+              <li><a class="dropdown-item py-2" href="/mis-comentarios/"><i class="bi bi-chat-left-text me-2"></i>Comentarios</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form action="{% url 'usuarios:logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item text-danger py-2">Cerrar Sesión</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      {% else %}
+        <a class="nav-link btn btn-outline-success rounded-pill px-4 py-2" href="{% url 'usuarios:login' %}">Acceder</a>
+      {% endif %}
       <a class="nav-link text-dark" href="#">
         <i class="bi bi-cart3 fs-5"></i>
       </a>

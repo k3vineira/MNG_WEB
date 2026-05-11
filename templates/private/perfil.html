@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    body { padding-top: 0 !important; }
+    /* Sobrescribimos el ancho fijo para que el grid de Bootstrap funcione */
+    .barra-lateral-perfil { 
+        min-height: 100vh;
+    }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block user_menu_fixed %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
+        
+        <!-- Sidebar -->
+        <aside class="col-md-3 col-lg-2 barra-lateral-perfil bg-success d-flex flex-column p-3">
+            <a href="#" class="d-flex align-items-center mb-4 text-decoration-none">
+                <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="64" height="64" class="me-2">
+            </a>
+            <nav class="nav flex-column gap-2 mb-auto ">
+                <a class="nav-link text-light" href="/"><i class="bi bi-compass me-2"></i> Inicio</a>
+                {% if user.es_turista or user.is_staff %}
+                    <a class="nav-link text-light" href="/mis-viajes/"><i class="bi bi-map me-2"></i> Mis Viajes</a>
+                    <a class="nav-link text-light" href="/guardados/"><i class="bi bi-bookmark me-2"></i> Guardados</a>
+                    <a class="nav-link text-light" href="/mis-comentarios/"><i class="bi bi-chat-left-text me-2"></i> Comentarios</a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                <a class="nav-link activo text-light bg-light bg-opacity-10 rounded" href="{% url 'usuarios:detalles' %}">
+                    <i class="bi bi-person-circle me-2"></i> Perfil
+                </a>
+                {% endif %}
+            </nav>
+            
+            <div class="mt-auto nav flex-column gap-2 border-top pt-3">
+                <a class="nav-link text-light" href="#"><i class="bi bi-question-circle me-2"></i> Soporte</a>
+                <a class="nav-link text-light" href="#"><i class="bi bi-shield-lock me-2"></i> Privacidad</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="col-md-9 col-lg-10 contenido-principal p-0">
+            
+            <header class="barra-superior bg-white border-bottom d-flex align-items-center justify-content-between px-4 py-3">
+                <nav class="nav gap-4">
+                    <a class="nav-link text-muted p-0" href="#">Destinos</a>
+                    <a class="nav-link text-muted p-0" href="#">Itinerarios</a>
+                    <a class="nav-link text-muted p-0" href="#">Diario</a>
+                    <a class="nav-link text-muted p-0" href="#">Colecciones</a>
+                </nav>
+                {% if user.is_staff %}
+                <div class="d-none d-lg-flex gap-3 ms-auto me-4">
+                    <a href="#" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold">GESTIONAR BANNERS</a>
+                </div>
+                {% endif %}
+                {% if user.is_authenticated %}
+                <div class="iconos-usuario d-flex gap-3 align-items-center">
+                    <i class="bi bi-bell text-muted fs-5"></i>
+                    <i class="bi bi-gear text-muted fs-5"></i>
+                    <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}" alt="Usuario" class="rounded-circle" width="32" height="32" style="object-fit: cover;">
+                </div>
+                {% endif %}
+            </header>
+            <div class="contenedor-perfil p-4 p-md-5">
+    
+    <div class="cabecera-usuario d-flex justify-content-between align-items-center mb-5">
+        <div class="d-flex align-items-center gap-4">
+            <div class="contenedor-avatar position-relative">
+                <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}" alt="{{ user.first_name }}" class="rounded-circle border border-4 border-white shadow-sm" width="120" height="120" style="object-fit: cover;">
+                <span class="insignia-verificado position-absolute bottom-0 end-0 bg-success text-white rounded-circle p-1"><i class="bi bi-check-circle-fill"></i></span>
+            </div>
+            <div class="info-usuario">
+                <!-- Etiqueta dinámica según el rol -->
+                {% if user.is_superuser or user.is_staff %}
+                    <span class="badge bg-dark text-light mb-2">ADMINISTRADOR</span>
+                {% elif user.es_guia %}
+                    <span class="badge bg-primary text-light mb-2">GUÍA TURÍSTICO</span>
+                {% else %}
+                    <span class="badge bg-danger text-light mb-2">VIAJERO</span>
+                {% endif %}
+                
+                <!-- Nombre y Apellido dinámicos -->
+                <h1 class="fw-bold mb-1">{{ user.first_name }} {{ user.last_name }}</h1>
+                
+                <!-- Residencia y Año de registro dinámicos -->
+                <p class="text-muted mb-3">
+                    <i class="bi bi-geo-alt me-1"></i> {{ user.residencia|default:"Ubicación pendiente" }} • Miembro desde {{ user.date_joined|date:"Y" }}
+                </p>
+
+                <!-- Botón de subida de imagen -->
+                <form action="{% url 'usuarios:detalles' %}" method="POST" enctype="multipart/form-data" class="d-inline">
+                    {% csrf_token %}
+                    <label for="input-foto" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                        <i class="bi bi-camera me-1"></i> Actualizar foto
+                    </label>
+                    <input type="file" name="imagen_perfil" id="input-foto" hidden onchange="this.form.submit()">
+                </form>
+            </div>
+        </div>
+        <button type="button" class="btn btn-success px-4 py-2 rounded-pill d-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalEditarPerfil">
+            <i class="bi bi-pencil"></i> Editar Perfil
+        </button>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card tarjeta-datos border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-person-fill text-secondary"></i> Información Personal
+                    </h5>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="text-muted text-uppercase form-label label-pequeno">Nombre Completo</label>
+                            <p class="fw-medium mb-0 fs-5">{{ user.first_name }} {{ user.last_name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted text-uppercase form-label label-pequeno">Correo Electrónico</label>
+                            <p class="fw-medium mb-0 fs-5">{{ user.email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted text-uppercase form-label label-pequeno">Teléfono</label>
+                            <p class="fw-medium mb-0 fs-5">{{ user.telefono|default:"No registrado" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted text-uppercase form-label label-pequeno">Tipo de Documento</label>
+                            <p class="fw-medium mb-0 fs-5">{{ user.tipo_documento|default:"-" }} {{ user.numero_documento|default:"" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted text-uppercase form-label label-pequeno">Residencia</label>
+                            <p class="fw-medium mb-0 fs-5">{{ user.residencia|default:"No registrada" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ... (Tu tarjeta de promoción Next Expedition se queda igual) ... -->
+        </div>
+        <!-- ... (Tu columna de Estadísticas e Intereses se queda igual por ahora) ... -->
+    </div>
+</div>
+
+<!-- Modal para Editar Perfil -->
+<div class="modal fade" id="modalEditarPerfil" tabindex="-1" aria-labelledby="modalEditarPerfilLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 p-4">
+                <h5 class="modal-title fw-bold" id="modalEditarPerfilLabel">Actualizar Información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'usuarios:detalles' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="editar_perfil" value="1">
+                <div class="modal-body p-4 pt-0">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Nombres</label>
+                            <input type="text" name="first_name" class="form-control rounded-3" value="{{ user.first_name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Apellidos</label>
+                            <input type="text" name="last_name" class="form-control rounded-3" value="{{ user.last_name }}" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted small fw-bold">Tipo de Documento</label>
+                            <select name="tipo_documento" class="form-select rounded-3">
+                                <option value="Cédula de Ciudadanía" {% if user.tipo_documento == 'Cédula de Ciudadanía' %}selected{% endif %}>Cédula de Ciudadanía</option>
+                                <option value="Cédula de Extranjería" {% if user.tipo_documento == 'Cédula de Extranjería' %}selected{% endif %}>Cédula de Extranjería</option>
+                                <option value="Pasaporte" {% if user.tipo_documento == 'Pasaporte' %}selected{% endif %}>Pasaporte</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted small fw-bold">Teléfono</label>
+                            <input type="text" name="telefono" class="form-control rounded-3" value="{{ user.telefono }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted small fw-bold">Lugar de Residencia</label>
+                            <input type="text" name="residencia" class="form-control rounded-3" value="{{ user.residencia }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 p-4">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success rounded-pill px-4">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+            
+        </main>
+    </div>
+</div>
+{% endblock %}

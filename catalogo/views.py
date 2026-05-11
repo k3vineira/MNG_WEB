@@ -97,3 +97,10 @@ class CategoriaDeleteView(DeleteView):
     model = Categoria
     template_name = 'admin/categorias/eliminar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
+
+def reservas(request):
+    # Lógica para obtener las reservas del usuario
+    context = {
+        'reservas': []  # Reemplaza con la lógica real
+    }
+    return render(request, 'usuario/reservas.html', context)

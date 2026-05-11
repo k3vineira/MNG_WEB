@@ -26,10 +26,23 @@
         <form method="POST" action="{% url 'usuarios:login' %}" class="mb-4">
           {% csrf_token %}
           
-          {% if form.errors or messages %}
-          <div class="alert alert-danger border-0 rounded-4 small mb-4" role="alert">
-            <i class="bi bi-exclamation-circle me-2"></i> Credenciales incorrectas. Inténtalo de nuevo.
+          {# Errores de validación del formulario (Login fallido) #}
+          {% if form.errors %}
+          <div class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña incorrectos.
+            <button type="button" class="btn-close small" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
+          {% endif %}
+
+          {# Mensajes del sistema (como el de "Registro Exitoso") #}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">
+                <i class="bi {% if message.tags == 'success' %}bi-check-circle{% else %}bi-info-circle{% endif %} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
           {% endif %}
 
           <!-- Input Usuario -->
@@ -74,4 +87,16 @@
 
   </div>
 </section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      let alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        let bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      });
+    }, 5000);
+  });
+</script>
 {% endblock %}
