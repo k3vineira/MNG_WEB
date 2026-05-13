@@ -10,6 +10,54 @@
                  style="background-color: var(--verde-oscuro); border-radius: 8px 8px 0 0; border-bottom: 2px solid rgba(255,255,255,0.2);">
                 <h4 class="text-white mb-0 fw-bold">Administración de PQRS</h4>
             </div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-end p-3 shadow-sm" 
+         style="background-color: var(--verde-bosque); border-radius: 8px 8px 0 0; border-bottom: 2px solid rgba(255,255,255,0.2);">
+        <h3 class="text-white mb-0 fw-bold">Administración de PQRS</h3>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Solicitante</th>
+                        <th>Tipo</th>
+                        <th>Asunto</th>
+                        <th>Documento</th>
+                        <th>Evidencia</th>
+                        <th style="width: 150px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for pqr in todas_las_pqrs %}
+                    <tr>
+                        <td>{{ pqr.nombre_solicitante }}<br><small class="text-muted">{{ pqr.email }}</small></td>
+                        <td>
+                            <span class="badge {% if pqr.tipo == 'Queja' or pqr.tipo == 'Reclamo' %}bg-danger{% else %}bg-info{% endif %}">
+                                {{ pqr.tipo }}
+                            </span>
+                        </td>
+                        <td>{{ pqr.asunto }}</td>
+                        <td>{{ pqr.documento }}</td>
+                        <td>
+                            {% if pqr.evidencia %}
+                                <a href="{{ pqr.evidencia.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">Ver archivo</a>
+                            {% else %}
+                                <span class="text-muted small">Sin adjunto</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pqr.respuesta and pqr.respuesta.strip %}
+                                <button type="button" class="btn btn-success btn-sm w-100 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
+                                    <i class="bi "></i> Respondido
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-danger btn-sm w-100 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
+                                    <i class="bi bi-chat-dots"></i> Contestar
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
 
             <div class="card shadow-sm border-0" style="border-radius: 0 0 8px 8px;">
                 <div class="card-body p-0"> <!-- p-0 para que la tabla aproveche el espacio -->
