@@ -25,6 +25,7 @@ class ActividadesForm(ModelForm):
             'nivel_dificultad': forms.Select(attrs={'class': 'form-select'}), # Menú desplegable
             'equipo_requerimiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'recomendacion_salud': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 # FORMULARIO DE PAQUETE
@@ -40,4 +41,5 @@ class PaqueteForm(ModelForm):
             'punto_encuentro': forms.TextInput(attrs={'class': 'form-control'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             'actividades': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
