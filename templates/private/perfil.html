@@ -1,50 +1,37 @@
-{% extends "base.html" %}
+{% extends "admin/base-admin.html" %}
 {% load static %}
 
-{% block extra_head %}
-<style>
-    body { padding-top: 0 !important; }
-    /* Sobrescribimos el ancho fijo para que el grid de Bootstrap funcione */
-    .barra-lateral-perfil { 
-        min-height: 100vh;
-    }
-</style>
+{% block title %}Mi Perfil | Monagua{% endblock %}
+
+{% block sidebar_subtitle %}Panel de Viajero{% endblock %}
+
+{% block sidebar_nav %}
+    <div class="text-uppercase text-white-50 fw-semibold px-3 py-1" style="font-size:.65rem;letter-spacing:.1em">Explorador</div>
+    
+    <a href="/" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+        <i class="bi bi-house-door-fill"></i> Inicio
+    </a>
+
+    <a href="{% url 'usuarios:detalles' %}" 
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1 bg-white bg-opacity-25 text-white">
+        <i class="bi bi-person-circle"></i> Mi Perfil
+    </a>
+
+    <a href="{% url 'pagos:mis_pagos' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+        <i class="bi bi-map-fill"></i> Mis Viajes
+    </a>
+
+    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+        <i class="bi bi-chat-left-text-fill"></i> Mis Comentarios
+    </a>
+
+    <div class="text-uppercase text-white-50 fw-semibold px-3 py-1 mt-3" style="font-size:.65rem;letter-spacing:.1em">Soporte</div>
+    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+        <i class="bi bi-question-circle-fill"></i> Ayuda
+    </a>
 {% endblock %}
 
-{% block navbar %}{% endblock %}
-{% block user_menu_fixed %}{% endblock %}
-{% block footer %}{% endblock %}
-
 {% block content %}
-<div class="container-fluid p-0">
-    <div class="row g-0 min-vh-100">
-        
-        <!-- Sidebar -->
-        <aside class="col-md-3 col-lg-2 barra-lateral-perfil bg-success d-flex flex-column p-3">
-            <a href="#" class="d-flex align-items-center mb-4 text-decoration-none">
-                <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="64" height="64" class="me-2">
-                <span class="text-white fw-bold d-none d-lg-inline">MONAGUA</span>
-            </a>
-            <nav class="nav flex-column gap-2 mb-auto ">
-                <a class="nav-link text-light" href="/"><i class="bi bi-compass me-2"></i> Inicio</a>
-                {% if user.es_turista or user.is_staff %}
-                    <a class="nav-link text-light" href="{% url 'pagos:mis_pagos' %}"><i class="bi bi-map me-2"></i> Mis Viajes</a>
-                    <a class="nav-link text-light" href="{% url 'comentarios' %}"><i class="bi bi-chat-left-text me-2"></i> Comentarios</a>
-                {% endif %}
-                <a class="nav-link active text-light rounded" href="{% url 'usuarios:detalles' %}">
-                    <i class="bi bi-person-circle me-2"></i> Perfil
-                </a>
-            </nav>
-            
-            <div class="mt-auto nav flex-column gap-2 border-top pt-3">
-                <a class="nav-link text-light" href="#"><i class="bi bi-question-circle me-2"></i> Soporte</a>
-                <a class="nav-link text-light" href="#"><i class="bi bi-shield-lock me-2"></i> Privacidad</a>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="col-md-9 col-lg-10 contenido-principal p-0">
-            
             <header class="barra-superior bg-white border-bottom d-flex align-items-center justify-content-between px-4 py-3">
                 <nav class="nav gap-4">
                     <a class="nav-link text-muted p-0" href="#">Destinos</a>
@@ -214,10 +201,6 @@
                 </div>
             </form>
         </div>
-    </div>
-</div>
-            
-        </main>
     </div>
 </div>
 {% endblock %}
