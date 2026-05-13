@@ -33,12 +33,6 @@
 
 {% block content %}
             <header class="barra-superior bg-white border-bottom d-flex align-items-center justify-content-between px-4 py-3">
-                <nav class="nav gap-4">
-                    <a class="nav-link text-muted p-0" href="#">Destinos</a>
-                    <a class="nav-link text-muted p-0" href="#">Itinerarios</a>
-                    <a class="nav-link text-muted p-0" href="#">Diario</a>
-                    <a class="nav-link text-muted p-0" href="#">Colecciones</a>
-                </nav>
                 {% if user.is_staff %}
                 <div class="d-none d-lg-flex gap-3 ms-auto me-4">
                     <a href="#" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold">GESTIONAR BANNERS</a>
@@ -142,19 +136,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #1a261f 0%, #2a3d32 100%);">
-                <div class="card-body p-4 text-white">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-trophy me-2"></i>Nivel de Explorador</h6>
-                    <div class="progress bg-white bg-opacity-25 mb-2" style="height: 8px;">
-                        <div class="progress-bar bg-white" role="progressbar" style="width: 25%"></div>
-                    </div>
-                    <p class="small mb-0 opacity-75">¡Estás a 3 caminatas de subir al siguiente nivel!</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <!-- Modal para Editar Perfil -->
 <div class="modal fade" id="modalEditarPerfil" tabindex="-1" aria-labelledby="modalEditarPerfilLabel" aria-hidden="true">

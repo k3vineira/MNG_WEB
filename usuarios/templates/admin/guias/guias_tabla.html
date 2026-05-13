@@ -51,7 +51,7 @@
             </td>
             <td class="text-center pe-4">
               <div class="btn-group btn-group-sm rounded-3 overflow-hidden shadow-sm">
-                <a href="{% url 'usuarios:gestion_guias_sel' id=guia.id %}" class="btn btn-warning" title="Asignar"><i class="bi bi-calendar-plus"></i></a>
+                <a href="{% url 'usuarios:asignar_rol_guia' user_id=guia.id %}" class="btn btn-warning" title="Asignar"><i class="bi bi-calendar-plus"></i></a>
                 <button class="btn btn-light" onclick="abrirModalEditar({{ guia.id }})" title="Editar"><i class="bi bi-pencil"></i></button>
                 {% if guia.is_active %}
                   <button class="btn btn-danger" onclick="confirmarBaja({{ guia.id }}, '{{ guia.first_name }} {{ guia.last_name }}')"><i class="bi bi-person-x"></i></button>
