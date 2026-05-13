@@ -1,11 +1,8 @@
+
 {% extends 'admin/base-admin.html' %}
 
 {% block content %}
-<!-- Contenedor principal para limitar el ancho y centrar -->
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10"> <!-- Cambia a col-md-8 si lo quieres aún más pequeño -->
-            
+ 
             <div class="d-flex justify-content-between align-items-end p-3 shadow-sm" 
                  style="background-color: var(--verde-oscuro); border-radius: 8px 8px 0 0; border-bottom: 2px solid rgba(255,255,255,0.2);">
                 <h4 class="text-white mb-0 fw-bold">Administración de PQRS</h4>
@@ -59,84 +56,40 @@
                         </td>
                     </tr>
 
-            <div class="card shadow-sm border-0" style="border-radius: 0 0 8px 8px;">
-                <div class="card-body p-0"> <!-- p-0 para que la tabla aproveche el espacio -->
-                    <!-- table-sm hace la tabla más compacta -->
-                    <table class="table table-sm table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-3">Solicitante</th>
-                                <th>Tipo</th>
-                                <th>Asunto</th>
-                                <th>fecha</th>
-                
-                                <th style="width: 130px;" class="pe-3 text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody style="vertical-align: middle;">
-                          {% for pqr in todas_las_pqrs %}
-                            <tr>
-                                <td class="ps-3">
-                                    <span class="fw-bold" style="font-size: 0.9rem;">{{ pqr.nombre_solicitante }}</span><br>
-                                    <small class="text-muted">{{ pqr.email }}</small>
-                                </td>
-                                <td>
-                                    <span class="badge {% if pqr.tipo == 'Queja' or pqr.tipo == 'Reclamo' %}bg-danger{% else %}bg-info{% endif %}" style="font-size: 0.75rem;">
-                                        {{ pqr.tipo }}
-                                    </span>
-                                </td>
-                                <td class="small">{{ pqr.asunto }}</td>
-                                <td class="small">{{ pqr.fecha }}</td>
-                                <td class="pe-3">
-                                    {% if pqr.respuesta and pqr.respuesta.strip %}
-                                        <button type="button" class="btn btn-success btn-sm w-100 shadow-sm py-0" style="font-size: 0.8rem;" data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
-                                            Respondido
-                                        </button>
-                                    {% else %}
-                                        <button type="button" class="btn btn-danger btn-sm w-100 shadow-sm py-0" style="font-size: 0.8rem;" data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
-                                            <i class="bi bi-chat-dots"></i> Contestar
-                                        </button>
-                                    {% endif %}
-                                </td>
-                            </tr>
-
-                            <!-- El Modal se mantiene igual pero se asegura de estar fuera de conflictos visuales -->
-                            <div class="modal fade" id="modalContestar{{ pqr.id }}" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <form action="{% url 'comunidad:contestar_pqrs' pqr.id %}" method="POST">
-                                            {% csrf_token %}
-                                            <div class="modal-header bg-light">
-                                                <h6 class="modal-title fw-bold">Contestar a: {{ pqr.nombre_solicitante }}</h6>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <label class="text-muted small text-uppercase">Asunto</label>
-                                                <p class="fw-bold small">{{ pqr.asunto }}</p>
-                                                <label class="text-muted small text-uppercase">Descripción</label>
-                                                <p class="small border p-2 rounded bg-light">{{ pqr.descripcion }}</p>
-                                                
-                                                <label class="form-label fw-bold small">Tu respuesta:</label>
-                                                <textarea name="respuesta" class="form-control form-control-sm" rows="4" placeholder="Escribe la solución..." required>{{ pqr.respuesta|default:'' }}</textarea>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                                <button type="submit" class="btn btn-sm btn-success" style="background-color: var(--verde-oscuro)">Guardar Respuesta</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+                    <div class="modal fade" id="modalContestar{{ pqr.id }}" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form action="{% url 'contestar_pqrs' pqr.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="modal-header bg-light">
+                              <h5 class="modal-title">Contestar a: {{ pqr.nombre_solicitante }}</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
+                            <div class="modal-body">
+                              <p class="mb-1 text-muted small">ASUNTO:</p>
+                              <p class="fw-bold mb-3">{{ pqr.asunto }}</p>
+                              <p class="mb-1 text-muted small">DESCRIPCIÓN:</p>
+                              <p class="mb-3 border p-2 rounded bg-light">{{ pqr.descripcion }}</p>
+                              
+                              <label class="form-label fw-bold">Tu respuesta:</label>
+                              <textarea name="respuesta" class="form-control" rows="5" placeholder="Escribe aquí la solución para el turista..." required>{{ pqr.respuesta|default:'' }}</textarea>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                              <button type="submit" class="btn btn-success" style="background-color: var(--verde-bosque)">Guardar Respuesta</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
 
-                          {% empty %}
-                            <tr>
-                                <td colspan="6" class="text-center py-4 small text-muted">No se han recibido PQRS hasta el momento.</td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                  {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">No se han recibido PQRS hasta el momento.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
