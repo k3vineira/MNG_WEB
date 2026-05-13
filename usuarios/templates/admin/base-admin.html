@@ -96,7 +96,19 @@
            width="34" height="34" style="object-fit:cover">
       <div>
         <div class="fw-semibold text-white small">{{ user.first_name|default:'Administrador' }}</div>
-        <div class="text-white-50" style="font-size:.7rem">Super Admin</div>
+        <div class="text-white-50" style="font-size:.7rem">
+          {% if user.is_superuser %}
+            Super Admin
+          {% elif user.is_staff %}
+            Administrador
+          {% elif user.es_guia %}
+            Guía Turístico
+          {% elif user.es_turista %}
+            Viajero
+          {% else %}
+            Usuario
+          {% endif %}
+        </div>
       </div>
     </div>
     <form action="{% url 'usuarios:logout' %}" method="post">
