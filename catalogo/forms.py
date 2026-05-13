@@ -1,6 +1,6 @@
 from django import forms 
 from django.forms import ModelForm 
-from .models import Categoria, Actividades, Paquete # 
+from .models import Categoria, Actividades, Paquete 
 
 # FORMULARIO DE CATEGORÍA
 class CategoriaForm(ModelForm):
@@ -38,7 +38,6 @@ class PaqueteForm(ModelForm):
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
             'duracion_estimada': forms.TextInput(attrs={'class': 'form-control'}),
             'punto_encuentro': forms.TextInput(attrs={'class': 'form-control'}),
-            'codigo_categoria': forms.Select(attrs={'class': 'form-select'}),
-            
+            'categoria': forms.Select(attrs={'class': 'form-select'}),
             'actividades': forms.SelectMultiple(attrs={'class': 'form-control'}),
         }
