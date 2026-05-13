@@ -72,7 +72,9 @@
       <i class="bi bi-box-seam-fill"></i> Paquetes Turísticos
     </a>
 
-    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+    <a href="{% url 'promociones_gestion' %}"
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'promociones_gestion' %}bg-white bg-opacity-25 text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-megaphone-fill"></i> Promociones
     </a>
 
