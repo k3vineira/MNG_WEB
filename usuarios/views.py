@@ -114,6 +114,14 @@ def terminos_view(request):
         'public/terminos.html'
     )
 
+# --- NUEVA VISTA PARA NOSOTROS ---
+def nosotros_view(request):
+    return render(
+        request,
+        'public/nosotros.html'
+    )
+
+
 @login_required
 def perfil_view(request):
     """

@@ -237,3 +237,55 @@ body.sidebar-open #mainSidebar {
 body.sidebar-open #sidebar-overlay {
     display: block !important;
 }
+
+:root {
+    --bs-primary: #3B643F;
+    --verde: #3B643F;
+    --verde-oscuro: #1A2E1C;
+    --verde-suave: #A8C5AA;
+    --crema: #F5F0E8;
+    --texto: #4A5E4D;
+}
+
+.font-playfair {
+    font-family: 'Playfair Display', serif;
+}
+
+.bg-verde {
+    background-color: var(--verde) !important;
+}
+
+.bg-verde-oscuro {
+    background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde) 100%) !important;
+}
+
+.bg-crema {
+    background-color: var(--crema) !important;
+}
+
+.text-verde {
+    color: var(--verde) !important;
+}
+
+.text-suave {
+    color: var(--verde-suave) !important;
+}
+
+.border-verde {
+    border-color: var(--verde) !important;
+}
+
+.card-hover {
+    transition: transform .3s, box-shadow .3s;
+}
+
+.card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 44px rgba(44, 74, 48, .13) !important;
+}
+
+.foto-miembro {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
