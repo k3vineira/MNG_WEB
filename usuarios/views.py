@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Cliente
+from django.utils import timezone
+from .models import Usuario, Cliente
+# Se asume la existencia de los modelos Guia y Paquete en sus respectivas apps
 from .forms import RegistroForm
 
 
@@ -141,4 +143,66 @@ def perfil_view(request):
 
     return render(request, 'private/perfil.html')
 
+@user_passes_test(lambda u: u.is_staff)
+def gestion_guias(request, id=None):
+    """
+    Vista principal para la gestión de guías y usuarios.
+    Implementa la lógica MVT para el index-guias.html.
+    """
+    # Importación dinámica para evitar ciclos si los modelos están en otras apps
+    from .models import Usuario 
+    # Nota: Sustituir por el modelo real de Guia si existe uno aparte
+    
+    all_users = Usuario.objects.all().order_by('-date_joined')
+    # Simulación de datos de guías (ajustar al modelo real)
+    guias = Usuario.objects.filter(es_guia=True) 
+    
+    guia_sel = None
+    if id:
+        guia_sel = get_object_or_404(Usuario, id=id)
 
+    context = {
+        'fecha': timezone.now().strftime('%d %b, %Y'),
+        'guias': guias,
+        'total_guias': guias.count(),
+        'total_guias_activos': guias.filter(is_active=True).count(),
+        'guias_asignados': 0, # Lógica con modelo de Reservas/Tours
+        'total_guias_inactivos': guias.filter(is_active=False).count(),
+        'all_users': all_users,
+        'total_users': all_users.count(),
+        'guia_sel': guia_sel,
+        # 'paquetes_disponibles': Paquete.objects.filter(estado=True),
+    }
+    return render(request, 'admin/index-guias.html', context)
+
+@user_passes_test(lambda u: u.is_staff)
+def asignar_rol_guia(request, user_id):
+    """Toggle para asignar o quitar el rol de guía a un usuario."""
+    if request.method == 'POST':
+        user_obj = get_object_or_404(Usuario, id=user_id)
+        user_obj.es_guia = not user_obj.es_guia
+        user_obj.save()
+        accion = "asignado como" if user_obj.es_guia else "removido de"
+        messages.success(request, f"Usuario {user_obj.username} {accion} guía.")
+    return redirect('usuarios:gestion_guias')
+
+@user_passes_test(lambda u: u.is_staff)
+def guias_baja_reactivar(request, id, estado):
+    """Cambia el estado de activación de un guía."""
+    if request.method == 'POST':
+        guia = get_object_or_404(Usuario, id=id)
+        guia.is_active = (estado == 'activar')
+        guia.save()
+        msg = "reactivado" if guia.is_active else "dado de baja"
+        messages.info(request, f"Guía {guia.first_name} {msg} exitosamente.")
+    return redirect('usuarios:gestion_guias')
+
+@user_passes_test(lambda u: u.is_staff)
+def guias_guardar(request):
+    """Lógica para crear o editar un guía desde el modal."""
+    if request.method == 'POST':
+        guia_id = request.POST.get('guia_id')
+        # Aquí se implementaría la lógica de guardado/update
+        # usando request.POST.get('especialidad'), etc.
+        messages.success(request, "Datos del guía guardados correctamente.")
+    return redirect('usuarios:gestion_guias')

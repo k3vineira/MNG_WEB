@@ -67,41 +67,7 @@
 {% block footer %}{% endblock %}
 
 {% block content %}
-<div class="sidebar-monagua bg-success">
-    <div class="sidebar-logo text-center">
-        <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="60">
-        <h5 class="text-white mt-3 fw-bold mb-0">MONAGUA</h5>
-        <small class="text-success text-uppercase" style="letter-spacing: 2px; font-size: 0.65rem;">Experiencias</small>
-    </div>
-
-    <nav class="nav flex-column nav-sidebar">
-        <a href="/" class="nav-link">
-            <i class="bi bi-house"></i> Inicio
-        </a>
-        <a href="{% url 'dashboard' %}" class="nav-link active">
-            <i class="bi bi-grid"></i> Dashboard
-        </a>
-        <a href="{% url 'mis_pagos_view' %}" class="nav-link">
-            <i class="bi bi-calendar-check"></i> Mis Reservas
-        </a>
-        <a href="{% url 'comentarios' %}" class="nav-link">
-            <i class="bi bi-chat-left-text"></i> Mis Reseñas
-        </a>
-        <a href="{% url 'detalles' %}#seccion-pqrs" class="nav-link">
-    <i class="bi bi-patch-question"></i> Mis PQRS
-</a>
-        <a href="{% url 'detalles' %}" class="nav-link">
-            <i class="bi bi-person"></i> Mi Perfil
-        </a>
-        <hr class="border-secondary my-4">
-        <form action="{% url 'logout_usuario' %}" method="post" class="px-2">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-danger btn-sm w-100 rounded-pill">
-                <i class="bi bi-power me-2"></i> Cerrar Sesión
-            </button>
-        </form>
-    </nav>
-</div>
+{% include "includes/_sidebar_privado.html" %}
 
 <div class="main-wrapper">
     <div class="container container-dashboard py-5">
@@ -132,7 +98,7 @@
                     </div>
                     <h5 class="fw-bold">Mis Pagos y Reservas</h5>
                     <p class="text-muted small">Tienes <strong>{{ reservas_count }}</strong> reservas registradas. Revisa estados y descarga comprobantes.</p>
-                    <a href="{% url 'mis_pagos_view' %}" class="btn btn-brand w-100 mt-2">Ir a mis pagos</a>
+                    <a href="{% url 'pagos:mis_pagos' %}" class="btn btn-brand w-100 mt-2">Ir a mis pagos</a>
                 </div>
             </div>
         </div>
@@ -146,7 +112,7 @@
                     </div>
                     <h5 class="fw-bold">Configuración de Perfil</h5>
                     <p class="text-muted small">Actualiza tu información de contacto, residencia y foto de perfil para un mejor servicio.</p>
-                    <a href="{% url 'detalles' %}" class="btn btn-brand w-100 mt-2">Editar Perfil</a>
+                    <a href="{% url 'usuarios:detalles' %}" class="btn btn-brand w-100 mt-2">Editar Perfil</a>
                 </div>
             </div>
         </div>

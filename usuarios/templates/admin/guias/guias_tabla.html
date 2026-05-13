@@ -1,0 +1,148 @@
+<div class="card border-0 shadow-sm overflow-hidden mb-5">
+  <div class="card-header bg-white py-3">
+    <h5 class="mb-0 fw-bold"><i class="bi bi-person-badge me-2 text-success"></i>Listado de Guías</h5>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0" id="tablaGuias">
+      <thead class="bg-light">
+        <tr class="text-secondary small fw-bold">
+          <th class="ps-4">GUÍA</th>
+          <th>ESPECIALIDAD</th>
+          <th>CONTACTO</th>
+          <th>DISPONIBILIDAD</th>
+          <th>ESTADO</th>
+          <th class="text-center">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyGuias" class="border-top-0">
+        {% for guia in guias %}
+          <tr data-estado="{{ guia.is_active|yesno:'Activo,Inactivo' }}" data-especialidad="{{ guia.especialidad }}" data-disponibilidad="{{ guia.disponibilidad }}">
+            <td class="ps-4">
+              <div class="d-flex align-items-center gap-3">
+                <div class="avatar-circle bg-success bg-opacity-75">
+                  {{ guia.first_name|slice:':1' }}{{ guia.last_name|slice:':1' }}
+                </div>
+                <div>
+                  <div class="fw-bold text-dark">{{ guia.first_name }} {{ guia.last_name }}</div>
+                  <div class="small text-muted">{{ guia.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge rounded-pill bg-light text-dark border small fw-medium">
+                {{ guia.especialidad|default:'General' }}
+              </span>
+            </td>
+            <td class="small text-muted">
+              <div><i class="bi bi-telephone me-1 text-success"></i> {{ guia.telefono }}</div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <span class="p-1 rounded-circle {% if guia.disponibilidad == 'Disponible' %}bg-success{% else %}bg-warning{% endif %}"></span>
+                <span class="small">{{ guia.disponibilidad|default:'Sin asignar' }}</span>
+              </div>
+            </td>
+            <td>
+              {% if guia.is_active %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle">Activo</span>
+              {% else %}
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Inactivo</span>
+              {% endif %}
+            </td>
+            <td class="text-center pe-4">
+              <div class="btn-group btn-group-sm rounded-3 overflow-hidden shadow-sm">
+                <a href="{% url 'usuarios:gestion_guias_sel' id=guia.id %}" class="btn btn-warning" title="Asignar"><i class="bi bi-calendar-plus"></i></a>
+                <button class="btn btn-light" onclick="abrirModalEditar({{ guia.id }})" title="Editar"><i class="bi bi-pencil"></i></button>
+                {% if guia.is_active %}
+                  <button class="btn btn-danger" onclick="confirmarBaja({{ guia.id }}, '{{ guia.first_name }} {{ guia.last_name }}')"><i class="bi bi-person-x"></i></button>
+                {% else %}
+                  <button class="btn btn-success" onclick="confirmarReactivar({{ guia.id }}, '{{ guia.first_name }} {{ guia.last_name }}')"><i class="bi bi-person-check"></i></button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center py-5">
+              <div class="text-muted">
+                <i class="bi bi-person-badge display-4 mb-3 d-block"></i>
+                <p>No hay guías registrados actualmente.</p>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if request.user.is_staff %}
+  <div class="mb-4 mt-5">
+    <h4 class="fw-bold text-dark">Gestión de Usuarios y Roles</h4>
+    <p class="text-muted small">Control centralizado de permisos y estatus de usuarios.</p>
+  </div>
+
+  <div class="card border-0 shadow-sm overflow-hidden">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
+      <h6 class="mb-0 fw-bold"><i class="bi bi-people me-2 text-primary"></i>Usuarios Registrados</h6>
+      <span class="badge bg-light text-dark border">{{ total_users|default:'0' }} Total</span>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0 small">
+        <thead class="bg-light">
+          <tr class="text-secondary fw-bold">
+            <th class="ps-4">USUARIO</th>
+            <th>EMAIL</th>
+            <th class="text-center">STAFF</th>
+            <th class="text-center">ESTADO</th>
+            <th>ROLES</th>
+            <th class="text-center">ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user_obj in all_users %}
+            <tr>
+              <td class="ps-4">
+                <span class="fw-bold text-dark">{{ user_obj.username }}</span>
+                <div class="text-muted" style="font-size: 0.75rem;">{{ user_obj.get_full_name|default:'Sin nombre' }}</div>
+              </td>
+              <td>{{ user_obj.email }}</td>
+              <td class="text-center">
+                {% if user_obj.is_staff %}
+                  <i class="bi bi-shield-check text-success fs-5"></i>
+                {% else %}
+                  <i class="bi bi-person text-muted fs-5"></i>
+                {% endif %}
+              </td>
+              <td class="text-center">
+                <span class="badge {% if user_obj.is_active %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %}">
+                  {{ user_obj.is_active|yesno:'Activo,Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <div class="d-flex gap-1">
+                  {% if user_obj.es_guia %}
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Guía</span>
+                  {% endif %}
+                  {% if user_obj.es_turista %}
+                    <span class="badge bg-info-subtle text-info border border-info-subtle">Turista</span>
+                  {% endif %}
+                </div>
+              </td>
+              <td class="text-center">
+                <form action="{% url 'usuarios:asignar_rol_guia' user_obj.id %}" method="post">
+                  {% csrf_token %}
+                  {% if user_obj.es_guia %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill">Quitar Guía</button>
+                  {% else %}
+                    <button type="submit" class="btn btn-sm btn-outline-success px-3 rounded-pill">Asignar Guía</button>
+                  {% endif %}
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
