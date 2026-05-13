@@ -213,7 +213,8 @@ def guias_guardar(request):
 
 class PasswordResetViewCustom(auth_views.PasswordResetView):
     template_name = 'authentication/contraseña_reset.html'
-    email_template_name = 'authentication/password_reset_email.html'
+    email_template_name = 'authentication/contraseña_reset_email.html'
+    html_email_template_name = 'authentication/contraseña_reset_email.html'
     success_url = reverse_lazy('usuarios:password_reset_done')
 
 class PasswordResetDoneViewCustom(auth_views.PasswordResetDoneView):
