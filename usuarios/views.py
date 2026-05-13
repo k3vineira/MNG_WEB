@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, views as auth_views
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.urls import reverse_lazy
 from django.utils import timezone
 from .models import Usuario, Cliente
 # Se asume la existencia de los modelos Guia y Paquete en sus respectivas apps
@@ -206,3 +207,22 @@ def guias_guardar(request):
         # usando request.POST.get('especialidad'), etc.
         messages.success(request, "Datos del guía guardados correctamente.")
     return redirect('usuarios:gestion_guias')
+
+
+# --- VISTAS PARA RESTABLECER CONTRASEÑA ---
+
+class PasswordResetViewCustom(auth_views.PasswordResetView):
+    template_name = 'authentication/contraseña_reset.html'
+    email_template_name = 'authentication/contraseña_reset_email.html'
+    html_email_template_name = 'authentication/contraseña_reset_email.html'
+    success_url = reverse_lazy('usuarios:password_reset_done')
+
+class PasswordResetDoneViewCustom(auth_views.PasswordResetDoneView):
+    template_name = 'authentication/contraseña_reset_enviado.html'
+
+class PasswordResetConfirmViewCustom(auth_views.PasswordResetConfirmView):
+    template_name = 'authentication/contraseña_reset_form.html'
+    success_url = reverse_lazy('usuarios:password_reset_complete')
+
+class PasswordResetCompleteViewCustom(auth_views.PasswordResetCompleteView):
+    template_name = 'authentication/contraseña_reset_guardar.html'

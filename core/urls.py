@@ -12,4 +12,5 @@ urlpatterns = [
     path('', inicio, name='inicio'),
     path('pagos/', include('pagos.urls')),
     path('mis-comentarios/', resenas_view, name='comentarios'),
+    path('promociones/', include('promociones.urls')),
 ]
