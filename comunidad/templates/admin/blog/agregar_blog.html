@@ -1,4 +1,4 @@
-{% extends "admin/base-admin.html" %}
+{% extends "base-admin.html" %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -14,7 +14,7 @@
                         {% csrf_token %}
                         {{ form|crispy }}
                         <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a href="{% url 'comunidad:listar_blog' %}" class="btn btn-outline-secondary">Cancelar</a>
+                            <a href="{% url 'admin_blog' %}" class="btn btn-outline-secondary">Cancelar</a>
                             <button type="submit" class="btn btn-success px-4">Guardar Publicación</button>
                         </div>
                     </form>

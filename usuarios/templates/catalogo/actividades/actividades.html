@@ -1,4 +1,4 @@
-{% extends 'admin/base-admin.html' %}
+{% extends 'base-admin.html' %}
 
 {% block content %}
 <div class="container py-4">
@@ -8,7 +8,7 @@
             <div class="d-flex justify-content-between align-items-end p-3 shadow-sm" 
                  style="background-color: var(--verde-bosque); border-radius: 8px 8px 0 0; border-bottom: 2px solid rgba(255,255,255,0.2);">
                 <h3 class="text-white mb-0 fw-bold">Gestión de Actividades</h3>
-                <a href="{% url 'catalogo:crear_actividad' %}" class="btn btn-sm btn-light fw-bold" style="color: var(--verde-bosque);">
+                <a href="{% url 'crear_actividad' %}" class="btn btn-sm btn-light fw-bold" style="color: var(--verde-oscuro);">
                     <i class="bi bi-plus-lg"></i> Nueva Actividad
                 </a>
             </div>
@@ -45,8 +45,8 @@
                                     {% endif %}
                                 </td>
                                     <td class="text-end pe-4 py-3">
-                                        <a href="{% url 'catalogo:editar_actividad' actividad.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
-                                        <a href="{% url 'catalogo:eliminar_actividad' actividad.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
+                                        <a href="{% url 'editar_actividad' actividad.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
+                                        <a href="{% url 'eliminar_actividad' actividad.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
                                     </td>
                                 </tr>
                                 {% empty %}

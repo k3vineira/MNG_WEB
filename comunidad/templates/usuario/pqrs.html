@@ -3,49 +3,32 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container-fluid py-5 mt-5 min-vh-100 d-flex align-items-center bg-light">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-6">
-                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                    
-                    <div class="card-header text-white py-4 border-0" style="background-color: #2c6e3c;"    >
-                        <div class="d-flex align-items-center justify-content-center gap-2">
-                            <i class="bi bi-pencil-square fs-3"></i> <h3 class="mb-0 fw-bolder text-uppercase tracking-tight ">Radicar PQRS</h3>
-                        </div>
-                        <p class="text-center mb-0 small opacity-75">Tu opinión nos ayuda a crecer como comunidad</p>
-                    </div>
-                    
-                    <div class="card-body p-4 p-md-5 bg-white">
-                        <form action="{% url 'comunidad:guardar_pqrs' %}" method="POST" class="needs-validation">
-                            {% csrf_token %}
-                            
-                            <div class="mb-3 custom-form-style">
-                                {{ form|crispy }}
-                            </div>
-                            
-                            <div class="alert alert-info border-0 rounded-3 small mb-4">
-                                <i class="bi bi-info-circle-fill me-2"></i>
-                                Todos los campos marcados con asterisco (*) son obligatorios.
-                            </div>
-
-                            <hr class="my-4 text-secondary opacity-25">
-
-                            <div class="d-grid d-md-flex justify-content-md-end gap-3">
-                                <a href="{% url 'comunidad:pqrs' %}" class="btn btn-light btn-lg px-4 fw-semibold text-secondary border">
-                                    Cancelar
-                                </a>
-                                <button type="submit" class="btn btn-success btn-lg px-5 fw-bold shadow-sm">
-                                    Enviar Solicitud <i class="bi bi-send-fill ms-2"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="card-footer bg-white py-3 border-0 text-center">
-                        <small class="text-muted">Mongua, Boyacá - Corazón verde de Colombia</small>
-                    </div>
+<div class="container-fluid py-5 mt-5 " style="background-color: #f8f9fa; min-height: 80vh; display: flex; align-items: center;">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-8 col-lg-5">
+            <div class="card shadow-sm border-0 mb-4">
+                
+                <div class="card-header bg-success text-white py-3 ">
+                    <h5 class="mb-0 fw-bold text-center">Radicar Nueva PQRS</h5>
                 </div>
+                
+                <div class="card-body p-4">
+                    <form action="{% url 'guardar_pqrs' %}" method="POST">
+                        {% csrf_token %}
+                        
+                        {{ form|crispy }}
+                        
+                        <hr class="my-4 text-secondary opacity-25">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'crear_pqrs' %}" class="btn btn-outline-secondary">Limpiar</a>
+                            <button type="submit" class="btn btn-success px-5 fw-bold">
+                                Enviar Solicitud
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>

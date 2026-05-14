@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 
 
 class Categoria(models.Model):
@@ -15,16 +14,12 @@ class Categoria(models.Model):
         return self.nombre
 
 class Actividades(models.Model):
-    NIVEL_CHOICES = [
-        ('Alta', 'Alta'),
-        ('Media', 'Media'),
-        ('Baja', 'Baja'),
-    ]
-    nombre = models.CharField(max_length=100, verbose_name='Nombre de la Actividad')
-    descripcion = models.TextField(verbose_name='Descripción')
-    nivel_dificultad = models.CharField(max_length=10, choices=NIVEL_CHOICES, verbose_name='Nivel de Dificultad')
-    equipo_requerimiento = models.TextField(verbose_name='Equipo Requerido')
-    recomendacion_salud = models.TextField(verbose_name='Recomendaciones de Salud')
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField()
+    nivel_dificultad = models.CharField(max_length=50)
+    equipo_requerimiento = models.TextField()
+    recomendacion_salud = models.TextField()
+
     class Meta:
         verbose_name = 'Actividad'
         verbose_name_plural = 'Actividades'
@@ -33,25 +28,14 @@ class Actividades(models.Model):
         return self.nombre
 
 class Paquete(models.Model):
-    imagen = models.ImageField(upload_to='destinos/', null=True, blank=True)
-    nombre = models.CharField(max_length=100, verbose_name='Nombre del Paquete')
-    descripcion = models.TextField(verbose_name='Descripción')
-    precio = models.IntegerField(verbose_name='Precio Total')
-    duracion_estimada = models.CharField(max_length=50)
+    imagen = models.ImageField(upload_to='paquetes/', null=True, blank=True)
+    nombre = models.CharField(max_length=200)
+    descripcion = models.TextField()
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    duracion_estimada = models.CharField(max_length=100)
     punto_encuentro = models.CharField(max_length=200)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
-    actividades = models.ManyToManyField(Actividades, through='PaqueteActividad')
+    codigo_categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    actividades = models.ManyToManyField(Actividades)
 
-
-class PaqueteActividad(models.Model):
-    paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE)
-    actividad = models.ForeignKey(Actividades, on_delete=models.CASCADE)
-
-    class Meta:
-        # Esto coincide con el error que tenías en el template
-        db_table = 'paquete_actividades'
-        verbose_name = 'Actividad del Paquete'
-        verbose_name_plural = 'Actividades del Paquete'
     def __str__(self):
-        return f"{self.paquete.nombre} - {self.actividad.nombre}"
-
+        return self.nombre

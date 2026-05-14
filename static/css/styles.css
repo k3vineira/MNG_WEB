@@ -1,22 +1,6 @@
 /* ══════════════ VARIABLES GLOBALES DE COLOR ══════════════ */
 
 :root {
-  /* Sobrescribimos el color 'success' de Bootstrap para todo el proyecto */
-  --bs-success: #1a261f;
-  --bs-success-rgb: 26, 38, 31;
-  --primary-green: #1a261f;
-  
-  /* Paleta Monagua de colores  - Verde */
-    --verde-oscuro: #005215;
-    --verde-bosque: #1a261f;
-    --verde-deep: #1a251e;
-    --verde-main: #2c6e3c;
-    --verde-mid: #406d46;
-    --verde-medio: #5ABA73;
-    --verde-accent: #4caf70;
-    --verde-claro: #96DCAA;
-    --verde-menta: #CFFFE3;
-    --verde-light: #d1e7dd;
     /* Sobrescribimos el color 'success' de Bootstrap para todo el proyecto */
     --bs-success: #1a261f;
     --bs-success-rgb: 26, 38, 31;
@@ -251,17 +235,6 @@ body.sidebar-open #sidebar-overlay {
     display: block !important;
 }
 
-
-/*estilos de reservas*/
-
-  .overlay-blur {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px);
-    z-index: 10; display: flex; align-items: center; justify-content: center;
-    border-radius: 0 0 1rem 1rem;
-  }
-  .link-verde { color: #2c6e3c; font-weight: bold; }
-  
 body {
     font-family: 'Poppins', sans-serif;
 }
