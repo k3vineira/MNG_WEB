@@ -1,6 +1,6 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.shortcuts import render , get_object_or_404, redirect
+from django.shortcuts import render
 from .models import Reserva, Cancelacion
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
@@ -92,25 +92,23 @@ class CancelacionDeleteView(DeleteView):
 # =========================
 
 def reservas_view(request):
-    
-    paquete_id = request.GET.get('paquete_id')
-    paquete = None
-    paquetes_relacionados = []
+    """
+    Vista pública.
+    El template decide si mostrar el formulario
+    o pedir inicio de sesión.
+    """
 
-    if paquete_id:
-        paquete = get_object_or_404(Paquete, id=paquete_id)
-        paquetes_relacionados = Paquete.objects.filter(
-            codigo_categoria=paquete.codigo_categoria
-        ).exclude(id=paquete.id)[:3]
-    else:
-        paquetes_relacionados = Paquete.objects.all()[:3]
+    paquetes = Paquete.objects.all()
 
     context = {
-        'paquete': paquete,
-        'paquetes_relacionados': paquetes_relacionados,
+        'paquetes': paquetes
     }
-    return render(request, 'usuario/reservas.html', context)
-    
+
+    return render(
+        request,
+        'usuario/reservas.html',
+        context
+    )
 
 
 # =========================

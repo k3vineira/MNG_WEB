@@ -4,7 +4,7 @@
 {% block content %}
 <main class="container pt-5 mt-5">
   <div class="row g-4 align-items-stretch justify-content-center mb-5">
-    
+    <!-- SECCIÓN DE IMAGEN -->
     <div class="col-md-5">
       <div class="h-100 shadow-sm rounded-4 overflow-hidden border bg-light d-flex align-items-center justify-content-center">
         {% if paquete and paquete.imagen %}
@@ -35,15 +35,19 @@
               <h5 class="fw-bold">Inicia sesión o regístrate</h5>
               <p class="small mb-3">Para realizar una reserva necesitas tener una cuenta en Monagua.</p>
               <div class="d-flex gap-2 justify-content-center">
-                <a href="#" class="btn btn-success btn-sm">Iniciar Sesión</a>
-                <a href="#" class="btn btn-success btn-sm">Registrarse</a>
+                <a href="{% url 'login' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-success btn-sm">
+                  Iniciar Sesión
+                </a>
+                <a href="{% url 'registro' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-outline-success btn-sm">
+                  Registrarse
+                </a>
               </div>
             </div>
           </div>
           {% endif %}
 
           <!-- EL FORMULARIO COMIENZA AQUÍ PARA ENVOLVER TODO -->
-          
+          <form action="{% if paquete %}{% url 'reservas:guardar_reserva' paquete.id %}{% else %}#{% endif %}" method="POST">
             {% csrf_token %}
 
             <div class="mb-3">
@@ -142,4 +146,14 @@
 </section>
 </main>
 
+<style>
+ 
+  .overlay-blur {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px);
+    z-index: 10; display: flex; align-items: center; justify-content: center;
+    border-radius: 0 0 1rem 1rem;
+  }
+  .link-verde { color: #2c6e3c; font-weight: bold; }
+</style>
 {% endblock %}

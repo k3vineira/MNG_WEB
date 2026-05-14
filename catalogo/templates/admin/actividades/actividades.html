@@ -20,7 +20,7 @@
                             <thead style="background-color: var(--verde-menta);">
                                 <tr style="color: var(--verde-oscuro); border-bottom: 1px solid var(--verde-claro);">
                                     <th class="ps-4 py-3">Actividad</th>
-                                    <th class="py-3">nivel de dificultad</th>
+                                    <th class="py-3">Categoría</th>
                                     
                                     <th class="text-center py-3">Estado</th>
                                     <th class="text-end pe-4 py-3">Acciones</th>
@@ -33,13 +33,9 @@
                                         <span class="fw-bold" style="color: var(--verde-oscuro);">{{ actividad.nombre }}</span>
                                     </td>
                                     <td class="py-3">
-                                        {% if actividad.nivel_dificultad == 'Baja' %}
-                                            <span class="badge bg-success">{{ actividad.nivel_dificultad }}</span>
-                                        {% elif actividad.nivel_dificultad == 'Media' %}
-                                            <span class="badge bg-warning text-dark">{{ actividad.nivel_dificultad }}</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">{{ actividad.nivel_dificultad }}</span>
-                                        {% endif %}
+                                        <span class="badge rounded-pill px-3 py-2" style="background-color: #f8f9fa; color: var(--verde-bosque); border: 1px solid var(--verde-claro);">
+                                            {{ actividad.categoria.nombre }}
+                                        </span>
                                     </td>
                                 <td class="text-center">
                                     {% if actividad.estado %} 
@@ -49,8 +45,8 @@
                                     {% endif %}
                                 </td>
                                     <td class="text-end pe-4 py-3">
-                                        <a href="{% url 'catalogo:editar_actividad' actividad.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
-                                        <a href="{% url 'catalogo:eliminar_actividad' actividad.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
+                                        <a href="{% url 'editar_actividad' actividad.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
+                                        <a href="{% url 'eliminar_actividad' actividad.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
                                     </td>
                                 </tr>
                                 {% empty %}

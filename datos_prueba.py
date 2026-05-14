@@ -50,15 +50,15 @@ def cargar_datos_mongua():
             'precio': 180000,
             'duracion_estimada': '8 horas',
             'punto_encuentro': 'Plaza Principal de Mongua',
-            'categoria': cat_eco
+            'codigo_categoria': cat_eco
         }
     )
 
     # --- 4. ASIGNAR ACTIVIDADES (Uso de la tabla through) ---
     if created:
         # Al usar 'through', creamos las relaciones en la tabla intermedia
-        PaqueteActividad.objects.get_or_create(paquete=paquete, actividad=act1)
-        PaqueteActividad.objects.get_or_create(paquete=paquete, actividad=act2)
+        PaqueteActividad.objects.get_or_create(codigo_paquete=paquete, codigo_actividad=act1)
+        PaqueteActividad.objects.get_or_create(codigo_paquete=paquete, codigo_actividad=act2)
         print(f"✅ Paquete '{paquete.nombre}' creado con sus actividades.")
     else:
         print(f"ℹ️ El paquete '{paquete.nombre}' ya existía.")
