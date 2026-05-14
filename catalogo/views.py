@@ -32,7 +32,7 @@ class PaqueteCreateView(CreateView):
     model = Paquete
     fields = [
         'imagen', 'nombre', 'descripcion', 'precio', 
-        'duracion_estimada', 'punto_encuentro', 'categoria', 'actividades'
+        'duracion_estimada', 'punto_encuentro', 'categoria', 'actividades','estado'
     ]
     template_name = 'admin/paquetes/agregar_paquete.html'
     success_url = reverse_lazy('catalogo:listar_paquetes') 
@@ -42,7 +42,7 @@ class PaqueteUpdateView(UpdateView):
     model = Paquete
     fields = [
         'imagen', 'nombre', 'descripcion', 'precio', 
-        'duracion_estimada', 'punto_encuentro', 'categoria', 'actividades'
+        'duracion_estimada', 'punto_encuentro', 'categoria', 'actividades','estado'
     ]
     template_name = 'admin/paquetes/editar_paquete.html'
     success_url = reverse_lazy('catalogo:listar_paquetes')
@@ -63,14 +63,14 @@ class ActividadesListView(ListView):
 
 class ActividadesCreateView(CreateView):
     model = Actividades
-    fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud']
+    fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud', 'estado']
     template_name = 'admin/actividades/agregar_actividad.html'
     success_url = reverse_lazy('catalogo:listar_actividades')
 
 class ActividadesUpdateView(UpdateView):
 
     model = Actividades
-    fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud']
+    fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud', 'estado']
     template_name = 'admin/actividades/editar_actividad.html'
     success_url = reverse_lazy('catalogo:listar_actividades')
 
