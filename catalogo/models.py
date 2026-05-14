@@ -25,6 +25,7 @@ class Actividades(models.Model):
     nivel_dificultad = models.CharField(max_length=10, choices=NIVEL_CHOICES, verbose_name='Nivel de Dificultad')
     equipo_requerimiento = models.TextField(verbose_name='Equipo Requerido')
     recomendacion_salud = models.TextField(verbose_name='Recomendaciones de Salud')
+    estado = models.BooleanField(default=True, verbose_name='¿Está Activa?')
     class Meta:
         verbose_name = 'Actividad'
         verbose_name_plural = 'Actividades'
@@ -39,12 +40,14 @@ class Paquete(models.Model):
     precio = models.IntegerField(verbose_name='Precio Total')
     duracion_estimada = models.CharField(max_length=50)
     punto_encuentro = models.CharField(max_length=200)
-    codigo_categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     actividades = models.ManyToManyField(Actividades, through='PaqueteActividad')
+    estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
 
 
 class PaqueteActividad(models.Model):
-    codigo_paquete_act = models.AutoField(primary_key=True)
+    paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE)
+    actividad = models.ForeignKey(Actividades, on_delete=models.CASCADE)
 
     codigo_paquete = models.ForeignKey(
         Paquete,
@@ -57,3 +60,6 @@ class PaqueteActividad(models.Model):
     )
     class Meta:
         db_table = 'paquete_actividades'
+        verbose_name = 'Actividad del Paquete'
+        verbose_name_plural = 'Actividades del Paquete'
+    

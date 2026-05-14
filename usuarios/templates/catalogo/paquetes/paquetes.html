@@ -40,8 +40,8 @@
                                 </td>
                                 
                                 <td class="text-end pe-4 py-3">
-                                    <a href="{% url 'editar_paquete' paquete.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
-                                    <a href="{% url 'eliminar_paquete' paquete.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
+                                    <a href="{% url 'catalogo:editar_paquete' paquete.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
+                                    <a href="{% url 'catalogo:eliminar_paquete' paquete.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
                                 </td>
                             </tr>
                             {% empty %}
