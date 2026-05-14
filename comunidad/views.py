@@ -90,3 +90,8 @@ class BlogDeleteView(DeleteView):
     model = Blog
     template_name = 'admin/blog/eliminar_blog.html'
     success_url = reverse_lazy('comunidad:listar_blog')
+
+def blog_usuario(request):
+    
+    articulos = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
+    return render(request, 'usuario/blog.html', {'blogs': articulos})

@@ -17,7 +17,7 @@ class Blog(models.Model):
     contenido          = models.TextField()
     imagen             = models.ImageField(upload_to='blog/', blank=True, null=True)
     fecha_publicacion  = models.DateTimeField(auto_now_add=True)
-    publicado          = models.BooleanField(default=True)
+    publicado = models.BooleanField(default=True, verbose_name='¿Está Publicado?')
 
     class Meta:
         ordering = ['-fecha_publicacion']
@@ -44,6 +44,7 @@ class PQRS(models.Model):
     estado    = models.CharField(max_length=15, choices=ESTADO_CHOICES, default='abierto')
     respuesta = models.TextField(blank=True)
     fecha     = models.DateTimeField(auto_now_add=True)
+    
 
     class Meta:
         verbose_name_plural = 'PQRS'
