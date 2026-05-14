@@ -32,15 +32,15 @@
             <small class="text-white-50 text-uppercase" style="letter-spacing:.1em;font-size:.68rem;">Destinos</small>
           </div>
           <div class="col-6 col-sm-3">
-            <div class="fw-bold fs-2 text-white">99%</div>
-            <small class="text-white-50 text-uppercase" style="letter-spacing:.1em;font-size:.68rem;">Satisfacción</small>
+            <div class="font-playfair fw-bold fs-2">98%</div>
+            <small class="text-dim text-uppercase" style="letter-spacing:.1em;font-size:.68rem;">Satisfacción</small>
           </div>
         </div>
       </div>
 
-      <div class="col-lg-6 p-5">
+      <div class="col-lg-6">
         <div class="position-relative">
-          <img src="{% static 'img/fondo.jpg' %}"
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80"
                alt="Paisaje Monagua"
                class="img-fluid w-100 rounded-4"
                style="height:380px;object-fit:cover;">
@@ -50,8 +50,8 @@
               <i class="bi bi-patch-check-fill text-success"></i>
             </div>
             <div>
-              <div class="fw-semibold small" style="color:#2d4a31;">Turismo responsable monagua</div>
-              <div class="text-muted" style="font-size:.7rem;">Certificados desde 2018</div>
+              <div class="fw-semibold small" style="color:#1E3A22!important;">Turismo responsable</div>
+              <div style="font-size:.7rem;color:#6c757d!important;">Certificados desde 2018</div>
             </div>
           </div>
         </div>
@@ -68,19 +68,14 @@
     <div class="row align-items-center g-5">
 
       <div class="col-lg-5">
-        <div class="row g-2">
-          <div class="col-12">
-            <img src="{% static 'img/fondo3.jpg' %}" alt="Guía turístico"
-                 class="img-fluid w-100 rounded-3" style="height:200px;object-fit:cover;">
-          </div>
-          <div class="col-6">
-            <img src="{% static 'img/fondo4.jpg' %}" alt="Camino"
-                 class="img-fluid w-100 rounded-3" style="height:150px;object-fit:cover;">
-          </div>
-          <div class="col-6">
-            <img src="{% static 'img/fondo2.jpg' %}" alt="Bosque"
-                 class="img-fluid w-100 rounded-3" style="height:150px;object-fit:cover;">
-          </div>
+        <div class="collage-grid">
+          <img class="span-2"
+               src="https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=600&q=80"
+               alt="Guía turístico">
+          <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=500&q=80"
+               alt="Camino">
+          <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=500&q=80"
+               alt="Bosque">
         </div>
       </div>
 
@@ -138,25 +133,19 @@
     </div>
     <div class="row g-4">
       <div class="col-md-6">
-        <div class="card h-100 border-0 rounded-4 p-4 p-lg-5" style="background-color:#3b5e3f;">
-          <div class="d-flex align-items-center justify-content-center rounded-2 bg-white bg-opacity-10 mb-3"
-               style="width:42px;height:42px;">
-            <i class="bi bi-compass text-white fs-5"></i>
-          </div>
-          <h3 class="fw-bold mb-2 fs-4 text-white">Nuestra misión</h3>
-          <p class="text-white-50 fw-light lh-lg mb-0">
+        <div class="card h-100 border-0 rounded-4 p-4 p-lg-5 shadow-sm bg-white hover-lift mv-card">
+          <div class="icon-box mb-3"><i class="bi bi-compass"></i></div>
+          <h3 class="font-playfair fw-bold mb-2 fs-4" style="color:var(--verde-oscuro);">Nuestra misión</h3>
+          <p class="text-muted fw-light lh-lg mb-0">
             Conectar a las personas con los destinos más extraordinarios del mundo a través de experiencias auténticas, seguras y sostenibles, apoyando las comunidades locales.
           </p>
         </div>
       </div>
       <div class="col-md-6">
-        <div class="card h-100 border-0 rounded-4 p-4 p-lg-5" style="background-color:#3b5e3f;">
-          <div class="d-flex align-items-center justify-content-center rounded-2 bg-white bg-opacity-10 mb-3"
-               style="width:42px;height:42px;">
-            <i class="bi bi-eye text-white fs-5"></i>
-          </div>
-          <h3 class="fw-bold mb-2 fs-4 text-white">Nuestra visión</h3>
-          <p class="text-white-50 fw-light lh-lg mb-0">
+        <div class="card h-100 border-0 rounded-4 p-4 p-lg-5 shadow-sm bg-white hover-lift mv-card">
+          <div class="icon-box mb-3"><i class="bi bi-eye"></i></div>
+          <h3 class="font-playfair fw-bold mb-2 fs-4" style="color:var(--verde-oscuro);">Nuestra visión</h3>
+          <p class="text-muted fw-light lh-lg mb-0">
             Ser la agencia de turismo de referencia en Colombia y América Latina, reconocida por transformar la manera en que la gente viaja: con conciencia, curiosidad y respeto.
           </p>
         </div>
@@ -175,42 +164,30 @@
     </div>
     <div class="row g-4">
       <div class="col-sm-6 col-lg-3">
-        <div class="card h-100 border-0 rounded-4 p-4 shadow-sm" style="background-color:#f5f0e8;">
-          <div class="d-flex align-items-center justify-content-center rounded-2 mb-3"
-               style="width:42px;height:42px;background:#eaf3e8;">
-            <i class="bi bi-tree fs-5" style="color:#3b5e3f;"></i>
-          </div>
-          <h4 class="fw-bold mb-1 fs-5" style="color:#2d4a31;">Sostenibilidad</h4>
+        <div class="card h-100 border-0 rounded-4 p-4 bg-crema hover-lift shadow-sm">
+          <div class="icon-box mb-3"><i class="bi bi-tree"></i></div>
+          <h4 class="font-playfair fw-bold mb-1 fs-5" style="color:var(--verde-oscuro);">Sostenibilidad</h4>
           <p class="text-muted small lh-lg mb-0">Cada decisión evalúa su impacto en el medio ambiente y en las comunidades locales.</p>
         </div>
       </div>
       <div class="col-sm-6 col-lg-3">
-        <div class="card h-100 border-0 rounded-4 p-4 shadow-sm" style="background-color:#f5f0e8;">
-          <div class="d-flex align-items-center justify-content-center rounded-2 mb-3"
-               style="width:42px;height:42px;background:#eaf3e8;">
-            <i class="bi bi-shield-check fs-5" style="color:#3b5e3f;"></i>
-          </div>
-          <h4 class="fw-bold mb-1 fs-5" style="color:#2d4a31;">Confianza</h4>
+        <div class="card h-100 border-0 rounded-4 p-4 bg-crema hover-lift shadow-sm">
+          <div class="icon-box mb-3"><i class="bi bi-shield-check"></i></div>
+          <h4 class="font-playfair fw-bold mb-1 fs-5" style="color:var(--verde-oscuro);">Confianza</h4>
           <p class="text-muted small lh-lg mb-0">Precios claros, condiciones honestas y comunicación directa en todo momento.</p>
         </div>
       </div>
       <div class="col-sm-6 col-lg-3">
-        <div class="card h-100 border-0 rounded-4 p-4 shadow-sm" style="background-color:#f5f0e8;">
-          <div class="d-flex align-items-center justify-content-center rounded-2 mb-3"
-               style="width:42px;height:42px;background:#eaf3e8;">
-            <i class="bi bi-people fs-5" style="color:#3b5e3f;"></i>
-          </div>
-          <h4 class="fw-bold mb-1 fs-5" style="color:#2d4a31;">Comunidad</h4>
+        <div class="card h-100 border-0 rounded-4 p-4 bg-crema hover-lift shadow-sm">
+          <div class="icon-box mb-3"><i class="bi bi-people"></i></div>
+          <h4 class="font-playfair fw-bold mb-1 fs-5" style="color:var(--verde-oscuro);">Comunidad</h4>
           <p class="text-muted small lh-lg mb-0">Trabajamos con guías y proveedores locales para generar valor en cada lugar.</p>
         </div>
       </div>
       <div class="col-sm-6 col-lg-3">
-        <div class="card h-100 border-0 rounded-4 p-4 shadow-sm" style="background-color:#f5f0e8;">
-          <div class="d-flex align-items-center justify-content-center rounded-2 mb-3"
-               style="width:42px;height:42px;background:#eaf3e8;">
-            <i class="bi bi-star fs-5" style="color:#3b5e3f;"></i>
-          </div>
-          <h4 class="fw-bold mb-1 fs-5" style="color:#2d4a31;">Excelencia</h4>
+        <div class="card h-100 border-0 rounded-4 p-4 bg-crema hover-lift shadow-sm">
+          <div class="icon-box mb-3"><i class="bi bi-star"></i></div>
+          <h4 class="font-playfair fw-bold mb-1 fs-5" style="color:var(--verde-oscuro);">Excelencia</h4>
           <p class="text-muted small lh-lg mb-0">Nos esforzamos para que cada viaje supere las expectativas de nuestros clientes.</p>
         </div>
       </div>
@@ -233,12 +210,11 @@
     <div class="row g-4 justify-content-center">
 
       <div class="col-6 col-md-3 text-center">
-        <img src="{% static 'img/victor.png' %}" alt="Victor Toledo"
-             class="rounded-circle border border-3 border-secondary mb-3"
-             style="width:110px;height:110px;object-fit:cover;">
-        <div class="fw-bold text-white">Victor Toledo</div>
-        <small class="text-white-50 text-uppercase fw-semibold d-block mb-2" style="letter-spacing:.08em;font-size:.65rem;">CEO</small>
-        <p class="text-white-50 small mb-3 px-1">Biólogo de profesión, explorador de vocación. Más de 15 años recorriendo los Andes.</p>
+        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&q=80"
+             alt="Laura Méndez" class="member-photo mb-3">
+        <div class="fw-bold font-playfair" style="color:var(--verde-oscuro);">Laura Méndez</div>
+        <small class="text-verde text-uppercase fw-semibold d-block mb-2" style="letter-spacing:.08em;font-size:.65rem;">Fundadora & CEO</small>
+        <p class="text-muted small mb-3 px-1">Bióloga de profesión, exploradora de vocación. Más de 15 años recorriendo los Andes.</p>
         <div class="d-flex justify-content-center gap-2">
           <a href="#" class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:28px;height:28px;"><i class="bi bi-linkedin" style="font-size:.6rem;"></i></a>
           <a href="#" class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:28px;height:28px;"><i class="bi bi-instagram" style="font-size:.6rem;"></i></a>
@@ -246,12 +222,11 @@
       </div>
 
       <div class="col-6 col-md-3 text-center">
-        <img src="{% static 'img/kevin.png' %}" alt="Kevin Neira"
-             class="rounded-circle border border-3 border-secondary mb-3"
-             style="width:110px;height:110px;object-fit:cover;">
-        <div class="fw-bold text-white">Kevin Neira</div>
-        <small class="text-white-50 text-uppercase fw-semibold d-block mb-2" style="letter-spacing:.08em;font-size:.65rem;">Director de Rutas & CEO</small>
-        <p class="text-white-50 small mb-3 px-1">Especialista en ecoturismo con más de 120 itinerarios únicos diseñados.</p>
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80"
+             alt="Carlos Ruiz" class="member-photo mb-3">
+        <div class="fw-bold font-playfair" style="color:var(--verde-oscuro);">Carlos Ruiz</div>
+        <small class="text-verde text-uppercase fw-semibold d-block mb-2" style="letter-spacing:.08em;font-size:.65rem;">Director de Rutas</small>
+        <p class="text-muted small mb-3 px-1">Especialista en ecoturismo con más de 120 itinerarios únicos diseñados.</p>
         <div class="d-flex justify-content-center gap-2">
           <a href="#" class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:28px;height:28px;"><i class="bi bi-linkedin" style="font-size:.6rem;"></i></a>
           <a href="#" class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:28px;height:28px;"><i class="bi bi-instagram" style="font-size:.6rem;"></i></a>
@@ -259,15 +234,26 @@
       </div>
 
       <div class="col-6 col-md-3 text-center">
-        <img src="{% static 'img/victor.png' %}" alt="Dayana Mozo"
-             class="rounded-circle border border-3 border-secondary mb-3"
-             style="width:110px;height:110px;object-fit:cover;">
-        <div class="fw-bold text-white">Dayana Mozo</div>
-        <small class="text-white-50 text-uppercase fw-semibold d-block mb-2" style="letter-spacing:.08em;font-size:.65rem;">Experiencia del Viajero & CEO</small>
-        <p class="text-white-50 small mb-3 px-1">Su obsesión es que cada viajero regrese transformado. Diseña experiencias a medida.</p>
+        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=300&q=80"
+             alt="Sofía Torres" class="member-photo mb-3">
+        <div class="fw-bold font-playfair" style="color:var(--verde-oscuro);">Sofía Torres</div>
+        <small class="text-verde text-uppercase fw-semibold d-block mb-2" style="letter-spacing:.08em;font-size:.65rem;">Experiencia del Viajero</small>
+        <p class="text-muted small mb-3 px-1">Su obsesión es que cada viajero regrese transformado. Diseña experiencias a medida.</p>
         <div class="d-flex justify-content-center gap-2">
           <a href="#" class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:28px;height:28px;"><i class="bi bi-linkedin" style="font-size:.6rem;"></i></a>
           <a href="#" class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:28px;height:28px;"><i class="bi bi-instagram" style="font-size:.6rem;"></i></a>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 text-center">
+        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=80"
+             alt="Andrés Vega" class="member-photo mb-3">
+        <div class="fw-bold font-playfair" style="color:var(--verde-oscuro);">Andrés Vega</div>
+        <small class="text-verde text-uppercase fw-semibold d-block mb-2" style="letter-spacing:.08em;font-size:.65rem;">Guía Senior & Fotógrafo</small>
+        <p class="text-muted small mb-3 px-1">Ha capturado la esencia de más de 30 países. Guía certificado apasionado por el viaje.</p>
+        <div class="d-flex justify-content-center gap-2">
+          <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:28px;height:28px;"><i class="bi bi-linkedin" style="font-size:.6rem;"></i></a>
+          <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle p-0 d-flex align-items-center justify-content-center" style="width:28px;height:28px;"><i class="bi bi-instagram" style="font-size:.6rem;"></i></a>
         </div>
       </div>
 
@@ -275,20 +261,21 @@
   </div>
 </section>
 
+
 <!-- ══ CTA ══ -->
-<section class="py-4 text-center" style="background-color:#f5f0e8;">
+<section class="cta-bg py-5 text-center">
   <div class="container py-4">
-    <h2 class="fw-bold mb-3" style="font-size:clamp(1.6rem,3.5vw,2.4rem);color:#2d4a31;">
+    <h2 class="font-playfair fw-bold text-white mb-3" style="font-size:clamp(1.6rem,3.5vw,2.4rem);">
       ¿Listo para tu próxima aventura?
     </h2>
-    <p class="fw-light mb-4 mx-auto text-muted" style="max-width:420px;">
+    <p class="fw-light mb-4 mx-auto" style="color:rgba(255,255,255,.55);max-width:420px;">
       Cuéntanos a dónde sueñas con ir y construimos juntos la experiencia perfecta.
     </p>
     <div class="d-flex flex-wrap justify-content-center gap-3">
       <a href="#" class="btn fw-semibold rounded-pill px-4 py-2 text-white" style="background:#3b5e3f;">
         <i class="bi bi-map me-2"></i>Explorar destinos
       </a>
-      <a href="#" class="btn fw-semibold rounded-pill px-4 py-2 text-white" style="background:#3b5e3f;">
+      <a href="#" class="btn btn-outline-light fw-medium rounded-pill px-4 py-2">
         <i class="bi bi-headset me-2"></i>Contactar un guía
       </a>
     </div>
