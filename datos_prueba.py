@@ -5,9 +5,9 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
-# Importamos los modelos necesarios
 from catalogo.models import Categoria, Actividades, Paquete, PaqueteActividad
-from comunidad.models import Blog  # Asegúrate de que tu app se llame 'comunidad'
+# Si tienes Blog y PQRS en 'comunidad', asegúrate de que los nombres de campos coincidan
+# from comunidad.models import Blog, PQRS 
 
 def cargar_datos_mongua():
     print("🚀 Iniciando carga de datos para la Agencia Mongua...")
@@ -32,6 +32,15 @@ def cargar_datos_mongua():
             'recomendacion_salud': 'No apto para personas con problemas respiratorios graves.'
         }
     )
+    act2, _ = Actividades.objects.get_or_create(
+        nombre="Avistamiento de Cóndores",
+        defaults={
+            'descripcion': 'Observación de aves en los riscos.',
+            'nivel_dificultad': 'Baja',
+            'equipo_requerimiento': 'Binoculares',
+            'recomendacion_salud': 'Ninguna especial.'
+        }
+    )
 
     # --- 3. PAQUETES TURÍSTICOS ---
     paquete, created = Paquete.objects.get_or_create(
@@ -41,38 +50,20 @@ def cargar_datos_mongua():
             'precio': 180000,
             'duracion_estimada': '8 horas',
             'punto_encuentro': 'Plaza Principal de Mongua',
-            'categoria': cat_eco
+            'codigo_categoria': cat_eco
         }
     )
 
+    # --- 4. ASIGNAR ACTIVIDADES (Uso de la tabla through) ---
     if created:
-        PaqueteActividad.objects.get_or_create(paquete=paquete, actividad=act1)
-        print(f"✅ Paquete '{paquete.nombre}' creado.")
+        # Al usar 'through', creamos las relaciones en la tabla intermedia
+        PaqueteActividad.objects.get_or_create(codigo_paquete=paquete, codigo_actividad=act1)
+        PaqueteActividad.objects.get_or_create(codigo_paquete=paquete, codigo_actividad=act2)
+        print(f"✅ Paquete '{paquete.nombre}' creado con sus actividades.")
+    else:
+        print(f"ℹ️ El paquete '{paquete.nombre}' ya existía.")
 
-    # --- 4. BLOGS (NUEVA SECCIÓN) ---
-    print("\n📝 Cargando artículos del Blog...")
-    
-    # Artículo 1: Publicado
-    blog1, created1 = Blog.objects.get_or_create(
-        titulo="Laguna Negra: El espejo de Mongua",
-        defaults={
-            'contenido': 'La Laguna Negra es un destino místico en el Páramo de Ocetá. Sus aguas oscuras reflejan la paz de la montaña...',
-            'publicado': True  # Aparecerá en la web
-        }
-    )
-    if created1: print(f"✅ Blog '{blog1.titulo}' creado como PUBLICADO.")
-
-    # Artículo 2: Borrador (No publicado)
-    blog2, created2 = Blog.objects.get_or_create(
-        titulo="Tips para visitar el Páramo",
-        defaults={
-            'contenido': 'Contenido en desarrollo sobre qué ropa llevar y cómo cuidar el ecosistema de frailejones.',
-            'publicado': False  # Aparecerá como "Borrado" en tu panel
-        }
-    )
-    if created2: print(f"✅ Blog '{blog2.titulo}' creado como BORRADOR (No publicado).")
-
-    print("\n✨ Proceso finalizado con éxito.")
+    print("\n✨ Proceso finalizado. Ahora tienes datos reales para probar tu panel admin.")
 
 if __name__ == '__main__':
     cargar_datos_mongua()

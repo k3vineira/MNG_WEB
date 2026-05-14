@@ -1,0 +1,33 @@
+{
+  "name": "mng_psnl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k3vineira/MNG_WEB.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/k3vineira/MNG_WEB/issues"
+  },
+  "homepage": "https://github.com/k3vineira/MNG_WEB#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.5.0",
+    "bootstrap": "^5.3.8",
+    "css-loader": "^7.1.4",
+    "mini-css-extract-plugin": "^2.10.2",
+    "postcss-loader": "^8.2.1",
+    "sass": "^1.99.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.106.2",
+    "webpack-cli": "^7.0.2",
+    "webpack-dev-server": "^5.2.3"
+  }
+}

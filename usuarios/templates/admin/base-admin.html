@@ -30,30 +30,27 @@
 
 <!-- ══════════════ SIDEBAR ══════════════ -->
 <aside id="mainSidebar"
-       class="d-flex flex-column bg-success text-white position-fixed top-0 start-0 h-100"
+       class="d-flex flex-column bg-dark text-white position-fixed top-0 start-0 h-100"
        style="overflow-y:auto;">
   <!-- Brand -->
-  <a href="/" class="d-flex align-items-center gap-2 p-3 text-decoration-none border-bottom border-white border-opacity-10">
+  <a href="/" class="d-flex align-items-center gap-2 p-3 text-decoration-none border-bottom border-secondary">
     <img src="{% static 'img/logo_monagua.png' %}" alt="Logo Monagua"
          class="rounded-circle border border-success flex-shrink-0"
          width="40" height="40" style="object-fit:cover">
     <div>
       <div class="fw-bold text-white small" style="letter-spacing:1px">MONAGUA</div>
-      <div class="text-white-50" style="font-size:.65rem;letter-spacing:2px;text-transform:uppercase">
-        {% block sidebar_subtitle %}Admin Panel{% endblock %}
-      </div>
+      <div class="text-success" style="font-size:.65rem;letter-spacing:2px;text-transform:uppercase">Admin Panel</div>
     </div>
   </a>
 
   <!-- Nav -->
   <nav class="flex-grow-1 py-2">
-    {% block sidebar_nav %}
-    <!-- Enlaces por defecto (Admin) -->
-    <div class="text-uppercase text-white-50 fw-semibold px-3 py-1" style="font-size:.65rem;letter-spacing:.1em">Principal</div>
-    
+
+    <div class="text-uppercase text-secondary fw-semibold px-3 py-1" style="font-size:.65rem;letter-spacing:.1em">Principal</div>
+
     <a href="{% url 'usuarios:dashboard' %}"
        class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'dashboard' %}bg-white bg-opacity-25 text-white{% else %}text-white-50{% endif %}">
+              {% if request.resolver_match.url_name == 'dashboard' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-grid-1x2-fill"></i> Dashboard
     </a>
 
@@ -63,11 +60,11 @@
 
     <a href="{% url 'usuarios:gestion_guias' %}"
        class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'gestion_guias' %}bg-white bg-opacity-25 text-white{% else %}text-white-50{% endif %}">
+              {% if request.resolver_match.url_name == 'gestion_guias' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-people-fill"></i> Usuarios y Guías
     </a>
 
-    <div class="text-uppercase text-white-50 fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Gestión</div>
+    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Gestión</div>
 
     <a href="{% url 'catalogo:listar_paquetes' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
       <i class="bi bi-box-seam-fill"></i> Paquetes Turísticos
@@ -93,13 +90,10 @@
   <i class="bi bi-chat-left-dots-fill"></i> PQRS
 </a>
     <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-    <a href="{% url 'promociones_gestion' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'promociones_gestion' %}bg-white bg-opacity-25 text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-megaphone-fill"></i> Promociones
     </a>
 
-    <div class="text-uppercase text-white-50 fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Sistema</div>
+    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Sistema</div>
 
     <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
       <i class="bi bi-bell-fill"></i> Notificaciones
@@ -107,11 +101,11 @@
     <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
       <i class="bi bi-gear-fill"></i> Configuración
     </a>
-    {% endblock %}
+
   </nav>
 
   <!-- Footer sidebar -->
-  <div class="p-3 border-top border-white border-opacity-10">
+  <div class="p-3 border-top border-secondary">
     <div class="d-flex align-items-center gap-2 mb-2">
       <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
            alt="{{ user.first_name|default:'Admin' }}"
@@ -119,19 +113,7 @@
            width="34" height="34" style="object-fit:cover">
       <div>
         <div class="fw-semibold text-white small">{{ user.first_name|default:'Administrador' }}</div>
-        <div class="text-white-50" style="font-size:.7rem">
-          {% if user.is_superuser %}
-            Super Admin
-          {% elif user.is_staff %}
-            Administrador
-          {% elif user.es_guia %}
-            Guía Turístico
-          {% elif user.es_turista %}
-            Viajero
-          {% else %}
-            Usuario
-          {% endif %}
-        </div>
+        <div class="text-success" style="font-size:.7rem">Super Admin</div>
       </div>
     </div>
     <form action="{% url 'usuarios:logout' %}" method="post">

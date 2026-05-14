@@ -7,7 +7,7 @@ class PqrsForm(forms.ModelForm):
        
         fields = ['cliente', 'tipo', 'asunto', 'descripcion']
         
-        
+        # Opcional: Añadir etiquetas personalizadas
         labels = {
             'cliente': 'Nombre Completo',
             'tipo': 'Tipo de Solicitud',
@@ -28,10 +28,10 @@ class BlogForm(forms.ModelForm):
             'contenido': 'Contenido del Blog',
             'imagen': 'Imagen del Blog',
             'fecha_publicacion': 'Fecha de Publicación',
-            'publicado': '¿Publicar ahora?'
+            'publicado': '¿Publicar ahora?',
         }     
         widgets = {
             'contenido': forms.Textarea(attrs={'rows': 10, 'placeholder': 'Escribe el contenido del blog aquí...'}),
-            'publicado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            
         }
         

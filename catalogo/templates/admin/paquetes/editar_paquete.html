@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-
-<div class="container " style="margin-top: 80px; margin-bottom: 80px;">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-12 col-md-5">
             <div class="card shadow-sm border-0">
                 
-                <div class=" card-header text-white text-center" style="background-color: #004d40;">
+                <div class="card-header text-white text-center" style="background-color: #004d40;">
                     <h5 class="mb-0 fs-6 fw-bold text-uppercase">
                         <i class="bi bi-pencil-square me-2"></i>Editar Registro
                     </h5>
@@ -25,7 +23,7 @@
                         <hr class="my-4 opacity-25">
 
                         <div class="d-flex justify-content-center gap-3">
-                            <a href="{% url 'catalogo:listar_paquetes' %}" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">
+                            <a href="{% url 'admin_paquetes' %}" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">
                                 Cancelar
                             </a>
                         

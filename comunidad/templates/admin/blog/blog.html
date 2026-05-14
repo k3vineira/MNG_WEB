@@ -27,19 +27,16 @@
                             <tr style="border-bottom: 1px solid #f0f0f0;">
                                 <td class="ps-4 py-3 fw-medium text-secondary">{{ entrada.titulo }}</td>
                                 <td class="text-center">
-                                    <td>
-                                     {% if entrada.publicado %} 
+                                    {% if entrada.estado %} 
                                         <span class="btn btn-sm btn-success">publicado</span>
                                     {% else %}
                                         <span class="btn btn-sm btn-danger">borrado</span>
                                     {% endif %}
-
-                                </td>
                                 </td>
 
                                 <td class="text-end pe-4 py-3">
-                                    <a href="{% url 'comunidad:editar_blog' entrada.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
-                                    <a href="{% url 'comunidad:eliminar_blog' entrada.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
+                                    <a href="{% url 'editar_blog' entrada.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
+                                    <a href="{% url 'eliminar_blog' entrada.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
                                 </td>
                             </tr>
                             {% empty %}

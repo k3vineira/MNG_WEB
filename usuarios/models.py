@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class Usuario(AbstractUser):
-    email = models.EmailField(unique=True, verbose_name='Correo Electrónico')
     tipo_documento = models.CharField(max_length=20, blank=True)
     numero_documento = models.CharField(max_length=20, unique=True, null=True)
     telefono = models.CharField(max_length=15, blank=True)
