@@ -1,12 +1,12 @@
-{% extends 'base-admin.html' %}
+{% extends 'admin/base-admin.html' %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="card border-0 shadow-sm" style="border-radius: 10px; overflow: hidden;">
         
-        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3" style="background-color: #388e3c !important;">
-            <h4 class="mb-0 text-white fw-bold">Administración de Reservas</h4>
-            <a href="{% url 'crear_reserva' %}" class="btn btn-light btn-sm fw-bold" style="border-radius: 20px; color: #388e3c;">
+        <div class="d-flex justify-content-between align-items-end p-3 shadow-sm rounded-top border-bottom border-white border-opacity-25" style="background-color: var(--verde-oscuro);">
+    <h3 class="text-white mb-0 fw-bold">Administración de reservas</h3>
+            <a href="{% url 'reservas:crear_reserva' %}" class="btn btn-light btn-sm fw-bold" style="border-radius: 20px; color: #388e3c;">
                 <i class="bi bi-plus-circle"></i> Nueva Reserva
             </a>
         </div>

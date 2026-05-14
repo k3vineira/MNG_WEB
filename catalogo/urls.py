@@ -1,12 +1,13 @@
 from django.urls import path
 from . import views
 
+
 app_name = 'catalogo'
 
 urlpatterns = [
-    path('', views.inicio, name='inicio'),
-    path('nuestros-destinos/', views.destinos, name='destinos'),
     
+    path('nuestros-destinos/', views.destinos, name='destinos'),
+
     #categorias
     path('categorias/', views.CategoriaListView.as_view(), name='listar_categorias'),
     path('categorias/nueva/', views.CategoriaCreateView.as_view(), name='crear_categoria'),
