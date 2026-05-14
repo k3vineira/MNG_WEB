@@ -25,7 +25,6 @@ class Actividades(models.Model):
     nivel_dificultad = models.CharField(max_length=10, choices=NIVEL_CHOICES, verbose_name='Nivel de Dificultad')
     equipo_requerimiento = models.TextField(verbose_name='Equipo Requerido')
     recomendacion_salud = models.TextField(verbose_name='Recomendaciones de Salud')
-    estado = models.BooleanField(default=True, verbose_name='¿Está Activa?')
     class Meta:
         verbose_name = 'Actividad'
         verbose_name_plural = 'Actividades'
@@ -42,7 +41,6 @@ class Paquete(models.Model):
     punto_encuentro = models.CharField(max_length=200)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     actividades = models.ManyToManyField(Actividades, through='PaqueteActividad')
-    estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
 
 
 class PaqueteActividad(models.Model):
