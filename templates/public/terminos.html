@@ -4,7 +4,31 @@
 {% block titulo %}Términos y Condiciones | Monagua{% endblock %}
 
 {% block extra_head %}
-
+<style>
+  .hero-terms {
+    background: linear-gradient(rgba(30,58,34,.88), rgba(30,58,34,.88)),
+                url("{% static 'img/fondo_log.jpg' %}") center/cover no-repeat !important;
+    padding: 4rem 0;
+  }
+  /* Texto blanco explícito en el hero */
+  .hero-terms, .hero-terms h1, .hero-terms p, .hero-terms span:not(.badge) {
+    color: #fff !important;
+  }
+  .sidebar-sticky { position: sticky; top: 80px; }
+  .nav-terms .nav-link {
+    color: #6c757d;
+    border-left: 2px solid #dee2e6;
+    border-radius: 0;
+    padding: .4rem .75rem;
+    font-size: .85rem;
+    transition: all .2s;
+  }
+  .nav-terms .nav-link:hover {
+    color: #3B643F;
+    border-left-color: #3B643F;
+    background: rgba(59,100,63,.06);
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -13,11 +37,11 @@
 <section class="hero-terms text-center ">
   <div class="container p-10 p-lg-5">
     <span class="badge rounded-pill  px-3 py-2 mb-3"
-          style="background:rgba(255, 255, 255, 0.12);border:1px solid rgba(255,255,255,.25);letter-spacing:.15em;font-size:.68rem;color:rgba(255, 255, 255, 0.6)!important;">
+          style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);letter-spacing:.15em;font-size:.68rem;color:rgba(255,255,255,.6)!important;">
       LEGAL
     </span>
     <h1 class="fw-bold mb-2">Términos y Condiciones</h1>
-    <p style="color:rgba(255, 255, 255, 0.78)!important;" class="mb-0">Tu seguridad y confianza son nuestra prioridad en cada destino</p>
+    <p style="color:rgba(49, 148, 62, 0.78)!important;" class="mb-0">Tu seguridad y confianza son nuestra prioridad en cada destino</p>
   </div>
 </section>
 
