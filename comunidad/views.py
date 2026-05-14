@@ -1,8 +1,6 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from .models import PQRS, Blog
 from .forms import PqrsForm , BlogForm 
 from django.contrib import messages 
@@ -89,15 +87,3 @@ def blog_usuario(request):
     articulos = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
     
     return render(request, 'usuario/blog.html', {'blogs': articulos})
-@login_required
-def resenas_view(request):
-    """
-    Vista para visualizar las reseñas del usuario.
-    Sigue el patrón MVT y permite gestionar comentarios propios.
-    """
-    context = {
-        'resenas': [], # Aquí se filtrarían las reseñas del usuario: Resena.objects.filter(usuario=request.user)
-        'total_resenas': 0,
-        'promedio': 0.0,
-    }
-    return render(request, 'private/comentarios.html', context)

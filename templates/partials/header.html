@@ -3,7 +3,7 @@
 <!-- ── Menú Fullscreen Overlay ── -->
 <div class="offcanvas offcanvas-top h-100 offcanvas-premium" tabindex="-1" id="menuPremium" aria-labelledby="menuPremiumLabel">
   <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom border-dark border-opacity-10">
-    <a class="navbar-brand m-0 d-flex align-items-center text-white" href="/">
+    <a class="navbar-brand m-0 d-flex align-items-center text-dark" href="/">
       <span class="fw-bold me-2">MONAGUA</span>
       <img src="{% static 'img/Logo.png' %}" alt="Monagua" width="60" height="60" class="object-fit-contain">
     </a>
@@ -12,7 +12,7 @@
       {% if user.is_authenticated %}
         <!-- Caso: Usuario Logueado (Dropdown en Menú Premium) -->
         <div class="dropdown">
-          <a class="dropdown-toggle d-flex align-items-center gap-2 btn btn-outline-light rounded-pill px-3 py-1 text-decoration-none" 
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 btn btn-outline-success rounded-pill px-3 py-1" 
              href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             {% if user.imagen_perfil %}
               <img src="{{ user.imagen_perfil.url }}" alt="Avatar" width="28" height="28" class="rounded-circle object-fit-cover">
@@ -48,12 +48,12 @@
           </ul>
         </div>
       {% else %}
-        <a class="btn btn-outline-light rounded-pill px-4 py-2" href="{% url 'usuarios:login' %}">Acceder</a>
+        <a class="nav-link btn btn-outline-success rounded-pill px-4 py-2" href="{% url 'usuarios:login' %}">Acceder</a>
       {% endif %}
-      <a class="nav-link text-white" href="#">
+      <a class="nav-link text-dark" href="#">
         <i class="bi bi-cart3 fs-5"></i>
       </a>
-      <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
   </div>
 
@@ -67,7 +67,7 @@
           <nav class="d-flex flex-column gap-3 gap-md-4">
             <a href="/" class="nav-main-link display-3 fw-bold">Inicio</a>
             {% if user.is_authenticated %}
-              <a href="{% url 'usuarios:detalles' %}" class="nav-main-link display-3 fw-bold">Mi Perfil</a>
+              <a href="{% url 'usuarios:detalles' %}" class="nav-main-link display-3 fw-bold text-success">Mi Perfil</a>
               {% if user.es_turista %}
                 <a href="{% url 'reservas:listar_reservas' %}" class="nav-main-link display-3 fw-bold">Mis Reservas</a>
               {% endif %}
@@ -97,7 +97,7 @@
 </div>
 
 <!-- ── Navbar Principal ── -->
-<nav class="navbar navbar-glass border-bottom px-3 py-2 fixed-top rounded-bottom-2 shadow-sm">
+<nav class="navbar navbar-glass border-bottom px-3 py-2 fixed-top">
   <div class="container-fluid d-flex align-items-center justify-content-between">
     
     <a class="navbar-brand m-0 d-flex align-items-center text-dark" href="/">
@@ -124,9 +124,9 @@
       </li>
       <li>
         <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" 
-        href="{% url 'usuarios:nosotros' %}" 
+        href="https://mail.google.com/mail/?view=cm&fs=1&to=tucorreo@tuempresa.com&su=Consulta%20desde%20la%20web&body=Hola,%20me%20gustaría%20obtener%20más%20información%20sobre..." 
         target="_blank">
-          <i class="bi bi-people fs-6"></i>NOSOTROS
+  <i class="bi bi-envelope fs-6"></i>CONTACTO
    </a>
       </li>
       <li>
