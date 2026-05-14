@@ -45,9 +45,15 @@ class Paquete(models.Model):
 
 class PaqueteActividad(models.Model):
     codigo_paquete_act = models.AutoField(primary_key=True)
-    
-    codigo_paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE)
-    codigo_actividad = models.ForeignKey(Actividades, on_delete=models.CASCADE)
 
+    codigo_paquete = models.ForeignKey(
+        Paquete,
+        on_delete=models.CASCADE
+    )
+
+    codigo_actividad = models.ForeignKey(
+        Actividades,
+        on_delete=models.CASCADE
+    )
     class Meta:
         db_table = 'paquete_actividades'
