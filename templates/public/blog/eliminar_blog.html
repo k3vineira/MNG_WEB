@@ -1,0 +1,37 @@
+{% extends 'admin/base-admin.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger shadow">
+                <div class="card-header bg-danger text-white text-center">
+                    <h4><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h4>
+                </div>
+                <div class="card-body text-center p-4">
+                    <p class="fs-5">Estás a punto de eliminar un nota del blog :</p>
+                    <h3 class="text-secondary mb-4">"{{ blog.titulo }}"</h3>
+                    
+                    <div class="alert alert-warning">
+                        <small>Esta acción no se puede deshacer.</small>
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="bi bi-trash"></i> Sí, eliminar permanentemente
+                            </button>
+                            <a href="{% url 'admin_blog' %}" class="btn btn-secondary px-4">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

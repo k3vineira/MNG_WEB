@@ -1,0 +1,37 @@
+{% extends "admin/base-admin.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid py-5" style="background-color: #f8f9fa; min-height: 80vh; display: flex; align-items: center;">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-8 col-lg-5">
+            <div class="card shadow-sm border-0 mb-4">
+                
+                <div class="card-header bg-success text-white py-3">
+                    <h5 class="mb-0 fw-bold text-center">Crear Nuevo Paquete Turístico</h5>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+              
+                        {{ form|crispy }}
+                        
+                        <hr class="my-4 text-secondary opacity-25">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'crear_paquete' %}" class="btn btn-outline-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-success px-5 fw-bold">
+                                Guardar Paquete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

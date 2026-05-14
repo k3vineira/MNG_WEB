@@ -1,9 +1,29 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from .models import PQRS, Blog
+from .forms import PqrsForm , BlogForm
 
+def blog(request):
+    blogs = Blog.objects.all()
+    return render(request, 'usuario/blog.html', {'blogs': blogs})
+
+def pqrs(request):
+    pqrs = PQRS.objects.all()
+    form = PqrsForm()
+    
+    return render(request, 'usuario/pqrs.html', {'pqrs': pqrs, 'form': form})
+
+def guardar_pqrs(request):
+    if request.method == 'POST':
+        form = PqrsForm(request.POST)
+        if form.is_valid():
+            form.save() 
+            return redirect('comunidad:pqrs') 
+    else:
+        form = PqrsForm()
+    
+    return render(request, 'usuario/pqrs.html', {'form': form})
 
 #PQRS
 class PQRSListView(ListView):
@@ -12,6 +32,7 @@ class PQRSListView(ListView):
     context_object_name = 'pqrs'
 class PQRSCreateView(CreateView):
     model = PQRS
+    form = PqrsForm()
     fields = ['cliente', 'tipo', 'asunto', 'descripcion', 'estado', 'respuesta']
     template_name = 'admin/pqrs/agregar_pqrs.html'
     success_url = reverse_lazy('comunidad:listar_pqrs')
@@ -23,46 +44,25 @@ class PQRSUpdateView(UpdateView):
 class PQRSDeleteView(DeleteView):
     model = PQRS
     template_name = 'admin/pqrs/eliminar_pqrs.html'
-    success_url = reverse_lazy('comunidad:listar_pqrs')
-    
-
-
-
+    success_url = reverse_lazy('comunidad:listar_pqrs')   
 
 #BLOG
 class BlogListView(ListView):
     model = Blog
-    template_name = 'usuario/blog.html' 
-    context_object_name = 'posts'
-
-    def get_queryset(self):
-        """Asegura que solo se vean los artículos marcados como publicados."""
-        return Blog.objects.filter(publicado=True)
-
+    template_name = 'admin/blog/blog.html' 
+    context_object_name = 'blogs'
 class BlogCreateView(CreateView):
     model = Blog
-    fields = ['titulo', 'contenido', 'resumen', 'imagen', 'categoria', 'publicado']
+    form = BlogForm()
+    fields = ['titulo', 'contenido', 'imagen', 'publicado']
     template_name = 'admin/blog/agregar_blog.html'
     success_url = reverse_lazy('comunidad:listar_blog')
 class BlogUpdateView(UpdateView):
     model = Blog
-    fields = ['titulo', 'contenido', 'resumen', 'imagen', 'categoria', 'publicado']
+    fields = ['titulo', 'contenido', 'imagen','publicado']
     template_name = 'admin/blog/editar_blog.html'
     success_url = reverse_lazy('comunidad:listar_blog')
 class BlogDeleteView(DeleteView):
     model = Blog
     template_name = 'admin/blog/eliminar_blog.html'
     success_url = reverse_lazy('comunidad:listar_blog')
-
-@login_required
-def resenas_view(request):
-    """
-    Vista para visualizar las reseñas del usuario.
-    Sigue el patrón MVT y permite gestionar comentarios propios.
-    """
-    context = {
-        'resenas': [], # Aquí se filtrarían las reseñas del usuario: Resena.objects.filter(usuario=request.user)
-        'total_resenas': 0,
-        'promedio': 0.0,
-    }
-    return render(request, 'private/comentarios.html', context)
