@@ -37,7 +37,7 @@ class PQRS(models.Model):
         ('en_proceso', 'En Proceso'),
         ('cerrado',    'Cerrado'),
     ]
-    cliente   = models.ForeignKey('usuarios.Cliente', on_delete=models.CASCADE, related_name='pqrs')
+    cliente   = models.ForeignKey('usuarios.Cliente', on_delete=models.CASCADE, related_name='pqrs', null=True, blank=True)
     tipo      = models.CharField(max_length=15, choices=TIPO_CHOICES)
     asunto    = models.CharField(max_length=200)
     descripcion = models.TextField()

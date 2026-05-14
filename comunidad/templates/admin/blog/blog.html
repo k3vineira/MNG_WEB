@@ -35,8 +35,8 @@
                                 </td>
 
                                 <td class="text-end pe-4 py-3">
-                                    <a href="{% url 'editar_blog' entrada.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
-                                    <a href="{% url 'eliminar_blog' entrada.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
+                                    <a href="{% url 'comunidad:editar_blog' entrada.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
+                                    <a href="{% url 'comunidad:eliminar_blog' entrada.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
                                 </td>
                             </tr>
                             {% empty %}
