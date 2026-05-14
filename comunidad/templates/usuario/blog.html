@@ -32,10 +32,10 @@
         <div class="col-md-6 col-lg-4"> <div class="card h-100 shadow-sm border-0">
                 
                 <div class="ratio ratio-4x3">
-                    {% if post.imagen_destacada %}
-                        <img src="{{ post.imagen_destacada.url }}" class="card-img-top object-fit-cover" alt="{{ post.titulo }}">
+                    {% if post.imagen %}
+                        <img src="{{ post.imagen.url }}" class="card-img-top object-fit-cover" alt="{{ post.titulo }}">
                     {% else %}
-                        <img src="{% static 'img/Lagunanegra.png' %}" class="card-img-top object-fit-cover" alt="Default">
+                        <img src="{% static 'img/lagunanegra.png' %}" class="card-img-top object-fit-cover" alt="Default">
                     {% endif %}
                 </div>
 

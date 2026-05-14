@@ -32,8 +32,13 @@ class PQRSDeleteView(DeleteView):
 #BLOG
 class BlogListView(ListView):
     model = Blog
-    template_name = 'public/blog/blog.html' 
-    context_object_name = 'blogs'
+    template_name = 'usuario/blog.html' 
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        """Asegura que solo se vean los artículos marcados como publicados."""
+        return Blog.objects.filter(publicado=True)
+
 class BlogCreateView(CreateView):
     model = Blog
     fields = ['titulo', 'contenido', 'resumen', 'imagen', 'categoria', 'publicado']
