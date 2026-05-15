@@ -13,18 +13,37 @@ class Reserva(models.Model):
     
     paquete = models.ForeignKey(Paquete, on_delete=models.PROTECT, related_name='reserva', verbose_name='Paquete Reservado')
     fecha = models.DateField(verbose_name='Fecha de Reserva')
-    numero_personas = models.PositiveIntegerField(verbose_name='Número de Personas')
+    numero_adultos = models.PositiveIntegerField(verbose_name='Número de Adultos', default=1)
+    numero_menores = models.PositiveIntegerField(verbose_name='Número de Menores', default=0)
+    
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('confirmada', 'Confirmada'),
+        ('completada', 'Completada'),
+        ('cancelada', 'Cancelada'),
+    ]
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente', verbose_name='Estado')
     
     # Monto total (se calculará automáticamente)
     monto_total = models.IntegerField(verbose_name='Monto Total', editable=False)
+    
+    fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Registro')
 
     class Meta:
         verbose_name = 'Reserva'
         verbose_name_plural = 'Reservas'
 
     def save(self, *args, **kwargs):
-        if self.paquete and self.numero_personas:
-            self.monto_total = self.paquete.precio * self.numero_personas
+        if self.paquete and self.fecha:
+            try:
+                from catalogo.models import Temporada, Tarifa
+                temporada = Temporada.objects.get(fecha_inicio__lte=self.fecha, fecha_fin__gte=self.fecha)
+                tarifa = Tarifa.objects.get(paquete=self.paquete, temporada=temporada)
+                self.monto_total = (tarifa.precio_adulto * self.numero_adultos) + (tarifa.precio_menor * self.numero_menores)
+            except (Temporada.DoesNotExist, Tarifa.DoesNotExist):
+                self.monto_total = 0
+        elif not getattr(self, 'monto_total', None):
+            self.monto_total = 0
         super().save(*args, **kwargs)
 
     def __str__(self):
