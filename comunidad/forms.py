@@ -32,6 +32,6 @@ class BlogForm(forms.ModelForm):
         }     
         widgets = {
             'contenido': forms.Textarea(attrs={'rows': 10, 'placeholder': 'Escribe el contenido del blog aquí...'}),
-            
+            'publicado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
         
