@@ -112,51 +112,28 @@ def reservas_view(request):
 
 
 # =========================
-# VISTA PRIVADA
+# VISTA PÚBLICA
 # =========================
 
-@login_required
-def guardar_reserva(request):
-
+@login_required 
+def guardar_reserva(request, paquete_id):
     if request.method == 'POST':
+        paquete = get_object_or_404(Paquete, id=paquete_id)
+        fecha_viaje = request.POST.get('fecha')
+        cantidad = request.POST.get('numero_personas')
+        
+        if fecha_viaje and cantidad:
+            reserva= Reserva.objects.create(
+                usuario=request.user,       
+                paquete=paquete,            
+                fecha=fecha_viaje,
+                numero_personas=cantidad
+            )
+            reserva.save()
+            
+            messages.success(request, f"¡Reserva para {paquete.nombre} realizada con éxito!")
+            return redirect('reservas') 
+        else:
+            messages.error(request, "Por favor completa todos los campos.")
 
-        paquete_id = request.POST.get('paquete_id')
-
-        num_personas = request.POST.get('num_personas')
-
-        horario = request.POST.get('horario')
-
-        observaciones = request.POST.get(
-            'observaciones',
-            ''
-        )
-
-        paquete = get_object_or_404(
-            Paquete,
-            id=paquete_id
-        )
-
-        reserva = Reserva.objects.create(
-            cliente=request.user.cliente,
-            paquete=paquete,
-            horario=horario,
-            num_personas=num_personas,
-            observaciones=observaciones
-        )
-
-        messages.success(
-            request,
-            'Reserva creada exitosamente.'
-        )
-
-        return redirect('listar_reservas')
-
-    else:
-
-        paquetes = Paquete.objects.all()
-
-        return render(
-            request,
-            'usuario/reservas.html',
-            {'paquetes': paquetes}
-        )
+    return redirect('reservas')
