@@ -5,7 +5,7 @@ app_name = 'reservas'
 
 urlpatterns = [
      path('reservar/', views.reservas_view, name='reservas'),
-     path('guardar_reserva/', views.guardar_reserva, name='guardar_reserva'),
+     path('guardar/<int:paquete_id>/', views.guardar_reserva, name='guardar_reserva'),
      
      #Rutas para CRUD de reservas
     path('reservas/', views.ReservaListView.as_view(), name='listar_reservas'),
