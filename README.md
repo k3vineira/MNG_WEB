@@ -7,7 +7,7 @@ Este proyecto está desarrollado en **Django** y sigue una arquitectura modular 
 A continuación se detalla la estructura de la base de datos, optimizada para el flujo de reservas de paquetes turísticos, gestión de usuarios, catálogo de destinos y participación de la comunidad. 
 
 El modelo completo puede ser visualizado en nuestro archivo de diagramas interactivo:
-👉 [Ver Modelo Entidad Relación (MER)](static/docs/MER.png)
+![Modelo Entidad Relación (MER)](static/docs/MER.png)
 
 ---
 
