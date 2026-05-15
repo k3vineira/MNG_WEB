@@ -19,7 +19,7 @@ class Blog(models.Model):
     imagen             = models.ImageField(upload_to='blog/', blank=True, null=True)
     categoria          = models.CharField(max_length=80, blank=True)
     fecha_publicacion  = models.DateTimeField(auto_now_add=True)
-    publicado          = models.BooleanField(default=True)
+    publicado = models.BooleanField(default=True, verbose_name='¿Está Publicado?')
 
     class Meta:
         ordering = ['-fecha_publicacion']
@@ -39,13 +39,14 @@ class PQRS(models.Model):
         ('en_proceso', 'En Proceso'),
         ('cerrado',    'Cerrado'),
     ]
-    cliente   = models.ForeignKey('usuarios.Cliente', on_delete=models.CASCADE, related_name='pqrs')
+    cliente   = models.ForeignKey('usuarios.Cliente', on_delete=models.CASCADE, related_name='pqrs', null=True, blank=True)
     tipo      = models.CharField(max_length=15, choices=TIPO_CHOICES)
     asunto    = models.CharField(max_length=200)
     descripcion = models.TextField()
     estado    = models.CharField(max_length=15, choices=ESTADO_CHOICES, default='abierto')
     respuesta = models.TextField(blank=True)
     fecha     = models.DateTimeField(auto_now_add=True)
+    
 
     class Meta:
         verbose_name_plural = 'PQRS'
