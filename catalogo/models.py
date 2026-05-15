@@ -14,6 +14,7 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
+
 class Actividades(models.Model):
     NIVEL_CHOICES = [
         ('Alta', 'Alta'),
@@ -26,12 +27,14 @@ class Actividades(models.Model):
     equipo_requerimiento = models.TextField(verbose_name='Equipo Requerido')
     recomendacion_salud = models.TextField(verbose_name='Recomendaciones de Salud')
     estado = models.BooleanField(default=True, verbose_name='¿Está Activa?')
+
     class Meta:
         verbose_name = 'Actividad'
         verbose_name_plural = 'Actividades'
 
     def __str__(self):
         return self.nombre
+
 
 class Paquete(models.Model):
     imagen = models.ImageField(upload_to='destinos/', null=True, blank=True)
@@ -44,22 +47,17 @@ class Paquete(models.Model):
     actividades = models.ManyToManyField(Actividades, through='PaqueteActividad')
     estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
 
+    def __str__(self):
+        return self.nombre
+
 
 class PaqueteActividad(models.Model):
+    # Dejamos únicamente estas dos relaciones. Django creará de forma interna 
+    # las columnas 'paquete_id' y 'actividad_id' en la base de datos.
     paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE)
     actividad = models.ForeignKey(Actividades, on_delete=models.CASCADE)
 
-    codigo_paquete = models.ForeignKey(
-        Paquete,
-        on_delete=models.CASCADE
-    )
-
-    codigo_actividad = models.ForeignKey(
-        Actividades,
-        on_delete=models.CASCADE
-    )
     class Meta:
         db_table = 'paquete_actividades'
         verbose_name = 'Actividad del Paquete'
         verbose_name_plural = 'Actividades del Paquete'
-    
