@@ -81,7 +81,7 @@
         </div>
 
         <div class="d-flex justify-content-center gap-4 auth-nav mb-3">
-            <a href="{% url 'usuarios:login' %}" class="auth-nav-item">Iniciar Sesión</a>
+            <a href="{% url 'usuarios:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% if request.GET.paquete_id %}&paquete_id={{ request.GET.paquete_id }}{% endif %}{% endif %}" class="auth-nav-item">Iniciar Sesión</a>
             <a href="#" class="auth-nav-item active">Regístrate</a>
         </div>
 

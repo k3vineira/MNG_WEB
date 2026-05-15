@@ -51,7 +51,15 @@ def login_view(request):
         return redirect('usuarios:inicio')
 
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        # Permitir login con correo interceptando los datos del POST
+        data = request.POST.copy()
+        username_input = data.get('username')
+        if username_input and '@' in username_input:
+            user_obj = Usuario.objects.filter(email=username_input).first()
+            if user_obj:
+                data['username'] = user_obj.username
+
+        form = AuthenticationForm(request, data=data)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -63,9 +71,12 @@ def login_view(request):
                 auth_login(request, user)
                 messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
 
-                # Redirigir a 'next' si existe (útil para reservas interrumpidas)
+                # Redirigir a 'next' preservando parámetros adicionales como paquete_id
                 next_url = request.GET.get('next')
                 if next_url:
+                    paquete_id = request.GET.get('paquete_id')
+                    if paquete_id:
+                        next_url = f"{next_url}?paquete_id={paquete_id}"
                     return redirect(next_url)
                 return redirect('usuarios:inicio')
     else:
@@ -97,7 +108,19 @@ def registro_view(request):
             Cliente.objects.create(usuario=user, telefono=user.telefono)
 
             messages.success(request, "¡Registro exitoso! Tu cuenta ha sido creada. Ahora puedes iniciar sesión.")
-            return redirect('usuarios:login')
+            
+            # Preservar parámetros de redirección hacia el login
+            from django.urls import reverse
+            login_url = reverse('usuarios:login')
+            next_url = request.GET.get('next')
+            paquete_id = request.GET.get('paquete_id')
+            query_params = []
+            if next_url: query_params.append(f"next={next_url}")
+            if paquete_id: query_params.append(f"paquete_id={paquete_id}")
+            if query_params:
+                login_url += "?" + "&".join(query_params)
+                
+            return redirect(login_url)
         else:
             messages.error(request, "Hubo un error en el registro. Por favor, revisa los datos.")
     else:

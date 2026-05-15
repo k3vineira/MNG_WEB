@@ -99,9 +99,15 @@ def reservas_view(request):
     """
 
     paquetes = Paquete.objects.all()
+    
+    paquete_id = request.GET.get('paquete_id')
+    paquete = None
+    if paquete_id:
+        paquete = get_object_or_404(Paquete, id=paquete_id)
 
     context = {
-        'paquetes': paquetes
+        'paquetes': paquetes,
+        'paquete': paquete
     }
 
     return render(
@@ -132,8 +138,8 @@ def guardar_reserva(request, paquete_id):
             reserva.save()
             
             messages.success(request, f"¡Reserva para {paquete.nombre} realizada con éxito!")
-            return redirect('reservas') 
+            return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
         else:
             messages.error(request, "Por favor completa todos los campos.")
 
-    return redirect('reservas')
+    return redirect('reservas:reservas')

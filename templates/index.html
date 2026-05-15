@@ -2,9 +2,10 @@
 {% load static %}
 {% block content %}
 
+
 <!-- Nueva Sección Blanca de 1889x400px -->
-<section class="bg-white w-100 py-editorial">
-  <div class="container mb-5">
+<section class="bg-white w-100" style="padding-top: 5rem; padding-bottom: 5rem;">
+  <div class="container-fluid px-4 px-xl-5 mb-5">
     <div class="row pt-4">
       <div class="col-md-8 col-lg-6">
         <h2 class="display-4 fw-bold text-dark mt-4 mb-4">Explora lo inexplorado</h2>
@@ -14,11 +15,11 @@
   </div>
 
   <!-- Contenedor de cartas "Flotantes" -->
-  <div class="container-fluid px-4 mb-5 pb-5" style="position: relative; z-index: 10;">
-    <div class="row g-4 justify-content-center">
+  <div class="container-fluid px-4 px-xl-5 mb-5">
+    <div class="row g-4 justify-content-center align-items-stretch">
       
-      <div class="col-sm-6 col-lg-3">
-        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg" style="height: 500px;">
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100" style="min-height: 400px;">
           <img src="{% static 'img/Fondo.jpg' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Vista panorámica de la Laguna Negra en Mongua" loading="lazy">
           <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.6) 100%);">
             <h3 class="card-title fw-bold text-white">Laguna Negra</h3>
@@ -31,8 +32,8 @@
         </div>
       </div>
 
-      <div class="col-sm-6 col-lg-3">
-        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg" style="height: 500px;">
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100" style="min-height: 400px;">
           <img src="{% static 'img/Fondo2.jpg' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Legado Ancestral" loading="lazy">
           <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.6) 100%);">
             <h3 class="card-title fw-bold text-white">Legado Ancestral</h3>
@@ -45,8 +46,8 @@
         </div>
       </div>
 
-      <div class="col-sm-6 col-lg-3">
-        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg" style="height: 500px;">
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100" style="min-height: 400px;">
           <img src="{% static 'img/Fondo3.jpg' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Rutas de Aventura" loading="lazy">
           <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.6) 100%);">
             <h3 class="card-title fw-bold text-white">Rutas de Aventura</h3>
@@ -62,8 +63,8 @@
         </div>
       </div>
 
-      <div class="col-sm-6 col-lg-3">
-        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg" style="height: 500px;">
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100" style="min-height: 400px;">
           <img src="{% static 'img/Fondo4.jpg' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Vivencias Monguenses" loading="lazy">
           <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.6) 100%);">
             <h3 class="card-title fw-bold text-white">Vivencias Monguenses</h3>
@@ -89,8 +90,8 @@
 </section>
 
 <!-- Sección de Sostenibilidad y Medio Ambiente -->
-<section class="bg-light py-editorial">
-  <div class="container">
+<section class="bg-light" style="padding-top: 5rem; padding-bottom: 5rem;">
+  <div class="container-fluid px-4 px-xl-5">
     <!-- Encabezado Introductorio -->
     <div class="row mb-5">
       <div class="col-lg-7">
@@ -137,7 +138,7 @@
   </div>
 </section>
 
-<section id="hero-carousel" class="my-5 py-5">
+<section id="hero-carousel" class="w-100">
   <div id="carouselExampleFade" class="carousel slide carousel-fade vh-100 bg-black" data-bs-ride="carousel" data-bs-interval="10000">
     
     <div class="carousel-indicators">
@@ -208,7 +209,7 @@
 
 
 
-<section id="location" class="container py-editorial my-5">
+<section id="location" class="container-fluid px-4 px-xl-5" style="padding-top: 5rem; padding-bottom: 5rem;">
   <div class="row g-0 align-items-center bg-white rounded-5 shadow-lg overflow-hidden border">
     <!-- Columna de Texto -->
     <div class="col-lg-6 p-4 p-md-5">

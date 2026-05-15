@@ -35,10 +35,10 @@
               <h5 class="fw-bold">Inicia sesión o regístrate</h5>
               <p class="small mb-3">Para realizar una reserva necesitas tener una cuenta en Monagua.</p>
               <div class="d-flex gap-2 justify-content-center">
-                <a href="{% url 'login' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-confirmar btn-sm text-white">
+                <a href="{% url 'usuarios:login' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-confirmar btn-sm text-white">
                   Iniciar Sesión
                 </a>
-                <a href="{% url 'registro' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-outline-success btn-sm">
+                <a href="{% url 'usuarios:registro' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-outline-success btn-sm">
                   Registrarse
                 </a>
               </div>
@@ -47,7 +47,7 @@
           {% endif %}
 
           <!-- EL FORMULARIO COMIENZA AQUÍ PARA ENVOLVER TODO -->
-          <form action="{% if paquete %}{% url 'guardar_reserva' paquete.id %}{% else %}#{% endif %}" method="POST">
+          <form action="{% if paquete %}{% url 'reservas:guardar_reserva' paquete.id %}{% else %}#{% endif %}" method="POST">
             {% csrf_token %}
 
             <div class="mb-3">
