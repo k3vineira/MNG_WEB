@@ -5,7 +5,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from .models import Usuario, Cliente
-# Se asume la existencia de los modelos Guia y Paquete en sus respectivas apps
 from .forms import RegistroForm
 
 
@@ -63,7 +62,7 @@ def login_view(request):
             if user is not None:
                 auth_login(request, user)
                 messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
-                
+
                 # Redirigir a 'next' si existe (útil para reservas interrumpidas)
                 next_url = request.GET.get('next')
                 if next_url:
@@ -93,12 +92,11 @@ def registro_view(request):
             user = form.save(commit=False)
             user.es_turista = True  # Asignar rol de turista automáticamente
             user.save()
-            
+
             # Crear el perfil de Cliente asociado
             Cliente.objects.create(usuario=user, telefono=user.telefono)
-            
+
             messages.success(request, "¡Registro exitoso! Tu cuenta ha sido creada. Ahora puedes iniciar sesión.")
-            # Redirigir al login en lugar de iniciar sesión automáticamente
             return redirect('usuarios:login')
         else:
             messages.error(request, "Hubo un error en el registro. Por favor, revisa los datos.")
@@ -109,10 +107,20 @@ def registro_view(request):
 
 
 def terminos_view(request):
-    return render(
-        request,
-        'public/terminos.html'
-    )
+    """
+    Vista pública para la página de Términos y Condiciones.
+    Accesible sin necesidad de autenticación.
+    """
+    return render(request, 'public/terminos.html')
+
+
+def nosotros_view(request):
+    """
+    Vista pública para la página Nosotros.
+    Accesible sin necesidad de autenticación.
+    """
+    return render(request, 'public/nosotros.html')
+
 
 @login_required
 def perfil_view(request):
@@ -121,14 +129,14 @@ def perfil_view(request):
     Maneja la actualización de imagen y datos personales desde el modal.
     """
     user = request.user
-    
+
     if request.method == 'POST':
         # Caso 1: Actualización de foto de perfil
         if 'imagen_perfil' in request.FILES:
             user.imagen_perfil = request.FILES['imagen_perfil']
             user.save()
             messages.success(request, "¡Foto de perfil actualizada con éxito!")
-            
+
         # Caso 2: Edición de datos personales (Modal)
         elif request.POST.get('editar_perfil') == '1':
             user.first_name = request.POST.get('first_name', user.first_name)
@@ -138,10 +146,11 @@ def perfil_view(request):
             user.residencia = request.POST.get('residencia', user.residencia)
             user.save()
             messages.success(request, "¡Información actualizada correctamente!")
-            
+
         return redirect('usuarios:detalles')
 
     return render(request, 'private/perfil.html')
+
 
 @user_passes_test(lambda u: u.is_staff)
 def gestion_guias(request, id=None):
@@ -149,14 +158,11 @@ def gestion_guias(request, id=None):
     Vista principal para la gestión de guías y usuarios.
     Implementa la lógica MVT para el index-guias.html.
     """
-    # Importación dinámica para evitar ciclos si los modelos están en otras apps
-    from .models import Usuario 
-    # Nota: Sustituir por el modelo real de Guia si existe uno aparte
-    
+    from .models import Usuario
+
     all_users = Usuario.objects.all().order_by('-date_joined')
-    # Simulación de datos de guías (ajustar al modelo real)
-    guias = Usuario.objects.filter(es_guia=True) 
-    
+    guias = Usuario.objects.filter(es_guia=True)
+
     guia_sel = None
     if id:
         guia_sel = get_object_or_404(Usuario, id=id)
@@ -166,14 +172,14 @@ def gestion_guias(request, id=None):
         'guias': guias,
         'total_guias': guias.count(),
         'total_guias_activos': guias.filter(is_active=True).count(),
-        'guias_asignados': 0, # Lógica con modelo de Reservas/Tours
+        'guias_asignados': 0,
         'total_guias_inactivos': guias.filter(is_active=False).count(),
         'all_users': all_users,
         'total_users': all_users.count(),
         'guia_sel': guia_sel,
-        # 'paquetes_disponibles': Paquete.objects.filter(estado=True),
     }
     return render(request, 'admin/index-guias.html', context)
+
 
 @user_passes_test(lambda u: u.is_staff)
 def asignar_rol_guia(request, user_id):
@@ -186,6 +192,7 @@ def asignar_rol_guia(request, user_id):
         messages.success(request, f"Usuario {user_obj.username} {accion} guía.")
     return redirect('usuarios:gestion_guias')
 
+
 @user_passes_test(lambda u: u.is_staff)
 def guias_baja_reactivar(request, id, estado):
     """Cambia el estado de activación de un guía."""
@@ -197,12 +204,11 @@ def guias_baja_reactivar(request, id, estado):
         messages.info(request, f"Guía {guia.first_name} {msg} exitosamente.")
     return redirect('usuarios:gestion_guias')
 
+
 @user_passes_test(lambda u: u.is_staff)
 def guias_guardar(request):
     """Lógica para crear o editar un guía desde el modal."""
     if request.method == 'POST':
-        guia_id = request.POST.get('guia_id')
         # Aquí se implementaría la lógica de guardado/update
-        # usando request.POST.get('especialidad'), etc.
         messages.success(request, "Datos del guía guardados correctamente.")
     return redirect('usuarios:gestion_guias')

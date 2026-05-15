@@ -1,141 +1,154 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block titulo %}Términos y Condiciones | Monagua{% endblock %}
+
 {% block content %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Términos y Condiciones | Monagua</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Poppins', sans-serif; }
-        .hero-terms {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                        url("{% static 'img/fondo_log.jpg' %}") center center / cover;
-        }
-        .sidebar-sticky { position: sticky; top: 20px; }
-    </style>
-</head>
-<body class="bg-light text-secondary">
-
-<section class="hero-terms text-white py-5 text-center">
-    <div class="container py-4">
-        <h1 class="fw-bold">Términos y Condiciones</h1>
-        <p class="lead opacity-75">Tu seguridad y confianza son nuestra prioridad en cada destino</p>
-    </div>
+<section class="pt-5 pb-4 text-center" style="background-color:#2d4a31;">
+  <div class="container mt-5 mb-4">
+    <span class="badge rounded-pill border border-light border-opacity-25 text-white-50 fw-normal px-3 py-2 mb-3"
+          style="background:rgba(255,255,255,0.10);letter-spacing:.15em;font-size:.68rem;">
+      LEGAL
+    </span>
+    <h1 class="fw-bold mb-2 text-white">Términos y Condiciones</h1>
+    <p class="text-white-50 mb-0">Tu seguridad y confianza son nuestra prioridad en cada destino</p>
+  </div>
 </section>
 
-<div class="container mb-5" style="margin-top: -50px;">
-    <div class="row">
-        <div class="col-lg-3 d-none d-lg-block">
-            <div class="sidebar-sticky card p-3 shadow-sm border-0">
-                <h6 class="fw-bold mb-3">CONTENIDO</h6>
-                <nav class="nav flex-column">
-                    <a class="nav-link small text-secondary border-start border-2 ps-3 mb-1" href="#introduccion">1. Introducción</a>
-                    <a class="nav-link small text-secondary border-start border-2 ps-3 mb-1" href="#reservas">2. Reservas y Pagos</a>
-                    <a class="nav-link small text-secondary border-start border-2 ps-3 mb-1" href="#cancelaciones">3. Cancelaciones</a>
-                    <a class="nav-link small text-secondary border-start border-2 ps-3 mb-1" href="#responsabilidades">4. Responsabilidades</a>
-                    <a class="nav-link small text-secondary border-start border-2 ps-3 mb-1" href="#privacidad">5. Protección de Datos</a>
-                </nav>
-            </div>
-        </div>
+<!-- CONTENIDO -->
+<div class="container py-5">
+  <div class="row g-4">
 
-        <div class="col-lg-9">
-            <div class="card rounded-4 border-0 shadow-sm p-4 p-md-5">
-                <div class="text-end mb-4">
-                    <span class="badge bg-light text-muted border px-3 py-2">Última actualización: 26 de Marzo, 2026</span>
-                </div>
-
-                <div id="introduccion">
-                    <h3 class="text-primary fw-semibold mt-3">
-                        <span class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;">
-                            <i class="bi bi-info-circle"></i>
-                        </span>
-                        Introducción
-                    </h3>
-                    <p class="lh-lg text-justify">Bienvenido a <strong>Monagua Agencia de Viajes y Turismo</strong>. Al utilizar nuestros servicios y plataforma web, usted acepta cumplir con los términos detallados a continuación. Estos términos regulan la relación contractual entre el cliente y nuestra agencia radicada en Sogamoso, Boyacá.</p>
-                </div>
-
-                <hr class="my-4">
-
-                <div id="reservas">
-                    <h3 class="text-primary fw-semibold mt-3">
-                        <span class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;">
-                            <i class="bi bi-wallet2"></i>
-                        </span>
-                        Reservas y Pagos
-                    </h3>
-                    <p class="lh-lg">Toda reserva de paquetes turísticos o tours individuales se considerará confirmada únicamente tras el pago del anticipo correspondiente (mínimo el 30% del valor total). Monagua se reserva el derecho de ajustar precios ante cambios imprevistos en tasas gubernamentales o costos de proveedores externos.</p>
-                    <ul>
-                        <li>Los pagos pueden realizarse vía PSE, transferencia bancaria o en nuestros puntos físicos.</li>
-                        <li>El saldo restante debe ser cancelado 48 horas antes de iniciar la experiencia turística.</li>
-                    </ul>
-                </div>
-
-                <hr class="my-4">
-
-                <div id="cancelaciones">
-                    <h3 class="text-primary fw-semibold mt-3">
-                        <span class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;">
-                            <i class="bi bi-x-circle"></i>
-                        </span>
-                        Políticas de Cancelación
-                    </h3>
-                    <p class="lh-lg">Entendemos que los planes pueden cambiar. Sin embargo, para mantener la logística con nuestros guías y transportadores regionales, aplicamos las siguientes penalidades:</p>
-                    <table class="table table-bordered table-sm mt-3">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Antelación</th>
-                                <th>Reembolso</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Más de 15 días</td>
-                                <td>90% del valor pagado</td>
-                            </tr>
-                            <tr>
-                                <td>Entre 5 y 14 días</td>
-                                <td>50% del valor pagado</td>
-                            </tr>
-                            <tr>
-                                <td>Menos de 48 horas</td>
-                                <td>Sin reembolso (No-Show)</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <hr class="my-4">
-
-                <div id="responsabilidades">
-                    <h3 class="text-primary fw-semibold mt-3">
-                        <span class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;">
-                            <i class="bi bi-shield-check"></i>
-                        </span>
-                        Responsabilidades
-                    </h3>
-                    <p class="lh-lg">Monagua actúa como intermediario entre el cliente y los prestadores de servicios (hoteles, transporte, guías). No nos hacemos responsables por retrasos climáticos, cierres viales o situaciones de fuerza mayor que alteren el itinerario original, aunque brindaremos asistencia total para reprogramaciones.</p>
-                </div>
-
-                <div class="mt-5 p-4 bg-light rounded-3 text-center">
-                    <p class="mb-0">¿Tiene dudas sobre nuestros términos?</p>
-                    <a href="mailto:contacto@monagua.com" class="btn btn-primary mt-2">Contactar Soporte Jurídico</a>
-                </div>
-            </div>
-        </div>
+    <!-- Sidebar -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <div class="card border-0 shadow-sm rounded-3 p-3" style="position:sticky;top:80px;">
+        <p class="fw-semibold small text-uppercase text-muted mb-3" style="letter-spacing:.1em;">Contenido</p>
+        <nav class="nav flex-column gap-1">
+          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#introduccion" style="font-size:.88rem;">1. Introducción</a>
+          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#reservas" style="font-size:.88rem;">2. Reservas y Pagos</a>
+          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#cancelaciones" style="font-size:.88rem;">3. Cancelaciones</a>
+          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#responsabilidades" style="font-size:.88rem;">4. Responsabilidades</a>
+          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#privacidad" style="font-size:.88rem;">5. Protección de Datos</a>
+        </nav>
+      </div>
     </div>
+
+    <!-- Main -->
+    <div class="col-lg-9">
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+          <div>
+            <div class="fw-semibold" style="color:#2d4a31;">Monagua Agencia de Viajes</div>
+            <small class="text-muted">Sogamoso, Boyacá — Colombia</small>
+          </div>
+          <span class="badge bg-light text-muted border px-3 py-2">Actualizado: 26 de marzo, 2026</span>
+        </div>
+
+        <!-- 1 -->
+        <div id="introduccion" class="mb-4">
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">1</span>
+            Introducción
+          </h4>
+          <p class="text-muted lh-lg">Bienvenido a <strong>Monagua Agencia de Viajes y Turismo</strong>. Al utilizar nuestros servicios y plataforma web, usted acepta cumplir con los términos detallados a continuación. Estos términos regulan la relación contractual entre el cliente y nuestra agencia radicada en Sogamoso, Boyacá.</p>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- 2 -->
+        <div id="reservas" class="mb-4">
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">2</span>
+            Reservas y Pagos
+          </h4>
+          <p class="text-muted lh-lg">Toda reserva se confirma tras el pago del anticipo mínimo del <strong>30%</strong> del valor total. Monagua se reserva el derecho de ajustar precios ante cambios en tasas gubernamentales o costos de proveedores.</p>
+          <ul class="text-muted small lh-lg">
+            <li>Pagos vía PSE, transferencia bancaria o en nuestros puntos físicos.</li>
+            <li>El saldo debe cancelarse <strong>48 horas antes</strong> de iniciar la experiencia.</li>
+          </ul>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- 3 -->
+        <div id="cancelaciones" class="mb-4">
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">3</span>
+            Políticas de Cancelación
+          </h4>
+          <p class="text-muted lh-lg">Para mantener la logística con nuestros guías y transportadores, aplicamos las siguientes condiciones:</p>
+          <div class="table-responsive mt-3">
+            <table class="table table-bordered table-sm text-center align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-start">Antelación de cancelación</th>
+                  <th>Reembolso aplicable</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-start">Más de 15 días</td>
+                  <td class="fw-semibold">90% del valor pagado</td>
+                  <td><span class="badge bg-success bg-opacity-10 text-success border border-success-subtle">Favorable</span></td>
+                </tr>
+                <tr>
+                  <td class="text-start">Entre 5 y 14 días</td>
+                  <td class="fw-semibold text-warning">50% del valor pagado</td>
+                  <td><span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle">Parcial</span></td>
+                </tr>
+                <tr>
+                  <td class="text-start">Menos de 48 horas</td>
+                  <td class="fw-semibold text-danger">Sin reembolso (No-Show)</td>
+                  <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle">Sin reembolso</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- 4 -->
+        <div id="responsabilidades" class="mb-4">
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">4</span>
+            Responsabilidades
+          </h4>
+          <p class="text-muted lh-lg">Monagua actúa como intermediario entre el cliente y los prestadores de servicios (hoteles, transporte, guías). No nos hacemos responsables por retrasos climáticos, cierres viales o situaciones de fuerza mayor que alteren el itinerario original, aunque brindaremos asistencia total para reprogramaciones.</p>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- 5 -->
+        <div id="privacidad" class="mb-4">
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">5</span>
+            Protección de Datos
+          </h4>
+          <p class="text-muted lh-lg">Sus datos personales son tratados conforme a la Ley 1581 de 2012 de Colombia. No compartimos su información con terceros sin consentimiento previo. Puede solicitar acceso, corrección o eliminación escribiendo a <strong>contacto@monagua.com</strong>.</p>
+        </div>
+
+        <div class="rounded-3 p-4 text-center mt-2" style="background:#f5f0e8;">
+          <p class="mb-2 text-muted small">¿Tiene dudas sobre nuestros términos?</p>
+          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vt74117@gmail.com&su=Dudas%20sobre%20los%20términos%20legales"
+             target="_blank"
+             class="btn btn-sm fw-semibold rounded-pill px-4 text-white"
+             style="background:#3b5e3f;">
+            <i class="bi bi-envelope me-2"></i>Contactar soporte jurídico
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>
 
-<footer class="bg-dark text-white py-4 text-center mt-5">
-    <p class="small opacity-50 mb-0">© 2026 Monagua Agencia de Viajes y Turismo - Todos los derechos reservados.</p>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
 {% endblock %}
