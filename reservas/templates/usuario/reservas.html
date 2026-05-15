@@ -19,9 +19,11 @@
     <div class="col-md-5">
       <div class="card shadow-sm border h-100 card-reserva">
         <div class="card-header text-center py-3 bg-white border-0">
-          <h4 class="mb-0 fw-bold header-reserva">Haz tu Reserva</h4>
+          <h3 class="mb-0 fw-bold header-reserva text-dark">Haz tu Reserva</h3>
           {% if paquete %}
-            <p class="text-success fw-bold mb-0 mt-1 small">Estás reservando: {{ paquete.nombre }}</p>
+            <p class="text-success fw-semibold mb-0 mt-2 small bg-success bg-opacity-10 d-inline-block px-3 py-1 rounded-pill">
+              <i class="bi bi-geo-alt-fill me-1"></i>{{ paquete.nombre }}
+            </p>
           {% endif %}
         </div>
         
@@ -50,56 +52,156 @@
           <form action="{% if paquete %}{% url 'guardar_reserva' paquete.id %}{% else %}#{% endif %}" method="POST">
             {% csrf_token %}
 
-            <div class="mb-3">
-              <label class="form-label fw-bold subtitulo-formulario">Información Personal</label>
-              <div class="row g-2">
-                <div class="col-6">
-                  <input type="text" name="full_name" class="form-control form-control-sm bg-light" 
-                         value="{{ user.first_name }} {{ user.last_name }}" placeholder="Nombre" readonly />
+            <!-- Información personal eliminada (el backend ya tiene acceso a request.user) -->
+
+            <div class="mb-4 mt-2">
+              <label class="form-label fw-bold text-dark mb-2"><i class="bi bi-calendar-event text-success me-2"></i>Fecha de tu Aventura</label>
+              <input type="date" name="fecha" id="fecha_input" class="form-control form-control-lg bg-light border-0 shadow-sm px-4" required onchange="updatePrice()" />
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-bold text-dark mb-3"><i class="bi bi-people-fill text-success me-2"></i>Pasajeros</label>
+              
+              <!-- Adultos -->
+              <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded-4 border border-light shadow-sm">
+                <div>
+                  <h6 class="mb-0 fw-bold text-dark">Adultos</h6>
+                  <small class="text-muted">Mayores de 12 años</small>
                 </div>
-                <div class="col-6">
-                  <input type="text" name="documento" class="form-control form-control-sm bg-light" 
-                         value="{{ user.numero_documento|default:'' }}" placeholder="Documento" readonly />
+                <div class="d-flex align-items-center gap-3">
+                  <button type="button" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" onclick="updateCount('adultos', -1)">
+                    <i class="bi bi-dash fw-bold"></i>
+                  </button>
+                  <span id="adultos_count" class="fw-bold fs-5" style="min-width: 20px; text-align: center;">1</span>
+                  <input type="hidden" name="adultos" id="adultos_input" value="1">
+                  <!-- Mantenemos numero_personas para que no rompa el backend temporalmente -->
+                  <input type="hidden" name="numero_personas" id="numero_personas_compat" value="1">
+                  <button type="button" class="btn btn-outline-success bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" onclick="updateCount('adultos', 1)">
+                    <i class="bi bi-plus fw-bold"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Menores -->
+              <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-4 border border-light shadow-sm">
+                <div>
+                  <h6 class="mb-0 fw-bold text-dark">Menores</h6>
+                  <small class="text-muted">De 2 a 11 años</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                  <button type="button" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" onclick="updateCount('menores', -1)">
+                    <i class="bi bi-dash fw-bold"></i>
+                  </button>
+                  <span id="menores_count" class="fw-bold fs-5" style="min-width: 20px; text-align: center;">0</span>
+                  <input type="hidden" name="menores" id="menores_input" value="0">
+                  <button type="button" class="btn btn-outline-success bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" onclick="updateCount('menores', 1)">
+                    <i class="bi bi-plus fw-bold"></i>
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div class="mb-2">
-              <input type="email" name="user_email" class="form-control form-control-sm bg-light" 
-                     value="{{ user.email }}" placeholder="Correo" readonly />
+            <!-- Mostrar Total Dinámico -->
+            <div id="total_reserva_display" class="mb-3 text-center p-3 rounded-4 bg-success bg-opacity-10 border border-success border-opacity-25">
+                <small class="text-muted">Selecciona una fecha para ver el precio.</small>
             </div>
 
-            <div class="mb-3">
-              <input type="tel" name="user_tel" class="form-control form-control-sm bg-light" 
-                     value="{{ user.telefono|default:'' }}" placeholder="Teléfono" readonly />
-            </div>
-
-            <hr class="my-3 opacity-25" />
-
-            <div class="mb-3">
-              <label class="form-label fw-bold subtitulo-formulario">Detalles del Tour</label>
-              <div class="row g-2">
-                <div class="col-7">
-                  <input type="date" name="fecha" class="form-control form-control-sm" required />
-                </div>
-                <div class="col-5">
-                  <input type="number" name="numero_personas" class="form-control form-control-sm" placeholder="Personas" min="1" required />
-                </div>
-              </div>
-            </div>
-
-            <div class="form-check mb-3">
-              <input class="form-check-input" type="checkbox" id="terminos" required />
-              <label class="form-check-label small" for="terminos">
-                Acepto <a href="#" class="text-decoration-none link-verde">términos y condiciones</a>
+            <div class="form-check mb-4 mt-2">
+              <input class="form-check-input border-secondary shadow-sm" type="checkbox" id="terminos" required />
+              <label class="form-check-label small text-muted" for="terminos">
+                He leído y acepto los <a href="#" class="text-decoration-none link-verde">términos y condiciones</a>
               </label>
             </div>
 
-            <div class="d-grid">
-              <button class="btn btn-confirmar py-2 fw-bold w-100" type="submit" {% if not user.is_authenticated %}disabled{% endif %}>
-                Reservar ahora
+            <div class="d-grid mt-2">
+              <button id="submit_reserva_btn" class="btn btn-confirmar rounded-pill py-3 fs-5 shadow-sm fw-bold transition-all" type="submit" {% if not user.is_authenticated %}disabled{% endif %}>
+                Confirmar Reserva
               </button>
             </div>
+
+            <script>
+              const tarifasData = [
+                  {% if paquete %}
+                  {% for tarifa in paquete.tarifas.all %}
+                  {
+                      fecha_inicio: "{{ tarifa.temporada.fecha_inicio|date:'Y-m-d' }}",
+                      fecha_fin: "{{ tarifa.temporada.fecha_fin|date:'Y-m-d' }}",
+                      precio_adulto: {{ tarifa.precio_adulto }},
+                      precio_menor: {{ tarifa.precio_menor }}
+                  },
+                  {% endfor %}
+                  {% endif %}
+              ];
+
+              function updatePrice() {
+                  const fecha = document.getElementById('fecha_input').value;
+                  const adultos = parseInt(document.getElementById('adultos_input').value) || 0;
+                  const menores = parseInt(document.getElementById('menores_input').value) || 0;
+                  
+                  const displayTotal = document.getElementById('total_reserva_display');
+                  const submitBtn = document.getElementById('submit_reserva_btn');
+                  const isAuth = submitBtn.hasAttribute('disabled') && submitBtn.textContent.includes('Confirmar') ? false : true;
+
+                  if (!fecha) {
+                      displayTotal.innerHTML = `<small class="text-muted">Selecciona una fecha para ver el precio.</small>`;
+                      return;
+                  }
+
+                  let precio_adulto = 0;
+                  let precio_menor = 0;
+                  let tarifa_encontrada = false;
+
+                  for (let tarifa of tarifasData) {
+                      if (fecha >= tarifa.fecha_inicio && fecha <= tarifa.fecha_fin) {
+                          precio_adulto = tarifa.precio_adulto;
+                          precio_menor = tarifa.precio_menor;
+                          tarifa_encontrada = true;
+                          break;
+                      }
+                  }
+
+                  if (tarifa_encontrada) {
+                      const total = (adultos * precio_adulto) + (menores * precio_menor);
+                      displayTotal.innerHTML = `
+                          <div class="d-flex justify-content-between align-items-center">
+                              <span class="text-secondary fw-semibold">Total estimado:</span>
+                              <h4 class="text-success fw-bold mb-0">$${total.toLocaleString('es-CO')}</h4>
+                          </div>
+                      `;
+                      {% if user.is_authenticated %}
+                      submitBtn.disabled = false;
+                      {% endif %}
+                  } else {
+                      displayTotal.innerHTML = `<small class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>No hay tarifas disponibles para esta fecha.</small>`;
+                      submitBtn.disabled = true;
+                  }
+              }
+
+              function updateCount(type, change) {
+                const input = document.getElementById(type + '_input');
+                const display = document.getElementById(type + '_count');
+                const compatInput = document.getElementById('numero_personas_compat');
+                let currentValue = parseInt(input.value) || 0;
+                
+                if (type === 'adultos' && currentValue + change < 1) return; 
+                if (type === 'menores' && currentValue + change < 0) return; 
+                if (currentValue + change > 20) return; 
+                
+                currentValue += change;
+                input.value = currentValue;
+                display.innerText = currentValue;
+
+                // Actualizar campo oculto de compatibilidad temporal para el backend
+                if(compatInput) {
+                    const adultos = parseInt(document.getElementById('adultos_input').value) || 1;
+                    const menores = parseInt(document.getElementById('menores_input').value) || 0;
+                    compatInput.value = adultos + menores;
+                }
+
+                // Recalcular precio dinámico
+                updatePrice();
+              }
+            </script>
           </form> 
           <!-- EL FORMULARIO TERMINA AQUÍ -->
 

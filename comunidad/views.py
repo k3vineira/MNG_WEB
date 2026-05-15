@@ -22,7 +22,7 @@ def guardar_pqrs(request):
         form = PqrsForm(request.POST)
         if form.is_valid():
             form.save() 
-            return redirect('comunidad:pqrs') 
+            return redirect('pqrs') 
     else:
         form = PqrsForm()
     
@@ -45,7 +45,7 @@ def contestar_pqrs(request, pqrs_id):
         
         pqr.respuesta = request.POST.get('respuesta') 
         pqr.save()
-        return redirect('comunidad:listar_pqrs')
+        return redirect('listar_pqrs')
 def guardar_pqrs(request):
     if request.method == 'POST':
         form = PqrsForm(request.POST, request.FILES)
@@ -62,12 +62,12 @@ def guardar_pqrs(request):
             
             nueva_pqrs.save() 
             messages.success(request, "Tu PQRS ha sido radicada exitosamente.")
-            return redirect('comunidad:pqrs')
+            return redirect('pqrs')
         else:
             print(f"Errores del formulario: {form.errors}")
             messages.error(request, "Hubo un error en los datos. Por favor verifica los campos.")
 
-    return redirect('comunidad:pqrs')
+    return redirect('pqrs')
 
 
 #BLOG
@@ -80,16 +80,16 @@ class BlogCreateView(CreateView):
     form = BlogForm()
     fields = ['titulo', 'contenido', 'imagen', 'publicado']
     template_name = 'admin/blog/agregar_blog.html'
-    success_url = reverse_lazy('comunidad:listar_blog')
+    success_url = reverse_lazy('listar_blog')
 class BlogUpdateView(UpdateView):
     model = Blog
     fields = ['titulo', 'contenido', 'imagen','publicado']
     template_name = 'admin/blog/editar_blog.html'
-    success_url = reverse_lazy('comunidad:listar_blog')
+    success_url = reverse_lazy('listar_blog')
 class BlogDeleteView(DeleteView):
     model = Blog
     template_name = 'admin/blog/eliminar_blog.html'
-    success_url = reverse_lazy('comunidad:listar_blog')
+    success_url = reverse_lazy('listar_blog')
 
 def blog_usuario(request):
     

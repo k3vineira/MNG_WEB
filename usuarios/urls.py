@@ -3,7 +3,7 @@ from . import views
 from .views import login_view, logout_view
 
 
-app_name = 'usuarios'
+
 
 urlpatterns = [
     path('', views.inicio_usuarios, name='inicio'),

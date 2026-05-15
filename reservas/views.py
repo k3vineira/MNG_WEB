@@ -99,9 +99,15 @@ def reservas_view(request):
     """
 
     paquetes = Paquete.objects.all()
+    
+    paquete_id = request.GET.get('paquete_id')
+    paquete = None
+    if paquete_id:
+        paquete = get_object_or_404(Paquete, id=paquete_id)
 
     context = {
-        'paquetes': paquetes
+        'paquetes': paquetes,
+        'paquete': paquete
     }
 
     return render(
@@ -120,19 +126,24 @@ def guardar_reserva(request, paquete_id):
     if request.method == 'POST':
         paquete = get_object_or_404(Paquete, id=paquete_id)
         fecha_viaje = request.POST.get('fecha')
-        cantidad = request.POST.get('numero_personas')
         
-        if fecha_viaje and cantidad:
+        # Extraer los pasajeros según los nuevos nombres de input
+        adultos = int(request.POST.get('adultos', 1))
+        menores = int(request.POST.get('menores', 0))
+        
+        if fecha_viaje:
+            # Crear la reserva usando la estructura normalizada
             reserva= Reserva.objects.create(
                 usuario=request.user,       
                 paquete=paquete,            
                 fecha=fecha_viaje,
-                numero_personas=cantidad
+                numero_adultos=adultos,
+                numero_menores=menores
             )
-            reserva.save()
+            # El save() del modelo Reserva automáticamente calcula y asigna el monto_total
             
             messages.success(request, f"¡Reserva para {paquete.nombre} realizada con éxito!")
-            return redirect('reservas') 
+            return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
         else:
             messages.error(request, "Por favor completa todos los campos.")
 

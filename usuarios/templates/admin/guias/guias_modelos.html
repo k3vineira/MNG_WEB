@@ -17,7 +17,7 @@
         <p class="mt-2 text-muted small">Cargando datos del guía…</p>
       </div>
 
-      <form id="formGuia" method="POST" action="{% url 'usuarios:guias_guardar' %}">
+      <form id="formGuia" method="POST" action="{% url 'guias_guardar' %}">
 
         {% csrf_token %}
         <input type="hidden" name="guia_id" id="inputGuiaId" />
@@ -114,7 +114,7 @@
       </div>
       <div class="modal-footer border-0 justify-content-center gap-2 p-4 pt-0">
         <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
-        <form id="formBaja" method="POST" action="{% url 'usuarios:guias_baja_reactivar' id=0 estado='desactivar' %}" style="display:inline;">
+        <form id="formBaja" method="POST" action="{% url 'guias_baja_reactivar' id=0 estado='desactivar' %}" style="display:inline;">
           {% csrf_token %}
           <input type="hidden" name="guia_id" id="inputBajaId" />
           <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold"><i class="bi bi-person-dash-fill me-1"></i> Dar de Baja</button>
@@ -144,7 +144,7 @@
       </div>
       <div class="modal-footer border-0 justify-content-center gap-2 p-4 pt-0">
         <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
-        <form id="formReactivar" method="POST" action="{% url 'usuarios:guias_baja_reactivar' id=0 estado='activar' %}" style="display:inline;">
+        <form id="formReactivar" method="POST" action="{% url 'guias_baja_reactivar' id=0 estado='activar' %}" style="display:inline;">
           {% csrf_token %}
           <input type="hidden" name="guia_id" id="inputReactivarId" />
           <button type="submit" class="btn btn-success px-4 rounded-pill fw-bold"><i class="bi bi-person-check-fill me-1"></i> Reactivar</button>
