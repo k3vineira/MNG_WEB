@@ -1,7 +1,6 @@
 from django.urls import path
 from reservas import views   # o: from nombre_app import views
 
-app_name = 'reservas'  
 
 urlpatterns = [
      path('reservar/', views.reservas_view, name='reservas'),

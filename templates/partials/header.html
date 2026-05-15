@@ -28,19 +28,19 @@
                 {% if user.is_superuser %}Administrador{% elif user.is_staff %}Staff{% elif user.es_guia %}Guía Turístico{% else %}Viajero{% endif %}
               </span>
             </li>
-            <li><a class="dropdown-item py-2 fw-bold text-success" href="{% url 'usuarios:detalles' %}"><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a></li>
+            <li><a class="dropdown-item py-2 fw-bold text-success" href="{% url 'detalles' %}"><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a></li>
             {% if user.is_staff %}
-              <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'usuarios:dashboard' %}"><i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin</a></li>
+              <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin</a></li>
             {% endif %}
             {% if user.es_turista or user.is_staff %}
               <li><a class="dropdown-item py-2" href="/mis-viajes/"><i class="bi bi-map me-2"></i>Mis Viajes</a></li>
-              <li><a class="dropdown-item py-2" href="{% url 'reservas:listar_reservas' %}"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a></li>
+              <li><a class="dropdown-item py-2" href="{% url 'listar_reservas' %}"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a></li>
               <li><a class="dropdown-item py-2" href="/guardados/"><i class="bi bi-bookmark me-2"></i>Guardados</a></li>
               <li><a class="dropdown-item py-2" href="/mis-comentarios/"><i class="bi bi-chat-left-text me-2"></i>Comentarios</a></li>
             {% endif %}
             <li><hr class="dropdown-divider"></li>
             <li>
-              <form action="{% url 'usuarios:logout' %}" method="post">
+              <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="dropdown-item text-danger py-2">Cerrar Sesión</button>
               </form>
@@ -48,7 +48,7 @@
           </ul>
         </div>
       {% else %}
-        <a class="btn btn-outline-light rounded-pill px-4 py-2" href="{% url 'usuarios:login' %}">Acceder</a>
+        <a class="btn btn-outline-light rounded-pill px-4 py-2" href="{% url 'login' %}">Acceder</a>
       {% endif %}
       <a class="nav-link text-white" href="#">
         <i class="bi bi-cart3 fs-5"></i>
@@ -67,9 +67,9 @@
           <nav class="d-flex flex-column gap-3 gap-md-4">
             <a href="/" class="nav-main-link display-3 fw-bold">Inicio</a>
             {% if user.is_authenticated %}
-              <a href="{% url 'usuarios:detalles' %}" class="nav-main-link display-3 fw-bold">Mi Perfil</a>
+              <a href="{% url 'detalles' %}" class="nav-main-link display-3 fw-bold">Mi Perfil</a>
               {% if user.es_turista %}
-                <a href="{% url 'reservas:listar_reservas' %}" class="nav-main-link display-3 fw-bold">Mis Reservas</a>
+                <a href="{% url 'listar_reservas' %}" class="nav-main-link display-3 fw-bold">Mis Reservas</a>
               {% endif %}
             {% endif %}
             <a href="#" class="nav-main-link display-3 fw-bold">Destinos</a>
@@ -86,8 +86,8 @@
               <li><a class="nav-secondary-link" href="#"><i class="bi bi-shield-lock me-2"></i>Privacidad</a></li>
             {% endif %}
             <li><a class="nav-secondary-link" href="#"><i class="bi bi-people me-2"></i>Nosotros</a></li>
-            <li><a class="nav-secondary-link" href="{% url 'comunidad:pqrs'%}"><i class="bi bi-chat-left-dots me-2"></i>PQRS</a></li>
-            <li><a class="nav-secondary-link" href="{% url 'comunidad:listar_blog' %}"><i class="bi bi-journal-text me-2"></i>Blog</a></li>
+            <li><a class="nav-secondary-link" href="{% url 'pqrs'%}"><i class="bi bi-chat-left-dots me-2"></i>PQRS</a></li>
+            <li><a class="nav-secondary-link" href="{% url 'listar_blog' %}"><i class="bi bi-journal-text me-2"></i>Blog</a></li>
           </ul>
         </div>
 
@@ -123,13 +123,13 @@
       </li>
      <li>
        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2"
-         href="{% url 'usuarios:nosotros' %}"
+         href="{% url 'nosotros' %}"
          target="_blank">
           <i class="bi bi-people fs-6"></i>NOSOTROS
        </a>
     </li>
       <li>
-        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="{% url 'comunidad:blog' %}">
+        <a class="nav-link text-dark small fw-bold d-flex align-items-center gap-2" href="{% url 'blog' %}">
           <i class="bi bi-journal-text fs-6"></i>BLOG
         </a>
       </li>
@@ -155,19 +155,19 @@
                 {% if user.is_superuser %}Administrador{% elif user.is_staff %}Staff{% elif user.es_guia %}Guía Turístico{% else %}Viajero{% endif %}
               </span>
             </li>
-            <li><a class="dropdown-item py-2 fw-bold text-success" href="{% url 'usuarios:detalles' %}"><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a></li>
+            <li><a class="dropdown-item py-2 fw-bold text-success" href="{% url 'detalles' %}"><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a></li>
             {% if user.is_staff %}
-              <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'usuarios:dashboard' %}"><i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin</a></li>
+              <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin</a></li>
             {% endif %}
             {% if user.es_turista or user.is_staff %}
               <li><a class="dropdown-item py-2" href="/mis-viajes/"><i class="bi bi-map me-2"></i>Mis Viajes</a></li>
-              <li><a class="dropdown-item py-2" href="{% url 'reservas:listar_reservas' %}"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a></li>
+              <li><a class="dropdown-item py-2" href="{% url 'listar_reservas' %}"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a></li>
               <li><a class="dropdown-item py-2" href="/guardados/"><i class="bi bi-bookmark me-2"></i>Guardados</a></li>
               <li><a class="dropdown-item py-2" href="/mis-comentarios/"><i class="bi bi-chat-left-text me-2"></i>Comentarios</a></li>
             {% endif %}
             <li><hr class="dropdown-divider"></li>
             <li>
-              <form action="{% url 'usuarios:logout' %}" method="post">
+              <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="dropdown-item text-danger py-2">Cerrar Sesión</button>
               </form>
@@ -175,7 +175,7 @@
           </ul>
         </div>
       {% else %}
-        <a class="nav-link btn btn-outline-success rounded-pill px-4 py-2" href="{% url 'usuarios:login' %}">Acceder</a>
+        <a class="nav-link btn btn-outline-success rounded-pill px-4 py-2" href="{% url 'login' %}">Acceder</a>
       {% endif %}
       <a class="nav-link text-dark" href="#">
         <i class="bi bi-cart3 fs-5"></i>

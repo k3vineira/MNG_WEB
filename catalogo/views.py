@@ -16,7 +16,7 @@ def destinos(request):
         destinos_list = destinos_list.filter(nombre__icontains=busqueda)
 
     if precio_max:
-        destinos_list = destinos_list.filter(precio__lte=precio_max)
+        destinos_list = destinos_list.filter(tarifas__precio_adulto__lte=precio_max).distinct()
     
     return render(request, 'usuario/destinos.html', {'destinos': destinos_list})
 
@@ -31,8 +31,8 @@ class PaqueteListView(ListView):
 class PaqueteCreateView(CreateView):
     model = Paquete
     fields = [
-        'imagen', 'nombre', 'descripcion', 'precio', 
-        'duracion_estimada', 'punto_encuentro', 'categoria', 'actividades','estado'
+        'imagen', 'nombre', 'descripcion', 
+        'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades','estado'
     ]
     template_name = 'admin/paquetes/agregar_paquete.html'
     success_url = reverse_lazy('listar_paquetes') 
@@ -41,8 +41,8 @@ class PaqueteCreateView(CreateView):
 class PaqueteUpdateView(UpdateView):
     model = Paquete
     fields = [
-        'imagen', 'nombre', 'descripcion', 'precio', 
-        'duracion_estimada', 'punto_encuentro', 'categoria', 'actividades','estado'
+        'imagen', 'nombre', 'descripcion', 
+        'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades','estado'
     ]
     template_name = 'admin/paquetes/editar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')

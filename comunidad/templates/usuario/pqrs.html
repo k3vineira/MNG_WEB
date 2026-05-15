@@ -17,7 +17,7 @@
                     </div>
                     
                     <div class="card-body p-4 p-md-5 bg-white">
-                        <form action="{% url 'comunidad:guardar_pqrs' %}" method="POST" class="needs-validation">
+                        <form action="{% url 'guardar_pqrs' %}" method="POST" class="needs-validation">
                             {% csrf_token %}
                             
                             <div class="mb-3 custom-form-style">
@@ -32,7 +32,7 @@
                             <hr class="my-4 text-secondary opacity-25">
 
                             <div class="d-grid d-md-flex justify-content-md-end gap-3">
-                                <a href="{% url 'comunidad:pqrs' %}" class="btn btn-light btn-lg px-4 fw-semibold text-secondary border">
+                                <a href="{% url 'pqrs' %}" class="btn btn-light btn-lg px-4 fw-semibold text-secondary border">
                                     Cancelar
                                 </a>
                                 <button type="submit" class="btn btn-success btn-lg px-5 fw-bold shadow-sm">

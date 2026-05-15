@@ -64,6 +64,13 @@ class Paquete(models.Model):
     def __str__(self):
         return self.nombre
 
+    @property
+    def precio_minimo(self):
+        tarifas = self.tarifas.all()
+        if tarifas.exists():
+            return min(t.precio_adulto for t in tarifas)
+        return 0
+
 
 class Tarifa(models.Model):
     paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='tarifas')

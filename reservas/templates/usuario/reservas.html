@@ -37,10 +37,10 @@
               <h5 class="fw-bold">Inicia sesión o regístrate</h5>
               <p class="small mb-3">Para realizar una reserva necesitas tener una cuenta en Monagua.</p>
               <div class="d-flex gap-2 justify-content-center">
-                <a href="{% url 'usuarios:login' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-confirmar btn-sm text-white">
+                <a href="{% url 'login' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-confirmar btn-sm text-white">
                   Iniciar Sesión
                 </a>
-                <a href="{% url 'usuarios:registro' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-outline-success btn-sm">
+                <a href="{% url 'registro' %}{% if paquete %}?next={{ request.path }}&paquete_id={{ paquete.id }}{% endif %}" class="btn btn-outline-success btn-sm">
                   Registrarse
                 </a>
               </div>
@@ -49,14 +49,14 @@
           {% endif %}
 
           <!-- EL FORMULARIO COMIENZA AQUÍ PARA ENVOLVER TODO -->
-          <form action="{% if paquete %}{% url 'reservas:guardar_reserva' paquete.id %}{% else %}#{% endif %}" method="POST">
+          <form action="{% if paquete %}{% url 'guardar_reserva' paquete.id %}{% else %}#{% endif %}" method="POST">
             {% csrf_token %}
 
             <!-- Información personal eliminada (el backend ya tiene acceso a request.user) -->
 
             <div class="mb-4 mt-2">
               <label class="form-label fw-bold text-dark mb-2"><i class="bi bi-calendar-event text-success me-2"></i>Fecha de tu Aventura</label>
-              <input type="date" name="fecha" class="form-control form-control-lg bg-light border-0 shadow-sm px-4" required />
+              <input type="date" name="fecha" id="fecha_input" class="form-control form-control-lg bg-light border-0 shadow-sm px-4" required onchange="updatePrice()" />
             </div>
 
             <div class="mb-4">
@@ -101,6 +101,11 @@
               </div>
             </div>
 
+            <!-- Mostrar Total Dinámico -->
+            <div id="total_reserva_display" class="mb-3 text-center p-3 rounded-4 bg-success bg-opacity-10 border border-success border-opacity-25">
+                <small class="text-muted">Selecciona una fecha para ver el precio.</small>
+            </div>
+
             <div class="form-check mb-4 mt-2">
               <input class="form-check-input border-secondary shadow-sm" type="checkbox" id="terminos" required />
               <label class="form-check-label small text-muted" for="terminos">
@@ -109,12 +114,69 @@
             </div>
 
             <div class="d-grid mt-2">
-              <button class="btn btn-confirmar rounded-pill py-3 fs-5 shadow-sm fw-bold transition-all" type="submit" {% if not user.is_authenticated %}disabled{% endif %}>
+              <button id="submit_reserva_btn" class="btn btn-confirmar rounded-pill py-3 fs-5 shadow-sm fw-bold transition-all" type="submit" {% if not user.is_authenticated %}disabled{% endif %}>
                 Confirmar Reserva
               </button>
             </div>
 
             <script>
+              const tarifasData = [
+                  {% if paquete %}
+                  {% for tarifa in paquete.tarifas.all %}
+                  {
+                      fecha_inicio: "{{ tarifa.temporada.fecha_inicio|date:'Y-m-d' }}",
+                      fecha_fin: "{{ tarifa.temporada.fecha_fin|date:'Y-m-d' }}",
+                      precio_adulto: {{ tarifa.precio_adulto }},
+                      precio_menor: {{ tarifa.precio_menor }}
+                  },
+                  {% endfor %}
+                  {% endif %}
+              ];
+
+              function updatePrice() {
+                  const fecha = document.getElementById('fecha_input').value;
+                  const adultos = parseInt(document.getElementById('adultos_input').value) || 0;
+                  const menores = parseInt(document.getElementById('menores_input').value) || 0;
+                  
+                  const displayTotal = document.getElementById('total_reserva_display');
+                  const submitBtn = document.getElementById('submit_reserva_btn');
+                  const isAuth = submitBtn.hasAttribute('disabled') && submitBtn.textContent.includes('Confirmar') ? false : true;
+
+                  if (!fecha) {
+                      displayTotal.innerHTML = `<small class="text-muted">Selecciona una fecha para ver el precio.</small>`;
+                      return;
+                  }
+
+                  let precio_adulto = 0;
+                  let precio_menor = 0;
+                  let tarifa_encontrada = false;
+
+                  for (let tarifa of tarifasData) {
+                      if (fecha >= tarifa.fecha_inicio && fecha <= tarifa.fecha_fin) {
+                          precio_adulto = tarifa.precio_adulto;
+                          precio_menor = tarifa.precio_menor;
+                          tarifa_encontrada = true;
+                          break;
+                      }
+                  }
+
+                  if (tarifa_encontrada) {
+                      const total = (adultos * precio_adulto) + (menores * precio_menor);
+                      displayTotal.innerHTML = `
+                          <div class="d-flex justify-content-between align-items-center">
+                              <span class="text-secondary fw-semibold">Total estimado:</span>
+                              <h4 class="text-success fw-bold mb-0">$${total.toLocaleString('es-CO')}</h4>
+                          </div>
+                      `;
+                      {% if user.is_authenticated %}
+                      submitBtn.disabled = false;
+                      {% endif %}
+                  } else {
+                      displayTotal.innerHTML = `<small class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>No hay tarifas disponibles para esta fecha.</small>`;
+                      submitBtn.disabled = true;
+                  }
+              }
+
               function updateCount(type, change) {
                 const input = document.getElementById(type + '_input');
                 const display = document.getElementById(type + '_count');
@@ -135,6 +197,9 @@
                     const menores = parseInt(document.getElementById('menores_input').value) || 0;
                     compatInput.value = adultos + menores;
                 }
+
+                // Recalcular precio dinámico
+                updatePrice();
               }
             </script>
           </form> 

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Monagua</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <style>
         :root {
@@ -67,6 +68,20 @@
             h4 { font-size: 1.2rem; }
             .mb-2 { margin-bottom: 0.5rem !important; }
         }
+        
+        .cursor-pointer {
+            cursor: pointer;
+        }
+        
+        .form-floating > label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--verde-monagua);
+            box-shadow: 0 0 0 0.25rem rgba(64, 109, 70, 0.25);
+        }
     </style>
 </head>
 
@@ -81,7 +96,7 @@
         </div>
 
         <div class="d-flex justify-content-center gap-4 auth-nav mb-3">
-            <a href="{% url 'usuarios:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% if request.GET.paquete_id %}&paquete_id={{ request.GET.paquete_id }}{% endif %}{% endif %}" class="auth-nav-item">Iniciar Sesión</a>
+            <a href="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% if request.GET.paquete_id %}&paquete_id={{ request.GET.paquete_id }}{% endif %}{% endif %}" class="auth-nav-item">Iniciar Sesión</a>
             <a href="#" class="auth-nav-item active">Regístrate</a>
         </div>
 
@@ -90,83 +105,115 @@
             {# Mantener redirección tras registro si existe #}
             <input type="hidden" name="next" value="{{ request.GET.next }}">
 
-            <div class="row g-0">
+            <div class="row g-4 mt-1">
                 <!-- Columna Izquierda -->
                 <div class="col-md-6 pe-md-4 divider-vertical">
-                    <div class="mb-2">
-                        <input type="text" name="username" value="{{ form.username.value|default:'' }}" 
-                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.username.errors %}is-invalid{% endif %}" 
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" 
+                               class="form-control rounded-4 shadow-sm {% if form.username.errors %}is-invalid{% endif %}" 
                                placeholder="Nombre de Usuario" required>
-                        {% if form.username.errors %}<div class="invalid-feedback ms-3">{{ form.username.errors.0 }}</div>{% endif %}
+                        <label for="id_username"><i class="bi bi-person text-success me-1"></i>Nombre de Usuario</label>
+                        {% if form.username.errors %}<div class="invalid-feedback ms-2">{{ form.username.errors.0 }}</div>{% endif %}
                     </div>
-                    <div class="mb-2">
-                        <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" 
-                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.first_name.errors %}is-invalid{% endif %}" 
-                               placeholder="Nombres" required>
-                        {% if form.first_name.errors %}<div class="invalid-feedback ms-3">{{ form.first_name.errors.0 }}</div>{% endif %}
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-6 form-floating">
+                            <input type="text" name="first_name" id="id_first_name" value="{{ form.first_name.value|default:'' }}" 
+                                   class="form-control rounded-4 shadow-sm {% if form.first_name.errors %}is-invalid{% endif %}" 
+                                   placeholder="Nombres" required>
+                            <label for="id_first_name" class="ms-2">Nombres</label>
+                            {% if form.first_name.errors %}<div class="invalid-feedback ms-2">{{ form.first_name.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-sm-6 form-floating">
+                            <input type="text" name="last_name" id="id_last_name" value="{{ form.last_name.value|default:'' }}" 
+                                   class="form-control rounded-4 shadow-sm {% if form.last_name.errors %}is-invalid{% endif %}" 
+                                   placeholder="Apellidos" required>
+                            <label for="id_last_name" class="ms-2">Apellidos</label>
+                            {% if form.last_name.errors %}<div class="invalid-feedback ms-2">{{ form.last_name.errors.0 }}</div>{% endif %}
+                        </div>
                     </div>
-                    <div class="mb-2">
-                        <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" 
-                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.last_name.errors %}is-invalid{% endif %}" 
-                               placeholder="Apellidos" required>
-                        {% if form.last_name.errors %}<div class="invalid-feedback ms-3">{{ form.last_name.errors.0 }}</div>{% endif %}
-                    </div>
-                    <div class="mb-2">
-                        <select name="tipo_documento" class="form-select rounded-pill border-secondary-subtle shadow-sm text-secondary {% if form.tipo_documento.errors %}is-invalid{% endif %}" required>
-                            <option value="" selected disabled>Tipo De Documento</option>
-                            <option value="Cédula de Ciudadanía" {% if form.tipo_documento.value == "Cédula de Ciudadanía" %}selected{% endif %}>Cédula de Ciudadanía</option>
-                            <option value="Cédula de Extranjería" {% if form.tipo_documento.value == "Cédula de Extranjería" %}selected{% endif %}>Cédula de Extranjería</option>
-                            <option value="Pasaporte" {% if form.tipo_documento.value == "Pasaporte" %}selected{% endif %}>Pasaporte</option>
+
+                    <div class="form-floating mb-3">
+                        <select name="tipo_documento" id="id_tipo_documento" class="form-select rounded-4 shadow-sm {% if form.tipo_documento.errors %}is-invalid{% endif %}" required>
+                            <option value="" selected disabled>Selecciona una opción</option>
+                            <option value="CC" {% if form.tipo_documento.value == "CC" %}selected{% endif %}>Cédula de Ciudadanía</option>
+                            <option value="CE" {% if form.tipo_documento.value == "CE" %}selected{% endif %}>Cédula de Extranjería</option>
+                            <option value="PAS" {% if form.tipo_documento.value == "PAS" %}selected{% endif %}>Pasaporte</option>
                         </select>
-                        {% if form.tipo_documento.errors %}<div class="invalid-feedback ms-3">{{ form.tipo_documento.errors.0 }}</div>{% endif %}
+                        <label for="id_tipo_documento"><i class="bi bi-card-heading text-success me-1"></i>Tipo de Documento</label>
+                        {% if form.tipo_documento.errors %}<div class="invalid-feedback ms-2">{{ form.tipo_documento.errors.0 }}</div>{% endif %}
                     </div>
-                    <div class="mb-2">
-                        <input type="text" name="numero_documento" value="{{ form.numero_documento.value|default:'' }}" 
-                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.numero_documento.errors %}is-invalid{% endif %}" 
+
+                    <div class="form-floating mb-3">
+                        <input type="text" name="numero_documento" id="id_numero_documento" value="{{ form.numero_documento.value|default:'' }}" 
+                               class="form-control rounded-4 shadow-sm {% if form.numero_documento.errors %}is-invalid{% endif %}" 
                                placeholder="Número de Documento" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        {% if form.numero_documento.errors %}<div class="invalid-feedback ms-3">{{ form.numero_documento.errors.0 }}</div>{% endif %}
+                        <label for="id_numero_documento"><i class="bi bi-123 text-success me-1"></i>Número de Documento</label>
+                        {% if form.numero_documento.errors %}<div class="invalid-feedback ms-2">{{ form.numero_documento.errors.0 }}</div>{% endif %}
                     </div>
-                    <div class="mb-2">
-                        <input type="tel" name="telefono" value="{{ form.telefono.value|default:'' }}" 
-                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.telefono.errors %}is-invalid{% endif %}" 
-                               placeholder="Número de Teléfono" 
-                               required maxlength="10"
-                               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        {% if form.telefono.errors %}<div class="invalid-feedback ms-3">{{ form.telefono.errors.0 }}</div>{% endif %}
+
+                    <div class="form-floating mb-3">
+                        <input type="tel" name="telefono" id="id_telefono" value="{{ form.telefono.value|default:'' }}" 
+                               class="form-control rounded-4 shadow-sm {% if form.telefono.errors %}is-invalid{% endif %}" 
+                               placeholder="Número de Teléfono" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <label for="id_telefono"><i class="bi bi-telephone text-success me-1"></i>Número de Teléfono</label>
+                        {% if form.telefono.errors %}<div class="invalid-feedback ms-2">{{ form.telefono.errors.0 }}</div>{% endif %}
                     </div>
                 </div>
 
                 <!-- Columna Derecha -->
                 <div class="col-md-6 ps-md-4">
-                    <div class="mb-2">
-                        <input type="text" name="residencia" value="{{ form.residencia.value|default:'' }}" 
-                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.residencia.errors %}is-invalid{% endif %}" 
-                               placeholder="Lugar de Residencia" required>
-                        {% if form.residencia.errors %}<div class="invalid-feedback ms-3">{{ form.residencia.errors.0 }}</div>{% endif %}
-                    </div>
-                    <div class="mb-2">
-                        <input type="email" name="email" value="{{ form.email.value|default:'' }}" 
-                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.email.errors %}is-invalid{% endif %}" 
+                    
+                    <div class="form-floating mb-3">
+                        <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}" 
+                               class="form-control rounded-4 shadow-sm {% if form.email.errors %}is-invalid{% endif %}" 
                                placeholder="Correo Electrónico" required>
-                        {% if form.email.errors %}<div class="invalid-feedback ms-3">{{ form.email.errors.0 }}</div>{% endif %}
+                        <label for="id_email"><i class="bi bi-envelope text-success me-1"></i>Correo Electrónico</label>
+                        {% if form.email.errors %}<div class="invalid-feedback ms-2">{{ form.email.errors.0 }}</div>{% endif %}
                     </div>
-                    <div class="mb-2">
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-sm-6 form-floating">
+                            <select name="pais" id="id_pais" class="form-select rounded-4 shadow-sm" required>
+                                <option value="" selected disabled>Cargando países...</option>
+                            </select>
+                            <label for="id_pais" class="ms-2"><i class="bi bi-globe text-success me-1"></i>País</label>
+                        </div>
+                        <div class="col-sm-6 form-floating">
+                            <select name="ciudad" id="id_ciudad" class="form-select rounded-4 shadow-sm" required disabled>
+                                <option value="" selected disabled>Elige un país primero</option>
+                            </select>
+                            <label for="id_ciudad" class="ms-2"><i class="bi bi-building text-success me-1"></i>Ciudad</label>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3 position-relative">
                         <input type="password" id="pass1" name="password1" 
-                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.password1.errors %}is-invalid{% endif %}" 
+                               class="form-control rounded-4 shadow-sm {% if form.password1.errors %}is-invalid{% endif %}" 
                                placeholder="Contraseña" required minlength="6">
-                        {% if form.password1.errors %}<div class="invalid-feedback ms-3">{{ form.password1.errors.0 }}</div>{% endif %}
+                        <label for="pass1"><i class="bi bi-lock text-success me-1"></i>Contraseña</label>
+                        <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer text-muted toggle-password" data-target="pass1">
+                            <i class="bi bi-eye"></i>
+                        </span>
+                        {% if form.password1.errors %}<div class="invalid-feedback ms-2">{{ form.password1.errors.0 }}</div>{% endif %}
                     </div>
-                    <div class="mb-2">
+
+                    <div class="form-floating mb-3 position-relative">
                         <input type="password" id="pass2" name="password2" 
-                               class="form-control rounded-pill border-secondary-subtle shadow-sm {% if form.password2.errors %}is-invalid{% endif %}" 
+                               class="form-control rounded-4 shadow-sm {% if form.password2.errors %}is-invalid{% endif %}" 
                                placeholder="Confirmar Contraseña" required minlength="6">
-                        {% if form.password2.errors %}<div class="invalid-feedback ms-3">{{ form.password2.errors.0 }}</div>{% endif %}
+                        <label for="pass2"><i class="bi bi-shield-lock text-success me-1"></i>Confirmar Contraseña</label>
+                        <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer text-muted toggle-password" data-target="pass2">
+                            <i class="bi bi-eye"></i>
+                        </span>
+                        {% if form.password2.errors %}<div class="invalid-feedback ms-2">{{ form.password2.errors.0 }}</div>{% endif %}
                     </div>
                     
-                    <div class="form-check mt-3">
+                    <div class="form-check mt-4 ms-2">
                         <input type="checkbox" class="form-check-input border-secondary-subtle shadow-sm" id="terminos" required>
-                        <label class="form-check-label text-muted" style="font-size: 0.8rem;" for="terminos">
-                            He leído y acepto los <a href="{% url 'usuarios:terminos' %}" class="text-custom-green fw-bold text-decoration-none">Términos y Condiciones</a>
+                        <label class="form-check-label text-muted" style="font-size: 0.85rem;" for="terminos">
+                            He leído y acepto los <a href="{% url 'terminos' %}" class="text-custom-green fw-bold text-decoration-none">Términos y Condiciones</a>
                         </label>
                     </div>
                 </div>
@@ -233,6 +280,127 @@
             } else {
                 mensajeError.classList.add('d-none');
                 formulario.submit(); 
+            }
+        });
+
+        // Alternar visibilidad de contraseñas
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const iconElement = this.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    iconElement.classList.remove('bi-eye');
+                    iconElement.classList.add('bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    iconElement.classList.remove('bi-eye-slash');
+                    iconElement.classList.add('bi-eye');
+                }
+            });
+        });
+
+        // Lógica de la API de Países y Ciudades
+        let countryData = [];
+        const paisSelect = document.getElementById('id_pais');
+        const ciudadSelect = document.getElementById('id_ciudad');
+
+        fetch('https://countriesnow.space/api/v0.1/countries')
+            .then(response => response.json())
+            .then(data => {
+                countryData = data.data;
+                paisSelect.innerHTML = '<option value="" selected disabled>Selecciona un país</option>';
+                
+                // Ordenar alfabéticamente
+                countryData.sort((a, b) => a.country.localeCompare(b.country));
+
+                countryData.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.country;
+                    option.textContent = item.country;
+                    // Preseleccionar si viene de un error de formulario
+                    if("{{ request.POST.pais }}" === item.country) {
+                        option.selected = true;
+                    }
+                    paisSelect.appendChild(option);
+                });
+
+                // Disparar evento change si ya había un país seleccionado
+                if(paisSelect.value) {
+                    paisSelect.dispatchEvent(new Event('change'));
+                }
+            })
+            .catch(error => {
+                console.error("Error cargando países:", error);
+                paisSelect.innerHTML = '<option value="">Error de conexión. Escribe manualmente</option>';
+                // Fallback a inputs de texto si la API falla
+                paisSelect.outerHTML = '<input type="text" name="pais" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu país" required>';
+                ciudadSelect.outerHTML = '<input type="text" name="ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
+            });
+
+        paisSelect.addEventListener('change', function() {
+            const selectedCountry = this.value;
+            
+            // Asegurarnos de que id_ciudad sea un select (por si se cambió a input antes)
+            let ciudadElement = document.getElementById('id_ciudad');
+            if (ciudadElement.tagName === 'INPUT') {
+                const newSelect = document.createElement('select');
+                newSelect.name = 'ciudad';
+                newSelect.id = 'id_ciudad';
+                newSelect.className = 'form-select rounded-4 shadow-sm';
+                newSelect.required = true;
+                ciudadElement.parentNode.replaceChild(newSelect, ciudadElement);
+                ciudadElement = newSelect;
+            }
+
+            ciudadElement.innerHTML = '<option value="" selected disabled>Cargando ciudades...</option>';
+            ciudadElement.disabled = false;
+
+            if (selectedCountry === "Colombia") {
+                // API oficial y completa para Colombia
+                fetch('https://api-colombia.com/api/v1/City')
+                    .then(response => response.json())
+                    .then(data => {
+                        ciudadElement.innerHTML = '<option value="" selected disabled>Selecciona una ciudad</option>';
+                        // Extraer nombres, eliminar duplicados por si acaso y ordenar
+                        let cities = [...new Set(data.map(c => c.name))];
+                        cities.sort((a, b) => a.localeCompare(b));
+                        
+                        cities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city;
+                            option.textContent = city;
+                            if("{{ request.POST.ciudad }}" === city) {
+                                option.selected = true;
+                            }
+                            ciudadElement.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Error cargando ciudades de Colombia:", error);
+                        ciudadElement.outerHTML = '<input type="text" name="ciudad" id="id_ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
+                    });
+            } else {
+                // Lógica original para el resto del mundo
+                const countryObj = countryData.find(c => c.country === selectedCountry);
+                if (countryObj && countryObj.cities.length > 0) {
+                    ciudadElement.innerHTML = '<option value="" selected disabled>Selecciona una ciudad</option>';
+                    const cities = countryObj.cities.sort((a, b) => a.localeCompare(b));
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city;
+                        option.textContent = city;
+                        if("{{ request.POST.ciudad }}" === city) {
+                            option.selected = true;
+                        }
+                        ciudadElement.appendChild(option);
+                    });
+                } else {
+                    // Si el país no tiene ciudades en la API global, permitir texto libre
+                    ciudadElement.outerHTML = '<input type="text" name="ciudad" id="id_ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
+                }
             }
         });
     </script>

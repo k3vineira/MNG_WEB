@@ -15,7 +15,7 @@ def inicio_usuarios(request):
     y a los turistas a su página de inicio personalizada.
     """
     if request.user.is_staff:
-        return redirect('usuarios:dashboard')
+        return redirect('dashboard')
 
     context = {
         'titulo': 'Bienvenido a Monagua',
@@ -23,7 +23,7 @@ def inicio_usuarios(request):
     return render(request, 'turista/index_turista.html', context)
 
 
-@user_passes_test(lambda u: u.is_staff, login_url='usuarios:inicio')
+@user_passes_test(lambda u: u.is_staff, login_url='inicio')
 def dashboard_admin(request):
     """
     Vista protegida para el Dashboard Administrativo.
@@ -48,7 +48,7 @@ def dashboard_admin(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('usuarios:inicio')
+        return redirect('inicio')
 
     if request.method == 'POST':
         # Permitir login con correo interceptando los datos del POST
@@ -78,7 +78,7 @@ def login_view(request):
                     if paquete_id:
                         next_url = f"{next_url}?paquete_id={paquete_id}"
                     return redirect(next_url)
-                return redirect('usuarios:inicio')
+                return redirect('inicio')
     else:
         form = AuthenticationForm()
     return render(request, 'authentication/login.html', {'form': form})
@@ -90,28 +90,34 @@ def logout_view(request):
     """
     auth_logout(request)
     messages.info(request, "Has cerrado sesión exitosamente.")
-    return redirect('usuarios:login')
+    return redirect('login')
 
 
 def registro_view(request):
     if request.user.is_authenticated:
-        return redirect('usuarios:inicio')
+        return redirect('inicio')
 
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.es_turista = True  # Asignar rol de turista automáticamente
+            user.rol = Usuario.Roles.CLIENTE
+            
+            pais = request.POST.get('pais', '')
+            ciudad = request.POST.get('ciudad', '')
+            if pais and ciudad:
+                user.residencia = f"{ciudad}, {pais}"
+                
             user.save()
 
             # Crear el perfil de Cliente asociado
-            Cliente.objects.create(usuario=user, telefono=user.telefono)
+            Cliente.objects.create(usuario=user, pais=pais, ciudad=ciudad)
 
             messages.success(request, "¡Registro exitoso! Tu cuenta ha sido creada. Ahora puedes iniciar sesión.")
             
             # Preservar parámetros de redirección hacia el login
             from django.urls import reverse
-            login_url = reverse('usuarios:login')
+            login_url = reverse('login')
             next_url = request.GET.get('next')
             paquete_id = request.GET.get('paquete_id')
             query_params = []
@@ -170,7 +176,7 @@ def perfil_view(request):
             user.save()
             messages.success(request, "¡Información actualizada correctamente!")
 
-        return redirect('usuarios:detalles')
+        return redirect('detalles')
 
     return render(request, 'private/perfil.html')
 
@@ -213,7 +219,7 @@ def asignar_rol_guia(request, user_id):
         user_obj.save()
         accion = "asignado como" if user_obj.es_guia else "removido de"
         messages.success(request, f"Usuario {user_obj.username} {accion} guía.")
-    return redirect('usuarios:gestion_guias')
+    return redirect('gestion_guias')
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -225,7 +231,7 @@ def guias_baja_reactivar(request, id, estado):
         guia.save()
         msg = "reactivado" if guia.is_active else "dado de baja"
         messages.info(request, f"Guía {guia.first_name} {msg} exitosamente.")
-    return redirect('usuarios:gestion_guias')
+    return redirect('gestion_guias')
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -234,4 +240,4 @@ def guias_guardar(request):
     if request.method == 'POST':
         # Aquí se implementaría la lógica de guardado/update
         messages.success(request, "Datos del guía guardados correctamente.")
-    return redirect('usuarios:gestion_guias')
+    return redirect('gestion_guias')

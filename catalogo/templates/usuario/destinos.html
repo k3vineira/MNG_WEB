@@ -115,12 +115,16 @@
                     </div>
                     <div class="card-body p-4 d-flex flex-column">
                         <h5 class="fw-bold text-dark mb-2">{{ destino.nombre }}</h5>
-                        <p class="small text-muted flex-grow-1 lh-lg">{{ destino.descripcion|truncatechars:110 }}</p>
+                        <div class="d-flex gap-2 mb-2">
+                            <span class="badge bg-light text-secondary border"><i class="bi bi-sun"></i> {{ destino.dias_duracion }} Días</span>
+                            <span class="badge bg-light text-secondary border"><i class="bi bi-moon"></i> {{ destino.noches_duracion }} Noches</span>
+                        </div>
+                        <p class="small text-muted flex-grow-1 lh-lg">{{ destino.descripcion|truncatechars:90 }}</p>
                         
                         <div class="d-flex align-items-end justify-content-between mb-4 mt-2">
                             <div>
                                 <span class="text-muted small d-block mb-1">Desde</span>
-                                <h4 class="text-success fw-bold mb-0">${{ destino.precio }}</h4>
+                                <h4 class="text-success fw-bold mb-0">${{ destino.precio_minimo }}</h4>
                             </div>
                         </div>
                         
@@ -130,7 +134,7 @@
                                     data-bs-target="#modalActividades-{{ destino.id }}">
                                 <i class="bi bi-list-stars me-1"></i> Detalles
                             </button>
-                            <a href="{% url 'reservas:reservas' %}?paquete_id={{ destino.id }}" class="btn btn-success w-100 shadow-sm rounded-pill fw-bold">
+                            <a href="{% url 'reservas' %}?paquete_id={{ destino.id }}" class="btn btn-success w-100 shadow-sm rounded-pill fw-bold">
                                 RESERVAR
                             </a>
                         </div>                 
@@ -172,7 +176,7 @@
                         </div>
                         <div class="modal-footer border-0 p-4 pt-0">
                             <button type="button" class="btn btn-light rounded-pill px-4 fw-semibold border" data-bs-dismiss="modal">Volver</button>
-                            <a href="{% url 'reservas:reservas' %}?paquete_id={{ destino.id }}" class="btn btn-success rounded-pill px-4 shadow-sm fw-bold">Reservar ahora</a>
+                            <a href="{% url 'reservas' %}?paquete_id={{ destino.id }}" class="btn btn-success rounded-pill px-4 shadow-sm fw-bold">Reservar ahora</a>
                         </div>
                     </div>
                 </div>
