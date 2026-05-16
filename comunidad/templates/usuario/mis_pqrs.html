@@ -1,76 +1,104 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block extra_head %}
+<style>
+    body { padding-top: 0 !important; }
+    .barra-lateral-perfil {
+        min-height: 100vh;
+    }
+</style>
+{% endblock %}
+
+{# Anulamos los elementos comunes si tu diseño de perfil los oculta #}
+{% block navbar %}{% endblock %}
+{% block user_menu_fixed %}{% endblock %}
+{% block footer %}{% endblock %}
+
 {% block content %}
-<div class="main-wrapper mt-5" style="margin-left: 280px; background-color: #f4f7f5; min-height: 100vh; padding: 40px;">
-    <div class="container">
-        <div class="d-flex align-items-center mb-5 p-4 bg-white shadow-sm rounded-4 border-start border-4" style="border-color: #3B643F !important;">
-            <div class="icon-shape bg-light p-3 rounded-circle me-3">
-                <i class="bi bi-chat-quote-fill fs-3" style="color: #3B643F;"></i>
-            </div>
-            <div>
-                <h2 class="fw-bold mb-0" style="color: #1a251e;">Mis Solicitudes</h2>
-                <p class="text-muted mb-0">Seguimiento de tus PQRS y respuestas de Monagua</p>
-            </div>
-        </div>
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
         
-        <div class="row">
-            {% for p in pqrs %}
-            <div class="col-12 mb-4">
-                <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                    <div class="card-header bg-white border-0 py-3 px-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-uppercase fw-bold small tracking-wider text-muted">Ticket #{{ p.id }}</span>
-                            <span class="badge rounded-pill {% if p.respuesta %}bg-success-subtle text-success{% else %}bg-warning-subtle text-dark{% endif %} px-3 py-2">
-                                <i class="bi {% if p.respuesta %}bi-check-circle-fill{% else %}bi-clock-history{% endif %} me-1"></i>
-                                {% if p.respuesta %}Resuelto{% else %}En revisión{% endif %}
-                            </span>
-                        </div>
+        <aside class="col-md-3 col-lg-2 barra-lateral-perfil bg-success d-flex flex-column p-3">
+            <a href="#" class="d-flex align-items-center mb-4 text-decoration-none">
+                <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="64" height="64" class="me-2">
+            </a>
+            
+            <nav class="nav flex-column gap-2 mb-auto">
+                <a class="nav-link text-light" href="/"><i class="bi bi-compass me-2"></i> Inicio</a>
+                
+                {% if user.cliente or user.is_staff %}
+                    <a href="{% url 'mis_reservas_usuario' %}" class="nav-link text-light"><i class="bi bi-archive me-2"></i> Mis Reservas</a>
+                    <a href="{% url 'mis_cancelaciones_usuario' %}" class="nav-link text-light"><i class="bi bi-x-circle me-2"></i> Mis Cancelaciones</a>
+                    <a href="{% url 'mis_pqrs' %}" class="nav-link activo text-light bg-light bg-opacity-10 rounded"><i class="bi bi-question-circle me-2"></i> Mis PQRS</a>
+                    <a class="nav-link text-light" href="/guardados/"><i class="bi bi-bookmark me-2"></i> Guardados</a>
+                    <a class="nav-link text-light" href="/mis-comentarios/"><i class="bi bi-chat-left me-2"></i> Mis Comentarios</a>
+                {% endif %}
+                
+                {% if user.is_authenticated %}
+                    <a class="nav-link text-light" href="{% url 'detalles' %}"><i class="bi bi-person-circle me-2"></i> Perfil</a>
+                {% endif %}
+            </nav>
+            
+            <div class="mt-auto nav flex-column gap-2 border-top pt-3">
+                <a class="nav-link text-light" href="#"><i class="bi bi-question-circle me-2"></i> Soporte</a>
+                <a class="nav-link text-light" href="#"><i class="bi bi-shield-lock me-2"></i> Privacidad</a>
+            </div>
+        </aside>
+
+        <main class="col-md-9 col-lg-10" style="background-color: #f4f7f5; padding: 40px;">
+            <div class="container">
+                
+                <div class="d-flex align-items-center mb-5 p-4 bg-white shadow-sm rounded-4 border-start border-4" style="border-color: #3B643F !important;">
+                    <div class="icon-shape bg-light p-3 rounded-circle me-3">
+                        <i class="bi bi-chat-quote-fill fs-3" style="color: #3B643F;"></i>
                     </div>
-                    
-                    <div class="card-body p-4 pt-0">
-                        <h4 class="fw-bold mb-2">{{ p.asunto }}</h4>
-                        <div class="bg-light p-3 rounded-3 mb-4">
-                            <p class="mb-0 text-dark" style="font-size: 0.95rem;">
-                                <i class="bi bi-person-circle me-2"></i><strong>Tu mensaje:</strong><br>
-                                <span class="ms-4 d-block mt-1">{{ p.descripcion}}</span>
-                            </p>
-                        </div>
-                        
-                        {% if p.respuesta %}
-                        <div class="p-4 rounded-4 border-0 position-relative" style="background-color: #f1f8f1;">
-                            <div class="position-absolute top-0 start-0 h-100 rounded-start" style="width: 5px; background-color: #3B643F;"></div>
-                            <p class="mb-2">
-                                <strong style="color: #3B643F;"><i class="bi bi-patch-check-fill me-2"></i>Respuesta oficial de Monagua:</strong>
-                            </p>
-                            <p class="mb-0 fs-6 text-dark" style="line-height: 1.6;">{{ p.respuesta }}</p>
-                        </div>
-                        {% else %}
-                        <div class="text-center py-3">
-                            <div class="spinner-grow spinner-grow-sm text-warning me-2" role="status"></div>
-                            <span class="text-muted small">Nuestro equipo está revisando tu caso...</span>
-                        </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="card-footer bg-light border-0 py-3 px-4 d-flex justify-content-between align-items-center">
-                        <button class="btn btn-link btn-sm text-decoration-none p-0 text-success fw-bold">Imprimir soporte</button>
+                    <div>
+                        <h2 class="fw-bold mb-0" style="color: #1a251e;">Mis Solicitudes</h2>
+                        <p class="text-muted mb-0">Seguimiento de tus PQRS y respuestas de Monagua</p>
                     </div>
                 </div>
+                
+                {% if solicitudes %}
+                    <div class="list-group">
+                        {% for pqrs in solicitudes %}
+                            <div class="card mb-3 shadow-sm border-0">
+                                <div class="card-body">
+                                    <h5 class="card-title d-flex justify-content-between align-items-center">
+                                        <span><strong>{{ pqrs.get_tipo_display }}</strong> - #{{ pqrs.id }}</span>
+                                        <span class="badge {% if pqrs.estado == 'cerrado' %}bg-success{% elif pqrs.estado == 'en_proceso' %}bg-info{% else %}bg-warning{% endif %}">
+                                            {{ pqrs.get_estado_display }}
+                                        </span>
+                                    </h5>
+                                    <h6 class="text-dark fw-semibold mt-2">{{ pqrs.asunto }}</h6>
+                                    <p class="card-text text-muted">{{ pqrs.descripcion }}</p>
+                                    <small class="text-muted d-block mb-2">Enviado el: {{ pqrs.fecha|date:"d/m/Y" }}</small>
+                                    
+                                    {% if pqrs.respuesta %}
+                                        <div class="mt-3 p-3 bg-light border-start border-success border-3 rounded">
+                                            <h6 class="text-success mb-1"><strong>Respuesta de Monagua:</strong></h6>
+                                            <p class="mb-0 text-secondary">{{ pqrs.respuesta }}</p>
+                                        </div>
+                                    {% else %}
+                                        <div class="mt-2 p-2 bg-light rounded text-center">
+                                            <small class="text-muted"> Tu solicitud está siendo procesada.</small>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <h4>No tienes solicitudes activas</h4>
+                        <p class="text-muted">Si tienes dudas o sugerencias, estamos listos para escucharte.</p>
+                        <a href="{% url 'pqrs' %}" class="btn btn-link">+ Nueva Solicitud</a>
+                    </div>
+                {% endif %}
+
             </div>
-            {% empty %}
-            <div class="col-12 text-center py-5 bg-white shadow-sm rounded-4">
-                <img src="{% static 'img/empty_pqrs.svg' %}" alt="Sin datos" class="mb-4" width="150" onerror="this.src='https://illustrations.popsy.co/green/not-found.svg'">
-                <h4 class="fw-bold">No tienes solicitudes activas</h4>
-                <p class="text-muted">Si tienes dudas o sugerencias, estamos listos para escucharte.</p>
-                <a href="{% url 'crear_pqrs' %}" class="btn btn-brand px-4 rounded-pill mt-2">
-                    <i class="bi bi-plus-lg me-2"></i>Nueva Solicitud
-                </a>
-            </div>
-            {% endfor %}
-        </div>
+        </main>
+
     </div>
 </div>
-
-
 {% endblock %}

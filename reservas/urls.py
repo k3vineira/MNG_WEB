@@ -5,6 +5,8 @@ from reservas import views   # o: from nombre_app import views
 urlpatterns = [
      path('reservar/', views.reservas_view, name='reservas'),
      path('guardar/<int:paquete_id>/', views.guardar_reserva, name='guardar_reserva'),
+     path('mis-reservas/', views.mis_reservas_usuario, name='mis_reservas_usuario'),
+     
      
      #Rutas para CRUD de reservas
     path('reservas/', views.ReservaListView.as_view(), name='listar_reservas'),
@@ -16,6 +18,6 @@ urlpatterns = [
      path('cancelaciones/nueva/', views.CancelacionCreateView.as_view(), name='crear_cancelacion'),
      path('cancelaciones/editar/<int:pk>/', views.CancelacionUpdateView.as_view(), name='editar_cancelacion'),
      path('cancelaciones/eliminar/<int:pk>/', views.CancelacionDeleteView.as_view(), name='eliminar_cancelacion'),
-    
+     path('mis-cancelaciones/', views.mis_cancelaciones_usuario, name='mis_cancelaciones_usuario'),
      
 ]

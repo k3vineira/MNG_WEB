@@ -27,8 +27,7 @@
                         {% for pqr in todas_las_pqrs %}
                         <tr class="align-middle">
                             <td class="ps-3">
-                                <div class="fw-bold text-dark">{{ pqr.nombre_solicitante }}</div>
-                                <div class="text-muted small">{{ pqr.email }}</div>
+                                <div class="fw-bold text-dark">{{ pqr.usuario.get_full_name }}</div>
                             </td>
                             <td>
                                 <span class="badge {% if pqr.tipo == 'Queja' or pqr.tipo == 'Reclamo' %}bg-danger{% else %}bg-info{% endif %}" style="font-size: 0.7rem;">

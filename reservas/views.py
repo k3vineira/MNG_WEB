@@ -21,12 +21,13 @@ class ReservaListView(ListView):
 class ReservaCreateView(CreateView):
     model = Reserva
     fields = [
-        'cliente',
-        'paquete',
-        'horario',
-        'num_personas',
-        'estado',
-        'observaciones'
+    'usuario',
+    'paquete',
+    'fecha',
+    'numero_adultos',
+    'numero_menores',
+    'estado',
+        
     ]
 
     template_name = 'admin/reservas/agregar_reserva.html'
@@ -37,12 +38,14 @@ class ReservaUpdateView(UpdateView):
     model = Reserva
 
     fields = [
-        'cliente',
-        'paquete',
-        'horario',
-        'num_personas',
-        'estado',
-        'observaciones'
+    'usuario',
+    'paquete',
+    'fecha',
+    'numero_adultos',
+    'numero_menores',
+    'estado',
+   
+        
     ]
 
     template_name = 'admin/reservas/editar_reserva.html'
@@ -53,6 +56,19 @@ class ReservaDeleteView(DeleteView):
     model = Reserva
     template_name = 'admin/reservas/eliminar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
+
+@login_required(login_url='login')
+def mis_reservas_usuario(request):
+    reservas_canceladas_ids = Cancelacion.objects.filter(reserva__usuario=request.user).values_list('reserva_id', flat=True)
+    
+    # 2. Filtramos las reservas del usuario, pero EXCLUIMOS las que están en la lista anterior
+    mis_reservas = Reserva.objects.filter(usuario=request.user).exclude(id__in=reservas_canceladas_ids).order_by('-id')
+    
+    context = {
+        'reservas': mis_reservas
+    }
+    return render(request, 'usuario/mis_reservas.html', context)
+
 
 
 # =========================
@@ -67,11 +83,17 @@ class CancelacionListView(ListView):
 
 class CancelacionCreateView(CreateView):
     model = Cancelacion
-    fields = ['reserva', 'motivo', 'penalidad']
-
-    template_name = 'admin/cancelaciones/agregar_cancelacion.html'
-    success_url = reverse_lazy('listar_cancelaciones')
-
+    fields = ['motivo']
+    template_name = 'usuario/cancelaciones/crear_cancelacion.html' 
+    success_url = reverse_lazy('mis_cancelaciones_usuario') 
+    def form_valid(self, form):
+        reserva_id = self.request.GET.get('reserva_id')
+        if reserva_id:
+            reserva = get_object_or_404(Reserva, id=reserva_id)
+            form.instance.reserva = reserva
+            
+        form.instance.usuario = self.request.user
+        return super().form_valid(form)
 
 class CancelacionUpdateView(UpdateView):
     model = Cancelacion
@@ -85,6 +107,17 @@ class CancelacionDeleteView(DeleteView):
     model = Cancelacion
     template_name = 'admin/cancelaciones/eliminar_cancelacion.html'
     success_url = reverse_lazy('listar_cancelaciones')
+    
+
+@login_required(login_url='login')
+def mis_cancelaciones_usuario(request):
+
+    mis_cancelaciones = Cancelacion.objects.filter(reserva__usuario=request.user).order_by('-id')
+    
+    context = {
+        'cancelaciones': mis_cancelaciones
+    }
+    return render(request, 'usuario/cancelaciones/mis_cancelaciones.html', context)
 
 
 # =========================

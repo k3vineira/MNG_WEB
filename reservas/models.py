@@ -51,6 +51,6 @@ class Reserva(models.Model):
     
 
 class Cancelacion(models.Model):
-    reserva = models.OneToOneField(Reserva, on_delete=models.CASCADE)
+    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='cancelaciones')
     motivo = models.TextField()
     penalidad = models.DecimalField(max_digits=10, decimal_places=2, default=0)

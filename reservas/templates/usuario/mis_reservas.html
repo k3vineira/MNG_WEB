@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    body { padding-top: 0 !important; }
+    .barra-lateral-perfil { min-height: 100vh; }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block user_menu_fixed %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
+        
+        <aside class="col-md-3 col-lg-2 barra-lateral-perfil bg-success d-flex flex-column p-3">
+            <a href="#" class="d-flex align-items-center mb-4 text-decoration-none">
+                <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="64" height="64">
+            </a>
+            
+            <nav class="nav flex-column gap-2 mb-auto">
+                <a class="nav-link text-light" href="/"><i class="bi bi-compass me-2"></i> Inicio</a>
+                
+                <a href="{% url 'mis_reservas_usuario' %}" class="nav-link text-white fw-bold bg-white bg-opacity-25 rounded p-2">
+                    <i class="bi bi-archive me-2"></i> Mis reservas
+                </a>
+                
+                <a class="nav-link text-light" href="#"><i class="bi bi-bookmark me-2"></i> Guardados</a>
+                <a class="nav-link text-light" href="#"><i class="bi bi-chat-left-text me-2"></i> Comentarios</a>
+                <a class="nav-link text-light" href="{% url 'detalles' %}"><i class="bi bi-person me-2"></i> Perfil</a>
+            </nav>
+            
+            <div class="pt-3 border-top border-white border-opacity-25">
+                <a class="nav-link text-light small mb-2" href="#"><i class="bi bi-question-circle me-2"></i> Soporte</a>
+                <a class="nav-link text-light small" href="#"><i class="bi bi-shield-check me-2"></i> Privacidad</a>
+            </div>
+        </aside>
+
+        <main class="col-md-9 col-lg-10 bg-light p-4">
+            <div class="card p-4 shadow-sm border-0 rounded-3 bg-white">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-success m-0 fw-bold">Mis Aventuras Reservadas</h3>
+                    <span class="badge bg-secondary p-2 rounded-2">Historial de Viajes</span>
+                </div>
+                
+                {% if reservas %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle">
+                            <thead class="table-light text-secondary">
+                                <tr>
+                                    <th class="py-3">Paquete Turístico</th>
+                                    <th class="py-3">Fecha del Viaje</th>
+                                    <th class="py-3">Pasajeros</th>
+                                    <th class="py-3">Monto Total</th>
+                                    <th class="py-3 text-center">Opciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reserva in reservas %}
+                                    <tr>
+                                        <td class="py-3">
+                                            <span class="fw-bold text-dark">{{ reserva.paquete.nombre }}</span>
+                                        </td>
+                                        <td class="py-3 text-muted">{{ reserva.fecha }}</td>
+                                        <td class="py-3">
+                                            <span class="text-secondary small">
+                                                {{ reserva.numero_adultos }} Adul. / {{ reserva.numero_menores }} Men.
+                                            </span>
+                                        </td>
+                                        <td class="py-3 fw-bold text-success">${{ reserva.monto_total }}</td>
+                                        <td class="py-3 text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button type="button" class="btn btn-sm btn-success px-3 rounded-2 fw-semibold">
+                                                    <i class="bi bi-credit-card me-1"></i> Pagar
+                                                </button>
+
+                                                <a href="{% url 'crear_cancelacion' %}?reserva_id={{ reserva.id }}" class="btn btn-sm btn-outline-danger px-3 rounded-2 fw-semibold">
+                                                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-geo-alt text-muted fs-1"></i>
+                        <p class="text-muted mt-3 mb-0">Aún no tienes aventuras reservadas en Mongua.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </main>
+
+    </div>
+</div>
+{% endblock %}

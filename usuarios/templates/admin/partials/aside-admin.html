@@ -65,9 +65,9 @@
       <i class="bi bi-bicycle"></i> Actividades
     </a>
 
-    <a href="{% url 'admin_reservas' %}"
+    <a href="{% url listar_reservas %}"
        class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'admin_reservas' %}bg-success text-white{% endif %}">
+              {% if request.resolver_match.url_name == listar_reservas %}bg-success text-white{% endif %}">
       <i class="bi bi-calendar-check-fill"></i> Reservas
     </a>
 
