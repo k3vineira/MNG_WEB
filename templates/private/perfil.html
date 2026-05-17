@@ -26,7 +26,7 @@
             </a>
             <nav class="nav flex-column gap-2 mb-auto ">
                 <a class="nav-link text-light" href="/"><i class="bi bi-compass me-2"></i> Inicio</a>
-                {% if user.cliente or user.is_staff %}
+                 {% if user.is_authenticated %}
                     <a href="{% url 'mis_reservas_usuario' %}" class="nav-link"><i class="bi bi-archive"></i> Mis reservas</a>
                     <a href="{% url 'mis_cancelaciones_usuario' %}" class="nav-link"><i class="bi bi-x-circle"></i> Cancelaciones</a>
                     <a href="{% url 'mis_pqrs' %}" class="nav-link"><i class="bi bi-question-circle"></i> Mis PQRS</a>

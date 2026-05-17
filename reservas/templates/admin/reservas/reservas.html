@@ -4,9 +4,9 @@
 <div class="container mt-4">
     <div class="card border-0 shadow-sm" style="border-radius: 10px; overflow: hidden;">
         
-        <div class="card-header  text-white d-flex justify-content-between align-items-center py-3" style="color: var(--verde-oscuro);">
-            <h4 class="mb-0 text-white fw-bold" >Administración de Reservas</h4>
-            <a href="{% url 'crear_reserva' %}" class="btn btn-light btn-sm fw-bold" ">
+        <div class="card-header text-white d-flex justify-content-between align-items-center py-3" style="background-color: var(--verde-oscuro);">
+            <h4 class="mb-0 text-white fw-bold">Administración de Reservas</h4>
+            <a href="{% url 'crear_reserva' %}" class="btn btn-light btn-sm fw-bold">
                 <i class="bi bi-plus-circle"></i> Nueva Reserva
             </a>
         </div>
@@ -20,28 +20,45 @@
                             <th>Paquete</th>
                             <th>Fecha</th>
                             <th>Total a Pagar</th>
+                            <th>Estado</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 0.9rem;">
                         {% for reserva in reservas %}
                         <tr class="align-middle">
-                           
                             <td class="ps-4 text-secondary">{{ reserva.usuario }}</td>
+                            
                             <td class="text-secondary">{{ reserva.paquete.nombre }}</td>
+                            
                             <td class="text-secondary">{{ reserva.fecha }}</td>
+                            
                             <td class="fw-bold text-success">
-                            ${{ reserva.monto_total }}
+                                ${{ reserva.monto_total }}
                             </td>
+                            
+                            <td>
+                                {% if reserva.estado == 'pendiente' %}
+                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                {% elif reserva.estado == 'confirmada' %}
+                                    <span class="badge bg-success">Confirmada</span>
+                                {% elif reserva.estado == 'cancelada' %}
+                                    <span class="badge bg-danger">Cancelada</span>
+                                {% elif reserva.estado == 'completada' %}
+                                    <span class="badge bg-info text-dark">Completada</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ reserva.get_estado_display|default:"Pendiente" }}</span>
+                                {% endif %}
+                            </td>
+                            
                             <td class="text-center">
-
                                 <a href="{% url 'editar_reserva' reserva.pk %}" class="btn btn-link text-primary fw-bold text-decoration-none btn-sm me-2" style="font-size: 0.75rem;">EDITAR</a>
                                 <a href="{% url 'eliminar_reserva' reserva.pk %}" class="btn btn-link text-danger fw-bold text-decoration-none btn-sm" style="font-size: 0.75rem;">ELIMINAR</a>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">No hay reservas registradas actualmente.</td>
+                            <td colspan="6" class="text-center py-4 text-muted">No hay reservas registradas actualmente.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

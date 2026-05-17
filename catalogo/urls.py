@@ -24,4 +24,15 @@ urlpatterns = [
     path('paquetes/nuevo/', views.PaqueteCreateView.as_view(), name='crear_paquete'),
     path('paquetes/editar/<int:pk>/', views.PaqueteUpdateView.as_view(), name='editar_paquete'),
     path('paquetes/eliminar/<int:pk>/', views.PaqueteDeleteView.as_view(), name='eliminar_paquete'),
+    
+  
+    #temporadas
+    path('temporadas/', views.TemporadaListView.as_view(), name='listar_temporadas'),
+    path('temporadas/nueva/', views.TemporadaCreateView.as_view(), name='crear_temporada'),
+    path('temporadas/editar/<int:pk>/', views.TemporadaUpdateView.as_view(), name='editar_temporada'),
+    
+    #tarifas
+    path('tarifas/', views.TarifaListView.as_view(), name='listar_tarifas'),
+    path('tarifas/crear/', views.TarifaCreateView.as_view(), name='crear_tarifa'),
+    path('tarifas/editar/<int:pk>/', views.TarifaUpdateView.as_view(), name='editar_tarifa'),
 ]

@@ -39,8 +39,9 @@ class Actividades(models.Model):
     nivel_dificultad = models.CharField(max_length=10, choices=NIVEL_CHOICES, verbose_name='Nivel de Dificultad')
     equipo_requerimiento = models.TextField(verbose_name='Equipo Requerido')
     recomendacion_salud = models.TextField(verbose_name='Recomendaciones de Salud')
-    estado = models.BooleanField(default=True, verbose_name='¿Está Activa?')
+    estado = models.BooleanField(default=True, blank=True, verbose_name='¿Está Activa?')
     apto_para_menores = models.BooleanField(default=True, verbose_name='¿Apto para menores?')
+
 
     class Meta:
         verbose_name = 'Actividad'

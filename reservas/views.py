@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from catalogo.models import Paquete
+from .forms import ReservaForm
 
 
 # =========================
@@ -20,34 +21,16 @@ class ReservaListView(ListView):
 
 class ReservaCreateView(CreateView):
     model = Reserva
-    fields = [
-    'usuario',
-    'paquete',
-    'fecha',
-    'numero_adultos',
-    'numero_menores',
-    'estado',
-        
-    ]
-
+    form_class = ReservaForm
+   # fields = ['usuario','paquete','fecha','numero_adultos','numero_menores','estado', ]
     template_name = 'admin/reservas/agregar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 
 
 class ReservaUpdateView(UpdateView):
     model = Reserva
-
-    fields = [
-    'usuario',
-    'paquete',
-    'fecha',
-    'numero_adultos',
-    'numero_menores',
-    'estado',
-   
-        
-    ]
-
+    form_class = ReservaForm
+    # fields = ['usuario','paquete','fecha','numero_adultos','numero_menores','estado', ]
     template_name = 'admin/reservas/editar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 
@@ -60,8 +43,6 @@ class ReservaDeleteView(DeleteView):
 @login_required(login_url='login')
 def mis_reservas_usuario(request):
     reservas_canceladas_ids = Cancelacion.objects.filter(reserva__usuario=request.user).values_list('reserva_id', flat=True)
-    
-    # 2. Filtramos las reservas del usuario, pero EXCLUIMOS las que están en la lista anterior
     mis_reservas = Reserva.objects.filter(usuario=request.user).exclude(id__in=reservas_canceladas_ids).order_by('-id')
     
     context = {
@@ -111,9 +92,7 @@ class CancelacionDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def mis_cancelaciones_usuario(request):
-
     mis_cancelaciones = Cancelacion.objects.filter(reserva__usuario=request.user).order_by('-id')
-    
     context = {
         'cancelaciones': mis_cancelaciones
     }
@@ -125,14 +104,7 @@ def mis_cancelaciones_usuario(request):
 # =========================
 
 def reservas_view(request):
-    """
-    Vista pública.
-    El template decide si mostrar el formulario
-    o pedir inicio de sesión.
-    """
-
     paquetes = Paquete.objects.all()
-    
     paquete_id = request.GET.get('paquete_id')
     paquete = None
     if paquete_id:
@@ -173,7 +145,6 @@ def guardar_reserva(request, paquete_id):
                 numero_adultos=adultos,
                 numero_menores=menores
             )
-            # El save() del modelo Reserva automáticamente calcula y asigna el monto_total
             
             messages.success(request, f"¡Reserva para {paquete.nombre} realizada con éxito!")
             return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")

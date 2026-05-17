@@ -9,7 +9,7 @@ from usuarios.models import Cliente
 from django.contrib.auth.decorators import login_required
 
 def blog(request):
-    blogs = Blog.objects.all()
+    blogs = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
     return render(request, 'usuario/blog.html', {'blogs': blogs})
 
 def pqrs(request):
@@ -60,7 +60,7 @@ def guardar_pqrs(request):
 
 @login_required
 def mis_pqrs_view(request):
-    solicitudes_usuario = PQRS.objects.filter(cliente=request.user.cliente).order_by('-fecha')
+    solicitudes_usuario = PQRS.objects.filter(cliente__usuario=request.user).order_by('-fecha')
     context = {
         'solicitudes': solicitudes_usuario
     }
