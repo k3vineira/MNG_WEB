@@ -23,7 +23,7 @@
         </div>
 
         <!-- Formulario -->
-        <form method="POST" action="{% url 'usuarios:login' %}" class="mb-4">
+        <form method="POST" action="" class="mb-4">
           {% csrf_token %}
           
           {# Errores de validación del formulario (Login fallido) #}
@@ -73,7 +73,7 @@
         <!-- Pie de Formulario -->
         <div class="text-center">
           <p class="small text-muted mb-0">¿Aún no tienes cuenta? 
-            <a href="{% url 'usuarios:registro' %}" class="text-success fw-bold text-decoration-none ms-1">Únete ahora</a>
+            <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next }}{% if request.GET.paquete_id %}&paquete_id={{ request.GET.paquete_id }}{% endif %}{% endif %}" class="text-success fw-bold text-decoration-none ms-1">Únete ahora</a>
           </p>
         </div>
 

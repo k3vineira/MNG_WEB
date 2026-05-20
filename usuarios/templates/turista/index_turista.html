@@ -11,7 +11,7 @@
             <p class="lead text-muted mb-4">Bienvenido de vuelta a las montañas. Tenemos nuevas rutas esperándote en el páramo.</p>
             <div class="d-flex gap-3">
                 <a href="/destinos/" class="btn btn-success rounded-pill px-5 py-3 fw-bold shadow-sm transition-all">Explorar Destinos</a>
-                <a href="{% url 'reservas:listar_reservas' %}" class="btn btn-outline-dark rounded-pill px-5 py-3 fw-bold">Ver Mis Reservas</a>
+                <a href="{% url 'listar_reservas' %}" class="btn btn-outline-dark rounded-pill px-5 py-3 fw-bold">Ver Mis Reservas</a>
             </div>
         </div>
         <div class="col-lg-5 d-none d-lg-block">
@@ -40,7 +40,7 @@
                 </a>
             </div>
             <div class="col-md-4">
-                <a href="{% url 'comunidad:listar_blog' %}" class="text-decoration-none text-dark">
+                <a href="{% url 'listar_blog' %}" class="text-decoration-none text-dark">
                     <div class="p-4 rounded-4 bg-white h-100 border-0 shadow-sm transition-all hover-shadow-lg">
                         <i class="bi bi-chat-square-text text-success display-5 mb-3"></i>
                         <h5 class="fw-bold">Blog y Comentarios</h5>
@@ -49,7 +49,7 @@
                 </a>
             </div>
             <div class="col-md-4">
-                <a href="{% url 'usuarios:detalles' %}" class="text-decoration-none text-dark">
+                <a href="{% url 'detalles' %}" class="text-decoration-none text-dark">
                     <div class="p-4 rounded-4 bg-white h-100 border-0 shadow-sm transition-all hover-shadow-lg">
                         <i class="bi bi-person-gear text-success display-5 mb-3"></i>
                         <h5 class="fw-bold">Gestionar Perfil</h5>

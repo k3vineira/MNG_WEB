@@ -16,7 +16,7 @@ def destinos(request):
         destinos_list = destinos_list.filter(nombre__icontains=busqueda)
 
     if precio_max:
-        destinos_list = destinos_list.filter(precio__lte=precio_max)
+        destinos_list = destinos_list.filter(tarifas__precio_adulto__lte=precio_max).distinct()
     
     return render(request, 'usuario/destinos.html', {'destinos': destinos_list})
 
@@ -31,27 +31,27 @@ class PaqueteListView(ListView):
 class PaqueteCreateView(CreateView):
     model = Paquete
     fields = [
-        'imagen', 'nombre', 'descripcion', 'precio', 
-        'duracion_estimada', 'punto_encuentro', 'categoria', 'actividades','estado'
+        'imagen', 'nombre', 'descripcion', 
+        'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades','estado'
     ]
     template_name = 'admin/paquetes/agregar_paquete.html'
-    success_url = reverse_lazy('catalogo:listar_paquetes') 
+    success_url = reverse_lazy('listar_paquetes') 
 
 
 class PaqueteUpdateView(UpdateView):
     model = Paquete
     fields = [
-        'imagen', 'nombre', 'descripcion', 'precio', 
-        'duracion_estimada', 'punto_encuentro', 'categoria', 'actividades','estado'
+        'imagen', 'nombre', 'descripcion', 
+        'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades','estado'
     ]
     template_name = 'admin/paquetes/editar_paquete.html'
-    success_url = reverse_lazy('catalogo:listar_paquetes')
+    success_url = reverse_lazy('listar_paquetes')
 
 
 class PaqueteDeleteView(DeleteView):
     model = Paquete
     template_name = 'admin/paquetes/eliminar_paquete.html'
-    success_url = reverse_lazy('catalogo:listar_paquetes')
+    success_url = reverse_lazy('listar_paquetes')
 
 #ACTIVIDADES
 
@@ -65,19 +65,19 @@ class ActividadesCreateView(CreateView):
     model = Actividades
     fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud', 'estado']
     template_name = 'admin/actividades/agregar_actividad.html'
-    success_url = reverse_lazy('catalogo:listar_actividades')
+    success_url = reverse_lazy('listar_actividades')
 
 class ActividadesUpdateView(UpdateView):
 
     model = Actividades
     fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud', 'estado']
     template_name = 'admin/actividades/editar_actividad.html'
-    success_url = reverse_lazy('catalogo:listar_actividades')
+    success_url = reverse_lazy('listar_actividades')
 
 class ActividadesDeleteView(DeleteView):
     model = Actividades
     template_name = 'admin/actividades/eliminar_actividad.html'
-    success_url = reverse_lazy('catalogo:listar_actividades')
+    success_url = reverse_lazy('listar_actividades')
 
 #CATEGORIAS
 class CategoriaListView(ListView):
@@ -89,18 +89,18 @@ class CategoriaCreateView(CreateView):
     model = Categoria
     fields = ['nombre', 'descripcion', 'estado']
     template_name = 'admin/categorias/agregar_categoria.html'
-    success_url = reverse_lazy('catalogo:listar_categorias')
+    success_url = reverse_lazy('listar_categorias')
 
 class CategoriaUpdateView(UpdateView):
     model = Categoria
     fields = ['nombre', 'descripcion', 'estado']
     template_name = 'admin/categorias/editar_categoria.html'
-    success_url = reverse_lazy('catalogo:listar_categorias')
+    success_url = reverse_lazy('listar_categorias')
 
 class CategoriaDeleteView(DeleteView):
     model = Categoria
     template_name = 'admin/categorias/eliminar_categoria.html'
-    success_url = reverse_lazy('catalogo:listar_categorias')
+    success_url = reverse_lazy('listar_categorias')
 
 def reservas(request):
 

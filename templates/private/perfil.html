@@ -32,7 +32,7 @@
                     <a class="nav-link text-light" href="/mis-comentarios/"><i class="bi bi-chat-left-text me-2"></i> Comentarios</a>
                 {% endif %}
                 {% if user.is_authenticated %}
-                <a class="nav-link activo text-light bg-light bg-opacity-10 rounded" href="{% url 'usuarios:detalles' %}">
+                <a class="nav-link activo text-light bg-light bg-opacity-10 rounded" href="{% url 'detalles' %}">
                     <i class="bi bi-person-circle me-2"></i> Perfil
                 </a>
                 {% endif %}
@@ -94,7 +94,7 @@
                 </p>
 
                 <!-- Botón de subida de imagen -->
-                <form action="{% url 'usuarios:detalles' %}" method="POST" enctype="multipart/form-data" class="d-inline">
+                <form action="{% url 'detalles' %}" method="POST" enctype="multipart/form-data" class="d-inline">
                     {% csrf_token %}
                     <label for="input-foto" class="btn btn-sm btn-outline-success rounded-pill px-3">
                         <i class="bi bi-camera me-1"></i> Actualizar foto
@@ -155,7 +155,7 @@
                 <h5 class="modal-title fw-bold" id="modalEditarPerfilLabel">Actualizar Información</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{% url 'usuarios:detalles' %}" method="POST">
+            <form action="{% url 'detalles' %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="editar_perfil" value="1">
                 <div class="modal-body p-4 pt-0">
