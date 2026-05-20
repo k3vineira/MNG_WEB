@@ -6,14 +6,14 @@ from .models import Reserva, Cancelacion
 class ReservaForm(ModelForm):
     class Meta:
         model = Reserva
-        fields = '__all__'
+        fields = ['usuario', 'paquete', 'fecha', 'numero_adultos', 'numero_menores', 'estado']
         widgets = {
-            'cliente': forms.Select(attrs={'class': 'form-control'}),
-            'paquete': forms.Select(attrs={'class': 'form-control'}),
-            'horario': forms.Select(attrs={'class': 'form-control'}),
-            'num_personas': forms.NumberInput(attrs={'class': 'form-control'}),
-            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'usuario': forms.Select(attrs={'class': 'form-select'}),
+            'paquete': forms.Select(attrs={'class': 'form-select'}),
+            'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'numero_adultos': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            'numero_menores': forms.NumberInput(attrs={'class': 'form-control', 'min': 0}),
+            'estado': forms.Select(attrs={'class': 'form-select'}), 
         }
 
 class CancelacionForm(ModelForm):

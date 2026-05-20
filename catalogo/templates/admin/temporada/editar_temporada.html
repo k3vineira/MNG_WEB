@@ -1,0 +1,56 @@
+{% extends 'admin/base-admin.html' %}
+
+{% block content %}
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="card border-0 shadow-sm w-100" style="border-radius: 10px; max-width: 600px;">
+        <div class="card-header text-white text-center py-3" style="background-color: var(--verde-oscuro, #0f5132);">
+            <h5 class="mb-0 text-white fw-bold"><i class="bi bi-pencil-square"></i> Modificar Datos de Temporada</h5>
+            <small class="text-white-50">Temporada: {{ object.nombre }}</small>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST" class="row g-3">
+                {% csrf_token %}
+                
+                <div class="col-12">
+                    <label class="form-label text-secondary small fw-bold">Nombre de la Temporada</label>
+                    {{ form.nombre }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-secondary small fw-bold">Fecha de Inicio</label>
+                    {{ form.fecha_inicio }}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-secondary small fw-bold">Fecha de Fin</label>
+                    {{ form.fecha_fin }}
+                </div>
+
+                <div class="col-12 d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+                    <a href="{% url 'listar_temporadas' %}" class="btn btn-secondary fw-bold btn-sm px-3">Cancelar</a>
+                    <button type="submit" class="btn btn-success fw-bold btn-sm px-4" style="background-color: var(--verde-oscuro, #0f5132);">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementsByName('nombre')[0]?.classList.add('form-control');
+        
+        // El formato de fecha debe ser YYYY-MM-DD para que el input date lo entienda al editar
+        const inputInicio = document.getElementsByName('fecha_inicio')[0];
+        if (inputInicio) {
+            inputInicio.classList.add('form-control');
+            inputInicio.setAttribute('type', 'date');
+        }
+        
+        const inputFin = document.getElementsByName('fecha_fin')[0];
+        if (inputFin) {
+            inputFin.classList.add('form-control');
+            inputFin.setAttribute('type', 'date');
+        }
+    });
+</script>
+{% endblock %}

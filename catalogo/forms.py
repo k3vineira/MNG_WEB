@@ -1,6 +1,6 @@
 from django import forms 
 from django.forms import ModelForm 
-from .models import Categoria, Actividades, Paquete # 
+from .models import Categoria, Actividades, Paquete, Tarifa , Temporada
 
 # FORMULARIO DE CATEGORÍA
 class CategoriaForm(ModelForm):
@@ -22,7 +22,8 @@ class ActividadesForm(ModelForm):
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'nivel_dificultad': forms.Select(attrs={'class': 'form-select'}), # Menú desplegable
+            'nivel_dificultad': forms.Select(attrs={'class': 'form-select'}), 
+            'apto_para_menores': forms.CheckboxInput(attrs={'class': 'form-check-input'}), 
             'equipo_requerimiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'recomendacion_salud': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -42,5 +43,25 @@ class PaqueteForm(ModelForm):
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             
             'actividades': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+class TarifaForm(ModelForm):
+    class Meta:
+        model = Tarifa
+        fields = '__all__'
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+class TemporadaForm(ModelForm):
+    class Meta:
+        model = Temporada
+        fields = '__all__'
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'fecha_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'fecha_fin': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

@@ -6,7 +6,7 @@
           {% csrf_token %}
           <div class="modal-header bg-success text-white">
             <h5 class="modal-title"><i class="bi bi-calendar-check me-2"></i>Asignar Tour a {{ guia_sel.nombre }}</h5>
-            <a href="{% url 'usuarios:gestion_guias' %}" class="btn-close btn-close-white" aria-label="Close"></a>
+            <a href="{% url 'gestion_guias' %}" class="btn-close btn-close-white" aria-label="Close"></a>
           </div>
           <div class="modal-body p-4 bg-light text-start">
             <div class="mb-3">
@@ -24,7 +24,7 @@
             </div>
           </div>
           <div class="modal-footer bg-light border-0">
-            <a href="{% url 'usuarios:gestion_guias' %}" class="btn btn-secondary">Cancelar</a>
+            <a href="{% url 'gestion_guias' %}" class="btn btn-secondary">Cancelar</a>
             <button type="submit" class="btn btn-success px-4">Guardar</button>
           </div>
         </form>

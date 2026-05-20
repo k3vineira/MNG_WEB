@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    body { padding-top: 0 !important; }
+    .barra-lateral-perfil { min-height: 100vh; }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block user_menu_fixed %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
+        
+        <aside class="col-md-3 col-lg-2 barra-lateral-perfil bg-success d-flex flex-column p-3">
+            <a href="#" class="d-flex align-items-center mb-4 text-decoration-none">
+                <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="64" height="64">
+            </a>
+            <nav class="nav flex-column gap-2 mb-auto">
+                <a class="nav-link text-light" href="/"><i class="bi bi-compass me-2"></i> Inicio</a>
+                <a class="nav-link text-light" href="{% url 'mis_reservas_usuario' %}"><i class="bi bi-archive me-2"></i> Mis reservas</a>
+                <a class="nav-link text-light" href="{% url 'mis_cancelaciones_usuario' %}"><i class="bi bi-x-circle me-2"></i> Cancelaciones</a>
+                <a class="nav-link text-light" href="#"><i class="bi bi-bookmark me-2"></i> Guardados</a>
+                <a class="nav-link text-light" href="#"><i class="bi bi-chat-left-text me-2"></i> Comentarios</a>
+                <a class="nav-link text-light" href="{% url 'detalles' %}"><i class="bi bi-person me-2"></i> Perfil</a>
+            </nav>
+        </aside>
+
+        <main class="col-md-9 col-lg-10 bg-light p-4 d-flex align-items-center justify-content-center">
+            <div class="card p-4 shadow-sm border-0 rounded-3 bg-white w-100" style="max-width: 550px;">
+                <div class="mb-3 text-center">
+                    <i class="bi bi-exclamation-triangle text-danger fs-1"></i>
+                    <h4 class="text-dark fw-bold mt-2">Solicitud de Cancelación</h4>
+                    <p class="text-muted small">Cuéntanos brevemente el motivo por el cual no podrás realizar esta aventura en Mongua.</p>
+                </div>
+
+                <form method="POST" class="needs-validation">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="id_motivo" class="form-label fw-semibold text-secondary">Motivo del reporte:</label>
+                        <textarea name="motivo" id="id_motivo" class="form-control rounded-2" rows="4" placeholder="Ej: Problemas de salud, cambio de itinerario de trabajo..." required></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-light border w-50 rounded-2 fw-semibold">
+                            Volver atrás
+                        </a>
+                        <button type="submit" class="btn btn-danger w-50 rounded-2 fw-semibold">
+                            Enviar Solicitud
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+    </div>
+</div>
+{% endblock %}

@@ -5,11 +5,8 @@ class PqrsForm(forms.ModelForm):
     class Meta:
         model = PQRS
        
-        fields = ['cliente', 'tipo', 'asunto', 'descripcion']
-        
-        # Opcional: Añadir etiquetas personalizadas
+        fields = [ 'tipo', 'asunto', 'descripcion']
         labels = {
-            'cliente': 'Nombre Completo',
             'tipo': 'Tipo de Solicitud',
             'asunto': 'Asunto de la PQRS',
             'descripcion': 'Detalle de su solicitud',
