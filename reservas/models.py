@@ -3,15 +3,24 @@ from django.conf import settings
 from catalogo.models import Paquete
 
 class Reserva(models.Model):
-    # Relación con el usuario (Cliente)
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('confirmada', 'Confirmada'),
+        ('cancelada', 'Cancelada'),
+    ]
+    
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
         related_name='reservas_realizadas', 
         verbose_name='Cliente'
     )
-    
-    paquete = models.ForeignKey(Paquete, on_delete=models.PROTECT, related_name='reserva', verbose_name='Paquete Reservado')
+    paquete = models.ForeignKey(
+        Paquete, 
+        on_delete=models.PROTECT, 
+        related_name='reserva', 
+        verbose_name='Paquete Reservado'
+    )
     fecha = models.DateField(verbose_name='Fecha de Reserva')
     numero_adultos = models.PositiveIntegerField(verbose_name='Número de Adultos', default=1)
     numero_menores = models.PositiveIntegerField(verbose_name='Número de Menores', default=0)
@@ -48,9 +57,16 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f"Reserva {self.id} - {self.usuario.get_full_name()} ({self.paquete.nombre})"
-    
+
 
 class Cancelacion(models.Model):
     reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='cancelaciones')
     motivo = models.TextField()
     penalidad = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    class Meta:
+        verbose_name = 'Cancelación'
+        verbose_name_plural = 'Cancelaciones'
+
+    def __str__(self):
+        return f"Cancelación de Reserva {self.reserva.id}"
