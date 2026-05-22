@@ -1,0 +1,65 @@
+{% extends 'admin/base-admin.html' %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row m-0"> <main class="col-md-9 col-lg-10 bg-light p-4">
+            <div class="card p-4 shadow-sm border-0 rounded-3 bg-white">
+                
+                <div class="bg-success text-white p-3 rounded-3 mb-4 d-flex justify-content-between align-items-center">
+                    <h4 class="m-0 fw-bold">Administración de Cancelaciones</h4>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light text-secondary">
+                            <tr>
+                                <th class="py-3">Cliente</th>
+                                <th class="py-3">Paquete</th>
+                                <th class="py-3">Motivo Informado</th>
+                                <th class="py-3 text-center">Penalidad</th>
+                                <th class="py-3 text-center">Estado Interno</th>
+                                <th class="py-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cancelacion in cancelaciones %}
+                                <tr>
+                                    <td class="py-3 fw-bold text-dark">{{ cancelacion.reserva.usuario.username }}</td>
+                                    <td class="py-3 text-secondary">{{ cancelacion.reserva.paquete.nombre }}</td>
+                                    <td class="py-3 italic text-muted">"{{ cancelacion.motivo }}"</td>
+                                    <td class="py-3 text-center fw-bold text-danger">${{ cancelacion.penalidad }}</td>
+                                    
+                                    <td class="py-3 text-center">
+
+                                        {% if cancelacion.estado == 'pendiente' or cancelacion.estado == 'revision' %}
+                                            <span class="badge bg-warning text-dark p-2 text-uppercase small">En Revisión</span>
+                                        {% elif cancelacion.estado == 'confirmada' or cancelacion.estado == 'aceptada' %}
+                                            <span class="badge bg-success text-white p-2 text-uppercase small">Aceptada</span>
+                                        {% elif cancelacion.estado == 'cancelada' or cancelacion.estado == 'rechazada' %}
+                                            <span class="badge bg-danger text-white p-2 text-uppercase small">Cancelada</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary text-white p-2 text-uppercase small">{{ cancelacion.estado }}</span>
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td class="py-3 text-center">
+                                        <a href="{% url 'editar_cancelacion' cancelacion.id %}" class="btn btn-sm btn-outline-primary px-3 fw-bold">
+                                            <i class="bi bi-pencil-square me-1"></i> Gestionar
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">No hay solicitudes de cancelación registradas.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+</div>
+{% endblock %}

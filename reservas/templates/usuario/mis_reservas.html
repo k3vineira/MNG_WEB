@@ -56,6 +56,7 @@
                                     <th class="py-3">Fecha del Viaje</th>
                                     <th class="py-3">Pasajeros</th>
                                     <th class="py-3">Monto Total</th>
+                                    <th class="py-3">Estado</th>
                                     <th class="py-3 text-center">Opciones</th>
                                 </tr>
                             </thead>
@@ -72,11 +73,31 @@
                                             </span>
                                         </td>
                                         <td class="py-3 fw-bold text-success">${{ reserva.monto_total }}</td>
+                                        <td class="py-3">
+                                    
+    {% if reserva.estado == 'pendiente' or reserva.estado == 'Pendiente' %}
+        <span class="badge bg-warning text-dark p-2" style="font-size: 0.85rem; min-width: 120px;">
+            <i class="fas fa-clock me-1"></i> Pendiente
+        </span>
+
+    {% elif reserva.estado == 'confirmada' or reserva.estado == 'Confirmada' %}
+        <span class="badge bg-success text-white p-2" style="font-size: 0.85rem; min-width: 120px;">
+            <i class="fas fa-check-circle me-1"></i> Confirmada
+        </span>
+
+    {% elif reserva.estado == 'completada' or reserva.estado == 'Completada' %}
+        <span class="badge bg-info text-dark p-2" style="font-size: 0.85rem; min-width: 120px;">
+            <i class="fas fa-map-marked-alt me-1"></i> Completada
+        </span>
+
+    {% elif reserva.estado == 'cancelada' or reserva.estado == 'Cancelada' %}
+        <span class="badge bg-danger text-white p-2" style="font-size: 0.85rem; min-width: 120px;">
+            <i class="fas fa-times-circle me-1"></i> Cancelada
+        </span>
+    {% endif %}
+</td>
                                         <td class="py-3 text-center">
                                             <div class="d-flex justify-content-center gap-2">
-                                                <button type="button" class="btn btn-sm btn-success px-3 rounded-2 fw-semibold">
-                                                    <i class="bi bi-credit-card me-1"></i> Pagar
-                                                </button>
 
                                                 <a href="{% url 'crear_cancelacion' %}?reserva_id={{ reserva.id }}" class="btn btn-sm btn-outline-danger px-3 rounded-2 fw-semibold">
                                                     <i class="bi bi-x-circle me-1"></i> Cancelar

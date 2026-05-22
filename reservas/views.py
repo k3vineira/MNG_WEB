@@ -6,7 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from catalogo.models import Paquete
-from .forms import ReservaForm
+from .forms import ReservaForm , CancelacionForm
+from decimal import Decimal, InvalidOperation
+from .forms import CancelacionForm
+
 
 
 # =========================
@@ -17,6 +20,9 @@ class ReservaListView(ListView):
     model = Reserva
     template_name = 'admin/reservas/reservas.html'
     context_object_name = 'reservas'
+
+    def get_queryset(self):
+        return Reserva.objects.exclude(estado='cancelada').order_by('-id')
 
 
 class ReservaCreateView(CreateView):
@@ -58,7 +64,7 @@ def mis_reservas_usuario(request):
 
 class CancelacionListView(ListView):
     model = Cancelacion
-    template_name = 'admin/cancelaciones/cancelaciones.html'
+    template_name = 'admin/cancelaciones/cancelaciones_admin.html'
     context_object_name = 'cancelaciones'
 
 
@@ -78,28 +84,65 @@ class CancelacionCreateView(CreateView):
 
 class CancelacionUpdateView(UpdateView):
     model = Cancelacion
-    fields = ['reserva', 'motivo', 'penalidad']
-
+    form_class = CancelacionForm
     template_name = 'admin/cancelaciones/editar_cancelacion.html'
-    success_url = reverse_lazy('listar_cancelaciones')
+    success_url = reverse_lazy('administrar_cancelaciones')
 
 
 class CancelacionDeleteView(DeleteView):
     model = Cancelacion
     template_name = 'admin/cancelaciones/eliminar_cancelacion.html'
-    success_url = reverse_lazy('listar_cancelaciones')
+    success_url = reverse_lazy('administrar_cancelaciones')
     
 
 @login_required(login_url='login')
 def mis_cancelaciones_usuario(request):
+   
     mis_cancelaciones = Cancelacion.objects.filter(reserva__usuario=request.user).order_by('-id')
+    
     context = {
         'cancelaciones': mis_cancelaciones
     }
     return render(request, 'usuario/cancelaciones/mis_cancelaciones.html', context)
 
+def administrar_cancelaciones(request):
+    if request.method == 'POST':
+        cancelacion_id = request.POST.get('cancelacion_id')
+        cancelacion = get_object_or_404(Cancelacion, id=cancelacion_id)
+        
+        cancelacion.estado = request.POST.get('estado')
+        
+        penalidad_raw = request.POST.get('penalidad', '0').strip()
+        try:
+            cancelacion.penalidad = Decimal(penalidad_raw) if penalidad_raw else Decimal('0.00')
+        except (InvalidOperation, ValueError):
+            cancelacion.penalidad = Decimal('0.00')
+            
+        cancelacion.save()
+    
+        if cancelacion.estado == 'aceptada':
+            cancelacion.reserva.estado = 'cancelada'
+        elif cancelacion.estado == 'rechazada':
+            cancelacion.reserva.estado = 'activa'
+        else:
+            cancelacion.reserva.estado = 'pendiente'
+            
+        cancelacion.reserva.save()
+            
+        return redirect('administrar_cancelaciones')
 
-# =========================
+    cancelaciones_raw = Cancelacion.objects.all().order_by('-id')
+
+    for c in cancelaciones_raw:
+        try:
+            Decimal(str(c.penalidad))
+        except (InvalidOperation, ValueError, TypeError):
+            c.penalidad = Decimal('0.00')
+
+    return render(request, 'admin/cancelaciones/cancelaciones_admin.html', {'cancelaciones': cancelaciones_raw})
+
+ 
+
 # VISTA PÚBLICA
 # =========================
 

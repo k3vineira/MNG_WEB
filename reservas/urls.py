@@ -19,5 +19,5 @@ urlpatterns = [
      path('cancelaciones/editar/<int:pk>/', views.CancelacionUpdateView.as_view(), name='editar_cancelacion'),
      path('cancelaciones/eliminar/<int:pk>/', views.CancelacionDeleteView.as_view(), name='eliminar_cancelacion'),
      path('mis-cancelaciones/', views.mis_cancelaciones_usuario, name='mis_cancelaciones_usuario'),
-     
+     path('admin/cancelaciones/', views.administrar_cancelaciones, name='administrar_cancelaciones'),
 ]

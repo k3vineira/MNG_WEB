@@ -55,7 +55,9 @@
                                 <tr>
                                     <th class="py-3">Paquete Turístico</th>
                                     <th class="py-3">Motivo Informado</th>
-                                    <th class="py-3 text-center">Estado Interno</th>
+                                    <th class="py-3 text-center">Estado</th>
+                                    <th class="py-3 text-center">Penalidad</th>
+                                    <th class="py-3 text-center">Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -68,9 +70,26 @@
                                             {{ cancelacion.motivo }}
                                         </td>
                                         <td class="py-3 text-center">
-                                            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-2 small fw-semibold">
-                                                En Revisión por Admin
-                                            </span>
+                                           {% if cancelacion.estado == 'revision' %}
+                                           <span class="badge bg-warning text-dark">En Revisión</span>
+                                           {% elif cancelacion.estado == 'aceptada' %}
+                                           <span class="badge bg-success">Aceptada</span>
+                                           {% else %}
+                                            <span class="badge bg-danger">Rechazada</span>
+                                           {% endif %}
+                                        </td>
+                                        <td class="py-3 text-center fw-bold">
+                                            ${{ cancelacion.penalidad }}
+                                        </td>
+                                        <td class="py-3 text-center">
+                                            {% if cancelacion.estado == 'aceptada' %}
+                                                <a href="#" class="btn btn-primary btn-sm">Pagar</a>
+                                            {% elif cancelacion.estado == 'rechazada' %}
+                                                <strong class="d-block mb-2 text-danger" style="font-size: 1.1rem;">Solicitud Rechazada</strong>
+                                                <a href="{% url 'pqrs' %}" class="btn btn-outline-danger btn-sm">Enviar PQRS</a>
+                                            {% else %}
+                                                <span class="text-muted small">Pendiente</span>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}

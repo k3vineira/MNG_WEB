@@ -3,6 +3,7 @@ import django
 import random
 from datetime import timedelta
 from django.utils import timezone
+from decimal import Decimal
 
 # Configurar el entorno de Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
@@ -114,7 +115,6 @@ def poblar_base_datos():
             punto_encuentro="Plaza principal",
             categoria=random.choice(categorias_creadas)
         )
-        # Asignar 2 actividades aleatorias al paquete
         p.actividades.add(*random.sample(actividades_creadas, 2))
         paquetes_creados.append(p)
 
@@ -132,17 +132,17 @@ def poblar_base_datos():
         tarifa = Tarifa.objects.create(
             paquete=paquetes_creados[i],
             temporada=temporadas_creadas[i],
-            precio_adulto=random.randint(100000, 500000),
-            precio_menor=random.randint(50000, 250000)
+            precio_adulto=Decimal(str(random.randint(100000, 500000))),
+            precio_menor=Decimal(str(random.randint(50000, 250000)))
         )
         tarifas_creadas.append(tarifa)
 
     print("4. Creando Reservas y Cancelaciones...")
     reservas_creadas = []
     estados_reserva = ['pendiente', 'confirmada', 'completada', 'cancelada']
-    for i in range(10):
-        tarifa_asociada = tarifas_creadas[i]
-        # Crear reserva que coincida con la fecha de la tarifa
+    
+    # 🌟 CAMBIO AQUÍ: En lugar de usar range(10), iteramos directamente sobre las tarifas reales creadas
+    for tarifa_asociada in tarifas_creadas:
         fecha_reserva = tarifa_asociada.temporada.fecha_inicio + timedelta(days=2)
         estado = random.choice(estados_reserva)
         
@@ -154,30 +154,17 @@ def poblar_base_datos():
             numero_menores=random.randint(0, 3),
             estado=estado
         )
-        r.save() # El save() calculará el monto_total automáticamente
+        r.save() 
         reservas_creadas.append(r)
 
         if estado == 'cancelada':
             Cancelacion.objects.create(
                 reserva=r,
                 motivo="Imprevisto de última hora",
-                penalidad=random.randint(0, 50000)
+                penalidad=Decimal(str(random.randint(0, 50000)))
             )
 
-    # Asegurar al menos 10 cancelaciones
-    cancelaciones_actuales = Cancelacion.objects.count()
-    if cancelaciones_actuales < 10:
-        for _ in range(10 - cancelaciones_actuales):
-            r = random.choice(reservas_creadas)
-            # Solo crear si no tiene ya una cancelación
-            if not hasattr(r, 'cancelacion'):
-                r.estado = 'cancelada'
-                r.save()
-                Cancelacion.objects.create(
-                    reserva=r,
-                    motivo="Cancelación generada automáticamente",
-                    penalidad=random.randint(10000, 30000)
-                )
+
 
     print("5. Creando Comunidad (Calificaciones, Blog y PQRS)...")
     for i in range(10):

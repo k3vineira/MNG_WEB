@@ -8,7 +8,7 @@
                 
                 <div class="card-header text-white text-center" style="background-color: #004d40;">
                     <h5 class="mb-0 fs-6 fw-bold text-uppercase">
-                        <i class="bi bi-pencil-square me-2"></i>Editar Registro
+                        <i class="bi bi-pencil-square me-2"></i>Editar Cancelación
                     </h5>
                 </div>
 
@@ -20,20 +20,10 @@
                             {{ form.as_p }}
                         </div>
 
-                        <hr class="my-4 opacity-25">
-
-                        <div class="d-flex justify-content-center gap-3">
-                            <a href="{% url 'listar_reservas' %}" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">
-                                Cancelar
-                            </a>
-                        
-                            <a href="{% url 'listar_reservas' %}" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">
-                                Guardar cambios
-                            </a>
-
-                        </div>
-                    </form>
-                </div>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'administrar_cancelaciones' %}" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">Cancelar</a>
+                            <button type="submit" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">Guardar cambios</button>
+                        </div> </form> </div>
             </div>
         </div>
     </div>
