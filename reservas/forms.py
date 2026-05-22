@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm 
 from .models import Reserva, Cancelacion
 
+
 # FORMULARIO DE RESERVA
 class ReservaForm(ModelForm):
     class Meta:
@@ -19,12 +20,21 @@ class ReservaForm(ModelForm):
 class CancelacionForm(ModelForm):
     class Meta:
         model = Cancelacion
-        fields = '__all__'
+        fields = ['reserva', 'motivo', 'penalidad', 'estado'] 
         widgets = {
-            'reserva': forms.Select(attrs={'class': 'form-control'}),
-            'motivo': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            # Bloqueo visual para que el usuario no lo mueva, pero el navegador sí envíe el dato
+            'reserva': forms.Select(attrs={
+                'class': 'form-control bg-light', 
+                'style': 'pointer-events: none;',
+                'readonly': 'readonly'
+            }),
+            'motivo': forms.Textarea(attrs={'class': 'form-control bg-light', 'rows': 3, 'readonly': 'readonly'}),
             'penalidad': forms.NumberInput(attrs={'class': 'form-control'}),
+            'estado': forms.Select(attrs={'class': 'form-select'}), 
         }
 
-        
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Aquí NO va ninguna línea que use .disabled = True
+        if self.instance and self.instance.penalidad:
+            self.initial['penalidad'] = int(self.instance.penalidad)

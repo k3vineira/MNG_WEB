@@ -58,11 +58,18 @@ class Reserva(models.Model):
     def __str__(self):
         return f"Reserva {self.id} - {self.usuario.get_full_name()} ({self.paquete.nombre})"
 
-
-class Cancelacion(models.Model):
+class Cancelacion(models.Model): 
     reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='cancelaciones')
     motivo = models.TextField()
     penalidad = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+   
+    ESTADOS_CANCELACION = [
+        ('revision', 'En Revisión por Admin'),
+        ('aceptada', 'Aceptada'),
+        ('rechazada', 'Rechazada'),
+    ]
+    estado = models.CharField(max_length=20, choices=ESTADOS_CANCELACION, default='revision')
 
     class Meta:
         verbose_name = 'Cancelación'
