@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from .models import Usuario, Cliente
 from .forms import RegistroForm
+from comunidad.models import Calificacion
 
 
 @login_required
@@ -241,3 +242,14 @@ def guias_guardar(request):
         # Aquí se implementaría la lógica de guardado/update
         messages.success(request, "Datos del guía guardados correctamente.")
     return redirect('gestion_guias')
+
+
+@user_passes_test(lambda u: u.is_staff)
+def listar_comentarios(request):
+    """Vista para listar y gestionar los comentarios/calificaciones de los paquetes."""
+    comentarios = Calificacion.objects.all().order_by('-fecha')
+    context = {
+        'comentarios': comentarios,
+        'titulo': 'Gestión de Comentarios y Reseñas',
+    }
+    return render(request, 'admin/comentarios.html', context)

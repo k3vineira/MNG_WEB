@@ -14,6 +14,7 @@ urlpatterns = [
     path('terminos/', views.terminos_view, name='terminos'),
     path('nosotros/', views.nosotros_view, name='nosotros'),
     path('perfil/', views.perfil_view, name='detalles'),
+    path('comentarios/', views.listar_comentarios, name='listar_comentarios'),
 
     # Rutas de Gestión de Personal y Guías
     path('gestion-guias/', views.gestion_guias, name='gestion_guias'),
