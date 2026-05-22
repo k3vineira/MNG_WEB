@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings 
 
 class Usuario(AbstractUser):
     class Roles(models.TextChoices):
@@ -18,6 +19,7 @@ class Usuario(AbstractUser):
     telefono = models.CharField(max_length=15, blank=True)
     residencia = models.CharField(max_length=100, blank=True)
     imagen_perfil = models.ImageField(upload_to='perfiles/', null=True, blank=True, verbose_name='Imagen de Perfil')
+    es_guia = models.BooleanField(default=False)
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
@@ -38,3 +40,39 @@ class GuiaTuristico(models.Model):
     
     def __str__(self):
         return f"Guía: {self.usuario.username}"
+
+
+class Comentario(models.Model):
+    TIPO_CHOICES = [
+        ('experiencia', 'Experiencia de viaje'),
+        ('sugerencia', 'Sugerencia'),
+        ('felicitacion', 'Felicitación'),
+        ('queja', 'Queja'),
+    ]
+
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='comentarios',
+        verbose_name='Usuario'
+    )
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='experiencia')
+    titulo = models.CharField(max_length=150)
+    mensaje = models.TextField()
+    valoracion = models.IntegerField(default=5)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    visible = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Comentario'
+        verbose_name_plural = 'Comentarios'
+        ordering = ['-fecha_creacion']
+
+    def __str__(self):
+        return f"{self.usuario.get_full_name()} — {self.titulo}"
+
+    def estrellas(self):
+        return range(self.valoracion)
+
+    def estrellas_vacias(self):
+        return range(5 - self.valoracion)

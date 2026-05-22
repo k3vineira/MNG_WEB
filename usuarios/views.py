@@ -4,45 +4,123 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
-from .models import Usuario, Cliente
+from .models import Usuario, Cliente, Comentario
 from .forms import RegistroForm
-from comunidad.models import Calificacion
 
 
 @login_required
 def inicio_usuarios(request):
-    """
-    Punto de entrada tras el login. Redirige a los administradores al dashboard
-    y a los turistas a su página de inicio personalizada.
-    """
     if request.user.is_staff:
         return redirect('dashboard')
-
-    context = {
-        'titulo': 'Bienvenido a Monagua',
-    }
+    context = {'titulo': 'Bienvenido a Monagua'}
     return render(request, 'turista/index_turista.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='inicio')
 def dashboard_admin(request):
-    """
-    Vista protegida para el Dashboard Administrativo.
-    Solo accesible para usuarios con el atributo is_staff=True.
-    """
+    from reservas.models import Reserva, Cancelacion
+    from catalogo.models import Paquete
+    from django.db.models import Sum, Count
+    from django.utils.timesince import timesince
+    from datetime import timedelta
+
+    hoy = timezone.now().date()
+    anio_actual = hoy.year
+
+    try:
+        total_usuarios = Usuario.objects.filter(is_staff=False).count()
+    except:
+        total_usuarios = 0
+
+    try:
+        total_tours = Paquete.objects.filter(estado=True).count()
+    except:
+        total_tours = 0
+
+    total_reservas = total_ventas = reservas_confirmadas = 0
+    reservas_pendientes = reservas_canceladas = tasa_confirmacion = 0
+    ingreso_por_reserva = cancelaciones_hoy = 0
+    ingresos_mensuales = [0] * 12
+    reservas_semana = [0] * 7
+    tours_populares = []
+    max_reservas = 1
+    actividad_reciente = []
+
+    try:
+        from reservas.models import Reserva, Cancelacion
+        total_reservas = Reserva.objects.count()
+        try:
+            total_ventas = Reserva.objects.filter(
+                estado='confirmada'
+            ).aggregate(total=Sum('monto_total'))['total'] or 0
+            reservas_confirmadas = Reserva.objects.filter(estado='confirmada').count()
+            reservas_pendientes  = Reserva.objects.filter(estado='pendiente').count()
+            reservas_canceladas  = Reserva.objects.filter(estado='cancelada').count()
+            if total_reservas > 0:
+                tasa_confirmacion = round((reservas_confirmadas / total_reservas) * 100)
+            if reservas_confirmadas > 0:
+                ingreso_por_reserva = round(total_ventas / reservas_confirmadas)
+            for i, mes in enumerate(range(1, 13)):
+                total_mes = Reserva.objects.filter(
+                    estado='confirmada', fecha__year=anio_actual, fecha__month=mes
+                ).aggregate(total=Sum('monto_total'))['total'] or 0
+                ingresos_mensuales[i] = float(total_mes)
+        except Exception as e:
+            print(f"[Dashboard] Error: {e}")
+        try:
+            from datetime import timedelta
+            for i, dias in enumerate(range(6, -1, -1)):
+                dia = hoy - timedelta(days=dias)
+                reservas_semana[i] = Reserva.objects.filter(fecha=dia).count()
+        except:
+            pass
+        try:
+            cancelaciones_hoy = Cancelacion.objects.filter(reserva__fecha=hoy).count()
+        except:
+            pass
+        try:
+            tours_populares = list(Paquete.objects.annotate(
+                numero_reservas=Count('reserva')
+            ).order_by('-numero_reservas')[:5])
+            max_reservas = tours_populares[0].numero_reservas if tours_populares and tours_populares[0].numero_reservas > 0 else 1
+        except:
+            pass
+        try:
+            ultimas = Reserva.objects.select_related('usuario', 'paquete').order_by('-id')[:8]
+            for r in ultimas:
+                nombre = r.usuario.get_full_name() or r.usuario.username
+                try:
+                    estado_txt = r.get_estado_display()
+                except:
+                    estado_txt = 'Sin estado'
+                actividad_reciente.append({
+                    'texto': f"{nombre} reservó '{r.paquete.nombre}' — {estado_txt}",
+                    'tiempo': timesince(r.fecha) + ' atrás',
+                })
+        except:
+            pass
+    except Exception as e:
+        print(f"[Dashboard] Error importando Reserva: {e}")
+
     context = {
-        'titulo': 'Tablero de Rendimiento',
-        'total_ventas': 0.0,
-        'total_usuarios': 0,
-        'total_reservas': 0,
-        'total_tours': 0,
-        'total_promociones': 0,
-        'ingresos_mensuales': [0]*12,
-        'reservas_confirmadas': 0,
-        'reservas_pendientes': 0,
-        'reservas_canceladas': 0,
-        'reservas_semana': [0]*7,
-        'actividad_reciente': [],
+        'titulo':               'Tablero de Rendimiento',
+        'total_ventas':         total_ventas,
+        'total_usuarios':       total_usuarios,
+        'total_reservas':       total_reservas,
+        'total_tours':          total_tours,
+        'total_promociones':    0,
+        'ingresos_mensuales':   ingresos_mensuales,
+        'reservas_confirmadas': reservas_confirmadas,
+        'reservas_pendientes':  reservas_pendientes,
+        'reservas_canceladas':  reservas_canceladas,
+        'reservas_semana':      reservas_semana,
+        'tasa_confirmacion':    tasa_confirmacion,
+        'valoracion_promedio':  0.0,
+        'ingreso_por_reserva':  ingreso_por_reserva,
+        'cancelaciones_hoy':    cancelaciones_hoy,
+        'tours_populares':      tours_populares,
+        'max_reservas':         max_reservas,
+        'actividad_reciente':   actividad_reciente,
     }
     return render(request, 'admin/index-admin.html', context)
 
@@ -50,29 +128,21 @@ def dashboard_admin(request):
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('inicio')
-
     if request.method == 'POST':
-        # Permitir login con correo interceptando los datos del POST
         data = request.POST.copy()
         username_input = data.get('username')
         if username_input and '@' in username_input:
             user_obj = Usuario.objects.filter(email=username_input).first()
             if user_obj:
                 data['username'] = user_obj.username
-
         form = AuthenticationForm(request, data=data)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(
-                username=username,
-                password=password
-            )
+            user = authenticate(username=username, password=password)
             if user is not None:
                 auth_login(request, user)
                 messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
-
-                # Redirigir a 'next' preservando parámetros adicionales como paquete_id
                 next_url = request.GET.get('next')
                 if next_url:
                     paquete_id = request.GET.get('paquete_id')
@@ -86,9 +156,6 @@ def login_view(request):
 
 
 def logout_view(request):
-    """
-    Cierra la sesión del usuario y redirige a la página de inicio de sesión.
-    """
     auth_logout(request)
     messages.info(request, "Has cerrado sesión exitosamente.")
     return redirect('login')
@@ -97,26 +164,18 @@ def logout_view(request):
 def registro_view(request):
     if request.user.is_authenticated:
         return redirect('inicio')
-
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.rol = Usuario.Roles.CLIENTE
-            
             pais = request.POST.get('pais', '')
             ciudad = request.POST.get('ciudad', '')
             if pais and ciudad:
                 user.residencia = f"{ciudad}, {pais}"
-                
             user.save()
-
-            # Crear el perfil de Cliente asociado
             Cliente.objects.create(usuario=user, pais=pais, ciudad=ciudad)
-
-            messages.success(request, "¡Registro exitoso! Tu cuenta ha sido creada. Ahora puedes iniciar sesión.")
-            
-            # Preservar parámetros de redirección hacia el login
+            messages.success(request, "¡Registro exitoso! Ahora puedes iniciar sesión.")
             from django.urls import reverse
             login_url = reverse('login')
             next_url = request.GET.get('next')
@@ -126,94 +185,63 @@ def registro_view(request):
             if paquete_id: query_params.append(f"paquete_id={paquete_id}")
             if query_params:
                 login_url += "?" + "&".join(query_params)
-                
             return redirect(login_url)
         else:
             messages.error(request, "Hubo un error en el registro. Por favor, revisa los datos.")
     else:
         form = RegistroForm()
-
     return render(request, 'authentication/registro.html', {'form': form})
 
 
 def terminos_view(request):
-    """
-    Vista pública para la página de Términos y Condiciones.
-    Accesible sin necesidad de autenticación.
-    """
     return render(request, 'public/terminos.html')
 
 
 def nosotros_view(request):
-    """
-    Vista pública para la página Nosotros.
-    Accesible sin necesidad de autenticación.
-    """
     return render(request, 'public/nosotros.html')
 
 
 @login_required
 def perfil_view(request):
-    """
-    Vista para visualizar y actualizar el perfil del usuario.
-    Maneja la actualización de imagen y datos personales desde el modal.
-    """
     user = request.user
-
     if request.method == 'POST':
-        # Caso 1: Actualización de foto de perfil
         if 'imagen_perfil' in request.FILES:
             user.imagen_perfil = request.FILES['imagen_perfil']
             user.save()
             messages.success(request, "¡Foto de perfil actualizada con éxito!")
-
-        # Caso 2: Edición de datos personales (Modal)
         elif request.POST.get('editar_perfil') == '1':
-            user.first_name = request.POST.get('first_name', user.first_name)
-            user.last_name = request.POST.get('last_name', user.last_name)
+            user.first_name  = request.POST.get('first_name', user.first_name)
+            user.last_name   = request.POST.get('last_name', user.last_name)
             user.tipo_documento = request.POST.get('tipo_documento', user.tipo_documento)
-            user.telefono = request.POST.get('telefono', user.telefono)
-            user.residencia = request.POST.get('residencia', user.residencia)
+            user.telefono    = request.POST.get('telefono', user.telefono)
+            user.residencia  = request.POST.get('residencia', user.residencia)
             user.save()
             messages.success(request, "¡Información actualizada correctamente!")
-
         return redirect('detalles')
-
     return render(request, 'private/perfil.html')
 
 
 @user_passes_test(lambda u: u.is_staff)
 def gestion_guias(request, id=None):
-    """
-    Vista principal para la gestión de guías y usuarios.
-    Implementa la lógica MVT para el index-guias.html.
-    """
-    from .models import Usuario
-
     all_users = Usuario.objects.all().order_by('-date_joined')
-    guias = Usuario.objects.filter(es_guia=True)
-
-    guia_sel = None
-    if id:
-        guia_sel = get_object_or_404(Usuario, id=id)
-
+    guias     = Usuario.objects.filter(es_guia=True)
+    guia_sel  = get_object_or_404(Usuario, id=id) if id else None
     context = {
-        'fecha': timezone.now().strftime('%d %b, %Y'),
-        'guias': guias,
-        'total_guias': guias.count(),
-        'total_guias_activos': guias.filter(is_active=True).count(),
-        'guias_asignados': 0,
+        'fecha':                 timezone.now().strftime('%d %b, %Y'),
+        'guias':                 guias,
+        'total_guias':           guias.count(),
+        'total_guias_activos':   guias.filter(is_active=True).count(),
+        'guias_asignados':       0,
         'total_guias_inactivos': guias.filter(is_active=False).count(),
-        'all_users': all_users,
-        'total_users': all_users.count(),
-        'guia_sel': guia_sel,
+        'all_users':             all_users,
+        'total_users':           all_users.count(),
+        'guia_sel':              guia_sel,
     }
     return render(request, 'admin/index-guias.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff)
 def asignar_rol_guia(request, user_id):
-    """Toggle para asignar o quitar el rol de guía a un usuario."""
     if request.method == 'POST':
         user_obj = get_object_or_404(Usuario, id=user_id)
         user_obj.es_guia = not user_obj.es_guia
@@ -225,7 +253,6 @@ def asignar_rol_guia(request, user_id):
 
 @user_passes_test(lambda u: u.is_staff)
 def guias_baja_reactivar(request, id, estado):
-    """Cambia el estado de activación de un guía."""
     if request.method == 'POST':
         guia = get_object_or_404(Usuario, id=id)
         guia.is_active = (estado == 'activar')
@@ -237,19 +264,87 @@ def guias_baja_reactivar(request, id, estado):
 
 @user_passes_test(lambda u: u.is_staff)
 def guias_guardar(request):
-    """Lógica para crear o editar un guía desde el modal."""
     if request.method == 'POST':
-        # Aquí se implementaría la lógica de guardado/update
         messages.success(request, "Datos del guía guardados correctamente.")
     return redirect('gestion_guias')
 
 
+# ── Comentarios ──────────────────────────────────────────────────────────────
+
+@login_required
+def enviar_comentario(request):
+    if request.method == 'POST':
+        tipo       = request.POST.get('tipo', 'experiencia')
+        titulo     = request.POST.get('titulo', '').strip()
+        mensaje    = request.POST.get('mensaje', '').strip()
+        valoracion = int(request.POST.get('valoracion', 5))
+        if titulo and mensaje:
+            Comentario.objects.create(
+                usuario=request.user,
+                tipo=tipo,
+                titulo=titulo,
+                mensaje=mensaje,
+                valoracion=valoracion,
+            )
+            messages.success(request, '¡Tu comentario fue enviado correctamente!')
+        else:
+            messages.error(request, 'Por favor completa todos los campos.')
+        return redirect('usuarios:enviar_comentario')
+
+    mis_comentarios = Comentario.objects.filter(
+        usuario=request.user
+    ).order_by('-fecha_creacion')[:5]
+
+    comentarios_publicos = Comentario.objects.filter(
+        visible=True
+    ).exclude(usuario=request.user).order_by('-fecha_creacion')[:10]
+
+    context = {
+        'mis_comentarios':      mis_comentarios,
+        'comentarios_publicos': comentarios_publicos,
+    }
+    return render(request, 'private/comentarios.html', context)
+
+
 @user_passes_test(lambda u: u.is_staff)
 def listar_comentarios(request):
-    """Vista para listar y gestionar los comentarios/calificaciones de los paquetes."""
-    comentarios = Calificacion.objects.all().order_by('-fecha')
+    tipo_filtro       = request.GET.get('tipo', '')
+    valoracion_filtro = request.GET.get('valoracion', '')
+    comentarios = Comentario.objects.select_related('usuario').all()
+    if tipo_filtro:
+        comentarios = comentarios.filter(tipo=tipo_filtro)
+    if valoracion_filtro:
+        comentarios = comentarios.filter(valoracion=valoracion_filtro)
+    total          = comentarios.count()
+    total_visibles = comentarios.filter(visible=True).count()
+    promedio = round(sum(c.valoracion for c in comentarios) / total, 1) if total > 0 else 0
     context = {
-        'comentarios': comentarios,
-        'titulo': 'Gestión de Comentarios y Reseñas',
+        'comentarios':        comentarios,
+        'total':              total,
+        'total_visibles':     total_visibles,
+        'promedio':           promedio,
+        'tipo_filtro':        tipo_filtro,
+        'valoracion_filtro':  valoracion_filtro,
     }
-    return render(request, 'admin/comentarios.html', context)
+    return render(request, 'admin/comentarios/listar_comentarios.html', context)
+
+
+@user_passes_test(lambda u: u.is_staff)
+def toggle_visible(request, pk):
+    if request.method == 'POST':
+        comentario = get_object_or_404(Comentario, pk=pk)
+        comentario.visible = not comentario.visible
+        comentario.save()
+        estado = 'visible' if comentario.visible else 'oculto'
+        messages.success(request, f'Comentario marcado como {estado}.')
+    return redirect('usuarios:listar_comentarios')
+
+@login_required
+def mis_resenas_view(request):
+    # Obtenemos las reseñas del usuario actual
+    mis_resenas = Comentario.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+
+    context = {
+        'mis_resenas': mis_resenas,
+    }
+    return render(request, 'private/resenas.html', context)
