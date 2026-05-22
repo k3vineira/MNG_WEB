@@ -14,6 +14,7 @@ urlpatterns = [
     path('terminos/', views.terminos_view, name='terminos'),
     path('nosotros/', views.nosotros_view, name='nosotros'),
     path('perfil/', views.perfil_view, name='detalles'),
+    path('comentarios/', views.listar_comentarios, name='listar_comentarios'),
 
     # Rutas de Gestión de Personal y Guías
     path('gestion-guias/', views.gestion_guias, name='gestion_guias'),
@@ -21,4 +22,5 @@ urlpatterns = [
     path('asignar-rol-guia/<int:user_id>/', views.asignar_rol_guia, name='asignar_rol_guia'),
     path('guia-estado/<int:id>/<str:estado>/', views.guias_baja_reactivar, name='guias_baja_reactivar'),
     path('guias-guardar/', views.guias_guardar, name='guias_guardar'),
+    path('mis-resenas/', views.mis_resenas_view, name='mis_resenas'),
 ]

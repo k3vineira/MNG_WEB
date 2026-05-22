@@ -1,0 +1,105 @@
+{% extends 'admin/base-admin.html' %}
+{% load static %}
+
+{% block title %}Comentarios | Monagua Admin{% endblock %}
+
+{% block content %}
+<!-- Top Bar -->
+<div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+  <div>
+    <h2 class="fw-bold mb-0 text-success" style="font-size:1.6rem">Gestión de Comentarios</h2>
+    <p class="text-muted mb-0 small">Calificaciones y reseñas publicadas por los clientes.</p>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <span class="badge bg-white text-secondary border px-3 py-2 d-inline-flex align-items-center gap-1">
+      <i class="bi bi-chat-left-text-fill text-success"></i>
+      <span>Total Reseñas: <strong>{{ comentarios|length }}</strong></span>
+    </span>
+  </div>
+</div>
+
+<!-- Main Table Card -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+  <div class="card-header bg-dark text-white py-3">
+    <h5 class="mb-0 fs-6"><i class="bi bi-chat-square-quote-fill text-success me-2"></i>Historial de Reseñas</h5>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light text-uppercase tracking-wider" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+        <tr>
+          <th class="ps-4 py-3" style="width: 250px;">Cliente</th>
+          <th class="py-3" style="width: 200px;">Paquete Turístico</th>
+          <th class="py-3 text-center" style="width: 150px;">Calificación</th>
+          <th class="py-3">Comentario</th>
+          <th class="pe-4 py-3 text-end" style="width: 150px;">Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for comentario in comentarios %}
+        <tr class="border-bottom-0">
+          <!-- Cliente info with avatar -->
+          <td class="ps-4 py-3">
+            <div class="d-flex align-items-center gap-3">
+              <img src="{% if comentario.cliente.usuario.imagen_perfil %}{{ comentario.cliente.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
+                   alt="{{ comentario.cliente.usuario.get_full_name|default:comentario.cliente.usuario.username }}"
+                   class="rounded-circle border"
+                   width="38" height="38" style="object-fit:cover">
+              <div>
+                <div class="fw-semibold text-dark" style="font-size: 0.9rem;">
+                  {{ comentario.cliente.usuario.get_full_name|default:comentario.cliente.usuario.username }}
+                </div>
+                <div class="text-muted" style="font-size: 0.75rem;">
+                  {{ comentario.cliente.usuario.email }}
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Paquete -->
+          <td class="py-3">
+            <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5 rounded-3 fw-semibold" style="font-size: 0.8rem;">
+              {{ comentario.paquete.nombre }}
+            </span>
+          </td>
+
+          <!-- Calificación (stars) -->
+          <td class="py-3 text-center">
+            <div class="text-warning" style="font-size: 0.85rem;">
+              {% if comentario.puntaje >= 1 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+              {% if comentario.puntaje >= 2 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+              {% if comentario.puntaje >= 3 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+              {% if comentario.puntaje >= 4 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+              {% if comentario.puntaje >= 5 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+            </div>
+            <span class="text-muted fw-bold" style="font-size: 0.75rem;">({{ comentario.puntaje }}/5)</span>
+          </td>
+
+          <!-- Comentario -->
+          <td class="py-3">
+            <div class="text-dark small lh-base" style="max-width: 450px; white-space: normal; word-break: break-word;">
+              {{ comentario.comentario|default:"*Sin comentario escrito.*" }}
+            </div>
+          </td>
+
+          <!-- Fecha -->
+          <td class="pe-4 py-3 text-end text-muted small">
+            {{ comentario.fecha|date:"d M, Y" }}
+            <div style="font-size: 0.7rem; opacity: 0.7;">{{ comentario.fecha|date:"h:i A" }}</div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center py-5 text-muted">
+            <div class="mb-3 text-secondary">
+              <i class="bi bi-chat-left-heart-fill display-4 text-success opacity-50"></i>
+            </div>
+            <h6 class="fw-bold">No hay comentarios todavía</h6>
+            <p class="small text-muted mb-0">Las calificaciones que realicen los turistas se mostrarán en este panel.</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
-from .models import Usuario, Cliente, GuiaTuristico
+from .models import Usuario, Cliente, Comentario
 from .forms import RegistroForm
 
 
@@ -12,10 +12,7 @@ from .forms import RegistroForm
 def inicio_usuarios(request):
     if request.user.is_staff:
         return redirect('dashboard')
-
-    context = {
-        'titulo': 'Bienvenido a Monagua',
-    }
+    context = {'titulo': 'Bienvenido a Monagua'}
     return render(request, 'turista/index_turista.html', context)
 
 
@@ -30,67 +27,80 @@ def dashboard_admin(request):
     hoy = timezone.now().date()
     anio_actual = hoy.year
 
-    # ── KPIs principales ──────────────────────────────────────────────────────
-    total_usuarios = Usuario.objects.filter(is_staff=False).count()
-    total_tours    = Paquete.objects.filter(estado=True).count()
-    total_reservas = Reserva.objects.count()
-    total_ventas   = Reserva.objects.filter(
-        estado='confirmada'
-    ).aggregate(total=Sum('monto_total'))['total'] or 0
+    try:
+        total_usuarios = Usuario.objects.filter(is_staff=False).count()
+    except:
+        total_usuarios = 0
 
-    # ── Estado de reservas ────────────────────────────────────────────────────
-    reservas_confirmadas = Reserva.objects.filter(estado='confirmada').count()
-    reservas_pendientes  = Reserva.objects.filter(estado='pendiente').count()
-    reservas_canceladas  = Reserva.objects.filter(estado='cancelada').count()
+    try:
+        total_tours = Paquete.objects.filter(estado=True).count()
+    except:
+        total_tours = 0
 
-    # ── Métricas calculadas ───────────────────────────────────────────────────
-    tasa_confirmacion = 0
-    if total_reservas > 0:
-        tasa_confirmacion = round((reservas_confirmadas / total_reservas) * 100)
-
-    ingreso_por_reserva = 0
-    if reservas_confirmadas > 0:
-        ingreso_por_reserva = round(total_ventas / reservas_confirmadas)
-
-    cancelaciones_hoy = Cancelacion.objects.filter(
-        reserva__fecha=hoy
-    ).count()
-
-    # ── Ingresos mensuales (12 meses del año actual) ──────────────────────────
-    ingresos_mensuales = []
-    for mes in range(1, 13):
-        total_mes = Reserva.objects.filter(
-            estado='confirmada',
-            fecha__year=anio_actual,
-            fecha__month=mes
-        ).aggregate(total=Sum('monto_total'))['total'] or 0
-        ingresos_mensuales.append(float(total_mes))
-
-    # ── Reservas últimos 7 días (lun → dom) ───────────────────────────────────
-    reservas_semana = []
-    for i in range(6, -1, -1):
-        dia = hoy - timedelta(days=i)
-        reservas_semana.append(Reserva.objects.filter(fecha=dia).count())
-
-    # ── Tours más populares ───────────────────────────────────────────────────
-    tours_populares = Paquete.objects.annotate(
-        numero_reservas=Count('reserva')
-    ).order_by('-numero_reservas')[:5]
-
-    max_reservas = tours_populares[0].numero_reservas if tours_populares else 1
-
-    # ── Actividad reciente ────────────────────────────────────────────────────
-    ultimas_reservas = Reserva.objects.select_related(
-        'usuario', 'paquete'
-    ).order_by('-id')[:8]
-
+    total_reservas = total_ventas = reservas_confirmadas = 0
+    reservas_pendientes = reservas_canceladas = tasa_confirmacion = 0
+    ingreso_por_reserva = cancelaciones_hoy = 0
+    ingresos_mensuales = [0] * 12
+    reservas_semana = [0] * 7
+    tours_populares = []
+    max_reservas = 1
     actividad_reciente = []
-    for r in ultimas_reservas:
-        nombre = r.usuario.get_full_name() or r.usuario.username
-        actividad_reciente.append({
-            'texto': f"{nombre} reservó '{r.paquete.nombre}' — {r.get_estado_display()}",
-            'tiempo': timesince(r.fecha) + ' atrás',
-        })
+
+    try:
+        from reservas.models import Reserva, Cancelacion
+        total_reservas = Reserva.objects.count()
+        try:
+            total_ventas = Reserva.objects.filter(
+                estado='confirmada'
+            ).aggregate(total=Sum('monto_total'))['total'] or 0
+            reservas_confirmadas = Reserva.objects.filter(estado='confirmada').count()
+            reservas_pendientes  = Reserva.objects.filter(estado='pendiente').count()
+            reservas_canceladas  = Reserva.objects.filter(estado='cancelada').count()
+            if total_reservas > 0:
+                tasa_confirmacion = round((reservas_confirmadas / total_reservas) * 100)
+            if reservas_confirmadas > 0:
+                ingreso_por_reserva = round(total_ventas / reservas_confirmadas)
+            for i, mes in enumerate(range(1, 13)):
+                total_mes = Reserva.objects.filter(
+                    estado='confirmada', fecha__year=anio_actual, fecha__month=mes
+                ).aggregate(total=Sum('monto_total'))['total'] or 0
+                ingresos_mensuales[i] = float(total_mes)
+        except Exception as e:
+            print(f"[Dashboard] Error: {e}")
+        try:
+            from datetime import timedelta
+            for i, dias in enumerate(range(6, -1, -1)):
+                dia = hoy - timedelta(days=dias)
+                reservas_semana[i] = Reserva.objects.filter(fecha=dia).count()
+        except:
+            pass
+        try:
+            cancelaciones_hoy = Cancelacion.objects.filter(reserva__fecha=hoy).count()
+        except:
+            pass
+        try:
+            tours_populares = list(Paquete.objects.annotate(
+                numero_reservas=Count('reserva')
+            ).order_by('-numero_reservas')[:5])
+            max_reservas = tours_populares[0].numero_reservas if tours_populares and tours_populares[0].numero_reservas > 0 else 1
+        except:
+            pass
+        try:
+            ultimas = Reserva.objects.select_related('usuario', 'paquete').order_by('-id')[:8]
+            for r in ultimas:
+                nombre = r.usuario.get_full_name() or r.usuario.username
+                try:
+                    estado_txt = r.get_estado_display()
+                except:
+                    estado_txt = 'Sin estado'
+                actividad_reciente.append({
+                    'texto': f"{nombre} reservó '{r.paquete.nombre}' — {estado_txt}",
+                    'tiempo': timesince(r.fecha) + ' atrás',
+                })
+        except:
+            pass
+    except Exception as e:
+        print(f"[Dashboard] Error importando Reserva: {e}")
 
     context = {
         'titulo':               'Tablero de Rendimiento',
@@ -118,16 +128,13 @@ def dashboard_admin(request):
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('inicio')
-
     if request.method == 'POST':
-        # Permitir login con correo interceptando los datos del POST
         data = request.POST.copy()
         username_input = data.get('username')
         if username_input and '@' in username_input:
             user_obj = Usuario.objects.filter(email=username_input).first()
             if user_obj:
                 data['username'] = user_obj.username
-
         form = AuthenticationForm(request, data=data)
         if form.is_valid():
             username = form.cleaned_data.get('username')
@@ -136,8 +143,6 @@ def login_view(request):
             if user is not None:
                 auth_login(request, user)
                 messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
-
-                # Redirigir a 'next' preservando parámetros adicionales como paquete_id
                 next_url = request.GET.get('next')
                 if next_url:
                     paquete_id = request.GET.get('paquete_id')
@@ -159,26 +164,18 @@ def logout_view(request):
 def registro_view(request):
     if request.user.is_authenticated:
         return redirect('inicio')
-
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.rol = Usuario.Roles.CLIENTE
-            
             pais = request.POST.get('pais', '')
             ciudad = request.POST.get('ciudad', '')
             if pais and ciudad:
                 user.residencia = f"{ciudad}, {pais}"
-                
             user.save()
-
-            # Crear el perfil de Cliente asociado
             Cliente.objects.create(usuario=user, pais=pais, ciudad=ciudad)
-
-            messages.success(request, "¡Registro exitoso! Tu cuenta ha sido creada. Ahora puedes iniciar sesión.")
-            
-            # Preservar parámetros de redirección hacia el login
+            messages.success(request, "¡Registro exitoso! Ahora puedes iniciar sesión.")
             from django.urls import reverse
             login_url = reverse('login')
             next_url = request.GET.get('next')
@@ -188,7 +185,6 @@ def registro_view(request):
             if paquete_id: query_params.append(f"paquete_id={paquete_id}")
             if query_params:
                 login_url += "?" + "&".join(query_params)
-                
             return redirect(login_url)
         else:
             messages.error(request, "Hubo un error en el registro. Por favor, revisa los datos.")
@@ -221,31 +217,25 @@ def perfil_view(request):
             user.residencia  = request.POST.get('residencia', user.residencia)
             user.save()
             messages.success(request, "¡Información actualizada correctamente!")
-
         return redirect('detalles')
-
     return render(request, 'private/perfil.html')
 
 
 @user_passes_test(lambda u: u.is_staff)
 def gestion_guias(request, id=None):
     all_users = Usuario.objects.all().order_by('-date_joined')
-    guias = Usuario.objects.filter(rol=Usuario.Roles.GUIA)
-
-    guia_sel = None
-    if id:
-        guia_sel = get_object_or_404(Usuario, id=id)
-
+    guias     = Usuario.objects.filter(es_guia=True)
+    guia_sel  = get_object_or_404(Usuario, id=id) if id else None
     context = {
-        'fecha':                  timezone.now().strftime('%d %b, %Y'),
-        'guias':                  guias,
-        'total_guias':            guias.count(),
-        'total_guias_activos':    guias.filter(is_active=True).count(),
-        'guias_asignados':        0,
-        'total_guias_inactivos':  guias.filter(is_active=False).count(),
-        'all_users':              all_users,
-        'total_users':            all_users.count(),
-        'guia_sel':               guia_sel,
+        'fecha':                 timezone.now().strftime('%d %b, %Y'),
+        'guias':                 guias,
+        'total_guias':           guias.count(),
+        'total_guias_activos':   guias.filter(is_active=True).count(),
+        'guias_asignados':       0,
+        'total_guias_inactivos': guias.filter(is_active=False).count(),
+        'all_users':             all_users,
+        'total_users':           all_users.count(),
+        'guia_sel':              guia_sel,
     }
     return render(request, 'admin/index-guias.html', context)
 
@@ -254,15 +244,9 @@ def gestion_guias(request, id=None):
 def asignar_rol_guia(request, user_id):
     if request.method == 'POST':
         user_obj = get_object_or_404(Usuario, id=user_id)
-        if user_obj.rol == Usuario.Roles.GUIA:
-            user_obj.rol = Usuario.Roles.CLIENTE
-        else:
-            user_obj.rol = Usuario.Roles.GUIA
-            # Asegurar que tenga un perfil de GuiaTuristico
-            if not hasattr(user_obj, 'guia'):
-                GuiaTuristico.objects.create(usuario=user_obj)
+        user_obj.es_guia = not user_obj.es_guia
         user_obj.save()
-        accion = "asignado como" if user_obj.rol == Usuario.Roles.GUIA else "removido de"
+        accion = "asignado como" if user_obj.es_guia else "removido de"
         messages.success(request, f"Usuario {user_obj.username} {accion} guía.")
     return redirect('gestion_guias')
 
@@ -283,3 +267,84 @@ def guias_guardar(request):
     if request.method == 'POST':
         messages.success(request, "Datos del guía guardados correctamente.")
     return redirect('gestion_guias')
+
+
+# ── Comentarios ──────────────────────────────────────────────────────────────
+
+@login_required
+def enviar_comentario(request):
+    if request.method == 'POST':
+        tipo       = request.POST.get('tipo', 'experiencia')
+        titulo     = request.POST.get('titulo', '').strip()
+        mensaje    = request.POST.get('mensaje', '').strip()
+        valoracion = int(request.POST.get('valoracion', 5))
+        if titulo and mensaje:
+            Comentario.objects.create(
+                usuario=request.user,
+                tipo=tipo,
+                titulo=titulo,
+                mensaje=mensaje,
+                valoracion=valoracion,
+            )
+            messages.success(request, '¡Tu comentario fue enviado correctamente!')
+        else:
+            messages.error(request, 'Por favor completa todos los campos.')
+        return redirect('usuarios:enviar_comentario')
+
+    mis_comentarios = Comentario.objects.filter(
+        usuario=request.user
+    ).order_by('-fecha_creacion')[:5]
+
+    comentarios_publicos = Comentario.objects.filter(
+        visible=True
+    ).exclude(usuario=request.user).order_by('-fecha_creacion')[:10]
+
+    context = {
+        'mis_comentarios':      mis_comentarios,
+        'comentarios_publicos': comentarios_publicos,
+    }
+    return render(request, 'private/comentarios.html', context)
+
+
+@user_passes_test(lambda u: u.is_staff)
+def listar_comentarios(request):
+    tipo_filtro       = request.GET.get('tipo', '')
+    valoracion_filtro = request.GET.get('valoracion', '')
+    comentarios = Comentario.objects.select_related('usuario').all()
+    if tipo_filtro:
+        comentarios = comentarios.filter(tipo=tipo_filtro)
+    if valoracion_filtro:
+        comentarios = comentarios.filter(valoracion=valoracion_filtro)
+    total          = comentarios.count()
+    total_visibles = comentarios.filter(visible=True).count()
+    promedio = round(sum(c.valoracion for c in comentarios) / total, 1) if total > 0 else 0
+    context = {
+        'comentarios':        comentarios,
+        'total':              total,
+        'total_visibles':     total_visibles,
+        'promedio':           promedio,
+        'tipo_filtro':        tipo_filtro,
+        'valoracion_filtro':  valoracion_filtro,
+    }
+    return render(request, 'admin/comentarios/listar_comentarios.html', context)
+
+
+@user_passes_test(lambda u: u.is_staff)
+def toggle_visible(request, pk):
+    if request.method == 'POST':
+        comentario = get_object_or_404(Comentario, pk=pk)
+        comentario.visible = not comentario.visible
+        comentario.save()
+        estado = 'visible' if comentario.visible else 'oculto'
+        messages.success(request, f'Comentario marcado como {estado}.')
+    return redirect('usuarios:listar_comentarios')
+
+@login_required
+def mis_resenas_view(request):
+    # Obtenemos las reseñas del usuario actual
+    mis_resenas = Comentario.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+
+    context = {
+        'mis_resenas': mis_resenas,
+    }
+    return render(request, 'private/resenas.html', context)

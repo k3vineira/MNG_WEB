@@ -32,8 +32,6 @@ INSTALLED_APPS = [
     'promociones',
     'reservas',
     'guias',
-    
-
 ]
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
