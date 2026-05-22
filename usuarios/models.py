@@ -18,6 +18,15 @@ class Usuario(AbstractUser):
     telefono = models.CharField(max_length=15, blank=True)
     residencia = models.CharField(max_length=100, blank=True)
     imagen_perfil = models.ImageField(upload_to='perfiles/', null=True, blank=True, verbose_name='Imagen de Perfil')
+    
+    @property
+    def es_guia(self):
+        return self.rol == self.Roles.GUIA
+
+    @property
+    def es_turista(self):
+        return self.rol == self.Roles.CLIENTE
+
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'

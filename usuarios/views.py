@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
-from .models import Usuario, Cliente
+from .models import Usuario, Cliente, GuiaTuristico
 from .forms import RegistroForm
 
 
@@ -230,8 +230,11 @@ def perfil_view(request):
 @user_passes_test(lambda u: u.is_staff)
 def gestion_guias(request, id=None):
     all_users = Usuario.objects.all().order_by('-date_joined')
-    guias     = Usuario.objects.filter(es_guia=True)
-    guia_sel  = get_object_or_404(Usuario, id=id) if id else None
+    guias = Usuario.objects.filter(rol=Usuario.Roles.GUIA)
+
+    guia_sel = None
+    if id:
+        guia_sel = get_object_or_404(Usuario, id=id)
 
     context = {
         'fecha':                  timezone.now().strftime('%d %b, %Y'),
@@ -251,9 +254,15 @@ def gestion_guias(request, id=None):
 def asignar_rol_guia(request, user_id):
     if request.method == 'POST':
         user_obj = get_object_or_404(Usuario, id=user_id)
-        user_obj.es_guia = not user_obj.es_guia
+        if user_obj.rol == Usuario.Roles.GUIA:
+            user_obj.rol = Usuario.Roles.CLIENTE
+        else:
+            user_obj.rol = Usuario.Roles.GUIA
+            # Asegurar que tenga un perfil de GuiaTuristico
+            if not hasattr(user_obj, 'guia'):
+                GuiaTuristico.objects.create(usuario=user_obj)
         user_obj.save()
-        accion = "asignado como" if user_obj.es_guia else "removido de"
+        accion = "asignado como" if user_obj.rol == Usuario.Roles.GUIA else "removido de"
         messages.success(request, f"Usuario {user_obj.username} {accion} guía.")
     return redirect('gestion_guias')
 
