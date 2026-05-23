@@ -121,17 +121,15 @@
 
             <script>
               const tarifasData = [
-                  {% if paquete %}
-                  {% for tarifa in paquete.tarifas.all %}
-                  {
-                      fecha_inicio: "{{ tarifa.temporada.fecha_inicio|date:'Y-m-d' }}",
-                      fecha_fin: "{{ tarifa.temporada.fecha_fin|date:'Y-m-d' }}",
-                      precio_adulto: {{ tarifa.precio_adulto }},
-                      precio_menor: {{ tarifa.precio_menor }}
-                  },
-                  {% endfor %}
-                  {% endif %}
-              ];
+             {% for tarifa in paquete.tarifas.all %}
+    {
+        fecha_inicio: "{{ tarifa.temporada.fecha_inicio|date:'Y-m-d' }}",
+        fecha_fin: "{{ tarifa.temporada.fecha_fin|date:'Y-m-d' }}",
+        precio_adulto: {{ tarifa.precio_adulto }},
+        precio_menor: {{ tarifa.precio_menor }}
+    },
+    {% endfor %}
+];
 
               function updatePrice() {
                   const fecha = document.getElementById('fecha_input').value;
