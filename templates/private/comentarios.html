@@ -1,55 +1,7 @@
-{% extends "base.html" %}
+{% extends "private/base_private.html" %}
 {% load static %}
-{% block navbar %}{% endblock %}
-{% block footer %}{% endblock %}
 
-{% block content %}
-
-<!-- Sidebar igual al que ya tienes -->
-<aside class="d-none d-md-flex flex-column position-fixed top-0 start-0 h-100 bg-dark p-4"
-    style="width:260px;z-index:1040;">
-    <div class="d-flex align-items-center mb-5">
-        <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="45" height="45" class="me-2">
-    </div>
-    <nav class="nav flex-column gap-2 flex-grow-1">
-        <a class="nav-link text-white-50 d-flex align-items-center gap-3 px-3 py-2 rounded" href="/">
-            <i class="bi bi-compass"></i>
-        </a>
-        <a class="nav-link text-white-50 d-flex align-items-center gap-3 px-3 py-2 rounded" href="#">
-            <i class="bi bi-calendar-check"></i>
-        </a>
-        <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded bg-success text-white" href="#">
-            <i class="bi bi-chat-square-text-fill"></i>
-        </a>
-        <a class="nav-link text-white-50 d-flex align-items-center gap-3 px-3 py-2 rounded" href="{% url 'detalles' %}">
-            <i class="bi bi-person-circle"></i>
-        </a>
-    </nav>
-    <a href="#" class="btn btn-success w-100 py-3 rounded-4 fw-bold mt-auto">Reservar Ahora</a>
-</aside>
-
-<!-- Contenido principal -->
-<main style="margin-left:260px;" class="min-vh-100">
-
-    <!-- Header sticky -->
-    <header class="sticky-top border-bottom shadow-sm bg-white">
-        <div class="container-fluid px-4 py-3 d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-link text-success p-0 d-md-none">
-                    <i class="bi bi-list fs-3"></i>
-                </button>
-                <h2 class="fs-5 fw-bold text-success mb-0 d-md-none">Monagua</h2>
-            </div>
-            <div class="d-flex align-items-center gap-3 text-secondary">
-                <i class="bi bi-bell fs-5" style="cursor:pointer"></i>
-                <i class="bi bi-heart fs-5" style="cursor:pointer"></i>
-                <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
-                    alt="Usuario" class="rounded-circle border border-2"
-                    style="width:32px;height:32px;object-fit:cover;">
-            </div>
-        </div>
-    </header>
-
+{% block private_content %}
     <div class="container py-5" style="max-width:900px;">
 
         <!-- Título -->
@@ -200,23 +152,7 @@
         </div>
 
     </div>
-</main>
-
-<!-- Nav móvil -->
-<nav class="d-md-none fixed-bottom bg-white border-top d-flex justify-content-around py-2 shadow-lg">
-    <a href="/" class="text-decoration-none text-muted d-flex flex-column align-items-center">
-        <i class="bi bi-compass fs-5"></i><span style="font-size:10px">Inicio</span>
-    </a>
-    <a href="#" class="text-decoration-none text-muted d-flex flex-column align-items-center">
-        <i class="bi bi-calendar-check fs-5"></i><span style="font-size:10px">Reservas</span>
-    </a>
-    <a href="#" class="text-decoration-none text-success fw-bold d-flex flex-column align-items-center">
-        <i class="bi bi-chat-square-text-fill fs-5"></i><span style="font-size:10px">Reseñas</span>
-    </a>
-    <a href="{% url 'detalles' %}" class="text-decoration-none text-muted d-flex flex-column align-items-center">
-        <i class="bi bi-person-circle fs-5"></i><span style="font-size:10px">Perfil</span>
-    </a>
-</nav>
+{% endblock %}
 
 {% block extra_js %}
 <script>
@@ -247,6 +183,4 @@
         });
     });
 </script>
-{% endblock %}
-
 {% endblock %}
