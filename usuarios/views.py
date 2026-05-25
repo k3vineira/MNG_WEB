@@ -326,7 +326,7 @@ def listar_comentarios(request):
         'tipo_filtro':        tipo_filtro,
         'valoracion_filtro':  valoracion_filtro,
     }
-    return render(request, 'admin/comentarios/listar_comentarios.html', context)
+    return render(request, 'admin/comentarios.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -337,7 +337,7 @@ def toggle_visible(request, pk):
         comentario.save()
         estado = 'visible' if comentario.visible else 'oculto'
         messages.success(request, f'Comentario marcado como {estado}.')
-    return redirect('usuarios:listar_comentarios')
+    return redirect('listar_comentarios')
 
 @login_required
 def mis_resenas_view(request):

@@ -8,93 +8,139 @@
 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
   <div>
     <h2 class="fw-bold mb-0 text-success" style="font-size:1.6rem">Gestión de Comentarios</h2>
-    <p class="text-muted mb-0 small">Calificaciones y reseñas publicadas por los clientes.</p>
+    <p class="text-muted mb-0 small">Calificaciones y reseñas publicadas por los usuarios.</p>
   </div>
   <div class="d-flex align-items-center gap-2">
     <span class="badge bg-white text-secondary border px-3 py-2 d-inline-flex align-items-center gap-1">
       <i class="bi bi-chat-left-text-fill text-success"></i>
-      <span>Total Reseñas: <strong>{{ comentarios|length }}</strong></span>
+      <span>Total Reseñas: <strong>{{ total }}</strong></span>
+    </span>
+    <span class="badge bg-white text-secondary border px-3 py-2 d-inline-flex align-items-center gap-1">
+      <i class="bi bi-eye-fill text-primary"></i>
+      <span>Públicas: <strong>{{ total_visibles }}</strong></span>
+    </span>
+    <span class="badge bg-white text-secondary border px-3 py-2 d-inline-flex align-items-center gap-1">
+      <i class="bi bi-star-fill text-warning"></i>
+      <span>Promedio: <strong>{{ promedio }}</strong></span>
     </span>
   </div>
 </div>
 
 <!-- Main Table Card -->
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
-  <div class="card-header bg-dark text-white py-3">
+  <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
     <h5 class="mb-0 fs-6"><i class="bi bi-chat-square-quote-fill text-success me-2"></i>Historial de Reseñas</h5>
+    <div class="d-flex gap-2">
+      <form method="get" class="d-flex gap-2">
+        <select name="tipo" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">Todos los tipos</option>
+          <option value="experiencia" {% if tipo_filtro == 'experiencia' %}selected{% endif %}>Experiencia</option>
+          <option value="sugerencia" {% if tipo_filtro == 'sugerencia' %}selected{% endif %}>Sugerencia</option>
+          <option value="felicitacion" {% if tipo_filtro == 'felicitacion' %}selected{% endif %}>Felicitación</option>
+          <option value="queja" {% if tipo_filtro == 'queja' %}selected{% endif %}>Queja</option>
+        </select>
+        <select name="valoracion" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">Todas las estrellas</option>
+          <option value="5" {% if valoracion_filtro == '5' %}selected{% endif %}>5 Estrellas</option>
+          <option value="4" {% if valoracion_filtro == '4' %}selected{% endif %}>4 Estrellas</option>
+          <option value="3" {% if valoracion_filtro == '3' %}selected{% endif %}>3 Estrellas</option>
+          <option value="2" {% if valoracion_filtro == '2' %}selected{% endif %}>2 Estrellas</option>
+          <option value="1" {% if valoracion_filtro == '1' %}selected{% endif %}>1 Estrella</option>
+        </select>
+      </form>
+    </div>
   </div>
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light text-uppercase tracking-wider" style="font-size: 0.75rem; letter-spacing: 0.5px;">
         <tr>
-          <th class="ps-4 py-3" style="width: 250px;">Cliente</th>
-          <th class="py-3" style="width: 200px;">Paquete Turístico</th>
+          <th class="ps-4 py-3" style="width: 250px;">Usuario</th>
+          <th class="py-3" style="width: 150px;">Tipo / Título</th>
           <th class="py-3 text-center" style="width: 150px;">Calificación</th>
           <th class="py-3">Comentario</th>
-          <th class="pe-4 py-3 text-end" style="width: 150px;">Fecha</th>
+          <th class="py-3 text-center" style="width: 100px;">Estado</th>
+          <th class="pe-4 py-3 text-end" style="width: 150px;">Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for comentario in comentarios %}
         <tr class="border-bottom-0">
-          <!-- Cliente info with avatar -->
+          <!-- Usuario info with avatar -->
           <td class="ps-4 py-3">
             <div class="d-flex align-items-center gap-3">
-              <img src="{% if comentario.cliente.usuario.imagen_perfil %}{{ comentario.cliente.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
-                   alt="{{ comentario.cliente.usuario.get_full_name|default:comentario.cliente.usuario.username }}"
+              <img src="{% if comentario.usuario.imagen_perfil %}{{ comentario.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
+                   alt="{{ comentario.usuario.get_full_name|default:comentario.usuario.username }}"
                    class="rounded-circle border"
                    width="38" height="38" style="object-fit:cover">
               <div>
                 <div class="fw-semibold text-dark" style="font-size: 0.9rem;">
-                  {{ comentario.cliente.usuario.get_full_name|default:comentario.cliente.usuario.username }}
+                  {{ comentario.usuario.get_full_name|default:comentario.usuario.username }}
                 </div>
                 <div class="text-muted" style="font-size: 0.75rem;">
-                  {{ comentario.cliente.usuario.email }}
+                  {{ comentario.usuario.email }}
                 </div>
               </div>
             </div>
           </td>
 
-          <!-- Paquete -->
+          <!-- Tipo & Título -->
           <td class="py-3">
-            <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5 rounded-3 fw-semibold" style="font-size: 0.8rem;">
-              {{ comentario.paquete.nombre }}
+            <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5 rounded-3 fw-semibold mb-1 d-inline-block" style="font-size: 0.7rem;">
+              {{ comentario.get_tipo_display }}
             </span>
+            <div class="fw-semibold text-dark small text-truncate" style="max-width: 200px;" title="{{ comentario.titulo }}">
+              {{ comentario.titulo }}
+            </div>
           </td>
 
           <!-- Calificación (stars) -->
           <td class="py-3 text-center">
             <div class="text-warning" style="font-size: 0.85rem;">
-              {% if comentario.puntaje >= 1 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
-              {% if comentario.puntaje >= 2 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
-              {% if comentario.puntaje >= 3 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
-              {% if comentario.puntaje >= 4 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
-              {% if comentario.puntaje >= 5 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+              {% for s in comentario.estrellas %}<i class="bi bi-star-fill"></i>{% endfor %}
+              {% for s in comentario.estrellas_vacias %}<i class="bi bi-star"></i>{% endfor %}
             </div>
-            <span class="text-muted fw-bold" style="font-size: 0.75rem;">({{ comentario.puntaje }}/5)</span>
+            <span class="text-muted fw-bold" style="font-size: 0.75rem;">({{ comentario.valoracion }}/5)</span>
           </td>
 
           <!-- Comentario -->
           <td class="py-3">
-            <div class="text-dark small lh-base" style="max-width: 450px; white-space: normal; word-break: break-word;">
-              {{ comentario.comentario|default:"*Sin comentario escrito.*" }}
+            <div class="text-dark small lh-base" style="max-width: 350px; white-space: normal; word-break: break-word;">
+              {{ comentario.mensaje|default:"*Sin comentario escrito.*" }}
             </div>
           </td>
+          
+          <!-- Estado -->
+          <td class="py-3 text-center">
+            {% if comentario.visible %}
+              <span class="badge bg-primary bg-opacity-10 text-primary px-2.5 py-1.5 rounded-pill" style="font-size: 0.7rem;">Público</span>
+            {% else %}
+              <span class="badge bg-secondary bg-opacity-10 text-secondary px-2.5 py-1.5 rounded-pill" style="font-size: 0.7rem;">Oculto</span>
+            {% endif %}
+          </td>
 
-          <!-- Fecha -->
-          <td class="pe-4 py-3 text-end text-muted small">
-            {{ comentario.fecha|date:"d M, Y" }}
-            <div style="font-size: 0.7rem; opacity: 0.7;">{{ comentario.fecha|date:"h:i A" }}</div>
+          <!-- Acciones -->
+          <td class="pe-4 py-3 text-end">
+            <div class="text-muted small mb-2">{{ comentario.fecha_creacion|date:"d M, Y" }}</div>
+            <form method="post" action="{% url 'toggle_visible' comentario.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm {% if comentario.visible %}btn-outline-danger{% else %}btn-outline-success{% endif %} rounded-pill px-3" style="font-size: 0.7rem;">
+                    {% if comentario.visible %}
+                        <i class="bi bi-eye-slash-fill me-1"></i>Ocultar
+                    {% else %}
+                        <i class="bi bi-eye-fill me-1"></i>Publicar
+                    {% endif %}
+                </button>
+            </form>
           </td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="5" class="text-center py-5 text-muted">
+          <td colspan="6" class="text-center py-5 text-muted">
             <div class="mb-3 text-secondary">
               <i class="bi bi-chat-left-heart-fill display-4 text-success opacity-50"></i>
             </div>
             <h6 class="fw-bold">No hay comentarios todavía</h6>
-            <p class="small text-muted mb-0">Las calificaciones que realicen los turistas se mostrarán en este panel.</p>
+            <p class="small text-muted mb-0">Las reseñas que realicen los turistas se mostrarán en este panel.</p>
           </td>
         </tr>
         {% endfor %}
