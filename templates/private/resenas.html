@@ -1,18 +1,62 @@
-{% extends "private/base_private.html" %} 
-{% load static %} 
-{% load custom_filters %}
+{% extends "base.html" %}
+{% load static %}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
 
-{% block private_content %}
+{% block content %}
 
-  <div class="container py-5" style="max-width: 900px">
+<aside class="d-none d-md-flex flex-column position-fixed top-0 start-0 h-100 bg-dark p-4"
+  style="width:260px;z-index:1040;">
+  <div class="d-flex align-items-center mb-5">
+    <img src="{% static 'img/logo_monagua.png' %}" alt="Monagua" width="45" height="45" class="me-2">
+  </div>
+  <nav class="nav flex-column gap-2 flex-grow-1">
+    <a class="nav-link text-white-50 d-flex align-items-center gap-3 px-3 py-2 rounded" href="/">
+      <i class="bi bi-compass"></i>
+    </a>
+    <a class="nav-link text-white-50 d-flex align-items-center gap-3 px-3 py-2 rounded" href="#">
+      <i class="bi bi-calendar-check"></i>
+    </a>
+    <a class="nav-link text-white-50 d-flex align-items-center gap-3 px-3 py-2 rounded"
+      href="{% url 'listar_comentarios' %}">
+      <i class="bi bi-chat-square-text"></i>
+    </a>
+    <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded bg-success text-white"
+      href="{% url 'mis_resenas' %}">
+      <i class="bi bi-star-fill"></i>
+    </a>
+    <a class="nav-link text-white-50 d-flex align-items-center gap-3 px-3 py-2 rounded" href="{% url 'detalles' %}">
+      <i class="bi bi-person-circle"></i>
+    </a>
+  </nav>
+  <a href="#" class="btn btn-success w-100 py-3 rounded-4 fw-bold mt-auto">Reservar Ahora</a>
+</aside>
+
+<main style="margin-left:260px;" class="min-vh-100">
+
+  <header class="sticky-top border-bottom shadow-sm bg-white">
+    <div class="container-fluid px-4 py-3 d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-link text-success p-0 d-md-none">
+          <i class="bi bi-list fs-3"></i>
+        </button>
+        <h2 class="fs-5 fw-bold text-success mb-0 d-md-none">Monagua</h2>
+      </div>
+      <div class="d-flex align-items-center gap-3 text-secondary">
+        <i class="bi bi-bell fs-5" style="cursor:pointer"></i>
+        <i class="bi bi-heart fs-5" style="cursor:pointer"></i>
+        <img
+          src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
+          alt="Usuario" class="rounded-circle border border-2" style="width:32px;height:32px;object-fit:cover;">
+      </div>
+    </div>
+  </header>
+
+  <div class="container py-5" style="max-width:900px;">
+
     {% for msg in messages %}
-    <div
-      class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-3 mb-4"
-      role="alert"
-    >
-      <i
-        class="bi bi-{% if msg.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"
-      ></i>
+    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-3 mb-4" role="alert">
+      <i class="bi bi-{% if msg.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
       {{ msg }}
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -28,40 +72,19 @@
       <div class="card-body p-4">
         <div class="row align-items-center g-4">
           <div class="col-12 col-md-3 text-center border-end">
-            <div class="display-4 fw-bold text-success">
-              {{ stats.promedio|floatformat:1 }}
-            </div>
+            <div class="display-4 fw-bold text-success">{{ stats.promedio }}</div>
             <div class="text-warning fs-5 my-1">★★★★★</div>
-            <small class="text-muted"
-              >{{ stats.total }} reseña{{ stats.total|pluralize }}</small
-            >
+            <small class="text-muted">{{ stats.total }} reseña{{ stats.total|pluralize }}</small>
           </div>
           <div class="col-12 col-md-9">
             {% for i in "54321" %}
             <div class="d-flex align-items-center gap-2 mb-1">
-              <span class="text-muted small" style="min-width: 1.2rem"
-                >{{ i }}</span
-              >
-              <i
-                class="bi bi-star-fill text-warning"
-                style="font-size: 0.7rem"
-              ></i>
-              <div
-                class="flex-grow-1 bg-light rounded-pill overflow-hidden"
-                style="height: 8px"
-              >
-                <div
-                  class="bg-success rounded-pill h-100"
-                  id="bar-{{ i }}"
-                  style="width: 0%"
-                ></div>
+              <span class="text-muted small" style="min-width:1.2rem">{{ i }}</span>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <div class="flex-grow-1 bg-light rounded-pill overflow-hidden" style="height:8px">
+                <div class="bg-success rounded-pill h-100" id="bar-{{ i }}" style="width:0%"></div>
               </div>
-              <span
-                class="text-muted small"
-                id="cnt-{{ i }}"
-                style="min-width: 1.5rem"
-                >0</span
-              >
+              <span class="text-muted small" id="cnt-{{ i }}" style="min-width:1.5rem">0</span>
             </div>
             {% endfor %}
           </div>
@@ -71,110 +94,51 @@
     {% endif %}
 
     <div class="row g-4">
+
       <div class="col-12 col-lg-7">
         <div class="card border-0 shadow-sm rounded-4">
           <div class="card-body p-4">
-            <h5 class="fw-bold mb-1">
-              <i class="bi bi-pencil-square text-success me-2"></i>Nueva Reseña
-            </h5>
-            <p class="text-muted small mb-4">
-              Tu opinión ayuda a otros viajeros.
-            </p>
+            <h5 class="fw-bold mb-1"><i class="bi bi-pencil-square text-success me-2"></i>Nueva Reseña</h5>
+            <p class="text-muted small mb-4">Tu opinión ayuda a otros viajeros.</p>
 
-            <form method="post" action="{% url 'resenas:resenas' %}" novalidate>
+            <form method="post" action="{% url 'mis_resenas' %}" novalidate>
               {% csrf_token %}
 
               <div class="mb-3">
-                <label class="form-label fw-medium small">Categoría</label>
-                {{ form.tipo }}
+                <label class="form-label fw-medium small" for="id_tipo">Categoría</label>
+                <select name="tipo" id="id_tipo" class="form-select rounded-3">
+                  <option value="experiencia">Experiencia de viaje</option>
+                  <option value="sugerencia">Sugerencia</option>
+                  <option value="felicitacion">Felicitación</option>
+                  <option value="queja">Queja</option>
+                </select>
               </div>
 
               <div class="mb-3">
-                <label class="form-label fw-medium small">Título</label>
-                {{ form.titulo }} {% if form.titulo.errors %}
-                <div class="text-danger small mt-1">
-                  {{ form.titulo.errors.0 }}
-                </div>
-                {% endif %}
+                <label class="form-label fw-medium small" for="id_titulo">Título</label>
+                <input type="text" name="titulo" id="id_titulo" class="form-control rounded-3"
+                  placeholder="Resumen de tu experiencia" required maxlength="150">
               </div>
 
               <div class="mb-3">
-                <label class="form-label fw-medium small">Tu experiencia</label>
-                {{ form.cuerpo }} {% if form.cuerpo.errors %}
-                <div class="text-danger small mt-1">
-                  {{ form.cuerpo.errors.0 }}
-                </div>
-                {% endif %}
+                <label class="form-label fw-medium small" for="id_mensaje">Tu experiencia</label>
+                <textarea name="mensaje" id="id_mensaje" class="form-control rounded-3" rows="4"
+                  placeholder="Cuéntanos los detalles…" required></textarea>
               </div>
 
-              <div class="mb-3">
-                <label class="form-label fw-medium small d-block"
-                  >Valoración general</label
-                >
+              <div class="mb-4">
+                <label class="form-label fw-medium small d-block">Valoración general</label>
                 <div class="d-flex gap-2 fs-3" id="starGeneral">
-                  <i
-                    class="bi bi-star-fill text-warning star-btn"
-                    style="cursor: pointer"
-                    data-val="1"
-                  ></i>
-                  <i
-                    class="bi bi-star-fill text-warning star-btn"
-                    style="cursor: pointer"
-                    data-val="2"
-                  ></i>
-                  <i
-                    class="bi bi-star-fill text-warning star-btn"
-                    style="cursor: pointer"
-                    data-val="3"
-                  ></i>
-                  <i
-                    class="bi bi-star-fill text-warning star-btn"
-                    style="cursor: pointer"
-                    data-val="4"
-                  ></i>
-                  <i
-                    class="bi bi-star-fill text-warning star-btn"
-                    style="cursor: pointer"
-                    data-val="5"
-                  ></i>
+                  <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="1"></i>
+                  <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="2"></i>
+                  <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="3"></i>
+                  <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="4"></i>
+                  <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="5"></i>
                 </div>
-                {{ form.valoracion }}
+                <input type="hidden" name="valoracion" id="id_valoracion" value="5">
               </div>
 
-              <p class="form-label fw-medium small mb-2">Aspectos (opcional)</p>
-              <div class="card bg-light border-0 rounded-3 p-3 mb-4">
-                {% for field, icon, label in "val_precio,tag,Precio /
-                Calidad|val_atencion,headset,Atención|val_experiencia,emoji-smile,Experiencia"|split:"|"
-                %} {% with data=field|split:"," %}
-                <div class="mb-2">
-                  <div
-                    class="d-flex justify-content-between align-items-center mb-1"
-                  >
-                    <span class="small text-muted"
-                      ><i class="bi bi-{{ data.1 }} me-1"></i>{{ data.2 }}</span
-                    >
-                    <div
-                      class="d-flex gap-1 fs-5"
-                      id="star{{ data.0|slice:'4:'|title }}"
-                    >
-                      {% for i in "12345" %}
-                      <i
-                        class="bi bi-star text-warning star-btn"
-                        style="cursor: pointer"
-                        data-val="{{ i }}"
-                      ></i>
-                      {% endfor %}
-                    </div>
-                  </div>
-                  {{ form|get_item:data.0 }}
-                </div>
-                {% endwith %} {% endfor %}
-              </div>
-
-              <button
-                type="submit"
-                class="btn btn-success w-100 rounded-3 py-2 fw-bold"
-              >
+              <button type="submit" class="btn btn-success w-100 rounded-3 py-2 fw-bold">
                 <i class="bi bi-send-fill me-2"></i>Enviar Reseña
               </button>
             </form>
@@ -185,29 +149,31 @@
       <div class="col-12 col-lg-5">
         <div class="card border-0 shadow-sm rounded-4 h-100">
           <div class="card-body p-4">
-            <h5 class="fw-bold mb-1">
-              <i class="bi bi-clock-history text-secondary me-2"></i>Mis Reseñas
-            </h5>
+            <h5 class="fw-bold mb-1"><i class="bi bi-clock-history text-secondary me-2"></i>Mis Reseñas</h5>
             <p class="text-muted small mb-4">Últimas enviadas.</p>
 
-            {% if mis_resenas %} {% for r in mis_resenas %}
+            {% if mis_resenas %}
+            {% for r in mis_resenas %}
             <div class="border-bottom pb-3 mb-3">
-              <div
-                class="d-flex justify-content-between align-items-start mb-1"
-              >
+              <div class="d-flex justify-content-between align-items-start mb-1">
                 <span class="fw-semibold small">{{ r.titulo }}</span>
                 <span
-                  class="badge rounded-pill {% if r.aprobada %}bg-success bg-opacity-25 text-success{% else %}bg-warning bg-opacity-25 text-warning{% endif %}"
-                  style="font-size: 0.65rem"
-                >
-                  {% if r.aprobada %}Publicada{% else %}En revisión{% endif %}
+                  class="badge rounded-pill {% if r.visible %}bg-success bg-opacity-25 text-success{% else %}bg-warning bg-opacity-25 text-warning{% endif %}"
+                  style="font-size:.65rem">
+                  {% if r.visible %}Publicada{% else %}En revisión{% endif %}
                 </span>
               </div>
-              <p class="text-muted small mb-1">
-                {{ r.cuerpo|truncatechars:70 }}
-              </p>
+              <p class="text-muted small mb-1">{{ r.mensaje|truncatechars:70 }}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-warning small">
+                  {% for s in r.estrellas %}★{% endfor %}{% for s in r.estrellas_vacias %}<span
+                    class="text-muted">★</span>{% endfor %}
+                </span>
+                <span class="text-muted" style="font-size:.7rem">{{ r.fecha_creacion|date:"d M Y" }}</span>
+              </div>
             </div>
-            {% endfor %} {% else %}
+            {% endfor %}
+            {% else %}
             <div class="text-center py-5 text-muted">
               <i class="bi bi-star d-block mb-2 fs-2"></i>
               <small>Aún no has enviado reseñas.</small>
@@ -216,23 +182,115 @@
           </div>
         </div>
       </div>
+
     </div>
 
     <div class="mt-5">
-      <h3 class="fs-4 fw-bold mb-4 text-success">Reseñas de la comunidad</h3>
+      <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+        <h3 class="fs-4 fw-bold mb-0 text-success">Reseñas de la comunidad</h3>
+        {% if stats.total %}<span class="text-muted small">{{ stats.total }} reseña{{ stats.total|pluralize }}</span>{% endif %}
+      </div>
+
       <div class="row g-0">
         {% for r in resenas_publicas %}
         <div class="col-12 border-bottom py-4">
-          <h6 class="fw-bold">{{ r.titulo }}</h6>
-          <p class="text-secondary">{{ r.cuerpo }}</p>
+          <div class="d-flex gap-3 align-items-center mb-2">
+            <img
+              src="{% if r.usuario.imagen_perfil %}{{ r.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
+              class="rounded-circle" width="40" height="40" style="object-fit:cover;">
+            <div>
+              <h6 class="mb-0 fw-bold">{{ r.usuario.get_full_name|default:r.usuario.username }}</h6>
+              <small class="text-muted">{{ r.fecha_creacion|date:"d M, Y" }}</small>
+            </div>
+            <div class="ms-auto d-flex align-items-center gap-2">
+              <span class="text-warning small">
+                {% for s in r.estrellas %}★{% endfor %}{% for s in r.estrellas_vacias %}<span
+                  class="text-muted">★</span>{% endfor %}
+              </span>
+            </div>
+          </div>
+          <h6 class="fw-semibold mb-1">{{ r.titulo }}</h6>
+          <p class="text-secondary mb-2">{{ r.mensaje }}</p>
+          <span class="badge rounded-pill bg-primary bg-opacity-25 text-primary" style="font-size:.65rem">{{
+            r.get_tipo_display }}</span>
         </div>
         {% empty %}
-        <div class="text-center py-5 text-muted">
-          <p>Aún no hay reseñas públicas.</p>
+        <div class="text-center py-5">
+          <i class="bi bi-star fs-1 text-muted"></i>
+          <p class="text-muted mt-2">Aún no hay reseñas públicas.</p>
         </div>
         {% endfor %}
       </div>
     </div>
+
   </div>
-    </div>
+</main>
+
+<nav class="d-md-none fixed-bottom bg-white border-top d-flex justify-content-around py-2 shadow-lg">
+  <a href="/" class="text-decoration-none text-muted d-flex flex-column align-items-center">
+    <i class="bi bi-compass fs-5"></i><span style="font-size:10px">Inicio</span>
+  </a>
+  <a href="#" class="text-decoration-none text-muted d-flex flex-column align-items-center">
+    <i class="bi bi-calendar-check fs-5"></i><span style="font-size:10px">Reservas</span>
+  </a>
+  <a href="{% url 'listar_comentarios' %}"
+    class="text-decoration-none text-muted d-flex flex-column align-items-center">
+    <i class="bi bi-chat-square-text fs-5"></i><span style="font-size:10px">Comentarios</span>
+  </a>
+  <a href="{% url 'mis_resenas' %}"
+    class="text-decoration-none text-success fw-bold d-flex flex-column align-items-center">
+    <i class="bi bi-star-fill fs-5"></i><span style="font-size:10px">Reseñas</span>
+  </a>
+  <a href="{% url 'detalles' %}" class="text-decoration-none text-muted d-flex flex-column align-items-center">
+    <i class="bi bi-person-circle fs-5"></i><span style="font-size:10px">Perfil</span>
+  </a>
+</nav>
+
+
+<script>
+  /* Datos de distribución desde Django */
+  const distribucionData = {
+    {% if distribucion %}{% for k, v in distribucion.items %}"{{ k }}": {{ v }}{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}
+  };
+  const totalResenas = {{ stats.total|default:"0" }};
+
+  /* Pintar barras de distribución */
+  if (totalResenas > 0) {
+    for (let i = 1; i <= 5; i++) {
+      const cnt = distribucionData[i] || 0;
+      const pct = Math.round((cnt / totalResenas) * 100);
+      const bar = document.getElementById('bar-' + i);
+      const label = document.getElementById('cnt-' + i);
+      if (bar) bar.style.width = pct + '%';
+      if (label) label.textContent = cnt;
+    }
+  }
+
+  /* Sistema de estrellas */
+  (function () {
+    const container = document.getElementById('starGeneral');
+    if (!container) return;
+    const stars = container.querySelectorAll('.star-btn');
+    const input = document.getElementById('id_valoracion');
+
+    const paint = (upTo) => {
+      stars.forEach((s, i) => {
+        s.classList.toggle('bi-star-fill', i < upTo);
+        s.classList.toggle('bi-star', i >= upTo);
+      });
+    };
+
+    paint(parseInt(input.value) || 0);
+
+    stars.forEach((star, idx) => {
+      star.addEventListener('click', () => {
+        input.value = idx + 1;
+        paint(idx + 1);
+      });
+      star.addEventListener('mouseover', () => paint(idx + 1));
+      star.addEventListener('mouseout', () => paint(parseInt(input.value) || 0));
+    });
+  })();
+</script>
+
 {% endblock %}

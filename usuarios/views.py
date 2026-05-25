@@ -341,10 +341,60 @@ def toggle_visible(request, pk):
 
 @login_required
 def mis_resenas_view(request):
-    # Obtenemos las reseñas del usuario actual
-    mis_resenas = Comentario.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+    from django.db.models import Avg, Count
+
+    # ── POST: crear nueva reseña ─────────────────────────────────────────
+    if request.method == 'POST':
+        tipo       = request.POST.get('tipo', 'experiencia')
+        titulo     = request.POST.get('titulo', '').strip()
+        mensaje    = request.POST.get('mensaje', '').strip()
+        valoracion = request.POST.get('valoracion', '5')
+        try:
+            valoracion = max(1, min(5, int(valoracion)))
+        except (ValueError, TypeError):
+            valoracion = 5
+
+        if titulo and mensaje:
+            Comentario.objects.create(
+                usuario=request.user,
+                tipo=tipo,
+                titulo=titulo,
+                mensaje=mensaje,
+                valoracion=valoracion,
+            )
+            messages.success(request, '¡Tu reseña fue enviada correctamente!')
+        else:
+            messages.error(request, 'Por favor completa todos los campos.')
+        return redirect('mis_resenas')
+
+    # ── GET: mostrar reseñas ─────────────────────────────────────────────
+    mis_resenas = Comentario.objects.filter(
+        usuario=request.user
+    ).order_by('-fecha_creacion')[:10]
+
+    resenas_publicas = Comentario.objects.filter(
+        visible=True
+    ).select_related('usuario').order_by('-fecha_creacion')[:20]
+
+    # Estadísticas
+    todas = Comentario.objects.filter(visible=True)
+    agg = todas.aggregate(total=Count('id'), promedio=Avg('valoracion'))
+    stats = {
+        'total':    agg['total'] or 0,
+        'promedio': round(agg['promedio'] or 0, 1),
+    }
+
+    # Distribución de estrellas (1-5)
+    distribucion = {}
+    if stats['total'] > 0:
+        dist_qs = todas.values('valoracion').annotate(cnt=Count('id'))
+        for row in dist_qs:
+            distribucion[row['valoracion']] = row['cnt']
 
     context = {
-        'mis_resenas': mis_resenas,
+        'mis_resenas':       mis_resenas,
+        'resenas_publicas':  resenas_publicas,
+        'stats':             stats,
+        'distribucion':      distribucion,
     }
     return render(request, 'private/resenas.html', context)
