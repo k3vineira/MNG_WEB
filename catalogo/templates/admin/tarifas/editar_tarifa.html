@@ -1,45 +1,43 @@
 {% extends 'admin/base-admin.html' %}
 
 {% block content %}
-<div class="container mt-4 d-flex justify-content-center">
-    <div class="card border-0 shadow-sm w-100" style="border-radius: 10px; max-width: 600px;">
-        <div class="card-header text-white text-center py-3" style="background-color: var(--verde-oscuro, #0f5132);">
-            <h5 class="mb-0 text-white fw-bold"><i class="bi bi-pencil-square"></i> Modificar Valores de Tarifa</h5>
-            <small class="text-white-50">Paquete: {{ object.paquete.nombre }}</small>
-        </div>
-        <div class="card-body p-4">
-            <form method="POST" class="row g-3">
-                {% csrf_token %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-5">
+            <div class="card shadow-sm border-0 rounded-3">
                 
-                <div class="col-12">
-                    <label class="form-label text-secondary small fw-bold">Temporada</label>
-                    {{ form.temporada }}
+                <div class="card-header text-white text-center py-3" style="background-color: #004d40;">
+                    <h5 class="mb-0 fs-6 fw-bold text-uppercase">
+                        <i class="bi bi-pencil-square me-2"></i>Modificar Tarifas
+                    </h5>
+                    <small class="text-white-50">Paquete: {{ object.paquete.nombre }}</small>
                 </div>
 
-                <div class="col-md-6">
-                    <label class="form-label text-secondary small fw-bold">Precio Adulto ($)</label>
-                    {{ form.precio_adulto }}
-                </div>
+                <div class="card-body p-4">
+                    <form method="POST" class="row g-3">
+                        {% csrf_token %}
+                        
+                        {% for field in form %}
+                            <div class="col-12 {% if field.name == 'precio_adulto' or field.name == 'precio_menor' %}col-md-6{% endif %}">
+                                <label class="form-label text-secondary small fw-bold">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endfor %}
 
-                <div class="col-md-6">
-                    <label class="form-label text-secondary small fw-bold">Precio Menor ($)</label>
-                    {{ form.precio_menor }}
-                </div>
+                        <hr class="my-4 opacity-25">
 
-                <div class="col-12 d-flex justify-content-end gap-2 mt-4 border-top pt-3">
-                    <a href="{% url 'listar_tarifas' %}" class="btn btn-secondary fw-bold btn-sm px-3">Cancelar</a>
-                    <button type="submit" class="btn btn-success fw-bold btn-sm px-4" style="background-color: var(--verde-oscuro, #0f5132);">Actualizar</button>
+                        <div class="col-12 d-flex justify-content-center gap-3">
+                            <a href="{% url 'listar_tarifas' %}" class="btn btn-outline-secondary px-4 rounded-pill">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn text-white px-4 rounded-pill" style="background-color: #004d40;">
+                                Guardar cambios
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementsByName('temporada')[0]?.classList.add('form-select');
-        document.getElementsByName('precio_adulto')[0]?.classList.add('form-control');
-        document.getElementsByName('precio_menor')[0]?.classList.add('form-control');
-    });
-</script>
 {% endblock %}

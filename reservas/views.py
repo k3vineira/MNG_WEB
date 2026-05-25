@@ -13,6 +13,7 @@ from datetime import datetime
 from catalogo.models import Tarifa
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Count, Q
 
 
 
@@ -27,6 +28,23 @@ class ReservaListView(ListView):
 
     def get_queryset(self):
         return Reserva.objects.exclude(estado='cancelada').order_by('-id')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        stats = Reserva.objects.aggregate(
+            total=Count('id'),
+            pendientes=Count('id', filter=Q(estado='pendiente')),
+            confirmadas=Count('id', filter=Q(estado='confirmada')),
+            canceladas=Count('id', filter=Q(estado='cancelada'))
+        )
+        context.update(stats)
+
+        context['stats_list'] = [
+            ('Total', stats['total'], 'text-dark'),
+            ('Pendientes', stats['pendientes'], 'text-warning'),
+            ('Confirmadas', stats['confirmadas'], 'text-success'),
+            ('Canceladas', stats['canceladas'], 'text-danger'),
+        ]
+        return context
 
 
 class ReservaCreateView(CreateView):
@@ -72,12 +90,12 @@ def enviar_correo_monagua(asunto, mensaje, destinatario):
 # =========================
 # CANCELACIONES
 # =========================
-
 class CancelacionListView(ListView):
     model = Cancelacion
     template_name = 'admin/cancelaciones/cancelaciones_admin.html'
     context_object_name = 'cancelaciones'
 
+   
 
 class CancelacionCreateView(CreateView):
     model = Cancelacion
@@ -150,6 +168,19 @@ def administrar_cancelaciones(request):
         enviar_correo_monagua(asunto, mensaje, cancelacion.reserva.usuario.email)
             
         return redirect('administrar_cancelaciones')
+    stats = Cancelacion.objects.aggregate(
+        total=Count('id'),
+        revisando=Count('id', filter=Q(estado__in=['pendiente', 'revision'])),
+        aceptadas=Count('id', filter=Q(estado__in=['confirmada', 'aceptada'])),
+        rechazadas=Count('id', filter=Q(estado__in=['cancelada', 'rechazada']))
+    )
+    
+    stats_list = [
+          ('Total', stats['total'], 'text-dark'),
+           ('En Revisión', stats['revisando'], 'text-warning'),
+           ('Aceptadas', stats['aceptadas'], 'text-success'),
+          ('Rechazadas', stats['rechazadas'], 'text-danger'),
+     ]
 
     cancelaciones_raw = Cancelacion.objects.all().order_by('-id')
 
@@ -159,7 +190,7 @@ def administrar_cancelaciones(request):
         except (InvalidOperation, ValueError, TypeError):
             c.penalidad = Decimal('0.00')
 
-    return render(request, 'admin/cancelaciones/cancelaciones_admin.html', {'cancelaciones': cancelaciones_raw})
+    return render(request, 'admin/cancelaciones/cancelaciones_admin.html', {'cancelaciones': cancelaciones_raw , 'stats_list': stats_list })
 
  
 

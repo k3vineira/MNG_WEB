@@ -3,6 +3,9 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Paquete, Actividades, Categoria, Tarifa ,Temporada
+from django.db.models import Count, Q
+from django import forms
+
 
 
 
@@ -35,6 +38,23 @@ class PaqueteListView(ListView):
     model = Paquete
     template_name = 'admin/paquetes/paquetes.html' 
     context_object_name = 'paquetes'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Conteo para los paquetes
+        stats = Paquete.objects.aggregate(
+            total=Count('id'),
+            activos=Count('id', filter=Q(estado=True)),
+            inactivos=Count('id', filter=Q(estado=False))
+        )
+        
+        context.update(stats)
+        context['stats_list'] = [
+            ('Total Paquetes', stats['total'], 'text-dark'),
+            ('Activos', stats['activos'], 'text-success'),
+            ('Inactivos', stats['inactivos'], 'text-danger'),
+        ]
+        return context
 
 class PaqueteCreateView(CreateView):
     model = Paquete
@@ -54,6 +74,12 @@ class PaqueteUpdateView(UpdateView):
     ]
     template_name = 'admin/paquetes/editar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
+    def get_form(self, form_class=None):
+         form = super().get_form(form_class)
+         for field in form.fields.values():
+          if not isinstance(field.widget, forms.CheckboxInput):
+            field.widget.attrs.update({'class': 'form-control'})
+         return form
 
 
 class PaqueteDeleteView(DeleteView):
@@ -67,6 +93,23 @@ class ActividadesListView(ListView):
     model = Actividades
     template_name = 'admin/actividades/actividades.html' 
     context_object_name = 'actividades'
+    def get_context_data(self, **kwargs):
+       context = super().get_context_data(**kwargs)
+    
+       # Contamos estados de actividades
+       stats = Actividades.objects.aggregate(
+          total=Count('id'),
+          activas=Count('id', filter=Q(estado=True)),
+          inactivas=Count('id', filter=Q(estado=False))
+         )
+    
+       context.update(stats)
+       context['stats_list'] = [
+          ('Total Actividades', stats['total'], 'text-dark'),
+          ('Activas', stats['activas'], 'text-success'),
+          ('Inactivas', stats['inactivas'], 'text-danger'),
+          ]
+       return context
 
 class ActividadesCreateView(CreateView):
     model = Actividades
@@ -75,23 +118,50 @@ class ActividadesCreateView(CreateView):
     success_url = reverse_lazy('listar_actividades')
 
 class ActividadesUpdateView(UpdateView):
-
     model = Actividades 
-    fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud', 'estado','apto_para_menores']
+    fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento', 'recomendacion_salud', 'estado', 'apto_para_menores']
     template_name = 'admin/actividades/editar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        for field in form.fields.values():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.update({'class': 'form-check-input'})
+            else:
+               
+                field.widget.attrs.update({'class': 'form-control'})
+        return form
 
 class ActividadesDeleteView(DeleteView):
     model = Actividades
     template_name = 'admin/actividades/eliminar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
 
-#CATEGORIAS
 class CategoriaListView(ListView):
     model = Categoria
     template_name = 'admin/categorias/categorias.html' 
     context_object_name = 'categorias'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # 2. Realizamos el cálculo
+        stats = Categoria.objects.aggregate(
+            total=Count('id'),
+            activas=Count('id', filter=Q(estado=True)),
+            inactivas=Count('id', filter=Q(estado=False))
+        )
+        
+        # 3. Agregamos stats_list al contexto
+        context['stats_list'] = [
+            ('Total Categorías', stats['total'], 'text-dark'),
+            ('Activas', stats['activas'], 'text-success'),
+            ('Inactivas', stats['inactivas'], 'text-danger'),
+        ]
+       
+        return context
+    
 class CategoriaCreateView(CreateView):
     model = Categoria
     fields = ['nombre', 'descripcion', 'estado']
@@ -103,6 +173,13 @@ class CategoriaUpdateView(UpdateView):
     fields = ['nombre', 'descripcion', 'estado']
     template_name = 'admin/categorias/editar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        for field in form.fields.values():
+         if not isinstance(field.widget, forms.CheckboxInput):
+            field.widget.attrs.update({'class': 'form-control'})
+        return form
 
 class CategoriaDeleteView(DeleteView):
     model = Categoria
@@ -122,32 +199,90 @@ class TarifaListView(ListView):
     model = Tarifa
     template_name = 'admin/tarifas/tarifas.html'
     context_object_name = 'tarifas'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Contamos estados de tarifas
+        stats = Tarifa.objects.aggregate(
+            total=Count('id'),
+            activas=Count('id', filter=Q(estado='activa')),
+            inactivas=Count('id', filter=Q(estado='inactiva'))
+        )
+        
+        context.update(stats)
+        context['stats_list'] = [
+            ('Total', stats['total'], 'text-dark'),
+            ('Activas', stats['activas'], 'text-success'),
+            ('Inactivas', stats['inactivas'], 'text-danger'),
+        ]
+        return context
+    
+ 
 
 class TarifaCreateView(CreateView):
     model = Tarifa
    
-    fields = ['paquete', 'temporada', 'precio_adulto', 'precio_menor']
+    fields = ['paquete', 'temporada', 'precio_adulto', 'precio_menor', 'estado']
     template_name = 'admin/tarifas/agregar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
 
 class TarifaUpdateView(UpdateView):
     model = Tarifa
-    fields = ['paquete', 'temporada', 'precio_adulto', 'precio_menor']
+    fields = ['paquete', 'temporada', 'precio_adulto', 'precio_menor', 'estado']
     template_name = 'admin/tarifas/editar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        for field in form.fields.values():
+        
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'class': 'form-select'})
+     
+            elif isinstance(field.widget, forms.CheckboxInput):
+             field.widget.attrs.update({'class': 'form-check-input'})
+    
+            else:
+                field.widget.attrs.update({'class': 'form-control'})
+            return form
+    
+    
 #temporada
 class TemporadaListView(ListView):
     model = Temporada
     template_name = 'admin/temporada/temporada.html'
     context_object_name = 'temporadas'
+
+    def get_context_data(self, **kwargs):
+        # Esta línea debe tener 8 espacios de indentación
+        context = super().get_context_data(**kwargs)
+        
+        # Contamos estados de temporadas
+        stats = Temporada.objects.aggregate(
+            total=Count('id'),
+            programadas=Count('id', filter=Q(estado='programada')),
+            activas=Count('id', filter=Q(estado='activa')),
+            finalizadas=Count('id', filter=Q(estado='finalizada'))
+        )
+        
+        context.update(stats)
+        context['stats_list'] = [
+            ('Total', stats['total'], 'text-dark'),
+            ('Programadas', stats['programadas'], 'text-secondary'),
+            ('Activas', stats['activas'], 'text-success'),
+            ('Finalizadas', stats['finalizadas'], 'text-info'),
+        ]
+        return context
+
 class TemporadaCreateView(CreateView):
     model = Temporada
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin']
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'estado']
     template_name = 'admin/temporada/agregar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
+    
 class TemporadaUpdateView(UpdateView):
     model = Temporada
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin']
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin' ,'estado']
     template_name = 'admin/temporada/editar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
 

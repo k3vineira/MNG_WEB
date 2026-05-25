@@ -36,6 +36,7 @@ class PaqueteForm(ModelForm):
         fields = '__all__'
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'imagen': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control'}),
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
             'duracion_estimada': forms.TextInput(attrs={'class': 'form-control'}),

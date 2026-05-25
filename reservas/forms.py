@@ -1,5 +1,5 @@
 from django import forms 
-from django.forms import ModelForm 
+from django.forms import ModelForm, Select, DateInput, NumberInput
 from .models import Reserva, Cancelacion
 
 
@@ -9,12 +9,15 @@ class ReservaForm(ModelForm):
         model = Reserva
         fields = ['usuario', 'paquete', 'fecha', 'numero_adultos', 'numero_menores', 'estado']
         widgets = {
-            'usuario': forms.Select(attrs={'class': 'form-select'}),
-            'paquete': forms.Select(attrs={'class': 'form-select'}),
-            'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'numero_adultos': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
-            'numero_menores': forms.NumberInput(attrs={'class': 'form-control', 'min': 0}),
-            'estado': forms.Select(attrs={'class': 'form-select'}), 
+            'usuario': Select(attrs={'class': 'form-select'}),
+            'paquete': Select(attrs={'class': 'form-select'}),
+            'fecha': DateInput(
+                format='%Y-%m-%d', 
+                attrs={'class': 'form-control', 'type': 'date'}
+            ),
+            'numero_adultos': NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            'numero_menores': NumberInput(attrs={'class': 'form-control', 'min': 0}),
+            'estado': Select(attrs={'class': 'form-select'}), 
         }
 
 class CancelacionForm(ModelForm):

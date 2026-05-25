@@ -25,6 +25,11 @@
                     <label class="form-label text-secondary small fw-bold">Fecha de Fin</label>
                     {{ form.fecha_fin }}
                 </div>
+                <div class="col-12">
+                    <label class="form-label text-secondary small fw-bold">Estado</label>
+                    {{ form.estado }}
+                </div>
+                
 
                 <div class="col-12 d-flex justify-content-end gap-2 mt-4 border-top pt-3">
                     <a href="{% url 'listar_temporadas' %}" class="btn btn-secondary fw-bold btn-sm px-3">Cancelar</a>

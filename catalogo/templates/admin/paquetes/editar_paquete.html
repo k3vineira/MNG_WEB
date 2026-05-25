@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
+<br>
+<br>
+<div class="container mt-5" >
     <div class="row justify-content-center">
         <div class="col-12 col-md-5">
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-sm border-0 rounded-3">
                 
-                <div class="card-header text-white text-center" style="background-color: #004d40;">
+                <div class="card-header text-white text-center py-3" style="background-color: #004d40;">
                     <h5 class="mb-0 fs-6 fw-bold text-uppercase">
                         <i class="bi bi-pencil-square me-2"></i>Editar Registro
                     </h5>
@@ -16,21 +18,23 @@
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         
-                        <div class="small text-dark">
-                            {{ form.as_p }}
-                        </div>
+                        {% for field in form %}
+                            <div class="mb-3 {% if field.field.widget.input_type == 'checkbox' %}form-check{% endif %}">
+                                {% if field.field.widget.input_type == 'checkbox' %}
+                                    {{ field }}
+                                    <label class="form-check-label fw-bold text-secondary">{{ field.label }}</label>
+                                {% else %}
+                                    <label class="form-label fw-bold text-secondary">{{ field.label }}</label>
+                                    {{ field }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
 
                         <hr class="my-4 opacity-25">
 
                         <div class="d-flex justify-content-center gap-3">
-                            <a href="{% url 'listar_paquetes' %}" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">
-                                Cancelar
-                            </a>
-                        
-                            <button type="submit" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">
-                                Guardar cambios
-                            </button>
-
+                            <a href="{% url 'listar_paquetes' %}" class="btn btn-outline-secondary px-4 rounded-pill">Cancelar</a>
+                            <button type="submit" class="btn text-white px-4 rounded-pill" style="background-color: #004d40;">Guardar cambios</button>
                         </div>
                     </form>
                 </div>
