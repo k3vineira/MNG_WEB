@@ -24,7 +24,7 @@
     <div class="card-body p-4">
       <div class="row align-items-center g-4">
         <div class="col-12 col-md-3 text-center border-end">
-          <div class="display-4 fw-bold text-success">{{ stats.promedio }}</div>
+          <div class="display-4 fw-bold text-success">{{ stats.promedio|floatformat:1 }}</div>
           <div class="text-warning fs-5 my-1">★★★★★</div>
           <small class="text-muted">{{ stats.total }} reseña{{ stats.total|pluralize }}</small>
         </div>
@@ -74,8 +74,12 @@
 
             <div class="mb-3">
               <label class="form-label fw-medium small" for="id_mensaje">Tu experiencia</label>
+              <!-- LÍMITE: max 500 caracteres con contador -->
               <textarea name="mensaje" id="id_mensaje" class="form-control rounded-3" rows="4"
-                placeholder="Cuéntanos los detalles…" required></textarea>
+                placeholder="Cuéntanos los detalles…" required maxlength="500"></textarea>
+              <div class="d-flex justify-content-end mt-1">
+                <small class="text-muted" id="char-count">0 / 500</small>
+              </div>
             </div>
 
             <div class="mb-4">
@@ -102,20 +106,24 @@
       <div class="card border-0 shadow-sm rounded-4 h-100">
         <div class="card-body p-4">
           <h5 class="fw-bold mb-1"><i class="bi bi-clock-history text-secondary me-2"></i>Mis Reseñas</h5>
-          <p class="text-muted small mb-4">Últimas enviadas.</p>
+          <p class="text-muted small mb-3">Últimas enviadas.</p>
 
           {% if mis_resenas %}
           {% for r in mis_resenas %}
           <div class="border-bottom pb-3 mb-3">
-            <div class="d-flex justify-content-between align-items-start mb-1">
-              <span class="fw-semibold small">{{ r.titulo }}</span>
+            <div class="d-flex justify-content-between align-items-start mb-1 gap-2">
+              <span class="fw-semibold small text-truncate" style="max-width:140px">{{ r.titulo }}</span>
               <span
-                class="badge rounded-pill {% if r.visible %}bg-success bg-opacity-25 text-success{% else %}bg-warning bg-opacity-25 text-warning{% endif %}"
+                class="badge rounded-pill flex-shrink-0 {% if r.visible %}bg-success bg-opacity-25 text-success{% else %}bg-warning bg-opacity-25 text-warning{% endif %}"
                 style="font-size:.65rem">
                 {% if r.visible %}Publicada{% else %}En revisión{% endif %}
               </span>
             </div>
-            <p class="text-muted small mb-1">{{ r.mensaje|truncatechars:70 }}</p>
+            <!-- LÍMITE: truncatechars para el mensaje -->
+            <p class="text-muted small mb-1"
+              style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">
+              {{ r.mensaje|truncatechars:90 }}
+            </p>
             <div class="d-flex justify-content-between align-items-center">
               <span class="text-warning small">
                 {% for s in r.estrellas %}★{% endfor %}{% for s in r.estrellas_vacias %}<span
@@ -137,24 +145,25 @@
 
   </div>
 
+  <!-- SECCIÓN COMUNIDAD CON PAGINACIÓN JS (cada 5) -->
   <div class="mt-5">
     <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
       <h3 class="fs-4 fw-bold mb-0 text-success">Reseñas de la comunidad</h3>
       {% if stats.total %}<span class="text-muted small">{{ stats.total }} reseña{{ stats.total|pluralize }}</span>{% endif %}
     </div>
 
-    <div class="row g-0">
+    <div id="resenas-container">
       {% for r in resenas_publicas %}
-      <div class="col-12 border-bottom py-4">
-        <div class="d-flex gap-3 align-items-center mb-2">
+      <div class="resena-item col-12 border-bottom py-4" style="display:none">
+        <div class="d-flex gap-3 align-items-center mb-2 flex-wrap">
           <img
             src="{% if r.usuario.imagen_perfil %}{{ r.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
-            class="rounded-circle" width="40" height="40" style="object-fit:cover;">
-          <div>
-            <h6 class="mb-0 fw-bold">{{ r.usuario.get_full_name|default:r.usuario.username }}</h6>
+            class="rounded-circle flex-shrink-0" width="40" height="40" style="object-fit:cover;">
+          <div class="flex-grow-1 min-width-0">
+            <h6 class="mb-0 fw-bold text-truncate">{{ r.usuario.get_full_name|default:r.usuario.username }}</h6>
             <small class="text-muted">{{ r.fecha_creacion|date:"d M, Y" }}</small>
           </div>
-          <div class="ms-auto d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center gap-2 ms-auto flex-shrink-0">
             <span class="text-warning small">
               {% for s in r.estrellas %}★{% endfor %}{% for s in r.estrellas_vacias %}<span
                 class="text-muted">★</span>{% endfor %}
@@ -162,9 +171,13 @@
           </div>
         </div>
         <h6 class="fw-semibold mb-1">{{ r.titulo }}</h6>
-        <p class="text-secondary mb-2">{{ r.mensaje }}</p>
-        <span class="badge rounded-pill bg-primary bg-opacity-25 text-primary" style="font-size:.65rem">{{
-          r.get_tipo_display }}</span>
+        <!-- LÍMITE: mensaje cortado con "ver más" si es largo -->
+        <p class="text-secondary mb-2" style="overflow-wrap:break-word;word-break:break-word;max-width:100%">
+          {{ r.mensaje|truncatechars:200 }}
+        </p>
+        <span class="badge rounded-pill bg-primary bg-opacity-25 text-primary" style="font-size:.65rem">
+          {{ r.get_tipo_display }}
+        </span>
       </div>
       {% empty %}
       <div class="text-center py-5">
@@ -173,22 +186,20 @@
       </div>
       {% endfor %}
     </div>
+
+    <!-- Paginación -->
+    <div class="d-flex justify-content-center align-items-center gap-2 mt-4" id="pagination-controls"></div>
+
   </div>
 
 </div>
-</div>
-
-
-
 
 <script>
-  /* Datos de distribución desde Django */
+  /* ── Distribución barras ── */
   const distribucionData = {
     {% if distribucion %} {% for k, v in distribucion.items %} "{{ k }}": {{ v }} {% if not forloop.last %}, {% endif %} {% endfor %} {% endif %}
   };
   const totalResenas = {{ stats.total|default:"0" }};
-
-  /* Pintar barras de distribución */
   if (totalResenas > 0) {
     for (let i = 1; i <= 5; i++) {
       const cnt = distribucionData[i] || 0;
@@ -200,30 +211,85 @@
     }
   }
 
-  /* Sistema de estrellas */
+  /* ── Estrellas ── */
   (function () {
     const container = document.getElementById('starGeneral');
     if (!container) return;
     const stars = container.querySelectorAll('.star-btn');
     const input = document.getElementById('id_valoracion');
-
-    const paint = (upTo) => {
-      stars.forEach((s, i) => {
-        s.classList.toggle('bi-star-fill', i < upTo);
-        s.classList.toggle('bi-star', i >= upTo);
-      });
-    };
-
+    const paint = (upTo) => stars.forEach((s, i) => { s.classList.toggle('bi-star-fill', i < upTo); s.classList.toggle('bi-star', i >= upTo); });
     paint(parseInt(input.value) || 0);
-
     stars.forEach((star, idx) => {
-      star.addEventListener('click', () => {
-        input.value = idx + 1;
-        paint(idx + 1);
-      });
+      star.addEventListener('click', () => { input.value = idx + 1; paint(idx + 1); });
       star.addEventListener('mouseover', () => paint(idx + 1));
       star.addEventListener('mouseout', () => paint(parseInt(input.value) || 0));
     });
+  })();
+
+  /* ── Contador de caracteres ── */
+  const textarea = document.getElementById('id_mensaje');
+  const charCount = document.getElementById('char-count');
+  if (textarea && charCount) {
+    textarea.addEventListener('input', () => {
+      const len = textarea.value.length;
+      charCount.textContent = len + ' / 500';
+      charCount.classList.toggle('text-danger', len >= 480);
+      charCount.classList.toggle('text-muted', len < 480);
+    });
+  }
+
+  /* ── Paginación de reseñas (5 por página) ── */
+  (function () {
+    const PER_PAGE = 5;
+    const items = Array.from(document.querySelectorAll('.resena-item'));
+    const controls = document.getElementById('pagination-controls');
+    if (!items.length || !controls) return;
+
+    let currentPage = 1;
+    const totalPages = Math.ceil(items.length / PER_PAGE);
+
+    function showPage(page) {
+      currentPage = page;
+      items.forEach((el, idx) => {
+        const start = (page - 1) * PER_PAGE;
+        el.style.display = (idx >= start && idx < start + PER_PAGE) ? 'block' : 'none';
+      });
+      renderControls();
+      // Scroll suave al inicio de la sección
+      document.getElementById('resenas-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderControls() {
+      controls.innerHTML = '';
+      if (totalPages <= 1) return;
+
+      // Botón anterior
+      const prev = document.createElement('button');
+      prev.className = 'btn btn-sm btn-outline-secondary rounded-3';
+      prev.innerHTML = '<i class="bi bi-chevron-left"></i>';
+      prev.disabled = currentPage === 1;
+      prev.addEventListener('click', () => showPage(currentPage - 1));
+      controls.appendChild(prev);
+
+      // Páginas numeradas
+      for (let p = 1; p <= totalPages; p++) {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm rounded-3 ' + (p === currentPage ? 'btn-success' : 'btn-outline-secondary');
+        btn.textContent = p;
+        btn.addEventListener('click', () => showPage(p));
+        controls.appendChild(btn);
+      }
+
+      // Botón siguiente
+      const next = document.createElement('button');
+      next.className = 'btn btn-sm btn-outline-secondary rounded-3';
+      next.innerHTML = '<i class="bi bi-chevron-right"></i>';
+      next.disabled = currentPage === totalPages;
+      next.addEventListener('click', () => showPage(currentPage + 1));
+      controls.appendChild(next);
+    }
+
+    showPage(1);
   })();
 </script>
 
