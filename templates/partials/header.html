@@ -306,24 +306,28 @@
               >Rol de Usuario</span
             >
             <span class="small fw-semibold text-dark">
-          {% if user.is_staff %}
-          <li>
-              <a
-                class="dropdown-item py-2 fw-bold text-primary"
-                href="{% url 'dashboard' %}"
-              >
-                  <i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin
-              </a>
+              {% if user.is_superuser %} Administrador {% elif user.is_staff %} Staff {% elif user.es_guia %} Guía Turístico {% else %} Viajero {% endif %}
+            </span>
           </li>
-          {% endif %}
 
-          {% if user.es_turista or user.is_staff %}
+          {% if user.is_staff %}
           <li>
             <a
               class="dropdown-item py-2 fw-bold text-primary"
               href="{% url 'dashboard' %}"
-              ><i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin</a
             >
+              <i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin
+            </a>
+          </li>
+          {% endif %}
+{% if user.es_turista %}
+          <li>
+            <a
+              class="dropdown-item py-2 fw-bold text-success"
+              href="{% url 'index_turista' %}"
+            >
+              <i class="bi bi-grid-1x2-fill me-2"></i>Mi Panel
+            </a>
           </li>
           {% endif %} {% if user.es_turista or user.is_staff %}
           <li>
