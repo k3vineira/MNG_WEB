@@ -80,6 +80,9 @@
         <a href="{% url 'mis_reservas_usuario' %}" class="nav-link {% if 'reservas' in request.resolver_match.url_name %}active{% endif %}">
             <i class="bi bi-calendar-check"></i> Mis Reservas
         </a>
+        <a href="{% url 'mis_comprobantes' %}" class="nav-link {% if 'comprobantes' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-credit-card"></i> Mis Pagos
+        </a>
         <a href="{% url 'mis_resenas' %}" class="nav-link {% if 'resenas' in request.resolver_match.url_name %}active{% endif %}">
             <i class="bi bi-star"></i> Mis Reseñas
         </a>

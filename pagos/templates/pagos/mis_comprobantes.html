@@ -1,0 +1,168 @@
+{% extends "private/base_private.html" %}
+{% load static %}
+
+{% block private_css %}
+<style>
+    .stat-card {
+        border: none; border-radius: 16px; padding: 1.25rem;
+        text-align: center; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    .stat-card .stat-icon { font-size: 1.8rem; margin-bottom: .5rem; }
+    .stat-card .stat-number { font-size: 2rem; font-weight: 800; }
+    .stat-card .stat-label { font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; opacity: .8; }
+
+    .historial-card { border: none; border-radius: 16px; overflow: hidden; }
+    .historial-card .table th {
+        font-size: 0.75rem; text-transform: uppercase;
+        letter-spacing: 1px; color: #6b7280; border-bottom: 2px solid #e5e7eb;
+    }
+    .historial-card .table td { vertical-align: middle; font-size: 0.9rem; }
+
+    .badge-estado { padding: 0.45rem 0.85rem; border-radius: 20px; font-weight: 600; font-size: 0.78rem; }
+    .badge-pendiente  { background: #fef3c7; color: #92400e; }
+    .badge-aprobado   { background: #d1fae5; color: #065f46; }
+    .badge-rechazado  { background: #fee2e2; color: #991b1b; }
+
+    .img-thumb-comprobante {
+        width: 48px; height: 48px; object-fit: cover;
+        border-radius: 10px; border: 2px solid #e5e7eb;
+        transition: transform 0.3s;
+        cursor: pointer;
+    }
+    .img-thumb-comprobante:hover { transform: scale(2.5); z-index: 10; position: relative; }
+</style>
+{% endblock %}
+
+{% block private_content %}
+<div class="container-fluid py-4">
+
+    <!-- Título -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">
+                <i class="bi bi-clock-history text-success me-2"></i>Mis Comprobantes
+            </h2>
+            <p class="text-muted mb-0">Historial de pagos enviados</p>
+        </div>
+        <a href="{% url 'enviar_comprobante' %}" class="btn btn-success rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Nuevo Comprobante
+        </a>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4">
+            <div class="stat-card bg-warning bg-opacity-10 shadow-sm">
+                <div class="stat-icon text-warning"><i class="bi bi-hourglass-split"></i></div>
+                <div class="stat-number text-warning">{{ total_pendientes }}</div>
+                <div class="stat-label text-warning">Pendientes</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="stat-card bg-success bg-opacity-10 shadow-sm">
+                <div class="stat-icon text-success"><i class="bi bi-check-circle-fill"></i></div>
+                <div class="stat-number text-success">{{ total_aprobados }}</div>
+                <div class="stat-label text-success">Aprobados</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="stat-card bg-danger bg-opacity-10 shadow-sm">
+                <div class="stat-icon text-danger"><i class="bi bi-x-circle-fill"></i></div>
+                <div class="stat-number text-danger">{{ total_rechazados }}</div>
+                <div class="stat-label text-danger">Rechazados</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes -->
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-3" role="alert">
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Tabla de comprobantes -->
+    <div class="card historial-card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4 py-3">Comprobante</th>
+                            <th class="py-3">Reserva</th>
+                            <th class="py-3">Referencia</th>
+                            <th class="py-3">Banco</th>
+                            <th class="py-3">Monto</th>
+                            <th class="py-3">Fecha Envío</th>
+                            <th class="py-3">Estado</th>
+                            <th class="py-3">Nota Admin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in comprobantes %}
+                        <tr>
+                            <td class="ps-4 py-3">
+                                {% if c.imagen %}
+                                    <img src="{{ c.imagen.url }}" alt="Comprobante"
+                                         class="img-thumb-comprobante">
+                                {% else %}
+                                    <i class="bi bi-image text-muted fs-4"></i>
+                                {% endif %}
+                            </td>
+                            <td class="py-3">
+                                {% if c.reserva %}
+                                    <span class="fw-semibold">{{ c.reserva.paquete.nombre }}</span>
+                                    <br><small class="text-muted">{{ c.reserva.fecha }}</small>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3">{{ c.referencia|default:"—" }}</td>
+                            <td class="py-3">{{ c.banco_origen|default:"—" }}</td>
+                            <td class="py-3 fw-bold text-success">
+                                {% if c.monto %}${{ c.monto }}{% else %}—{% endif %}
+                            </td>
+                            <td class="py-3 text-muted">{{ c.fecha_envio|date:"d/m/Y H:i" }}</td>
+                            <td class="py-3">
+                                <span class="badge-estado badge-{{ c.estado }}">
+                                    {% if c.estado == 'pendiente' %}
+                                        <i class="bi bi-hourglass-split me-1"></i>
+                                    {% elif c.estado == 'aprobado' %}
+                                        <i class="bi bi-check-circle me-1"></i>
+                                    {% elif c.estado == 'rechazado' %}
+                                        <i class="bi bi-x-circle me-1"></i>
+                                    {% endif %}
+                                    {{ c.get_estado_display }}
+                                </span>
+                            </td>
+                            <td class="py-3">
+                                {% if c.nota_admin %}
+                                    <small class="text-muted fst-italic">{{ c.nota_admin|truncatewords:10 }}</small>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <i class="bi bi-receipt text-muted" style="font-size: 3rem;"></i>
+                                <p class="text-muted mt-3 mb-0">No has enviado ningún comprobante aún.</p>
+                                <a href="{% url 'enviar_comprobante' %}" class="btn btn-outline-success mt-3 rounded-pill px-4">
+                                    <i class="bi bi-plus-lg me-1"></i> Enviar mi primer comprobante
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

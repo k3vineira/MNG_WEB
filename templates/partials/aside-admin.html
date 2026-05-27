@@ -70,6 +70,12 @@
       <i class="bi bi-calendar-check-fill"></i> Reservas
     </a>
 
+    <a href="{% url 'admin_comprobantes' %}"
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
+              {% if 'comprobantes' in request.resolver_match.url_name %}bg-success text-white{% endif %}">
+      <i class="bi bi-wallet2"></i> Comprobantes de Pago
+    </a>
+
     <a href="{% url 'listar_categorias' %}"
        class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
               {% if request.resolver_match.url_name == 'listar_categorias' %}bg-success text-white{% endif %}">
