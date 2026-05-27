@@ -37,8 +37,8 @@
                     </td>
                     <td class="py-4">
                         <span class="badge {% if pqr.tipo == 'Queja' or pqr.tipo == 'Reclamo' %}bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25{% else %}bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25{% endif %} rounded-pill px-3">
-    {{ pqr.tipo }}
-</span>
+                         {{ pqr.tipo }}
+                        </span>
                     </td>
                     <td class="py-4 text-muted">{{ pqr.asunto|truncatechars:40 }}</td>
                     <td class="text-center py-4">
