@@ -9,11 +9,11 @@ from .forms import RegistroForm
 
 
 @login_required
-def inicio_usuarios(request):
+def index_turista(request):
     if request.user.is_staff:
         return redirect('dashboard')
     context = {'titulo': 'Bienvenido a Monagua'}
-    return render(request, 'turista/index_turista.html', context)
+    return render(request, 'index_turista.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='inicio')
@@ -143,6 +143,9 @@ def login_view(request):
             if user is not None:
                 auth_login(request, user)
                 messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
+                # Redirect tourists to their landing page after login
+                if hasattr(user, 'rol') and user.rol == Usuario.Roles.CLIENTE:
+                    return redirect('index_turista')
                 next_url = request.GET.get('next')
                 if next_url:
                     paquete_id = request.GET.get('paquete_id')
@@ -153,6 +156,7 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'authentication/login.html', {'form': form})
+
 
 
 def logout_view(request):
@@ -175,17 +179,11 @@ def registro_view(request):
                 user.residencia = f"{ciudad}, {pais}"
             user.save()
             Cliente.objects.create(usuario=user, pais=pais, ciudad=ciudad)
-            messages.success(request, "¡Registro exitoso! Ahora puedes iniciar sesión.")
-            from django.urls import reverse
-            login_url = reverse('login')
-            next_url = request.GET.get('next')
-            paquete_id = request.GET.get('paquete_id')
-            query_params = []
-            if next_url: query_params.append(f"next={next_url}")
-            if paquete_id: query_params.append(f"paquete_id={paquete_id}")
-            if query_params:
-                login_url += "?" + "&".join(query_params)
-            return redirect(login_url)
+            # Auto-login the new tourist user
+            from django.contrib.auth import login as auth_login
+            auth_login(request, user)
+            messages.success(request, "¡Registro exitoso! Bienvenido.")
+            return redirect('index_turista')
         else:
             messages.error(request, "Hubo un error en el registro. Por favor, revisa los datos.")
     else:
