@@ -98,7 +98,11 @@
 </td>
                                         <td class="py-3 text-center">
                                             <div class="d-flex justify-content-center gap-2">
-
+                                                {% if reserva.estado == 'pendiente' or reserva.estado == 'Pendiente' %}
+                                                    <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-sm btn-success px-3 rounded-2 fw-semibold text-white">
+                                                        <i class="bi bi-cash-coin me-1"></i> Pagar
+                                                    </a>
+                                                {% endif %}
                                                 <a href="{% url 'crear_cancelacion' %}?reserva_id={{ reserva.id }}" class="btn btn-sm btn-outline-danger px-3 rounded-2 fw-semibold">
                                                     <i class="bi bi-x-circle me-1"></i> Cancelar
                                                 </a>

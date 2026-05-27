@@ -1,0 +1,264 @@
+{% extends "private/base_private.html" %}
+{% load static %}
+
+{% block private_css %}
+<style>
+    .stat-card {
+        border: none;
+        border-radius: 16px;
+        padding: 1.25rem;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    .stat-card .stat-icon { font-size: 1.8rem; margin-bottom: .5rem; }
+    .stat-card .stat-number { font-size: 2rem; font-weight: 800; }
+    .stat-card .stat-label { font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; opacity: .8; }
+
+    .upload-zone {
+        border: 2px dashed #4ade80;
+        border-radius: 16px;
+        padding: 2.5rem;
+        text-align: center;
+        background: rgba(74, 222, 128, 0.04);
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+        background: rgba(74, 222, 128, 0.1);
+        border-color: #22c55e;
+        box-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
+    }
+    .upload-zone .upload-icon { font-size: 3rem; color: #22c55e; }
+    .upload-zone input[type="file"] {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        opacity: 0; cursor: pointer;
+    }
+    .upload-zone .file-name {
+        display: none;
+        margin-top: 0.5rem;
+        font-weight: 600;
+        color: #22c55e;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #22c55e;
+        box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.15);
+    }
+
+    .btn-enviar {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        border: none;
+        color: #fff;
+        font-weight: 700;
+        padding: 0.85rem 2rem;
+        border-radius: 12px;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .btn-enviar:hover {
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
+        color: #fff;
+    }
+
+    .historial-card {
+        border: none;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+    .historial-card .table th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6b7280;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    .historial-card .table td {
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    .badge-estado {
+        padding: 0.45rem 0.85rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.78rem;
+    }
+    .badge-pendiente  { background: #fef3c7; color: #92400e; }
+    .badge-aprobado   { background: #d1fae5; color: #065f46; }
+    .badge-rechazado  { background: #fee2e2; color: #991b1b; }
+</style>
+{% endblock %}
+
+{% block private_content %}
+<div class="container-fluid py-4">
+
+    <!-- Título -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">
+                <i class="bi bi-receipt-cutoff text-success me-2"></i>Enviar Comprobante de Pago
+            </h2>
+            <p class="text-muted mb-0">Adjunta tu comprobante y lo revisaremos en breve</p>
+        </div>
+        <a href="{% url 'mis_comprobantes' %}" class="btn btn-outline-success rounded-pill px-4">
+            <i class="bi bi-clock-history me-1"></i> Ver Historial
+        </a>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4">
+            <div class="stat-card bg-warning bg-opacity-10 shadow-sm">
+                <div class="stat-icon text-warning"><i class="bi bi-hourglass-split"></i></div>
+                <div class="stat-number text-warning">{{ total_pendientes }}</div>
+                <div class="stat-label text-warning">Pendientes</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <div class="stat-card bg-success bg-opacity-10 shadow-sm">
+                <div class="stat-icon text-success"><i class="bi bi-check-circle-fill"></i></div>
+                <div class="stat-number text-success">{{ total_aprobados }}</div>
+                <div class="stat-label text-success">Aprobados</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="stat-card bg-danger bg-opacity-10 shadow-sm">
+                <div class="stat-icon text-danger"><i class="bi bi-x-circle-fill"></i></div>
+                <div class="stat-number text-danger">{{ total_rechazados }}</div>
+                <div class="stat-label text-danger">Rechazados</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4 p-lg-5">
+            <form method="POST" enctype="multipart/form-data" id="formComprobante">
+                {% csrf_token %}
+
+                <div class="row g-4">
+                    <!-- Reserva -->
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-secondary small text-uppercase">
+                            <i class="bi bi-calendar-check me-1"></i> Reserva asociada
+                        </label>
+                        <select name="reserva" class="form-select rounded-3 py-2">
+                            <option value="">— Selecciona una reserva pendiente —</option>
+                            {% for r in reservas_usuario %}
+                                <option value="{{ r.id }}"
+                                    {% if selected_reserva_id and selected_reserva_id|stringformat:"s" == r.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ r.paquete.nombre }} — {{ r.fecha }} — ${{ r.monto_total }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if not reservas_usuario %}
+                            <div class="form-text text-muted mt-1">
+                                <i class="bi bi-info-circle me-1"></i> No tienes reservas pendientes de pago.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Imagen del comprobante -->
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-secondary small text-uppercase">
+                            <i class="bi bi-image me-1"></i> Imagen del comprobante *
+                        </label>
+                        <div class="upload-zone" id="uploadZone">
+                            <div class="upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+                            <p class="fw-semibold text-dark mt-2 mb-1">Arrastra tu comprobante aquí</p>
+                            <p class="text-muted small mb-0">o haz clic para seleccionar un archivo</p>
+                            <div class="file-name" id="fileName"></div>
+                            <input type="file" name="imagen" accept="image/*" id="inputImagen" required>
+                        </div>
+                    </div>
+
+                    <!-- Referencia + Banco -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary small text-uppercase">
+                            <i class="bi bi-hash me-1"></i> Nº de referencia / transacción
+                        </label>
+                        <input type="text" name="referencia" class="form-control rounded-3 py-2"
+                               placeholder="Ej: 123456789">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary small text-uppercase">
+                            <i class="bi bi-bank me-1"></i> Banco / Medio de pago
+                        </label>
+                        <input type="text" name="banco_origen" class="form-control rounded-3 py-2"
+                               placeholder="Ej: Nequi, Daviplata, Bancolombia">
+                    </div>
+
+                    <!-- Monto -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary small text-uppercase">
+                            <i class="bi bi-currency-dollar me-1"></i> Monto pagado
+                        </label>
+                        <input type="number" name="monto" step="0.01" class="form-control rounded-3 py-2"
+                               placeholder="Ej: 150000">
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-secondary small text-uppercase">
+                            <i class="bi bi-chat-left-text me-1"></i> Nota adicional (opcional)
+                        </label>
+                        <textarea name="descripcion" rows="3" class="form-control rounded-3"
+                                  placeholder="Cualquier información adicional sobre el pago..."></textarea>
+                    </div>
+
+                    <!-- Botón -->
+                    <div class="col-12 text-center mt-3">
+                        <button type="submit" class="btn btn-enviar w-100 w-md-auto px-5">
+                            <i class="bi bi-send-fill me-2"></i> Enviar Comprobante
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensajes Django -->
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-3" role="alert">
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+</div>
+
+<script>
+// Drag & drop + preview en la zona de upload
+document.addEventListener('DOMContentLoaded', function() {
+    const zone = document.getElementById('uploadZone');
+    const input = document.getElementById('inputImagen');
+    const nameDisplay = document.getElementById('fileName');
+
+    input.addEventListener('change', function() {
+        if (input.files.length) {
+            nameDisplay.textContent = '✓ ' + input.files[0].name;
+            nameDisplay.style.display = 'block';
+            zone.classList.add('dragover');
+        }
+    });
+
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+        e.preventDefault();
+        if (e.dataTransfer.files.length) {
+            input.files = e.dataTransfer.files;
+            nameDisplay.textContent = '✓ ' + e.dataTransfer.files[0].name;
+            nameDisplay.style.display = 'block';
+        }
+    });
+});
+</script>
+{% endblock %}

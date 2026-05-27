@@ -1,0 +1,215 @@
+{% extends 'base-admin.html' %}
+{% load static %}
+
+{% block title %}Admin | Comprobantes de Pago{% endblock %}
+
+{% block extra_head %}
+<style>
+    .stat-card-admin {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s;
+    }
+    .stat-card-admin:hover {
+        transform: translateY(-2px);
+    }
+    .btn-filter {
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        padding: 0.4rem 1.2rem;
+    }
+    .badge-estado-admin {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+    .bg-status-pendiente { background-color: #fef3c7; color: #d97706; }
+    .bg-status-aprobado { background-color: #d1fae5; color: #059669; }
+    .bg-status-rechazado { background-color: #fee2e2; color: #dc2626; }
+
+    .img-admin-thumb {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        transition: transform 0.2s;
+    }
+    .img-admin-thumb:hover {
+        transform: scale(2.2);
+        z-index: 10;
+        position: relative;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0">Gestión de Comprobantes</h2>
+            <p class="text-muted mb-0">Revisa, aprueba o rechaza los comprobantes de pago de los usuarios.</p>
+        </div>
+    </div>
+
+    <!-- Mensajes de Alerta -->
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}{{ msg.tags }}{% endif %} alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+                <i class="bi {% if msg.tags == 'success' %}bi-check-circle-fill{% elif msg.tags == 'warning' %}bi-exclamation-triangle-fill{% else %}bi-info-circle-fill{% endif %} me-2"></i>
+                {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Stats Panel -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card stat-card-admin bg-white shadow-sm p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-secondary small text-uppercase fw-bold">Total Enviados</span>
+                        <h3 class="fw-extrabold text-dark mb-0 mt-1">{{ total }}</h3>
+                    </div>
+                    <div class="bg-light p-2 rounded-3 text-secondary fs-4"><i class="bi bi-files"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card stat-card-admin bg-warning bg-opacity-10 border-warning border-opacity-25 shadow-sm p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-warning small text-uppercase fw-bold">Pendientes</span>
+                        <h3 class="fw-extrabold text-warning mb-0 mt-1">{{ total_pendientes }}</h3>
+                    </div>
+                    <div class="bg-warning bg-opacity-20 p-2 rounded-3 text-warning fs-4"><i class="bi bi-hourglass-split"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card stat-card-admin bg-success bg-opacity-10 border-success border-opacity-25 shadow-sm p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-success small text-uppercase fw-bold">Aprobados</span>
+                        <h3 class="fw-extrabold text-success mb-0 mt-1">{{ total_aprobados }}</h3>
+                    </div>
+                    <div class="bg-success bg-opacity-20 p-2 rounded-3 text-success fs-4"><i class="bi bi-check-circle-fill"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card stat-card-admin bg-danger bg-opacity-10 border-danger border-opacity-25 shadow-sm p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-danger small text-uppercase fw-bold">Rechazados</span>
+                        <h3 class="fw-extrabold text-danger mb-0 mt-1">{{ total_rechazados }}</h3>
+                    </div>
+                    <div class="bg-danger bg-opacity-20 p-2 rounded-3 text-danger fs-4"><i class="bi bi-x-circle-fill"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Table Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 border-0">
+            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                <span class="fw-bold text-secondary text-uppercase small"><i class="bi bi-funnel-fill me-1"></i>Filtrar por estado</span>
+                <div class="d-flex gap-2">
+                    <a href="?estado=" class="btn btn-filter {% if not estado_filtro %}btn-dark{% else %}btn-outline-dark{% endif %}">Todo</a>
+                    <a href="?estado=pendiente" class="btn btn-filter {% if estado_filtro == 'pendiente' %}btn-warning text-dark{% else %}btn-outline-warning text-dark{% endif %}">Pendientes</a>
+                    <a href="?estado=aprobado" class="btn btn-filter {% if estado_filtro == 'aprobado' %}btn-success{% else %}btn-outline-success{% endif %}">Aprobados</a>
+                    <a href="?estado=rechazado" class="btn btn-filter {% if estado_filtro == 'rechazado' %}btn-danger{% else %}btn-outline-danger{% endif %}">Rechazados</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr class="text-secondary small text-uppercase" style="font-size: 0.78rem;">
+                            <th class="ps-4">Imagen</th>
+                            <th>Usuario</th>
+                            <th>Reserva</th>
+                            <th>Monto</th>
+                            <th>Banco</th>
+                            <th>Referencia</th>
+                            <th>Fecha de Envío</th>
+                            <th>Estado</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in comprobantes %}
+                            <tr>
+                                <td class="ps-4">
+                                    {% if c.imagen %}
+                                        <img src="{{ c.imagen.url }}" alt="Comprobante" class="img-admin-thumb shadow-sm">
+                                    {% else %}
+                                        <i class="bi bi-image text-muted fs-4"></i>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ c.usuario.get_full_name|default:c.usuario.username }}</div>
+                                    <small class="text-muted">{{ c.usuario.email }}</small>
+                                </td>
+                                <td>
+                                    {% if c.reserva %}
+                                        <div class="fw-semibold text-secondary">#{{ c.reserva.id }} — {{ c.reserva.paquete.nombre }}</div>
+                                        <small class="text-muted">Fecha: {{ c.reserva.fecha }}</small>
+                                    {% else %}
+                                        <span class="text-muted italic small">Sin reserva vinculada</span>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-bold text-success">
+                                    {% if c.monto %}${{ c.monto }}{% else %}—{% endif %}
+                                </td>
+                                <td>{{ c.banco_origen|default:"—" }}</td>
+                                <td><code>{{ c.referencia|default:"—" }}</code></td>
+                                <td class="text-muted small">{{ c.fecha_envio|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <span class="badge-estado-admin bg-status-{{ c.estado }}">
+                                        {% if c.estado == 'pendiente' %}
+                                            <i class="bi bi-hourglass-split me-1"></i>
+                                        {% elif c.estado == 'aprobado' %}
+                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                        {% else %}
+                                            <i class="bi bi-x-circle-fill me-1"></i>
+                                        {% endif %}
+                                        {{ c.get_estado_display }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-inline-flex gap-2">
+                                        <a href="{% url 'admin_revisar_comprobante' c.pk %}" class="btn btn-sm btn-outline-primary px-3 rounded-pill fw-semibold">
+                                            <i class="bi bi-pencil-square me-1"></i> Revisar
+                                        </a>
+                                        <form action="{% url 'admin_eliminar_comprobante' c.pk %}" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este comprobante?')" class="m-0">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill fw-semibold">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="9" class="text-center py-5 text-muted">
+                                    <i class="bi bi-receipt fs-1 d-block mb-3 text-secondary"></i>
+                                    No se encontraron comprobantes de pago registrados.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
