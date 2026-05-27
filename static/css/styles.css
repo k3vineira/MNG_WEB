@@ -2,10 +2,16 @@
 /* ══════════════ VARIABLES GLOBALES DE COLOR ══════════════ */
 
 :root {
-    /* Sobrescribimos el color 'success' de Bootstrap para todo el proyecto */
-    --bs-success: #1a261f;
-    --bs-success-rgb: 26, 38, 31;
-    --primary-green: #1a261f;
+    /* Color de marca principal: Verde Mongua */
+    --bs-success: #2d4a31;
+    --bs-success-rgb: 45, 74, 49;
+    --primary-green: #2d4a31;
+    --bs-primary: #3B643F;
+    --verde: #3B643F;
+    --verde-oscuro: #1A2E1C;
+    --verde-suave: #A8C5AA;
+    --crema: #F5F0E8;
+    --texto: #4A5E4D;
 }
 
 
@@ -234,15 +240,6 @@ body.sidebar-open #mainSidebar {
 
 body.sidebar-open #sidebar-overlay {
     display: block !important;
-}
-
-:root {
-    --bs-primary: #3B643F;
-    --verde: #3B643F;
-    --verde-oscuro: #1A2E1C;
-    --verde-suave: #A8C5AA;
-    --crema: #F5F0E8;
-    --texto: #4A5E4D;
 }
 
 .font-playfair {
