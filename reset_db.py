@@ -3,7 +3,7 @@ import os
 # --- CONFIGURACIÓN ---
 # ¡ATENCIÓN APRENDIZ! Verifica que el nombre de tu entorno virtual sea exactamente este.
 # Si le pusiste otro nombre (ej. 'env', 'entorno'), cámbialo en la variable de abajo.
-VENV_DIR = '.venv'
+VENV_DIR = 'venv'
 DB_FILE = 'db.sqlite3'
 archivos_a_borrar = []
 
@@ -12,9 +12,10 @@ print(f"Nota: Se ignorará la carpeta del entorno virtual: '{VENV_DIR}'")
 
 # 1. Buscar archivos de migración recursivamente
 for root, dirs, files in os.walk('.'):
-    # Ignorar la carpeta del entorno virtual para no dañarlo
-    if VENV_DIR in dirs:
-        dirs.remove(VENV_DIR)
+    # Ignorar carpetas comunes de entornos virtuales y control de versiones
+    for venv in ['.venv', 'venv', '.git', '__pycache__']:
+        if venv in dirs:
+            dirs.remove(venv)
     
     # Buscar solo dentro de carpetas llamadas 'migrations'
     if 'migrations' in root:
