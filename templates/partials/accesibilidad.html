@@ -1,20 +1,20 @@
 {% load static %}
 
-<!-- Botón flotante -->
-<button id="a11y-btn" onclick="A11y.toggle()" aria-label="Accesibilidad" aria-expanded="false"
-  class="btn btn-success rounded-circle position-fixed shadow p-0 d-flex align-items-center justify-content-center"
-  style="bottom:1.5rem;right:1.5rem;z-index:1060;width:44px;height:44px">
+<!-- ── Botón flotante de Accesibilidad ── -->
+<button id="a11y-btn" onclick="A11y.toggle()" aria-label="Opciones de accesibilidad" aria-expanded="false"
+  class="btn btn-success rounded-circle position-fixed shadow-lg p-0 d-flex align-items-center justify-content-center"
+  style="bottom:1.5rem;right:1.5rem;z-index:9999;width:48px;height:48px;border:2px solid rgba(255,255,255,0.3)">
   <i class="bi bi-universal-access fs-5"></i>
 </button>
 
-<!-- Panel -->
-<div id="a11y-panel" class="card border-secondary shadow position-fixed d-none"
-  style="bottom:5rem;right:1.5rem;width:290px;z-index:1055" role="dialog" aria-modal="true">
+<!-- ── Panel de Accesibilidad ── -->
+<div id="a11y-panel" class="card border-secondary shadow-lg position-fixed d-none"
+  style="bottom:5.5rem;right:1.5rem;width:300px;z-index:9998;border-radius:16px;overflow:hidden"
+  role="dialog" aria-modal="true" aria-label="Panel de accesibilidad">
 
-  <div
-    class="d-flex justify-content-between align-items-center px-3 py-2 bg-dark border-bottom border-secondary rounded-top">
+  <div class="d-flex justify-content-between align-items-center px-3 py-2 bg-dark border-bottom border-secondary">
     <span class="small fw-semibold text-white d-flex align-items-center gap-2">
-      <i class="bi bi-universal-access text-success"></i>Accesibilidad
+      <i class="bi bi-universal-access text-success"></i> Accesibilidad
     </span>
     <button class="btn btn-outline-secondary btn-sm py-0 px-2" id="btn-reset" style="font-size:.7rem">
       <i class="bi bi-arrow-counterclockwise me-1"></i>Restablecer
@@ -23,6 +23,7 @@
 
   <div class="bg-dark p-3 d-flex flex-column gap-3">
 
+    <!-- Brillo -->
     <div>
       <div class="d-flex justify-content-between mb-1">
         <span class="small text-white"><i class="bi bi-brightness-high me-1 text-warning"></i>Brillo</span>
@@ -31,6 +32,7 @@
       <input type="range" class="form-range" id="sl-bright" min="50" max="120" value="100" step="1">
     </div>
 
+    <!-- Tamaño de texto -->
     <div>
       <div class="d-flex justify-content-between mb-1">
         <span class="small text-white"><i class="bi bi-fonts me-1 text-info"></i>Tamaño de texto</span>
@@ -41,6 +43,7 @@
 
     <hr class="border-secondary my-0">
 
+    <!-- Cursor grande -->
     <div class="d-flex justify-content-between align-items-center">
       <div>
         <div class="small text-white"><i class="bi bi-cursor me-1 text-secondary"></i>Cursor grande</div>
@@ -51,6 +54,7 @@
       </div>
     </div>
 
+    <!-- Resaltar enlaces -->
     <div class="d-flex justify-content-between align-items-center">
       <div>
         <div class="small text-white"><i class="bi bi-link-45deg me-1 text-secondary"></i>Resaltar enlaces</div>
@@ -61,17 +65,28 @@
       </div>
     </div>
 
+    <!-- Alto contraste -->
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <div class="small text-white"><i class="bi bi-circle-half me-1 text-secondary"></i>Alto contraste</div>
+        <div class="text-secondary" style="font-size:.65rem">Mejora la visibilidad del texto</div>
+      </div>
+      <div class="form-check form-switch mb-0 ms-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="tog-contrast">
+      </div>
+    </div>
+
   </div>
 
-  <div class="card-footer bg-black border-top border-secondary d-flex align-items-center gap-2 py-2 rounded-bottom">
+  <div class="card-footer bg-black border-top border-secondary d-flex align-items-center gap-2 py-2">
     <span class="badge bg-success rounded-circle p-1" style="width:8px;height:8px;display:inline-block"></span>
-    <span class="text-secondary" style="font-size:.6rem">Guardado automáticamente</span>
+    <span class="text-secondary" style="font-size:.6rem">Guardado automáticamente · Alt+A para abrir</span>
   </div>
 </div>
 
-<!-- Toast -->
+<!-- ── Toast de confirmación ── -->
 <div id="a11y-toast" class="toast position-fixed text-white bg-success border-0"
-  style="bottom:5.5rem;right:1.5rem;z-index:1070" role="status" aria-live="polite" data-bs-delay="1800">
+  style="bottom:6rem;right:1.5rem;z-index:10000" role="status" aria-live="polite">
   <div class="d-flex">
     <div class="toast-body small fw-semibold" id="a11y-toast-msg"></div>
     <button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
@@ -79,100 +94,163 @@
 </div>
 
 <script>
-  const A11y = (() => {
-    const D = { bright: 100, font: 100, bigCursor: false, hlLinks: false };
-    let s = { ...D }, _toast = null;
+/* ── Widget de accesibilidad — se inicializa cuando Bootstrap esté listo ── */
+(function () {
+  var D = { bright: 100, font: 100, bigCursor: false, hlLinks: false, hiContrast: false };
+  var s = Object.assign({}, D);
+  var _toast = null;
 
-    const save = () => { try { localStorage.setItem('a11y', JSON.stringify(s)); } catch (_) { } };
-    const load = () => { try { const r = localStorage.getItem('a11y'); if (r) s = { ...D, ...JSON.parse(r) }; } catch (_) { } };
+  function save() { try { localStorage.setItem('a11y', JSON.stringify(s)); } catch (_) {} }
+  function load() {
+    try {
+      var r = localStorage.getItem('a11y');
+      if (r) s = Object.assign({}, D, JSON.parse(r));
+    } catch (_) {}
+  }
 
-    const applyBright = v => {
-      let el = document.getElementById('a11y-bright-style');
-      if (!el) { el = document.createElement('style'); el.id = 'a11y-bright-style'; document.head.appendChild(el); }
-      el.textContent = +v === 100 ? '' : `html{filter:brightness(${v}%)!important}`;
-    };
-    const applyFont = v => { document.documentElement.style.fontSize = (v / 100 * 16) + 'px'; };
-    const applyBigCursor = on => {
-      let el = document.getElementById('a11y-cursor-style');
-      if (!el) { el = document.createElement('style'); el.id = 'a11y-cursor-style'; document.head.appendChild(el); }
-      el.textContent = on
-        ? `body,body *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2322c55e' opacity='.35'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2322c55e'/%3E%3C/svg%3E") 16 16,crosshair!important}`
-        : '';
-    };
-    const applyLinks = on => {
-      let el = document.getElementById('a11y-links-style');
-      if (!el) { el = document.createElement('style'); el.id = 'a11y-links-style'; document.head.appendChild(el); }
-      el.textContent = on ? `a{text-decoration:underline!important;color:#58a6ff!important}` : '';
-    };
+  function applyBright(v) {
+    var el = document.getElementById('a11y-bright-style');
+    if (!el) { el = document.createElement('style'); el.id = 'a11y-bright-style'; document.head.appendChild(el); }
+    el.textContent = +v === 100 ? '' : 'html{filter:brightness(' + v + '%)!important}';
+  }
+  function applyFont(v) { document.documentElement.style.fontSize = (v / 100 * 16) + 'px'; }
+  function applyBigCursor(on) {
+    var el = document.getElementById('a11y-cursor-style');
+    if (!el) { el = document.createElement('style'); el.id = 'a11y-cursor-style'; document.head.appendChild(el); }
+    el.textContent = on
+      ? "body,body *{cursor:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2322c55e' opacity='.35'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2322c55e'/%3E%3C/svg%3E\") 16 16,crosshair!important}"
+      : '';
+  }
+  function applyLinks(on) {
+    var el = document.getElementById('a11y-links-style');
+    if (!el) { el = document.createElement('style'); el.id = 'a11y-links-style'; document.head.appendChild(el); }
+    el.textContent = on ? 'a{text-decoration:underline!important;color:#58a6ff!important;outline:2px solid #58a6ff!important}' : '';
+  }
+  function applyContrast(on) {
+    var el = document.getElementById('a11y-contrast-style');
+    if (!el) { el = document.createElement('style'); el.id = 'a11y-contrast-style'; document.head.appendChild(el); }
+    el.textContent = on ? 'body{background:#000!important;color:#fff!important} p,span,li,td,th,label,div{color:#fff!important} .card,.navbar,.sidebar-monagua{background:#111!important;color:#fff!important}' : '';
+  }
 
-    const syncUI = () => {
-      const sb = document.getElementById('sl-bright'); if (sb) sb.value = s.bright;
-      const vb = document.getElementById('val-bright'); if (vb) vb.textContent = s.bright + '%';
-      const sf = document.getElementById('sl-font'); if (sf) sf.value = s.font;
-      const vf = document.getElementById('val-font'); if (vf) vf.textContent = s.font + '%';
-      const tc = document.getElementById('tog-cursor'); if (tc) tc.checked = s.bigCursor;
-      const tl = document.getElementById('tog-links'); if (tl) tl.checked = s.hlLinks;
-    };
+  function syncUI() {
+    var sb = document.getElementById('sl-bright'); if (sb) sb.value = s.bright;
+    var vb = document.getElementById('val-bright'); if (vb) vb.textContent = s.bright + '%';
+    var sf = document.getElementById('sl-font');   if (sf) sf.value = s.font;
+    var vf = document.getElementById('val-font');  if (vf) vf.textContent = s.font + '%';
+    var tc = document.getElementById('tog-cursor');   if (tc) tc.checked = s.bigCursor;
+    var tl = document.getElementById('tog-links');    if (tl) tl.checked = s.hlLinks;
+    var tco = document.getElementById('tog-contrast'); if (tco) tco.checked = s.hiContrast;
+  }
 
-    const showToast = msg => {
-      const el = document.getElementById('a11y-toast'), me = document.getElementById('a11y-toast-msg');
-      if (!el || !me) return;
-      me.textContent = msg;
-      if (!_toast) _toast = new bootstrap.Toast(el);
-      _toast.show();
-    };
+  function showToast(msg) {
+    var el = document.getElementById('a11y-toast');
+    var me = document.getElementById('a11y-toast-msg');
+    if (!el || !me) return;
+    me.textContent = msg;
+    /* Intentar con bootstrap, si no está disponible usar CSS */
+    try {
+      if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+        if (!_toast) _toast = new bootstrap.Toast(el, { delay: 2000 });
+        _toast.show();
+      } else {
+        el.classList.add('show');
+        setTimeout(function() { el.classList.remove('show'); }, 2000);
+      }
+    } catch(e) {
+      el.classList.add('show');
+      setTimeout(function() { el.classList.remove('show'); }, 2000);
+    }
+  }
 
-    const toggle = () => {
-      const p = document.getElementById('a11y-panel'), b = document.getElementById('a11y-btn');
-      const open = p.classList.contains('d-none');
-      p.classList.toggle('d-none', !open);
-      b.setAttribute('aria-expanded', open);
-      if (open) setTimeout(() => { const f = p.querySelector('button,input'); if (f) f.focus(); }, 50);
-    };
+  function toggle() {
+    var p = document.getElementById('a11y-panel');
+    var b = document.getElementById('a11y-btn');
+    if (!p || !b) return;
+    var open = p.classList.contains('d-none');
+    p.classList.toggle('d-none', !open);
+    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) {
+      setTimeout(function() {
+        var f = p.querySelector('button,input');
+        if (f) f.focus();
+      }, 50);
+    }
+  }
 
-    const reset = () => {
-      s = { ...D };
-      try { localStorage.removeItem('a11y'); } catch (_) { }
-      applyBright(100); applyFont(100); applyBigCursor(false); applyLinks(false);
-      syncUI(); showToast('Restablecido ✓');
-    };
+  function reset() {
+    s = Object.assign({}, D);
+    try { localStorage.removeItem('a11y'); } catch (_) {}
+    applyBright(100); applyFont(100); applyBigCursor(false); applyLinks(false); applyContrast(false);
+    syncUI();
+    showToast('Restablecido ✓');
+  }
 
-    const init = () => {
-      load();
-      applyBright(s.bright); applyFont(s.font); applyBigCursor(s.bigCursor); applyLinks(s.hlLinks);
-      syncUI();
+  function init() {
+    load();
+    applyBright(s.bright); applyFont(s.font); applyBigCursor(s.bigCursor);
+    applyLinks(s.hlLinks); applyContrast(s.hiContrast);
+    syncUI();
 
-      document.getElementById('sl-bright').addEventListener('input', e => {
-        s.bright = +e.target.value; applyBright(s.bright);
-        document.getElementById('val-bright').textContent = s.bright + '%'; save();
-      });
-      document.getElementById('sl-font').addEventListener('input', e => {
-        s.font = +e.target.value; applyFont(s.font);
-        document.getElementById('val-font').textContent = s.font + '%'; save();
-      });
-      document.getElementById('tog-cursor').addEventListener('change', e => {
-        s.bigCursor = e.target.checked; applyBigCursor(s.bigCursor); save();
-        showToast(s.bigCursor ? 'Cursor grande activado' : 'Cursor normal');
-      });
-      document.getElementById('tog-links').addEventListener('change', e => {
-        s.hlLinks = e.target.checked; applyLinks(s.hlLinks); save();
-        showToast(s.hlLinks ? 'Enlaces resaltados' : 'Enlaces normales');
-      });
-      document.getElementById('btn-reset').addEventListener('click', reset);
+    var slBright = document.getElementById('sl-bright');
+    if (slBright) slBright.addEventListener('input', function(e) {
+      s.bright = +e.target.value; applyBright(s.bright);
+      var v = document.getElementById('val-bright'); if (v) v.textContent = s.bright + '%';
+      save();
+    });
 
-      document.addEventListener('click', e => {
-        const p = document.getElementById('a11y-panel'), b = document.getElementById('a11y-btn');
-        if (p && b && !p.classList.contains('d-none') && !p.contains(e.target) && !b.contains(e.target)) {
-          p.classList.add('d-none'); b.setAttribute('aria-expanded', 'false');
-        }
-      });
-      document.addEventListener('keydown', e => {
-        if (e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); toggle(); }
-        if (e.altKey && e.key.toLowerCase() === 'r') { e.preventDefault(); reset(); }
-      });
-    };
+    var slFont = document.getElementById('sl-font');
+    if (slFont) slFont.addEventListener('input', function(e) {
+      s.font = +e.target.value; applyFont(s.font);
+      var v = document.getElementById('val-font'); if (v) v.textContent = s.font + '%';
+      save();
+    });
 
-    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();
-    return { toggle, reset };
-  })();
+    var togCursor = document.getElementById('tog-cursor');
+    if (togCursor) togCursor.addEventListener('change', function(e) {
+      s.bigCursor = e.target.checked; applyBigCursor(s.bigCursor); save();
+      showToast(s.bigCursor ? 'Cursor grande activado' : 'Cursor normal');
+    });
+
+    var togLinks = document.getElementById('tog-links');
+    if (togLinks) togLinks.addEventListener('change', function(e) {
+      s.hlLinks = e.target.checked; applyLinks(s.hlLinks); save();
+      showToast(s.hlLinks ? 'Enlaces resaltados' : 'Enlaces normales');
+    });
+
+    var togContrast = document.getElementById('tog-contrast');
+    if (togContrast) togContrast.addEventListener('change', function(e) {
+      s.hiContrast = e.target.checked; applyContrast(s.hiContrast); save();
+      showToast(s.hiContrast ? 'Alto contraste activado' : 'Contraste normal');
+    });
+
+    var btnReset = document.getElementById('btn-reset');
+    if (btnReset) btnReset.addEventListener('click', reset);
+
+    /* Cerrar panel al hacer clic fuera */
+    document.addEventListener('click', function(e) {
+      var p = document.getElementById('a11y-panel');
+      var b = document.getElementById('a11y-btn');
+      if (p && b && !p.classList.contains('d-none') && !p.contains(e.target) && !b.contains(e.target)) {
+        p.classList.add('d-none');
+        b.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    /* Atajos de teclado */
+    document.addEventListener('keydown', function(e) {
+      if (e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); toggle(); }
+      if (e.altKey && e.key.toLowerCase() === 'r') { e.preventDefault(); reset(); }
+    });
+  }
+
+  /* Exponer globalmente */
+  window.A11y = { toggle: toggle, reset: reset };
+
+  /* Inicializar cuando el DOM esté listo */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
 </script>

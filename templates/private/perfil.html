@@ -1,133 +1,643 @@
 {% extends "private/base_private.html" %}
 {% load static %}
 
+{% block titulo %}Mi Perfil | Monagua{% endblock %}
+
+{% block private_css %}
+<style>
+    /* ── Cabecera de perfil ── */
+    .perfil-hero {
+        background: linear-gradient(135deg, #1a6634 0%, #22c55e 60%, #16a34a 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    .perfil-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.06);
+    }
+    .perfil-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        right: 15%;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.04);
+    }
+
+    /* ── Avatar ── */
+    .avatar-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+    .avatar-img {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid rgba(255,255,255,0.8);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+    }
+    .avatar-img:hover { transform: scale(1.03); }
+    .avatar-edit-btn {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #fff;
+        color: #16a34a;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        transition: all 0.2s;
+    }
+    .avatar-edit-btn:hover { background: #f0fdf4; transform: scale(1.1); }
+
+    /* ── Tarjetas de datos ── */
+    .data-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+        transition: box-shadow 0.2s;
+        overflow: hidden;
+    }
+    .data-card:hover { box-shadow: 0 4px 25px rgba(0,0,0,0.1); }
+    .data-card .card-header-custom {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    .data-card .card-body { padding: 1.5rem; }
+
+    /* ── Campos de dato ── */
+    .info-field {
+        padding: 0.9rem 0;
+        border-bottom: 1px solid #f8fafc;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .info-field:last-child { border-bottom: none; }
+    .info-field .field-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+    .info-field .field-label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #9ca3af;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+    .info-field .field-value {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #1f2937;
+    }
+    .info-field .field-value.empty { color: #d1d5db; font-style: italic; font-weight: 400; }
+
+    /* ── Estadísticas ── */
+    .stat-pill {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        text-align: center;
+        transition: transform 0.2s;
+    }
+    .stat-pill:hover { transform: translateY(-2px); }
+    .stat-pill .stat-n { font-size: 1.7rem; font-weight: 800; color: #15803d; line-height: 1; }
+    .stat-pill .stat-l { font-size: 0.7rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+
+    /* ── Badge de rol ── */
+    .rol-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    /* ── Botón editar ── */
+    .btn-editar {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.4);
+        color: #fff;
+        border-radius: 12px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.88rem;
+        transition: all 0.2s;
+        backdrop-filter: blur(4px);
+    }
+    .btn-editar:hover {
+        background: rgba(255,255,255,0.3);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    /* ── Verificación de cuenta ── */
+    .verificacion-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 20px;
+        padding: 3px 10px;
+        font-size: 0.72rem;
+        color: rgba(255,255,255,0.9);
+    }
+</style>
+{% endblock %}
+
 {% block private_content %}
-    <div class="contenedor-perfil">
-    
-    <div class="cabecera-usuario d-flex justify-content-between align-items-center mb-5">
-        <div class="d-flex align-items-center gap-4">
-            <div class="contenedor-avatar position-relative">
-                <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}" alt="{{ user.first_name }}" class="rounded-circle border border-4 border-white shadow-sm" width="120" height="120" style="object-fit: cover;">
-                <span class="insignia-verificado position-absolute bottom-0 end-0 bg-success text-white rounded-circle p-1"><i class="bi bi-check-circle-fill"></i></span>
-            </div>
-            <div class="info-usuario">
-                <!-- Etiqueta dinámica según el rol -->
-                {% if user.is_superuser or user.is_staff %}
-                    <span class="badge bg-dark text-light mb-2">ADMINISTRADOR</span>
-                {% elif user.es_guia %}
-                    <span class="badge bg-primary text-light mb-2">GUÍA TURÍSTICO</span>
-                {% else %}
-                    <span class="badge bg-danger text-light mb-2">VIAJERO</span>
-                {% endif %}
-                
-                <!-- Nombre y Apellido dinámicos -->
-                <h1 class="fw-bold mb-1">{{ user.first_name }} {{ user.last_name }}</h1>
-                
-                <!-- Residencia y Año de registro dinámicos -->
-                <p class="text-muted mb-3">
-                    <i class="bi bi-geo-alt me-1"></i> {{ user.residencia|default:"Ubicación pendiente" }} • Miembro desde {{ user.date_joined|date:"Y" }}
+<div class="container-fluid px-0 px-md-3 py-4">
+
+    <!-- ══ HERO DE PERFIL ══ -->
+    <div class="perfil-hero">
+        <div class="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-4 position-relative" style="z-index:1">
+
+            <!-- Avatar con botón editar foto -->
+            <form action="{% url 'detalles' %}" method="POST" enctype="multipart/form-data" id="form-foto">
+                {% csrf_token %}
+                <div class="avatar-wrapper">
+                    <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
+                         alt="{{ user.first_name|default:user.username }}"
+                         class="avatar-img" id="preview-avatar">
+                    <label for="input-foto" class="avatar-edit-btn" title="Cambiar foto">
+                        <i class="bi bi-camera-fill"></i>
+                    </label>
+                    <input type="file" name="imagen_perfil" id="input-foto" hidden accept="image/*" onchange="previewAndSubmit(this)">
+                </div>
+            </form>
+
+            <!-- Información básica -->
+            <div class="flex-grow-1 text-center text-md-start">
+                <!-- Badge de rol -->
+                <div class="mb-2">
+                    {% if user.is_superuser or user.is_staff %}
+                        <span class="rol-badge" style="background:rgba(0,0,0,0.3);color:#fbbf24;">
+                            <i class="bi bi-shield-fill-check"></i> Administrador
+                        </span>
+                    {% elif user.es_guia %}
+                        <span class="rol-badge" style="background:rgba(59,130,246,0.3);color:#93c5fd;">
+                            <i class="bi bi-map-fill"></i> Guía Turístico
+                        </span>
+                    {% else %}
+                        <span class="rol-badge" style="background:rgba(255,255,255,0.2);color:rgba(255,255,255,0.9);">
+                            <i class="bi bi-person-fill"></i> Viajero
+                        </span>
+                    {% endif %}
+                </div>
+
+                <!-- Nombre -->
+                <h1 class="text-white fw-bold mb-1" style="font-size:1.7rem;text-shadow:0 2px 8px rgba(0,0,0,0.15)">
+                    {{ user.first_name|default:user.username }} {{ user.last_name }}
+                </h1>
+
+                <!-- Email + miembro desde -->
+                <p class="mb-2" style="color:rgba(255,255,255,0.8);font-size:0.9rem">
+                    <i class="bi bi-envelope me-1"></i>{{ user.email }}
+                    &nbsp;·&nbsp;
+                    <i class="bi bi-calendar me-1"></i>Miembro desde {{ user.date_joined|date:"Y" }}
                 </p>
 
-                <!-- Botón de subida de imagen -->
-                <form action="{% url 'detalles' %}" method="POST" enctype="multipart/form-data" class="d-inline">
-                    {% csrf_token %}
-                    <label for="input-foto" class="btn btn-sm btn-outline-success rounded-pill px-3">
-                        <i class="bi bi-camera me-1"></i> Actualizar foto
-                    </label>
-                    <input type="file" name="imagen_perfil" id="input-foto" hidden onchange="this.form.submit()">
-                </form>
+                <!-- Ubicación -->
+                <p class="mb-3" style="color:rgba(255,255,255,0.7);font-size:0.85rem">
+                    <i class="bi bi-geo-alt me-1"></i>{{ user.residencia|default:"Ubicación no registrada" }}
+                </p>
+
+                <!-- Chips -->
+                <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+                    <span class="verificacion-chip">
+                        <i class="bi bi-check-circle-fill text-success"></i> Cuenta activa
+                    </span>
+                    {% if user.telefono %}
+                    <span class="verificacion-chip">
+                        <i class="bi bi-telephone-fill"></i> {{ user.telefono }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Botón Editar Perfil -->
+            <div class="flex-shrink-0">
+                <button class="btn btn-editar" data-bs-toggle="modal" data-bs-target="#modalEditarPerfil">
+                    <i class="bi bi-pencil me-2"></i>Editar Perfil
+                </button>
             </div>
         </div>
-        <button type="button" class="btn btn-success px-4 py-2 rounded-pill d-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalEditarPerfil">
-            <i class="bi bi-pencil"></i> Editar Perfil
-        </button>
     </div>
 
+    <!-- Mensajes -->
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}{{ msg.tags }}{% endif %} alert-dismissible fade show rounded-3 mb-4" role="alert">
+        <i class="bi {% if msg.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- ══ CONTENIDO PRINCIPAL ══ -->
     <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="card tarjeta-datos border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-body p-4">
-                    <h5 class="card-title fw-bold mb-4 d-flex align-items-center gap-2">
-                        <i class="bi bi-person-fill text-secondary"></i> Información Personal
-                    </h5>
-                    
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <label class="text-muted text-uppercase form-label label-pequeno">Nombre Completo</label>
-                            <p class="fw-medium mb-0 fs-5">{{ user.first_name }} {{ user.last_name }}</p>
+
+        <!-- Columna izquierda: Información personal -->
+        <div class="col-lg-7">
+
+            <!-- Información Personal -->
+            <div class="card data-card mb-4">
+                <div class="card-header-custom bg-white">
+                    <div class="rounded-2 p-1 bg-success bg-opacity-10">
+                        <i class="bi bi-person-lines-fill text-success fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold mb-0 text-dark">Información Personal</h6>
+                </div>
+                <div class="card-body">
+
+                    <div class="info-field">
+                        <div class="field-icon bg-blue-50" style="background:#eff6ff;">
+                            <i class="bi bi-person-fill text-primary"></i>
                         </div>
-                        <div class="col-md-6">
-                            <label class="text-muted text-uppercase form-label label-pequeno">Correo Electrónico</label>
-                            <p class="fw-medium mb-0 fs-5">{{ user.email }}</p>
+                        <div>
+                            <div class="field-label">Nombre Completo</div>
+                            <div class="field-value {% if not user.first_name and not user.last_name %}empty{% endif %}">
+                                {% if user.first_name or user.last_name %}
+                                    {{ user.first_name }} {{ user.last_name }}
+                                {% else %}
+                                    Sin nombre registrado
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="text-muted text-uppercase form-label label-pequeno">Teléfono</label>
-                            <p class="fw-medium mb-0 fs-5">{{ user.telefono|default:"No registrado" }}</p>
+                    </div>
+
+                    <div class="info-field">
+                        <div class="field-icon" style="background:#f0fdf4;">
+                            <i class="bi bi-envelope-fill text-success"></i>
                         </div>
-                        <div class="col-md-6">
-                            <label class="text-muted text-uppercase form-label label-pequeno">Tipo de Documento</label>
-                            <p class="fw-medium mb-0 fs-5">{{ user.tipo_documento|default:"-" }} {{ user.numero_documento|default:"" }}</p>
+                        <div>
+                            <div class="field-label">Correo Electrónico</div>
+                            <div class="field-value">{{ user.email }}</div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="text-muted text-uppercase form-label label-pequeno">Residencia</label>
-                            <p class="fw-medium mb-0 fs-5">{{ user.residencia|default:"No registrada" }}</p>
+                    </div>
+
+                    <div class="info-field">
+                        <div class="field-icon" style="background:#fef3c7;">
+                            <i class="bi bi-telephone-fill text-warning"></i>
+                        </div>
+                        <div>
+                            <div class="field-label">Teléfono</div>
+                            <div class="field-value {% if not user.telefono %}empty{% endif %}">
+                                {{ user.telefono|default:"No registrado" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-field">
+                        <div class="field-icon" style="background:#f5f3ff;">
+                            <i class="bi bi-card-text text-purple" style="color:#7c3aed;"></i>
+                        </div>
+                        <div>
+                            <div class="field-label">Documento de Identidad</div>
+                            <div class="field-value {% if not user.tipo_documento %}empty{% endif %}">
+                                {% if user.tipo_documento %}
+                                    {{ user.tipo_documento }}
+                                    {% if user.numero_documento %} — <code>{{ user.numero_documento }}</code>{% endif %}
+                                {% else %}
+                                    No registrado
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-field">
+                        <div class="field-icon" style="background:#fff7ed;">
+                            <i class="bi bi-geo-alt-fill text-orange" style="color:#ea580c;"></i>
+                        </div>
+                        <div>
+                            <div class="field-label">Lugar de Residencia</div>
+                            <div class="field-value {% if not user.residencia %}empty{% endif %}">
+                                {{ user.residencia|default:"No registrada" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-field">
+                        <div class="field-icon" style="background:#f0f9ff;">
+                            <i class="bi bi-person-badge-fill" style="color:#0284c7;"></i>
+                        </div>
+                        <div>
+                            <div class="field-label">Nombre de Usuario</div>
+                            <div class="field-value"><code>{{ user.username }}</code></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Acceso Rápido -->
+            <div class="card data-card">
+                <div class="card-header-custom bg-white">
+                    <div class="rounded-2 p-1" style="background:#f0fdf4;">
+                        <i class="bi bi-lightning-fill text-success fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold mb-0 text-dark">Acceso Rápido</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6 col-md-4">
+                            <a href="{% url 'mis_reservas_usuario' %}" class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none text-center"
+                               style="background:#f0fdf4;border:1px solid #bbf7d0;transition:all 0.2s;"
+                               onmouseover="this.style.background='#dcfce7'" onmouseout="this.style.background='#f0fdf4'">
+                                <i class="bi bi-calendar-check-fill text-success fs-3 mb-2"></i>
+                                <span class="small fw-semibold text-success">Mis Reservas</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <a href="{% url 'mis_comprobantes' %}" class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none text-center"
+                               style="background:#eff6ff;border:1px solid #bfdbfe;transition:all 0.2s;"
+                               onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                                <i class="bi bi-credit-card-fill text-primary fs-3 mb-2"></i>
+                                <span class="small fw-semibold text-primary">Mis Pagos</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <a href="{% url 'mis_resenas' %}" class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none text-center"
+                               style="background:#fefce8;border:1px solid #fde68a;transition:all 0.2s;"
+                               onmouseover="this.style.background='#fef9c3'" onmouseout="this.style.background='#fefce8'">
+                                <i class="bi bi-star-fill text-warning fs-3 mb-2"></i>
+                                <span class="small fw-semibold text-warning">Mis Reseñas</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <a href="{% url 'mis_pqrs' %}" class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none text-center"
+                               style="background:#fff7ed;border:1px solid #fed7aa;transition:all 0.2s;"
+                               onmouseover="this.style.background='#ffedd5'" onmouseout="this.style.background='#fff7ed'">
+                                <i class="bi bi-patch-question-fill text-orange fs-3 mb-2" style="color:#ea580c;"></i>
+                                <span class="small fw-semibold" style="color:#ea580c;">Mis PQRS</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <a href="/" class="d-flex flex-column align-items-center p-3 rounded-3 text-decoration-none text-center"
+                               style="background:#f5f3ff;border:1px solid #ddd6fe;transition:all 0.2s;"
+                               onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='#f5f3ff'">
+                                <i class="bi bi-compass-fill fs-3 mb-2" style="color:#7c3aed;"></i>
+                                <span class="small fw-semibold" style="color:#7c3aed;">Explorar</span>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <form action="{% url 'logout' %}" method="post" class="m-0">
+                                {% csrf_token %}
+                                <button type="submit" class="w-100 d-flex flex-column align-items-center p-3 rounded-3 border-0 text-center"
+                                   style="background:#fff1f2;border:1px solid #fecdd3 !important;cursor:pointer;transition:all 0.2s;"
+                                   onmouseover="this.style.background='#ffe4e6'" onmouseout="this.style.background='#fff1f2'">
+                                    <i class="bi bi-box-arrow-right text-danger fs-3 mb-2"></i>
+                                    <span class="small fw-semibold text-danger">Cerrar Sesión</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- ... (Tu tarjeta de promoción Next Expedition se queda igual) ... -->
+
         </div>
-        <!-- ... (Tu columna de Estadísticas e Intereses se queda igual por ahora) ... -->
+
+        <!-- Columna derecha: Estadísticas + Seguridad -->
+        <div class="col-lg-5">
+
+            <!-- Estadísticas -->
+            <div class="card data-card mb-4">
+                <div class="card-header-custom bg-white">
+                    <div class="rounded-2 p-1" style="background:#f0fdf4;">
+                        <i class="bi bi-bar-chart-fill text-success fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold mb-0 text-dark">Mis Estadísticas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="stat-pill">
+                                <div class="stat-n">{{ user.reservas_realizadas.count|default:"0" }}</div>
+                                <div class="stat-l">Reservas</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-pill">
+                                <div class="stat-n">{{ user.comprobantes.count|default:"0" }}</div>
+                                <div class="stat-l">Pagos</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-pill">
+                                <div class="stat-n">{{ user.comentarios.count|default:"0" }}</div>
+                                <div class="stat-l">Reseñas</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-pill">
+                                <div class="stat-n">{{ user.pqrs.count|default:"0" }}</div>
+                                <div class="stat-l">PQRS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seguridad de la cuenta -->
+            <div class="card data-card mb-4">
+                <div class="card-header-custom bg-white">
+                    <div class="rounded-2 p-1" style="background:#f0fdf4;">
+                        <i class="bi bi-shield-lock-fill text-success fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold mb-0 text-dark">Seguridad de la Cuenta</h6>
+                </div>
+                <div class="card-body">
+                    <div class="info-field">
+                        <div class="field-icon" style="background:#f0fdf4;">
+                            <i class="bi bi-key-fill text-success"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="field-label">Contraseña</div>
+                            <div class="field-value">••••••••••••</div>
+                        </div>
+                        <a href="#" class="btn btn-sm btn-outline-secondary rounded-pill px-3" style="font-size:0.75rem;">
+                            Cambiar
+                        </a>
+                    </div>
+                    <div class="info-field">
+                        <div class="field-icon" style="background:#f0fdf4;">
+                            <i class="bi bi-calendar-check text-success"></i>
+                        </div>
+                        <div>
+                            <div class="field-label">Último acceso</div>
+                            <div class="field-value" style="font-size:0.85rem;">
+                                {{ user.last_login|date:"d/m/Y H:i"|default:"—" }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-field">
+                        <div class="field-icon" style="background:#f0fdf4;">
+                            <i class="bi bi-person-check-fill text-success"></i>
+                        </div>
+                        <div>
+                            <div class="field-label">Estado de la cuenta</div>
+                            <div class="field-value">
+                                {% if user.is_active %}
+                                    <span class="badge bg-success rounded-pill">Activa</span>
+                                {% else %}
+                                    <span class="badge bg-danger rounded-pill">Inactiva</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Próxima Reserva -->
+            <div class="card data-card" style="background:linear-gradient(135deg,#1a6634,#22c55e);border-radius:16px;">
+                <div class="card-body p-4 text-white">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-airplane-fill fs-4"></i>
+                        <h6 class="fw-bold mb-0">Próxima Aventura</h6>
+                    </div>
+                    {% with proxima=user.reservas_realizadas.all|dictsort:"fecha"|first %}
+                    {% if proxima %}
+                        <p class="mb-1 fw-semibold" style="color:rgba(255,255,255,0.95)">{{ proxima.paquete.nombre }}</p>
+                        <p class="mb-2 small" style="color:rgba(255,255,255,0.75)">
+                            <i class="bi bi-calendar me-1"></i>{{ proxima.fecha|date:"d/m/Y" }}
+                            &nbsp;·&nbsp;
+                            <span class="badge bg-white text-success rounded-pill">{{ proxima.get_estado_display }}</span>
+                        </p>
+                        <p class="mb-3 fw-bold fs-5">${{ proxima.monto_total }}</p>
+                        <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-sm btn-light text-success fw-bold rounded-pill px-3">
+                            Ver detalles →
+                        </a>
+                    {% else %}
+                        <p class="mb-3" style="color:rgba(255,255,255,0.8);font-size:0.9rem;">
+                            Aún no tienes reservas. ¡Es momento de planear tu próxima aventura en Mongua!
+                        </p>
+                        <a href="/" class="btn btn-sm btn-light text-success fw-bold rounded-pill px-3">
+                            <i class="bi bi-search me-1"></i>Explorar Destinos
+                        </a>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
-<!-- Modal para Editar Perfil -->
+<!-- ══ MODAL EDITAR PERFIL ══ -->
 <div class="modal fade" id="modalEditarPerfil" tabindex="-1" aria-labelledby="modalEditarPerfilLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 border-0 shadow">
-            <div class="modal-header border-bottom-0 p-4">
-                <h5 class="modal-title fw-bold" id="modalEditarPerfilLabel">Actualizar Información</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-0 p-4 pb-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-3 p-2 bg-success bg-opacity-10">
+                        <i class="bi bi-pencil-fill text-success"></i>
+                    </div>
+                    <h5 class="modal-title fw-bold mb-0" id="modalEditarPerfilLabel">Editar Perfil</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <form action="{% url 'detalles' %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="editar_perfil" value="1">
-                <div class="modal-body p-4 pt-0">
+                <div class="modal-body px-4 pb-2">
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label text-muted small fw-bold">Nombres</label>
-                            <input type="text" name="first_name" class="form-control rounded-3" value="{{ user.first_name }}" required>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:.06em;">Nombres</label>
+                            <input type="text" name="first_name" class="form-control rounded-3" value="{{ user.first_name }}" placeholder="Tu nombre" required>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label text-muted small fw-bold">Apellidos</label>
-                            <input type="text" name="last_name" class="form-control rounded-3" value="{{ user.last_name }}" required>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:.06em;">Apellidos</label>
+                            <input type="text" name="last_name" class="form-control rounded-3" value="{{ user.last_name }}" placeholder="Tus apellidos" required>
                         </div>
                         <div class="col-12">
-                            <label class="form-label text-muted small fw-bold">Tipo de Documento</label>
+                            <label class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:.06em;">Tipo de Documento</label>
                             <select name="tipo_documento" class="form-select rounded-3">
-                                <option value="Cédula de Ciudadanía" {% if user.tipo_documento == 'Cédula de Ciudadanía' %}selected{% endif %}>Cédula de Ciudadanía</option>
-                                <option value="Cédula de Extranjería" {% if user.tipo_documento == 'Cédula de Extranjería' %}selected{% endif %}>Cédula de Extranjería</option>
-                                <option value="Pasaporte" {% if user.tipo_documento == 'Pasaporte' %}selected{% endif %}>Pasaporte</option>
+                                <option value="Cédula de Ciudadanía" {% if user.tipo_documento == 'Cédula de Ciudadanía' or user.tipo_documento == 'CC' %}selected{% endif %}>Cédula de Ciudadanía</option>
+                                <option value="Cédula de Extranjería" {% if user.tipo_documento == 'Cédula de Extranjería' or user.tipo_documento == 'CE' %}selected{% endif %}>Cédula de Extranjería</option>
+                                <option value="Pasaporte" {% if user.tipo_documento == 'Pasaporte' or user.tipo_documento == 'PAS' %}selected{% endif %}>Pasaporte</option>
                             </select>
                         </div>
                         <div class="col-12">
-                            <label class="form-label text-muted small fw-bold">Teléfono</label>
-                            <input type="text" name="telefono" class="form-control rounded-3" value="{{ user.telefono }}">
+                            <label class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:.06em;">Número de Documento</label>
+                            <input type="text" name="numero_documento" class="form-control rounded-3" value="{{ user.numero_documento|default:'' }}" placeholder="Ej: 1234567890">
                         </div>
                         <div class="col-12">
-                            <label class="form-label text-muted small fw-bold">Lugar de Residencia</label>
-                            <input type="text" name="residencia" class="form-control rounded-3" value="{{ user.residencia }}">
+                            <label class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:.06em;">Teléfono / Celular</label>
+                            <input type="text" name="telefono" class="form-control rounded-3" value="{{ user.telefono }}" placeholder="Ej: 3001234567">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted text-uppercase" style="font-size:0.72rem;letter-spacing:.06em;">Lugar de Residencia</label>
+                            <input type="text" name="residencia" class="form-control rounded-3" value="{{ user.residencia }}" placeholder="Ej: Bogotá, Colombia">
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-top-0 p-4">
+                <div class="modal-footer border-0 px-4 pb-4">
                     <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success rounded-pill px-4">Guardar Cambios</button>
+                    <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold">
+                        <i class="bi bi-check-lg me-1"></i>Guardar Cambios
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-    </div>
+
+{% block extra_js %}
+<script>
+// Preview de foto antes de subir
+function previewAndSubmit(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('preview-avatar').src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+        // Subir automáticamente
+        setTimeout(function() {
+            document.getElementById('form-foto').submit();
+        }, 400);
+    }
+}
+</script>
+{% endblock %}
+
 {% endblock %}

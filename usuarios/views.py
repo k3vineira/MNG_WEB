@@ -210,13 +210,14 @@ def perfil_view(request):
             user.save()
             messages.success(request, "¡Foto de perfil actualizada con éxito!")
         elif request.POST.get('editar_perfil') == '1':
-            user.first_name  = request.POST.get('first_name', user.first_name)
-            user.last_name   = request.POST.get('last_name', user.last_name)
-            user.tipo_documento = request.POST.get('tipo_documento', user.tipo_documento)
-            user.telefono    = request.POST.get('telefono', user.telefono)
-            user.residencia  = request.POST.get('residencia', user.residencia)
+            user.first_name      = request.POST.get('first_name', user.first_name).strip()
+            user.last_name       = request.POST.get('last_name', user.last_name).strip()
+            user.tipo_documento  = request.POST.get('tipo_documento', user.tipo_documento)
+            user.numero_documento = request.POST.get('numero_documento', user.numero_documento) or user.numero_documento
+            user.telefono        = request.POST.get('telefono', user.telefono).strip()
+            user.residencia      = request.POST.get('residencia', user.residencia).strip()
             user.save()
-            messages.success(request, "¡Información actualizada correctamente!")
+            messages.success(request, '¡Información actualizada correctamente!')
         return redirect('detalles')
     return render(request, 'private/perfil.html')
 
