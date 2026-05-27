@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Paquete, Actividades, Categoria, Tarifa ,Temporada
 from django.db.models import Count, Q
 from django import forms
+from .forms import TemporadaForm
 
 
 
@@ -276,13 +277,13 @@ class TemporadaListView(ListView):
 
 class TemporadaCreateView(CreateView):
     model = Temporada
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'estado']
+    form_class = TemporadaForm
     template_name = 'admin/temporada/agregar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
     
 class TemporadaUpdateView(UpdateView):
     model = Temporada
-    fields = ['nombre', 'fecha_inicio', 'fecha_fin' ,'estado']
+    form_class = TemporadaForm
     template_name = 'admin/temporada/editar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
 

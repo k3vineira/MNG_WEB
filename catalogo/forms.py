@@ -59,10 +59,16 @@ class TarifaForm(ModelForm):
 class TemporadaForm(ModelForm):
     class Meta:
         model = Temporada
-        fields = '__all__'
+        fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'estado']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'fecha_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'fecha_fin': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'fecha_inicio': forms.DateInput(
+                format='%Y-%m-%d', 
+                attrs={'class': 'form-control', 'type': 'date'}
+            ),
+            'fecha_fin': forms.DateInput(
+                format='%Y-%m-%d', 
+                attrs={'class': 'form-control', 'type': 'date'}
+            ),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

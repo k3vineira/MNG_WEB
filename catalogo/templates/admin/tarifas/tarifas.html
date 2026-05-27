@@ -47,13 +47,13 @@
                         </td>
                         <td class="fw-bold text-success py-3">${{ tarifa.precio_adulto }}</td>
                         <td class="fw-bold text-success py-3">${{ tarifa.precio_menor }}</td>
-                        <td class="text-center py-3">
+                           <td class="text-center py-3">
                             <span class="badge rounded-pill px-4 py-2 fs-6 
-                            {% if tarifa.estado == 'activa' %}bg-success-subtle text-success
-                            {% elif tarifa.estado == 'inactiva' %}bg-danger-subtle text-danger
-                            {% else %}bg-secondary-subtle text-secondary{% endif %}">
-                                {{ tarifa.estado|capfirst }}
-                            </span>
+                             {% if tarifa.estado == 'activa' %}bg-success text-white
+                             {% elif tarifa.estado == 'inactiva' %}bg-danger text-white
+                             {% else %}bg-secondary text-white{% endif %}">
+                             {{ tarifa.estado|capfirst }}
+                        </span>
                         </td>
                         <td class="text-center py-3">
                             <a href="{% url 'editar_tarifa' tarifa.pk %}" class="text-primary text-decoration-none fw-bold small">EDITAR</a>

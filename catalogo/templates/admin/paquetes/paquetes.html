@@ -45,13 +45,13 @@
                             <span class="text-muted small">Sin imagen</span>
                         {% endif %}
                         </td>
-                        <td class="text-center py-3">
-                            {% if paquete.estado %}
-                                <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill">Activo</span>
-                            {% else %}
+                             <td class="py-3">
+                                {% if paquete.estado %}
+                                 <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill">Activo</span>
+                                {% else %}
                                 <span class="badge bg-danger text-white px-4 py-2 fs-6 rounded-pill">Inactivo</span>
-                            {% endif %}
-                        </td>
+                                {% endif %}
+                                </td>
                         <td class="text-center py-3">
                             <a href="{% url 'editar_paquete' paquete.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
                             <a href="{% url 'eliminar_paquete' paquete.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>

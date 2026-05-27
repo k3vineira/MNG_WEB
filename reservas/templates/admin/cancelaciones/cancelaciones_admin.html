@@ -40,18 +40,18 @@
                     <td class="py-4 text-muted fst-italic">"{{ cancelacion.motivo|truncatechars:30 }}"</td>
                     <td class="py-4 text-center fw-bold text-danger">${{ cancelacion.penalidad }}</td>
                     
-                    <td class="text-center py-4">
-                        <span class="badge rounded-pill px-4 py-2 
-                            {% if cancelacion.estado == 'pendiente' or cancelacion.estado == 'revision' %}bg-warning-subtle text-dark
-                            {% elif cancelacion.estado == 'confirmada' or cancelacion.estado == 'aceptada' %}bg-success-subtle text-success
-                            {% else %}bg-danger-subtle text-danger{% endif %}">
-                            {{ cancelacion.estado|capfirst }}
-                        </span>
+                   <td class="text-center py-4">
+                    <span class="badge rounded-pill px-4 py-2 
+                    {% if cancelacion.estado == 'pendiente' or cancelacion.estado == 'revision' %}bg-warning text-dark
+                    {% elif cancelacion.estado == 'confirmada' or cancelacion.estado == 'aceptada' %}bg-success text-white
+                    {% else %}bg-danger text-white{% endif %}">
+                    {{ cancelacion.estado|capfirst }}
+                    </span>
                     </td>
                     
                     <td class="text-center py-4">
-                        <a href="{% url 'editar_cancelacion' cancelacion.id %}" class="btn btn-outline-primary btn-sm px-3 py-2 fw-bold">
-                            <i class="bi bi-pencil-square me-1"></i> Gestionar
+                        <a href="{% url 'editar_cancelacion' cancelacion.id %}" class="btn btn-outline-primary btn-sm px-3 py-2 fw-bold" style="background-color: var(--verde-oscuro); color: white;">
+                            <i class="bi  me-1"></i> Gestionar
                         </a>
                     </td>
                 </tr>

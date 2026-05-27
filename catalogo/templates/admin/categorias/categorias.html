@@ -37,13 +37,13 @@
                     {% for cat in categorias %}
                     <tr>
                         <td class="ps-5 py-3 fw-bold text-dark">{{ cat.nombre }}</td>
-                        <td class="text-center py-3">
-                            {% if cat.estado %}
-                                <span class="badge bg-success-subtle text-success rounded-pill px-4 py-2 fs-6">Activo</span>
-                            {% else %}
-                                <span class="badge bg-danger-subtle text-danger rounded-pill px-4 py-2 fs-6">Inactivo</span>
-                            {% endif %}
-                        </td>
+                      <td class="text-center py-3">
+                     {% if cat.estado %}
+                    <span class="badge bg-success text-white rounded-pill px-4 py-2 fs-6">Activo</span>
+                    {% else %}
+                     <span class="badge bg-danger text-white rounded-pill px-4 py-2 fs-6">Inactivo</span>
+                    {% endif %}
+                    </td>
                         <td class="text-center py-3">
                             <a href="{% url 'editar_categoria' cat.pk %}" class="text-primary text-decoration-none mx-3 fw-bold small">EDITAR</a>
                             <a href="{% url 'eliminar_categoria' cat.pk %}" class="text-danger text-decoration-none mx-3 fw-bold small">ELIMINAR</a>

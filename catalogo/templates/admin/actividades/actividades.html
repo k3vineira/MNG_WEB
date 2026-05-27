@@ -49,12 +49,12 @@
                                 <span class="badge bg-secondary-subtle text-secondary rounded-pill px-4 py-2 fs-6">No</span>
                             {% endif %}
                         </td>
-                        <td class="text-center py-3">
-                            <span class="badge rounded-pill px-4 py-2 fs-6 
-                                {% if actividad.estado %}bg-success-subtle text-success
-                                {% else %}bg-danger-subtle text-danger{% endif %}">
+                                <td class="text-center py-3">
+                                <span class="badge rounded-pill px-4 py-2 fs-6 
+                                    {% if actividad.estado %}bg-success text-white
+                                    {% else %}bg-danger text-white{% endif %}">
                                 {{ actividad.estado|yesno:"Activo,Inactivo" }}
-                            </span>
+                        </span>
                         </td>
                         <td class="text-center py-3">
                             <a href="{% url 'editar_actividad' actividad.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
