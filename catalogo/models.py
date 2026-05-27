@@ -1,11 +1,19 @@
 from django.db import models
 from django.conf import settings
 
-
 class Temporada(models.Model):
+    # Definimos las opciones
+    ESTADOS = [
+        ('programada', 'Programada'),
+        ('activa', 'Activa'),
+        ('finalizada', 'Finalizada'),
+    ]
+
     nombre = models.CharField(max_length=50, verbose_name='Nombre de la Temporada')
     fecha_inicio = models.DateField(verbose_name='Fecha de Inicio')
     fecha_fin = models.DateField(verbose_name='Fecha de Fin')
+    # Agregamos el campo estado
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='programada', verbose_name='Estado')
 
     class Meta:
         verbose_name = 'Temporada'
@@ -13,6 +21,7 @@ class Temporada(models.Model):
 
     def __str__(self):
         return self.nombre
+    
 
 
 class Categoria(models.Model):
@@ -78,7 +87,11 @@ class Tarifa(models.Model):
     temporada = models.ForeignKey(Temporada, on_delete=models.CASCADE, related_name='tarifas')
     precio_adulto = models.IntegerField(verbose_name='Precio por Adulto')
     precio_menor = models.IntegerField(verbose_name='Precio por Menor')
-
+    ESTADOS = [
+        ('activa', 'Activa'),
+        ('inactiva', 'Inactiva'),
+    ]
+    estado = models.CharField(max_length=10, choices=ESTADOS, default='activa')
     class Meta:
         verbose_name = 'Tarifa'
         verbose_name_plural = 'Tarifas'

@@ -3,7 +3,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import inicio
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -15,7 +16,5 @@ urlpatterns = [
     path('pagos/', include('pagos.urls')),
     path('', inicio, name='inicio'),
 ]
-
-# Servir archivos MEDIA en desarrollo
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

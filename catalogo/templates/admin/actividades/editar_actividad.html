@@ -3,10 +3,10 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-12 col-md-5">
+        <div class="col-12 col-md-6">
             <div class="card shadow-sm border-0">
                 
-                <div class="card-header text-white text-center" style="background-color: #004d40;">
+                <div class="card-header text-white text-center" style="background-color: var(--verde-oscuro);">
                     <h5 class="mb-0 fs-6 fw-bold text-uppercase">
                         <i class="bi bi-pencil-square me-2"></i>Editar Registro
                     </h5>
@@ -16,21 +16,28 @@
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         
-                        <div class="small text-dark">
-                            {{ form.as_p }}
-                        </div>
-
+                       <div class="p-3 bg-white rounded-3 border">
+                      {% for field in form %}
+                      <div class="mb-3 {% if field.field.widget.input_type == 'checkbox' %}form-check form-switch{% endif %}">
+            
+                       {% if field.field.widget.input_type == 'checkbox' %}
+                       {{ field }} 
+                       <label class="form-check-label fw-bold text-secondary">{{ field.label }}</label>
+                       {% else %}
+                       <label class="form-label fw-bold text-secondary">{{ field.label }}</label>
+                      {{ field }}
+                      {% endif %}
+            
+                       </div>
+                      {% endfor %}
+                       </div>
                         <hr class="my-4 opacity-25">
 
                         <div class="d-flex justify-content-center gap-3">
-                            <a href="{% url 'listar_actividades' %}" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">
-                                Cancelar
-                            </a>
-                        
-                         <button type="submit" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">
+                            <a href="{% url 'listar_actividades' %}" class="btn btn-light border px-4">Cancelar</a>
+                            <button type="submit" class="btn text-white px-4" style="background-color: var(--verde-oscuro); color: white;">
                                 Guardar cambios
                             </button>
-
                         </div>
                     </form>
                 </div>

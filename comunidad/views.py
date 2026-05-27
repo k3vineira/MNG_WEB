@@ -7,6 +7,7 @@ from .forms import PqrsForm , BlogForm
 from django.contrib import messages
 from usuarios.models import Cliente
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q
 
 def blog(request):
     blogs = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
@@ -27,6 +28,24 @@ class PQRSListView(ListView):
     def get_queryset(self):
         
         return PQRS.objects.all().order_by('-fecha')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        stats = PQRS.objects.aggregate(
+            total=Count('id'),
+            respondidas=Count('id', filter=Q(respuesta__isnull=False) & ~Q(respuesta='')),
+            pendientes=Count('id', filter=Q(respuesta__isnull=True) | Q(respuesta=''))
+        )
+        
+        
+        context['stats_list'] = [
+            ('Total PQRS', stats['total'], 'text-dark'),
+            ('Respondidas', stats['respondidas'], 'text-success'),
+            ('Pendientes', stats['pendientes'], 'text-danger'),
+        ]
+        
+        return context
+    
 
 def contestar_pqrs(request, pqrs_id):
     pqr = get_object_or_404(PQRS, pk=pqrs_id)
@@ -72,6 +91,23 @@ class BlogListView(ListView):
     model = Blog
     template_name = 'admin/blog/blog.html' 
     context_object_name = 'blogs'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Conteo de publicados vs borradores
+        stats = Blog.objects.aggregate(
+            total=Count('id'),
+            publicados=Count('id', filter=Q(publicado=True)),
+            borradores=Count('id', filter=Q(publicado=False))
+        )
+        
+        context['stats_list'] = [
+            ('Total Blogs', stats['total'], 'text-dark'),
+            ('Publicados', stats['publicados'], 'text-success'),
+            ('Borradores', stats['borradores'], 'text-danger'),
+        ]
+        return context
 class BlogCreateView(CreateView):
     model = Blog
     form = BlogForm()
