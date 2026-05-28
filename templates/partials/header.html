@@ -49,74 +49,7 @@
           class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4"
           aria-labelledby="offcanvasNavbarDropdown"
         >
-          <li
-            class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column"
-          >
-            <span
-              class="text-muted fw-bold text-uppercase"
-              style="font-size: 0.65rem; letter-spacing: 0.5px"
-              >Rol de Usuario</span
-            >
-
-            <span class="small fw-semibold text-dark">
-              {% if user.is_superuser %} Administrador {% elif user.is_staff %} Staff {% elif user.es_guia %} Guía Turístico {% else %} Viajero {% endif %}
-            </span>
-          </li>
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-success"
-              href="{% url 'detalles' %}"
-              ><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a
-            >
-          </li>
-          <!--Menú Premium (Offcanvas): -->
-          {% if user.is_staff %}
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-primary"
-              href="{% url 'dashboard' %}"
-              ><i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin</a
-            >
-          </li>
-          {% endif %} {% if user.es_turista or user.is_staff %}
-          <li>
-            <a class="dropdown-item py-2" href="/mis-viajes/"
-              ><i class="bi bi-map me-2"></i>Mis Viajes</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="{% url 'listar_reservas' %}"
-              ><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="/guardados/"
-              ><i class="bi bi-bookmark me-2"></i>Guardados</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="/mis-comentarios/"
-              ><i class="bi bi-chat-left-text me-2"></i>Comentarios</a
-            >
-          </li>
-          {% if user.es_turista %}
-          <li>
-            <a class="dropdown-item py-2" href="#"><i class="bi bi-star me-2"></i>Nuevo Enlace Turista</a>
-          </li>
-          {% endif %}
-          {% endif %}
-
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <form action="{% url 'logout' %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="dropdown-item text-danger py-2">
-                Cerrar Sesión
-              </button>
-            </form>
-          </li>
+          {% include 'partials/user_dropdown_items.html' %}
         </ul>
       </div>
       {% else %}
@@ -302,75 +235,7 @@
           class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4"
           aria-labelledby="navbarDropdown"
         >
-          <li
-            class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column"
-          >
-            <span
-              class="text-muted fw-bold text-uppercase"
-              style="font-size: 0.65rem; letter-spacing: 0.5px"
-              >Rol de Usuario</span
-            >
-            <span class="small fw-semibold text-dark">
-              {% if user.is_superuser %} Administrador {% elif user.is_staff %} Staff {% elif user.es_guia %} Guía Turístico {% else %} Viajero {% endif %}
-            </span>
-          </li>
-
-          {% if user.is_staff %}
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-primary"
-              href="{% url 'dashboard' %}"
-            >
-              <i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin
-            </a>
-          </li>
-          {% endif %} {% if user.es_turista %}
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-success"
-              href="{% url 'index_turista' %}"
-            >
-              <i class="bi bi-grid-1x2-fill me-2"></i>Mi Panel
-            </a>
-          </li>
-          {% endif %} {% if user.es_turista or user.is_staff %}
-          <li>
-            <a class="dropdown-item py-2" href="/mis-viajes/"
-              ><i class="bi bi-map me-2"></i>Mis Viajes</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="{% url 'listar_reservas' %}"
-              ><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="/guardados/"
-              ><i class="bi bi-bookmark me-2"></i>Guardados</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="/mis-comentarios/"
-              ><i class="bi bi-chat-left-text me-2"></i>Comentarios</a
-            >
-          </li>
-          {% if user.es_turista %}
-          <li>
-            <a class="dropdown-item py-2" href="#"><i class="bi bi-star me-2"></i>Nuevo Enlace Turista</a>
-          </li>
-          {% endif %}
-          {% endif %}
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <form action="{% url 'logout' %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="dropdown-item text-danger py-2">
-                Cerrar Sesión
-              </button>
-            </form>
-          </li>
+          {% include 'partials/user_dropdown_items.html' %}
         </ul>
       </div>
       {% else %}
