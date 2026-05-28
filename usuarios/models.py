@@ -20,6 +20,11 @@ class Usuario(AbstractUser):
     residencia = models.CharField(max_length=100, blank=True)
     imagen_perfil = models.ImageField(upload_to='perfiles/', null=True, blank=True, verbose_name='Imagen de Perfil')
     es_guia = models.BooleanField(default=False)
+
+    @property
+    def es_turista(self):
+        return self.rol == self.Roles.CLIENTE and not self.es_guia and not self.is_staff and not self.is_superuser
+
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
