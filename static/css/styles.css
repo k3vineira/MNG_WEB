@@ -1,8 +1,20 @@
 
 /* ══════════════ VARIABLES GLOBALES DE COLOR ══════════════ */
-
 :root {
-    /* Sobrescribimos el color 'success' de Bootstrap para todo el proyecto */
+    /* Paleta Monagua - Verde */
+    --verde-oscuro: #005215;
+    --verde-bosque: #1a261f;
+    --verde-deep: #1a251e;
+    --verde-main: #2c6e3c;
+    --verde-mid: #406d46;
+    --verde-medio: #5ABA73;
+    --verde-accent: #4caf70;
+    --verde-claro: #96DCAA;
+    --verde-menta: #CFFFE3;
+    --verde-light: #d1e7dd;
+}
+:root {
+   
     --bs-success: #1a261f;
     --bs-success-rgb: 26, 38, 31;
     --primary-green: #1a261f;
@@ -234,15 +246,6 @@ body.sidebar-open #mainSidebar {
 
 body.sidebar-open #sidebar-overlay {
     display: block !important;
-}
-
-:root {
-    --bs-primary: #3B643F;
-    --verde: #3B643F;
-    --verde-oscuro: #1A2E1C;
-    --verde-suave: #A8C5AA;
-    --crema: #F5F0E8;
-    --texto: #4A5E4D;
 }
 
 .font-playfair {

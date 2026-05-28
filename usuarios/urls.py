@@ -6,8 +6,10 @@ from .views import login_view, logout_view
 
 
 urlpatterns = [
-    path('', views.inicio_usuarios, name='inicio'),
-    path('dashboard/', views.dashboard_admin, name='dashboard'),
+    path('', views.index_turista, name='inicio'),
+    
+    path('dashboard/', views.index_turista, name='index_turista'),
+    path('admin-dashboard/', views.dashboard_admin, name='dashboard'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('registro/', views.registro_view, name='registro'),

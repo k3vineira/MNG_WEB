@@ -3,6 +3,7 @@ from . import views
 
 
 
+
 urlpatterns = [
     
     path('nuestros-destinos/', views.destinos, name='destinos'),
@@ -36,3 +37,4 @@ urlpatterns = [
     path('tarifas/crear/', views.TarifaCreateView.as_view(), name='crear_tarifa'),
     path('tarifas/editar/<int:pk>/', views.TarifaUpdateView.as_view(), name='editar_tarifa'),
 ]
+
