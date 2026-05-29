@@ -274,105 +274,44 @@
 
     <div class="d-flex align-items-center gap-3">
       {% if user.is_authenticated %}
-      <!-- Caso: Usuario Logueado (Dropdown en Navbar Principal) -->
-      <div class="dropdown">
-        <button
-          class="nav-link dropdown-toggle d-flex align-items-center gap-2 btn btn-outline-success rounded-pill px-3 py-1"
-          type="button"
-          id="navbarDropdown"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          {% if user.imagen_perfil %}
-          <img
-            src="{{ user.imagen_perfil.url }}"
-            alt="{{ user.username }}"
-            width="28"
-            height="28"
-            class="rounded-circle object-fit-cover"
-          />
-          {% else %}
-          <i class="bi bi-person-circle fs-5"></i>
-          {% endif %}
-          <span class="d-none d-md-inline"
-            >Hola, {{ user.first_name|default:user.username }}</span
-          >
-        </button>
-        <ul
-          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4"
-          aria-labelledby="navbarDropdown"
-        >
-          <li
-            class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column"
-          >
-            <span
-              class="text-muted fw-bold text-uppercase"
-              style="font-size: 0.65rem; letter-spacing: 0.5px"
-              >Rol de Usuario</span
-            >
-            <span class="small fw-semibold text-dark">
-              {% if user.is_superuser %} Administrador {% elif user.is_staff %} Staff {% elif user.es_guia %} Guía Turístico {% else %} Viajero {% endif %}
-            </span>
-          </li>
+        <!-- Caso: Usuario Logueado (Dropdown en Navbar Principal) -->
+        <div class="dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 btn btn-outline-success rounded-pill px-3 py-1" 
+             href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if user.imagen_perfil %}
+              <img src="{{ user.imagen_perfil.url }}" alt="{{ user.username }}" width="28" height="28" class="rounded-circle object-fit-cover">
+            {% else %}
+              <i class="bi bi-person-circle fs-5"></i>
+            {% endif %}
+            <span class="d-none d-md-inline">Hola, {{ user.first_name|default:user.username }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4" aria-labelledby="navbarDropdown">
+            <li class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column">
+              <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Rol de Usuario</span>
+              <span class="small fw-semibold text-dark">
+                {% if user.is_superuser %}Administrador{% elif user.is_staff %}Staff{% elif user.es_guia %}Guía Turístico{% else %}Viajero{% endif %}
+              </span>
+            </li>
+            <li><a class="dropdown-item py-2 fw-bold text-success" href="{% url 'detalles' %}"><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a></li>
+            {% if user.is_staff %}
+              <li><a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin</a></li>
+            {% endif %}
+            {% if user.es_turista or user.is_staff %}
+              <li><a class="dropdown-item py-2" href="{% url 'mis_reservas_usuario' %}"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a></li>
+              <li><a class="dropdown-item py-2" href="{% url 'mis_pqrs' %}"><i class="bi bi-chat-left-text me-2"></i>Mis Pqrs</a></li>
 
-          {% if user.is_staff %}
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-primary"
-              href="{% url 'dashboard' %}"
-            >
-              <i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin
-            </a>
-          </li>
-          {% endif %} {% if user.es_turista %}
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-success"
-              href="{% url 'index_turista' %}"
-            >
-              <i class="bi bi-grid-1x2-fill me-2"></i>Mi Panel
-            </a>
-          </li>
-          {% endif %} {% if user.es_turista or user.is_staff %}
-          <li>
-            <a class="dropdown-item py-2" href="/mis-viajes/"
-              ><i class="bi bi-map me-2"></i>Mis Viajes</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="{% url 'listar_reservas' %}"
-              ><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="/guardados/"
-              ><i class="bi bi-bookmark me-2"></i>Guardados</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="/mis-comentarios/"
-              ><i class="bi bi-chat-left-text me-2"></i>Comentarios</a
-            >
-          </li>
-          {% if user.es_turista %}
-          <li>
-            <a class="dropdown-item py-2" href="#"><i class="bi bi-star me-2"></i>Nuevo Enlace Turista</a>
-          </li>
-          {% endif %}
-          {% endif %}
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <form action="{% url 'logout' %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="dropdown-item text-danger py-2">
-                Cerrar Sesión
-              </button>
-            </form>
-          </li>
-        </ul>
-      </div>
+              <li><a class="dropdown-item py-2" href="/guardados/"><i class="bi bi-bookmark me-2"></i>Guardados</a></li>
+              <li><a class="dropdown-item py-2" href="/mis-comentarios/"><i class="bi bi-chat-left-text me-2"></i>Comentarios</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item text-danger py-2">Cerrar Sesión</button>
+              </form>
+            </li>
+          </ul>
+        </div>
       {% else %}
       <a
         class="nav-link btn btn-outline-success rounded-pill px-4 py-2"
