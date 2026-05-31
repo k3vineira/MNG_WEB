@@ -1,0 +1,126 @@
+{% extends "private/base_private.html" %}
+{% load static %}
+
+{% block titulo %}Mis Estadísticas | Monagua{% endblock %}
+
+{% block private_content %}
+<div class="container py-5" style="max-width:1000px;">
+    <!-- Header -->
+    <div class="mb-5">
+        <h1 class="fw-bold mb-1">Mis Estadísticas</h1>
+        <p class="text-muted">Una visión general de tu historial de viajes y actividad en Monagua.</p>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-4 mb-5">
+        <!-- Total Invertido -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
+                <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 50px; height: 50px;">
+                    <i class="bi bi-currency-dollar fs-4"></i>
+                </div>
+                <h6 class="text-muted small fw-medium mb-1">Inversión en Viajes</h6>
+                <h3 class="fw-bold text-success mb-0">${{ total_invertido|floatformat:2|default:"0.00" }}</h3>
+                <small class="text-muted" style="font-size: 0.7rem;">Solo pagos aprobados</small>
+            </div>
+        </div>
+
+        <!-- Reservas Totales -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 50px; height: 50px;">
+                    <i class="bi bi-calendar-check fs-4"></i>
+                </div>
+                <h6 class="text-muted small fw-medium mb-1">Reservas Totales</h6>
+                <h3 class="fw-bold text-primary mb-0">{{ total_reservas|default:"0" }}</h3>
+                <small class="text-muted" style="font-size: 0.7rem;">Registradas en tu cuenta</small>
+            </div>
+        </div>
+
+        <!-- Reseñas / Comentarios -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
+                <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 50px; height: 50px;">
+                    <i class="bi bi-star-fill fs-4"></i>
+                </div>
+                <h6 class="text-muted small fw-medium mb-1">Reseñas Compartidas</h6>
+                <h3 class="fw-bold text-warning mb-0">{{ total_comentarios|default:"0" }}</h3>
+                <small class="text-muted" style="font-size: 0.7rem;">Aportes a la comunidad</small>
+            </div>
+        </div>
+
+        <!-- PQRS Enviadas -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 50px; height: 50px;">
+                    <i class="bi bi-patch-question fs-4"></i>
+                </div>
+                <h6 class="text-muted small fw-medium mb-1">PQRS Solicitadas</h6>
+                <h3 class="fw-bold text-danger mb-0">{{ total_pqrs|default:"0" }}</h3>
+                <small class="text-muted" style="font-size: 0.7rem;">Peticiones o sugerencias</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="row g-4">
+        <!-- Breakdown of reservations -->
+        <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                <h5 class="fw-bold mb-4"><i class="bi bi-pie-chart text-success me-2"></i>Estado de mis Reservas</h5>
+                <div class="d-flex flex-column gap-3">
+                    <div>
+                        <div class="d-flex justify-content-between mb-1 small text-muted">
+                            <span>Confirmadas</span>
+                            <span>{{ reservas_confirmadas }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {% if total_reservas > 0 %}{{ reservas_confirmadas|add:"0"|widthratio:total_reservas 1 }}%{% else %}0%{% endif %}"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between mb-1 small text-muted">
+                            <span>Pendientes de Pago / Revisión</span>
+                            <span>{{ reservas_pendientes }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {% if total_reservas > 0 %}{{ reservas_pendientes|add:"0"|widthratio:total_reservas 1 }}%{% else %}0%{% endif %}"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between mb-1 small text-muted">
+                            <span>Canceladas</span>
+                            <span>{{ reservas_canceladas }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: {% if total_reservas > 0 %}{{ reservas_canceladas|add:"0"|widthratio:total_reservas 1 }}%{% else %}0%{% endif %}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ecosystem Awareness card -->
+        <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-success text-white h-100 position-relative overflow-hidden">
+                <div class="position-absolute end-0 bottom-0 opacity-10 m-n3 d-none d-sm-block">
+                    <i class="bi bi-compass" style="font-size: 12rem;"></i>
+                </div>
+                <div class="position-relative">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-tree-fill me-2"></i>Viajero Ecológico</h5>
+                    <p class="small mb-4" style="line-height: 1.6;">En Monagua nos esforzamos por preservar los senderos del Páramo de Mongua. Cada viaje confirmado contribuye a la conservación y el apoyo a las comunidades locales.</p>
+                    <div class="bg-white bg-opacity-20 rounded-3 p-3">
+                        <div class="d-flex gap-3 align-items-center">
+                            <span class="fs-1">🌱</span>
+                            <div>
+                                <h6 class="fw-bold mb-1">¡Gracias por viajar responsablemente!</h6>
+                                <p class="mb-0 small text-white-50">Sigue los consejos de Cóndy para mantener el páramo intacto.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

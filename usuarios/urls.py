@@ -26,4 +26,5 @@ urlpatterns = [
     path('guia-estado/<int:id>/<str:estado>/', views.guias_baja_reactivar, name='guias_baja_reactivar'),
     path('guias-guardar/', views.guias_guardar, name='guias_guardar'),
     path('mis-resenas/', views.mis_resenas_view, name='mis_resenas'),
+    path('mis-estadisticas/', views.estadisticas_usuario, name='mis_estadisticas'),
 ]

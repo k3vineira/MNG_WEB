@@ -20,7 +20,7 @@ def index_turista(request):
 def dashboard_admin(request):
     from reservas.models import Reserva, Cancelacion
     from catalogo.models import Paquete
-    from django.db.models import Sum, Count
+    from django.db.models import Sum, Count, Avg
     from django.utils.timesince import timesince
     from datetime import timedelta
 
@@ -40,6 +40,8 @@ def dashboard_admin(request):
     total_reservas = total_ventas = reservas_confirmadas = 0
     reservas_pendientes = reservas_canceladas = tasa_confirmacion = 0
     ingreso_por_reserva = cancelaciones_hoy = 0
+    total_pagos_rechazados = cancelaciones_pendientes = cancelaciones_rechazadas = 0
+    valoracion_promedio = 0.0
     ingresos_mensuales = [0] * 12
     reservas_semana = [0] * 7
     tours_populares = []
@@ -65,6 +67,14 @@ def dashboard_admin(request):
                     estado='confirmada', fecha__year=anio_actual, fecha__month=mes
                 ).aggregate(total=Sum('monto_total'))['total'] or 0
                 ingresos_mensuales[i] = float(total_mes)
+            
+            from pagos.models import ComprobantePago
+            total_pagos_rechazados = ComprobantePago.objects.filter(estado='rechazado').count()
+            cancelaciones_pendientes = Cancelacion.objects.filter(estado='revision').count()
+            cancelaciones_rechazadas = Cancelacion.objects.filter(estado='rechazada').count()
+            
+            from .models import Comentario
+            valoracion_promedio = round(Comentario.objects.filter(visible=True).aggregate(promedio=Avg('valoracion'))['promedio'] or 0.0, 1)
         except Exception as e:
             print(f"[Dashboard] Error: {e}")
         try:
@@ -115,9 +125,12 @@ def dashboard_admin(request):
         'reservas_canceladas':  reservas_canceladas,
         'reservas_semana':      reservas_semana,
         'tasa_confirmacion':    tasa_confirmacion,
-        'valoracion_promedio':  0.0,
+        'valoracion_promedio':  valoracion_promedio,
         'ingreso_por_reserva':  ingreso_por_reserva,
         'cancelaciones_hoy':    cancelaciones_hoy,
+        'total_pagos_rechazados': total_pagos_rechazados,
+        'cancelaciones_pendientes': cancelaciones_pendientes,
+        'cancelaciones_rechazadas': cancelaciones_rechazadas,
         'tours_populares':      tours_populares,
         'max_reservas':         max_reservas,
         'actividad_reciente':   actividad_reciente,
@@ -272,11 +285,25 @@ def guias_guardar(request):
 
 @login_required
 def enviar_comentario(request):
+    from catalogo.models import Paquete
     if request.method == 'POST':
         tipo       = request.POST.get('tipo', 'experiencia')
         titulo     = request.POST.get('titulo', '').strip()
         mensaje    = request.POST.get('mensaje', '').strip()
-        valoracion = int(request.POST.get('valoracion', 5))
+        try:
+            valoracion = max(1, min(5, int(request.POST.get('valoracion', 5))))
+        except (ValueError, TypeError):
+            valoracion = 5
+
+        paquete = None
+        if tipo.startswith('paquete_'):
+            try:
+                paquete_id = int(tipo.split('_')[1])
+                paquete = Paquete.objects.filter(id=paquete_id).first()
+                tipo = 'experiencia'
+            except (ValueError, IndexError):
+                pass
+
         if titulo and mensaje:
             Comentario.objects.create(
                 usuario=request.user,
@@ -284,39 +311,44 @@ def enviar_comentario(request):
                 titulo=titulo,
                 mensaje=mensaje,
                 valoracion=valoracion,
+                paquete=paquete,
             )
             messages.success(request, '¡Tu comentario fue enviado correctamente!')
         else:
             messages.error(request, 'Por favor completa todos los campos.')
-        return redirect('usuarios:enviar_comentario')
+        return redirect('mis_resenas')
 
     mis_comentarios = Comentario.objects.filter(
         usuario=request.user
-    ).order_by('-fecha_creacion')[:5]
+    ).select_related('paquete').order_by('-fecha_creacion')[:5]
 
     comentarios_publicos = Comentario.objects.filter(
         visible=True
-    ).exclude(usuario=request.user).order_by('-fecha_creacion')[:10]
+    ).select_related('usuario', 'paquete').exclude(usuario=request.user).order_by('-fecha_creacion')[:10]
 
+    paquetes_activos = Paquete.objects.filter(estado=True)
     context = {
         'mis_comentarios':      mis_comentarios,
         'comentarios_publicos': comentarios_publicos,
+        'paquetes_activos':     paquetes_activos,
     }
     return render(request, 'private/comentarios.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff)
 def listar_comentarios(request):
+    from django.db.models import Avg
     tipo_filtro       = request.GET.get('tipo', '')
     valoracion_filtro = request.GET.get('valoracion', '')
-    comentarios = Comentario.objects.select_related('usuario').all()
+    comentarios = Comentario.objects.select_related('usuario', 'paquete').all()
     if tipo_filtro:
         comentarios = comentarios.filter(tipo=tipo_filtro)
     if valoracion_filtro:
         comentarios = comentarios.filter(valoracion=valoracion_filtro)
     total          = comentarios.count()
     total_visibles = comentarios.filter(visible=True).count()
-    promedio = round(sum(c.valoracion for c in comentarios) / total, 1) if total > 0 else 0
+    agg = comentarios.aggregate(avg=Avg('valoracion'))
+    promedio = round(agg['avg'] or 0, 1)
     context = {
         'comentarios':        comentarios,
         'total':              total,
@@ -341,6 +373,7 @@ def toggle_visible(request, pk):
 @login_required
 def mis_resenas_view(request):
     from django.db.models import Avg, Count
+    from catalogo.models import Paquete
 
     # ── POST: crear nueva reseña ─────────────────────────────────────────
     if request.method == 'POST':
@@ -353,6 +386,15 @@ def mis_resenas_view(request):
         except (ValueError, TypeError):
             valoracion = 5
 
+        paquete = None
+        if tipo.startswith('paquete_'):
+            try:
+                paquete_id = int(tipo.split('_')[1])
+                paquete = Paquete.objects.filter(id=paquete_id).first()
+                tipo = 'experiencia'
+            except (ValueError, IndexError):
+                pass
+
         if titulo and mensaje:
             Comentario.objects.create(
                 usuario=request.user,
@@ -360,6 +402,7 @@ def mis_resenas_view(request):
                 titulo=titulo,
                 mensaje=mensaje,
                 valoracion=valoracion,
+                paquete=paquete,
             )
             messages.success(request, '¡Tu reseña fue enviada correctamente!')
         else:
@@ -369,11 +412,11 @@ def mis_resenas_view(request):
     # ── GET: mostrar reseñas ─────────────────────────────────────────────
     mis_resenas = Comentario.objects.filter(
         usuario=request.user
-    ).order_by('-fecha_creacion')[:10]
+    ).select_related('paquete').order_by('-fecha_creacion')[:10]
 
     resenas_publicas = Comentario.objects.filter(
         visible=True
-    ).select_related('usuario').order_by('-fecha_creacion')[:20]
+    ).select_related('usuario', 'paquete').order_by('-fecha_creacion')[:20]
 
     # Estadísticas
     todas = Comentario.objects.filter(visible=True)
@@ -390,10 +433,54 @@ def mis_resenas_view(request):
         for row in dist_qs:
             distribucion[row['valoracion']] = row['cnt']
 
+    paquetes_activos = Paquete.objects.filter(estado=True)
+
     context = {
         'mis_resenas':       mis_resenas,
         'resenas_publicas':  resenas_publicas,
         'stats':             stats,
         'distribucion':      distribucion,
+        'paquetes_activos':  paquetes_activos,
     }
     return render(request, 'private/resenas.html', context)
+
+@login_required
+def estadisticas_usuario(request):
+    if request.user.is_staff:
+        return redirect('dashboard')
+        
+    from reservas.models import Reserva
+    from pagos.models import ComprobantePago
+    from comunidad.models import PQRS
+    from .models import Comentario, Cliente
+    from django.db.models import Sum
+    
+    total_reservas = Reserva.objects.filter(usuario=request.user).count()
+    reservas_confirmadas = Reserva.objects.filter(usuario=request.user, estado='confirmada').count()
+    reservas_pendientes  = Reserva.objects.filter(usuario=request.user, estado='pendiente').count()
+    reservas_canceladas  = Reserva.objects.filter(usuario=request.user, estado='cancelada').count()
+    
+    total_invertido = ComprobantePago.objects.filter(
+        usuario=request.user, estado='aprobado'
+    ).aggregate(total=Sum('monto'))['total'] or 0.0
+    
+    total_comentarios = Comentario.objects.filter(usuario=request.user).count()
+
+    # Safely query PQRS — only if the user has a Cliente profile
+    total_pqrs = 0
+    try:
+        cliente_obj = Cliente.objects.get(usuario=request.user)
+        total_pqrs = PQRS.objects.filter(cliente=cliente_obj).count()
+    except Cliente.DoesNotExist:
+        pass
+    
+    context = {
+        'total_reservas':       total_reservas,
+        'reservas_confirmadas': reservas_confirmadas,
+        'reservas_pendientes':  reservas_pendientes,
+        'reservas_canceladas':  reservas_canceladas,
+        'total_invertido':      total_invertido,
+        'total_comentarios':    total_comentarios,
+        'total_pqrs':           total_pqrs,
+    }
+    return render(request, 'private/estadisticas.html', context)

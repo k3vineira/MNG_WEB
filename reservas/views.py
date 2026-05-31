@@ -152,7 +152,7 @@ def administrar_cancelaciones(request):
         if cancelacion.estado == 'aceptada':
             cancelacion.reserva.estado = 'cancelada'
         elif cancelacion.estado == 'rechazada':
-            cancelacion.reserva.estado = 'activa'
+            cancelacion.reserva.estado = 'confirmada'
         else:
             cancelacion.reserva.estado = 'pendiente'
             

@@ -1,0 +1,80 @@
+{% load static %}
+<!-- ── Mascot: Cóndy El Cóndor ── -->
+<div id="condor-mascot-container" class="position-fixed" style="bottom: 1.5rem; left: 1.5rem; z-index: 9999; cursor: pointer;">
+    <!-- Speech bubble -->
+    <div id="condor-speech-bubble" class="bg-dark text-white rounded-4 p-3 shadow-lg border border-success position-absolute d-none" style="bottom: 80px; left: 10px; width: 240px; font-size: 0.85rem; z-index: 10000;">
+        <div class="fw-bold text-success mb-1">¡Cóndy dice! 🦅</div>
+        <span id="condor-speech-text">¡Hola! Soy Cóndy, tu guía en Monagua. ¡Cuidemos el páramo juntos!</span>
+        <!-- Small arrow at the bottom of speech bubble -->
+        <div class="position-absolute" style="bottom: -10px; left: 20px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid #212529;"></div>
+    </div>
+    
+    <!-- Condor Mascot Image -->
+    <div class="condor-avatar-wrapper position-relative">
+        <img id="condor-img" src="{% static 'img/condor_mascota.png' %}" alt="Cóndor Mascot" width="60" height="60" class="rounded-circle shadow-lg border border-3 border-success bg-white transition-all" style="object-fit: contain;">
+        <!-- Label badge -->
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success border border-light" style="font-size: 0.65rem;">
+            Cóndy
+        </span>
+    </div>
+</div>
+
+<style>
+#condor-img {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#condor-img:hover {
+    transform: scale(1.2) rotate(8deg);
+}
+.condor-bounce {
+    animation: condorBounce 2.5s infinite ease-in-out;
+}
+@keyframes condorBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const mascot = document.getElementById('condor-mascot-container');
+    const bubble = document.getElementById('condor-speech-bubble');
+    const text = document.getElementById('condor-speech-text');
+    const img = document.getElementById('condor-img');
+    
+    const tips = [
+        "¡Hola! Soy Cóndy, tu guía en Monagua. ¡Exploremos el Páramo de Mongua juntos!",
+        "¡No dejes basura en los senderos! Mantengamos el páramo limpio.",
+        "¡Lleva siempre ropa abrigada e impermeable! El clima del páramo cambia rápido.",
+        "¡El cóndor andino es el rey de los Andes! ¿Sabías que está en peligro de extinción?",
+        "¡Sigue siempre el sendero demarcado para proteger los frailejones!",
+        "¡Si tienes dudas sobre tus reservas, escríbenos a través de las PQRS!",
+        "¿Sabías que la Laguna Negra es un sitio sagrado lleno de leyendas?",
+        "¡El agua del páramo es vida! Respeta las fuentes hídricas naturales.",
+        "Planifica tu visita con guías autorizados en nuestra pestaña de Guías y Usuarios."
+    ];
+    
+    // Activate bouncing animation
+    img.classList.add('condor-bounce');
+    
+    mascot.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (bubble.classList.contains('d-none')) {
+            // Pick a random tip
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            text.textContent = randomTip;
+            bubble.classList.remove('d-none');
+            img.classList.remove('condor-bounce');
+        } else {
+            bubble.classList.add('d-none');
+            img.classList.add('condor-bounce');
+        }
+    });
+    
+    // Close bubble when clicking anywhere else
+    document.addEventListener('click', function() {
+        bubble.classList.add('d-none');
+        img.classList.add('condor-bounce');
+    });
+});
+</script>

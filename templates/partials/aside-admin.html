@@ -27,7 +27,7 @@
       <i class="bi bi-grid-1x2-fill"></i> Dashboard
     </a>
 
-    <a href="#"
+    <a href="{% url 'dashboard' %}"
        class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
       <i class="bi bi-graph-up-arrow"></i> Estadísticas
     </a>
@@ -72,8 +72,14 @@
 
     <a href="{% url 'admin_comprobantes' %}"
        class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if 'comprobantes' in request.resolver_match.url_name %}bg-success text-white{% endif %}">
+              {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}bg-success text-white{% endif %}">
       <i class="bi bi-wallet2"></i> Comprobantes de Pago
+    </a>
+
+    <a href="{% url 'admin_comprobantes' %}?estado=rechazado"
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
+              {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}bg-success text-white{% endif %}">
+      <i class="bi bi-x-circle-fill text-danger"></i> Pagos Rechazados
     </a>
 
     <a href="{% url 'listar_categorias' %}"
@@ -154,8 +160,16 @@ document.addEventListener("DOMContentLoaded", function() {
         const href = link.getAttribute("href");
         if (!href || href === "#" || href === "") return;
         
+        // Split path and query parameters
+        const hrefPath = href.split('?')[0];
+        const hasRechazadoQuery = href.includes("estado=rechazado");
+        const currentHasRechazadoQuery = window.location.search.includes("estado=rechazado");
+        
+        // If we are looking for a rejected query and it doesn't match the current page's query status, skip
+        if (hasRechazadoQuery !== currentHasRechazadoQuery) return;
+        
         // Normalize paths
-        const normalizedHref = href.replace(/\/$/, "");
+        const normalizedHref = hrefPath.replace(/\/$/, "");
         const normalizedPath = currentPath.replace(/\/$/, "");
         
         // Match condition

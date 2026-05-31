@@ -80,6 +80,9 @@
         <a href="{% url 'mis_reservas_usuario' %}" class="nav-link {% if 'reservas' in request.resolver_match.url_name %}active{% endif %}">
             <i class="bi bi-calendar-check"></i> Mis Reservas
         </a>
+        <a href="{% url 'mis_estadisticas' %}" class="nav-link {% if request.resolver_match.url_name == 'mis_estadisticas' %}active{% endif %}">
+            <i class="bi bi-graph-up"></i> Mis Estadísticas
+        </a>
         <a href="{% url 'mis_comprobantes' %}" class="nav-link {% if 'comprobantes' in request.resolver_match.url_name %}active{% endif %}">
             <i class="bi bi-credit-card"></i> Mis Pagos
         </a>
@@ -103,6 +106,7 @@
 </aside>
 
 {% include 'partials/accesibilidad.html' %}
+{% include 'partials/mascota.html' %}
 
 <!-- Contenedor Principal -->
 <div class="main-wrapper">

@@ -3,8 +3,8 @@
 <!-- ── Botón flotante de Accesibilidad ── -->
 <button id="a11y-btn" onclick="A11y.toggle()" aria-label="Opciones de accesibilidad" aria-expanded="false"
   class="btn btn-success rounded-circle position-fixed shadow-lg p-0 d-flex align-items-center justify-content-center"
-  style="bottom:1.5rem;right:1.5rem;z-index:9999;width:48px;height:48px;border:2px solid rgba(255,255,255,0.3)">
-  <i class="bi bi-universal-access fs-5"></i>
+  style="bottom:1.5rem;right:1.5rem;z-index:9999;width:60px;height:60px;border:3px solid rgba(255,255,255,0.4)">
+  <i class="bi bi-universal-access fs-3"></i>
 </button>
 
 <!-- ── Panel de Accesibilidad ── -->
@@ -129,7 +129,9 @@
   function applyContrast(on) {
     var el = document.getElementById('a11y-contrast-style');
     if (!el) { el = document.createElement('style'); el.id = 'a11y-contrast-style'; document.head.appendChild(el); }
-    el.textContent = on ? 'body{background:#000!important;color:#fff!important} p,span,li,td,th,label,div{color:#fff!important} .card,.navbar,.sidebar-monagua{background:#111!important;color:#fff!important}' : '';
+    el.textContent = on 
+      ? 'html, body, main, div, header, footer, section, article, aside, nav, table, tr, td, th, thead, tbody, card, .card, .card-body, .card-header, .card-footer, .list-group-item, .main-wrapper, .content-wrapper, .modal-content, .offcanvas { background-color: #000000 !important; background: #000000 !important; color: #ffffff !important; border-color: #ffffff !important; box-shadow: none !important; } h1, h2, h3, h4, h5, h6, p, span, li, td, th, label, small, strong, i, em, dd, dt, figcaption { color: #ffffff !important; } .text-muted, .text-secondary, .text-white-50 { color: #dddddd !important; } .text-success, .text-primary, .text-warning, .text-danger, .text-info, .text-brand { color: #ffff00 !important; } .bg-success, .bg-primary, .bg-warning, .bg-danger, .bg-info, .bg-dark, .bg-light, .bg-white, .sidebar-monagua { background-color: #000000 !important; background: #000000 !important; border: 1px solid #ffffff !important; } a, .btn-link, .nav-link { color: #00ffff !important; text-decoration: underline !important; } a:hover, .nav-link:hover, .nav-link.active { color: #ffffff !important; background-color: #00ffff !important; } .btn, button, input[type="submit"], input[type="button"] { background-color: #000000 !important; color: #ffff00 !important; border: 2px solid #ffff00 !important; background-image: none !important; } .btn:hover, button:hover { background-color: #ffff00 !important; color: #000000 !important; } input, select, textarea { background-color: #000000 !important; color: #ffffff !important; border: 2px solid #ffffff !important; } .badge { background-color: #000000 !important; color: #ffffff !important; border: 1px solid #ffffff !important; } img, svg, video, iframe, .bi { filter: none !important; }'
+      : '';
   }
 
   function syncUI() {

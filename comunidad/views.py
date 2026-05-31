@@ -79,11 +79,19 @@ def guardar_pqrs(request):
 
 @login_required
 def mis_pqrs_view(request):
-    solicitudes_usuario = PQRS.objects.filter(cliente__usuario=request.user).order_by('-fecha')
+    from usuarios.models import Cliente
+    solicitudes_usuario = PQRS.objects.none()
+    try:
+        cliente_obj = Cliente.objects.get(usuario=request.user)
+        solicitudes_usuario = PQRS.objects.filter(cliente=cliente_obj).order_by('-fecha')
+    except Cliente.DoesNotExist:
+        pass
+
+    form = PqrsForm()
     context = {
-        'solicitudes': solicitudes_usuario
+        'solicitudes': solicitudes_usuario,
+        'form': form,
     }
-    
     return render(request, 'usuario/mis_pqrs.html', context)
 
 #BLOG

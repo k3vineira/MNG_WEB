@@ -57,6 +57,13 @@ class Comentario(models.Model):
         verbose_name='Usuario'
     )
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='experiencia')
+    paquete = models.ForeignKey(
+        'catalogo.Paquete',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Paquete Turístico'
+    )
     titulo = models.CharField(max_length=150)
     mensaje = models.TextField()
     valoracion = models.IntegerField(default=5)
