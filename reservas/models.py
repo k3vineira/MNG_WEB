@@ -6,6 +6,7 @@ class Reserva(models.Model):
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente'),
         ('confirmada', 'Confirmada'),
+        ('completada', 'Completada'),
         ('cancelada', 'Cancelada'),
     ]
     
@@ -24,13 +25,6 @@ class Reserva(models.Model):
     fecha = models.DateField(verbose_name='Fecha de Reserva')
     numero_adultos = models.PositiveIntegerField(verbose_name='Número de Adultos', default=1)
     numero_menores = models.PositiveIntegerField(verbose_name='Número de Menores', default=0)
-    
-    ESTADO_CHOICES = [
-        ('pendiente', 'Pendiente'),
-        ('confirmada', 'Confirmada'),
-        ('completada', 'Completada'),
-        ('cancelada', 'Cancelada'),
-    ]
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente', verbose_name='Estado')
     
     # Monto total (se calculará automáticamente)
@@ -46,17 +40,29 @@ class Reserva(models.Model):
         if self.paquete and self.fecha:
             try:
                 from catalogo.models import Temporada, Tarifa
-                temporada = Temporada.objects.get(fecha_inicio__lte=self.fecha, fecha_fin__gte=self.fecha)
-                tarifa = Tarifa.objects.get(paquete=self.paquete, temporada=temporada)
-                self.monto_total = (tarifa.precio_adulto * self.numero_adultos) + (tarifa.precio_menor * self.numero_menores)
-            except (Temporada.DoesNotExist, Tarifa.DoesNotExist):
+                temporada = Temporada.objects.filter(fecha_inicio__lte=self.fecha, fecha_fin__gte=self.fecha).first()
+                
+                if temporada:
+                    tarifa = Tarifa.objects.filter(paquete=self.paquete, temporada=temporada).first()
+                    if tarifa:
+                        self.monto_total = int((tarifa.precio_adulto * self.numero_adultos) + (tarifa.precio_menor * self.numero_menores))
+                    else:
+                        self.monto_total = 0
+                else:
+                    self.monto_total = 0
+                    
+            except Exception:
+               
                 self.monto_total = 0
         elif not getattr(self, 'monto_total', None):
             self.monto_total = 0
+            
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Reserva {self.id} - {self.usuario.get_full_name()} ({self.paquete.nombre})"
+      
+        nombre_usuario = self.usuario.get_full_name() or self.usuario.username
+        return f"Reserva {self.id} - {nombre_usuario} ({self.paquete.nombre})"
 
 class Cancelacion(models.Model): 
     reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='cancelaciones')
