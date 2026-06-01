@@ -15,7 +15,8 @@ def destinos(request):
 
     busqueda = request.GET.get('q', '').strip()
     precio_max = request.GET.get('precio_max')
-    apto_menores = request.GET.get('apto_menores') # <--- Capturamos el nuevo filtro
+    apto_menores = request.GET.get('apto_menores') 
+    categoria_id = request.GET.get('categoria')
 
     if busqueda:
         destinos_list = destinos_list.filter(nombre__icontains=busqueda)
@@ -24,13 +25,18 @@ def destinos(request):
         destinos_list = destinos_list.filter(tarifas__precio_adulto__lte=precio_max).distinct()
     
     if apto_menores == 'si':
-     
         destinos_list = destinos_list.filter(actividades__apto_para_menores=True).distinct()
     elif apto_menores == 'no':
-        
         destinos_list = destinos_list.filter(actividades__apto_para_menores=False).distinct()
         
-    return render(request, 'usuario/destinos.html', {'destinos': destinos_list})
+    if categoria_id:
+        destinos_list = destinos_list.filter(categoria_id=categoria_id)
+    categorias_list = Categoria.objects.all()
+    
+    return render(request, 'usuario/destinos.html', {
+        'destinos': destinos_list,
+        'categorias': categorias_list
+    })
 
 
 
