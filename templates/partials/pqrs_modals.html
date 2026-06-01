@@ -1,0 +1,21 @@
+ <div class="modal fade" id="modalContestar{{ pqr.id }}" tabindex="-1" aria-labelledby="label{{ pqr.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="{% url 'contestar_pqrs' pqr.id %}">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="label{{ pqr.id }}">Responder a {{ pqr.cliente.usuario.first_name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-muted small"><strong>Asunto:</strong> {{ pqr.asunto }}</p>
+                                    <textarea name="respuesta" class="form-control" rows="5" required placeholder="Escribe tu respuesta aquí...">{{ pqr.respuesta|default:'' }}</textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn" style="background-color: var(--verde-oscuro); color: white;">Guardar respuesta</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
