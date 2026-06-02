@@ -10,8 +10,8 @@ from .forms import RegistroForm, PerfilUsuarioForm
 
 @login_required
 def index_turista(request):
-    if request.user.is_staff:
-        return redirect('dashboard')
+    # if request.user.is_staff:
+    #     return redirect('dashboard')
     context = {'titulo': 'Bienvenido a Monagua'}
     return render(request, 'index_turista.html', context)
 
@@ -486,3 +486,54 @@ def estadisticas_usuario(request):
         'total_pqrs':           total_pqrs,
     }
     return render(request, 'private/estadisticas.html', context)
+
+
+@login_required
+def dashboard_turista(request):
+    if request.user.is_staff:
+        return redirect('dashboard')
+
+    from reservas.models import Reserva
+    from pagos.models import ComprobantePago
+    from comunidad.models import PQRS
+    from .models import Comentario, Cliente
+    from django.db.models import Sum
+
+    total_reservas = Reserva.objects.filter(usuario=request.user).count()
+    reservas_confirmadas = Reserva.objects.filter(usuario=request.user, estado='confirmada').count()
+    reservas_pendientes  = Reserva.objects.filter(usuario=request.user, estado='pendiente').count()
+    reservas_canceladas  = Reserva.objects.filter(usuario=request.user, estado='cancelada').count()
+
+    tasa_confirmacion = 0
+    if total_reservas > 0:
+        tasa_confirmacion = round((reservas_confirmadas / total_reservas) * 100)
+
+    total_invertido = ComprobantePago.objects.filter(
+        usuario=request.user, estado='aprobado'
+    ).aggregate(total=Sum('monto'))['total'] or 0.0
+
+    total_comentarios = Comentario.objects.filter(usuario=request.user).count()
+
+    total_pqrs = 0
+    try:
+        cliente_obj = Cliente.objects.get(usuario=request.user)
+        total_pqrs = PQRS.objects.filter(cliente=cliente_obj).count()
+    except Cliente.DoesNotExist:
+        pass
+
+    ultimas_reservas = Reserva.objects.filter(
+        usuario=request.user
+    ).select_related('paquete').order_by('-id')[:5]
+
+    context = {
+        'total_reservas':       total_reservas,
+        'reservas_confirmadas': reservas_confirmadas,
+        'reservas_pendientes':  reservas_pendientes,
+        'reservas_canceladas':  reservas_canceladas,
+        'tasa_confirmacion':    tasa_confirmacion,
+        'total_invertido':      total_invertido,
+        'total_comentarios':    total_comentarios,
+        'total_pqrs':           total_pqrs,
+        'ultimas_reservas':     ultimas_reservas,
+    }
+    return render(request, 'private/dashboard_turista.html', context)
