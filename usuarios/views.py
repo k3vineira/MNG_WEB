@@ -5,7 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from .models import Usuario, Cliente, Comentario
-from .forms import RegistroForm
+from .forms import RegistroForm, PerfilUsuarioForm
 
 
 @login_required
@@ -217,17 +217,19 @@ def perfil_view(request):
             user.imagen_perfil = request.FILES['imagen_perfil']
             user.save()
             messages.success(request, "¡Foto de perfil actualizada con éxito!")
+            return redirect('detalles')
+            
         elif request.POST.get('editar_perfil') == '1':
-            user.first_name      = request.POST.get('first_name', user.first_name).strip()
-            user.last_name       = request.POST.get('last_name', user.last_name).strip()
-            user.tipo_documento  = request.POST.get('tipo_documento', user.tipo_documento)
-            user.numero_documento = request.POST.get('numero_documento', user.numero_documento) or user.numero_documento
-            user.telefono        = request.POST.get('telefono', user.telefono).strip()
-            user.residencia      = request.POST.get('residencia', user.residencia).strip()
-            user.save()
-            messages.success(request, '¡Información actualizada correctamente!')
+            form = PerfilUsuarioForm(request.POST, instance=user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, '¡Información actualizada correctamente!')
+            else:
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{field.replace('_', ' ').capitalize()}: {error}")
         return redirect('detalles')
-    return render(request, 'private/perfil.html')
+    return render(request, 'private/perfil_turista.html')
 
 
 @user_passes_test(lambda u: u.is_staff)
