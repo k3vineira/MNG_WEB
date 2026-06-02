@@ -1,103 +1,92 @@
-<li class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column">
-  <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Rol de Usuario</span>
-  <span class="small fw-semibold text-dark">
-    {% if user.is_superuser %}
-      Administrador
-    {% elif user.is_staff %}
-      Staff
-    {% elif user.es_guia %}
-      Guía Turístico
-    {% else %}
-      Viajero
-    {% endif %}
-  </span>
+{# --- SECCIÓN: ADMINISTRADOR --- #} {% if user.is_staff or user.is_superuser %}
+<li
+  class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column"
+>
+  <span
+    class="text-muted fw-bold text-uppercase"
+    style="font-size: 0.65rem; letter-spacing: 0.5px"
+    >Gestión Global</span
+  >
+  <span class="small fw-semibold text-dark">Administrador</span>
 </li>
-
 <li>
-  <a class="dropdown-item py-2 fw-bold text-success" href="{% url 'detalles' %}">
+  <a
+    class="dropdown-item py-2 fw-bold text-primary"
+    href="{% url 'dashboard' %}"
+    ><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a
+  >
+</li>
+<li>
+  <a class="dropdown-item py-2" href="{% url 'gestion_guias' %}"
+    ><i class="bi bi-people me-2"></i>Gestión Guías</a
+  >
+</li>
+<li>
+  <a class="dropdown-item py-2" href="{% url 'listar_reservas' %}"
+    ><i class="bi bi-calendar-check me-2"></i>Reservas (Admin)</a
+  >
+</li>
+<li>
+  <a class="dropdown-item py-2" href="{% url 'listar_pqrs' %}"
+    ><i class="bi bi-envelope me-2"></i>PQRS (Admin)</a
+  >
+</li>
+{% endif %} {# --- SECCIÓN: GUÍA TURÍSTICO --- #} {% if user.es_guia %}
+<li class="px-3 py-2 border-bottom mb-2 bg-light d-flex flex-column">
+  <span
+    class="text-muted fw-bold text-uppercase"
+    style="font-size: 0.65rem; letter-spacing: 0.5px"
+    >Panel de Trabajo</span
+  >
+  <span class="small fw-semibold text-dark">Guía Turístico</span>
+</li>
+<li>
+  <a class="dropdown-item py-2" href="#"
+    ><i class="bi bi-calendar-event me-2"></i>Mis Rutas</a
+  >
+</li>
+<li>
+  <a class="dropdown-item py-2" href="{% url 'mis_resenas' %}"
+    ><i class="bi bi-chat-left-text me-2"></i>Mis Reseñas</a
+  >
+</li>
+{% endif %} {# --- SECCIÓN: VIAJERO / TURISTA --- #} {% if user.es_turista %}
+<li class="px-3 py-2 border-bottom mb-2 bg-light d-flex flex-column">
+  <span
+    class="text-muted fw-bold text-uppercase"
+    style="font-size: 0.65rem; letter-spacing: 0.5px"
+    >Mi Cuenta</span
+  >
+  <span class="small fw-semibold text-dark">Viajero</span>
+</li>
+<li>
+  <a
+    class="dropdown-item py-2 fw-bold text-success"
+    href="{% url 'index_turista' %}"
+    ><i class="bi bi-grid-1x2-fill me-2"></i>Mi Panel</a
+  >
+</li>
+<li>
+  <a class="dropdown-item py-2" href="{% url 'mis_reservas_usuario' %}"
+    ><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a
+  >
+</li>
+<li>
+  <a class="dropdown-item py-2" href="{% url 'mis_comprobantes' %}"
+    ><i class="bi bi-cash-stack me-2"></i>Mis Comprobantes</a
+  >
+</li>
+<li>
+  <a class="dropdown-item py-2" href="{% url 'mis_pqrs' %}"
+    ><i class="bi bi-envelope me-2"></i>Mis PQRS</a
+  >
+</li>
+{% endif %} {# --- ACCIONES COMUNES --- #}
+<li><hr class="dropdown-divider" /></li>
+<li>
+  <a class="dropdown-item py-2 fw-bold text-dark" href="{% url 'detalles' %}">
     <i class="bi bi-person-vcard me-2"></i>Mi Perfil
   </a>
-</li>
-
-{# --- MENÚ PARA ADMINISTRADORES / STAFF --- #}
-{% if user.is_staff or user.is_superuser %}
-  <li>
-    <a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'dashboard' %}">
-      <i class="bi bi-grid-1x2-fill me-2"></i>Panel Admin
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'gestion_guias' %}">
-      <i class="bi bi-people me-2"></i>Gestión Guías
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'listar_reservas' %}">
-      <i class="bi bi-calendar-check me-2"></i>Reservas (Admin)
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'listar_comentarios' %}">
-      <i class="bi bi-chat-left-text me-2"></i>Comentarios (Admin)
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'listar_pqrs' %}">
-      <i class="bi bi-envelope me-2"></i>PQRS (Admin)
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'listar_blog' %}">
-      <i class="bi bi-journal-text me-2"></i>Blog (Admin)
-    </a>
-  </li>
-{% endif %}
-
-{# --- MENÚ PARA TURISTAS / CLIENTES --- #}
-{% if user.es_turista %}
-  <li>
-    <a class="dropdown-item py-2 fw-bold text-success" href="{% url 'index_turista' %}">
-      <i class="bi bi-grid-1x2-fill me-2"></i>Mi Panel
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="/mis-viajes/">
-      <i class="bi bi-map me-2"></i>Mis Viajes
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'mis_reservas_usuario' %}">
-      <i class="bi bi-calendar-check me-2"></i>Mis Reservas
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'mis_comprobantes' %}">
-      <i class="bi bi-cash-stack me-2"></i>Mis Comprobantes
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'mis_resenas' %}">
-      <i class="bi bi-bookmark me-2"></i>Mis Reseñas
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'mis_pqrs' %}">
-      <i class="bi bi-envelope me-2"></i>Mis PQRS
-    </a>
-  </li>
-{% endif %}
-
-{# --- MENÚ PARA GUÍAS --- #}
-{% if user.es_guia %}
-  <li>
-    <a class="dropdown-item py-2" href="{% url 'mis_resenas' %}">
-      <i class="bi bi-chat-left-text me-2"></i>Comentarios/Reseñas
-    </a>
-  </li>
-{% endif %}
-
-<li>
-  <hr class="dropdown-divider" />
 </li>
 <li>
   <form action="{% url 'logout' %}" method="post">
