@@ -3,7 +3,6 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 def plantilla_reserva_html(nombre_cliente, paquete, fecha, adultos, menores):
-    """Diseño Premium con encabezado verde oscuro sólido (Sin imágenes externas)"""
     return f"""
     <html>
     <body style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f7f5; margin: 0; padding: 40px 15px;">
