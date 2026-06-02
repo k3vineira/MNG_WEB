@@ -156,7 +156,6 @@ def login_view(request):
             if user is not None:
                 auth_login(request, user)
                 messages.success(request, f"¡Bienvenido de nuevo, {user.username}!")
-                # Redirect tourists to their landing page after login
                 if hasattr(user, 'rol') and user.rol == Usuario.Roles.CLIENTE:
                     return redirect('index_turista')
                 next_url = request.GET.get('next')
@@ -169,7 +168,6 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'authentication/login.html', {'form': form})
-
 
 
 def logout_view(request):
@@ -192,7 +190,6 @@ def registro_view(request):
                 user.residencia = f"{ciudad}, {pais}"
             user.save()
             Cliente.objects.create(usuario=user, pais=pais, ciudad=ciudad)
-            # Auto-login the new tourist user
             from django.contrib.auth import login as auth_login
             auth_login(request, user)
             messages.success(request, "¡Registro exitoso! Bienvenido.")
@@ -482,5 +479,237 @@ def estadisticas_usuario(request):
         'total_invertido':      total_invertido,
         'total_comentarios':    total_comentarios,
         'total_pqrs':           total_pqrs,
+    }
+    return render(request, 'private/estadisticas.html', context)
+
+@login_required
+def estadisticas_usuario(request):
+    """
+    Vista de estadísticas personales del turista.
+    Alimenta TODOS los datos que necesita templates/private/estadisticas.html
+    """
+    if request.user.is_staff:
+        return redirect('dashboard')
+
+    from reservas.models import Reserva
+    from pagos.models import ComprobantePago
+    from comunidad.models import PQRS
+    from catalogo.models import Paquete
+    from .models import Comentario, Cliente
+    # 🌟 CORRECCIÓN: Se agregó Max a la importación para evitar el crash NameError
+    from django.db.models import Sum, Avg, Count, Max
+    from django.utils import timezone
+    from datetime import date, datetime
+
+    user = request.user
+    hoy = timezone.now().date()
+
+    # ── 1. RESERVAS ──────────────────────────────────────────────────────────
+    mis_reservas = Reserva.objects.filter(usuario=user)
+
+    total_reservas        = mis_reservas.count()
+    reservas_confirmadas  = mis_reservas.filter(estado='confirmada').count()
+    reservas_pendientes   = mis_reservas.filter(estado='pendiente').count()
+    reservas_canceladas   = mis_reservas.filter(estado='cancelada').count()
+    reservas_completadas  = mis_reservas.filter(estado='completada').count()
+
+    # ── 2. PAGOS ─────────────────────────────────────────────────────────────
+    mis_comprobantes = ComprobantePago.objects.filter(usuario=user)
+
+    pagos_aprobados   = mis_comprobantes.filter(estado='aprobado').count()
+    pagos_pendientes  = mis_comprobantes.filter(estado='pendiente').count()
+    pagos_rechazados  = mis_comprobantes.filter(estado='rechazado').count()
+    total_comprobantes = mis_comprobantes.count()
+
+    total_invertido = mis_comprobantes.filter(
+        estado='aprobado'
+    ).aggregate(total=Sum('monto'))['total'] or 0.0
+
+    promedio_por_reserva = (
+        round(total_invertido / reservas_confirmadas, 2)
+        if reservas_confirmadas > 0 else 0.0
+    )
+
+    # ── 3. COMENTARIOS / RESEÑAS ─────────────────────────────────────────────
+    mis_comentarios = Comentario.objects.filter(usuario=user)
+    total_comentarios = mis_comentarios.count()
+
+    agg_cal = mis_comentarios.aggregate(promedio=Avg('valoracion'))
+    promedio_calificacion = round(agg_cal['promedio'] or 0.0, 1)
+
+    # Distribución de estrellas para las barras de progreso
+    distribucion_calificaciones = []
+    if total_comentarios > 0:
+        dist_qs = (
+            mis_comentarios
+            .values('valoracion')
+            .annotate(cantidad=Count('id'))
+            .order_by('-valoracion')
+        )
+        for row in dist_qs:
+            porcentaje = round((row['cantidad'] / total_comentarios) * 100)
+            distribucion_calificaciones.append({
+                'estrellas': row['valoracion'],
+                'cantidad':  row['cantidad'],
+                'porcentaje': porcentaje,
+            })
+
+    # ── 4. PQRS ──────────────────────────────────────────────────────────────
+    total_pqrs         = 0
+    pqrs_abiertas      = 0
+    pqrs_en_gestion    = 0
+    pqrs_cerradas      = 0
+    pqrs_sin_respuesta = 0
+
+    try:
+        cliente_obj = Cliente.objects.get(usuario=user)
+        mis_pqrs = PQRS.objects.filter(cliente=cliente_obj)
+
+        total_pqrs = mis_pqrs.count()
+
+        # Ajusta los valores de 'estado' según tu modelo PQRS
+        pqrs_abiertas      = mis_pqrs.filter(estado='abierta').count()
+        pqrs_en_gestion    = mis_pqrs.filter(estado='en_gestion').count()
+        pqrs_cerradas      = mis_pqrs.filter(estado__in=['cerrada', 'resuelta']).count()
+        pqrs_sin_respuesta = mis_pqrs.filter(estado='sin_respuesta').count()
+    except Cliente.DoesNotExist:
+        pass
+
+    # ── 5. DESTINOS FRECUENTES ───────────────────────────────────────────────
+    destinos_frecuentes = []
+    try:
+        destinos_qs = (
+            mis_reservas
+            .values('paquete__id', 'paquete__nombre')
+            .annotate(
+                total_reservas=Count('id'),
+                ultima_visita=Max('fecha'),
+            )
+            .order_by('-total_reservas')[:5]
+        )
+        for d in destinos_qs:
+            destinos_frecuentes.append({
+                'nombre':         d['paquete__nombre'] or '—',
+                'total_reservas': d['total_reservas'],
+                'ultima_visita':  d['ultima_visita'],
+            })
+    except Exception:
+        pass
+
+    # ── 6. ACTIVIDAD RECIENTE ────────────────────────────────────────────────
+    actividad_reciente = []
+
+    # Últimas 3 reservas
+    try:
+        for r in mis_reservas.select_related('paquete').order_by('-fecha')[:3]:
+            actividad_reciente.append({
+                'tipo':        'reserva',
+                'descripcion': f"Reservaste '{r.paquete.nombre}'",
+                'fecha':       r.fecha,
+                'monto':       None,
+            })
+    except Exception:
+        pass
+
+    # Últimos 3 pagos aprobados
+    try:
+        for p in mis_comprobantes.filter(estado='aprobado').order_by('-fecha_subida')[:3]:
+            actividad_reciente.append({
+                'tipo':        'pago',
+                'descripcion': 'Pago aprobado',
+                'fecha':       p.fecha_subida.date() if hasattr(p.fecha_subida, 'date') else p.fecha_subida,
+                'monto':       p.monto,
+            })
+    except Exception:
+        pass
+
+    # Últimas 2 reseñas
+    try:
+        for c in mis_comentarios.order_by('-fecha_creacion')[:2]:
+            actividad_reciente.append({
+                'tipo':        'resena',
+                'descripcion': f"Dejaste una reseña: \"{c.titulo}\"",
+                'fecha':       c.fecha_creacion.date() if hasattr(c.fecha_creacion, 'date') else c.fecha_creacion,
+                'monto':       None,
+            })
+    except Exception:
+        pass
+
+    # 🌟 CORRECCIÓN: Lambda robusta para evitar crasheos al ordenar objetos date y datetime juntos
+    actividad_reciente.sort(
+        key=lambda x: x['fecha'].date() if isinstance(x['fecha'], datetime) else (x['fecha'] if isinstance(x['fecha'], date) else date.min), 
+        reverse=True
+    )
+    actividad_reciente = actividad_reciente[:8]
+
+    # ── 7. NIVEL DE VIAJERO ──────────────────────────────────────────────────
+    #  Lógica de gamificación basada en reservas confirmadas
+    NIVELES = [
+        (0,  'Nuevo Viajero',   'Completa tu primera reserva para subir de nivel.',     1),
+        (1,  'Explorador',      'Ya diste tus primeros pasos por el páramo.',            3),
+        (3,  'Aventurero',      'Tres expediciones y contando. ¡Sigue explorando!',      6),
+        (6,  'Expedicionista',  'Eres un experto en los senderos de Mongua.',           None),
+    ]
+
+    nivel_viajero     = 'Nuevo Viajero'
+    descripcion_nivel = 'Completa tu primera reserva para subir de nivel.'
+    progreso_nivel    = None
+
+    for i, (minimo, nombre, desc, siguiente) in enumerate(NIVELES):
+        if reservas_confirmadas >= minimo:
+            nivel_viajero     = nombre
+            descripcion_nivel = desc
+            if siguiente is not None:
+                faltante       = siguiente - minimo
+                avance         = reservas_confirmadas - minimo
+                progreso_nivel = min(100, round((avance / faltante) * 100))
+            else:
+                progreso_nivel = 100  # nivel máximo
+
+    # ── 8. DÍAS COMO MIEMBRO ─────────────────────────────────────────────────
+    dias_como_miembro = (hoy - user.date_joined.date()).days
+
+    # ── CONTEXTO ─────────────────────────────────────────────────────────────
+    context = {
+        # Reservas
+        'total_reservas':        total_reservas,
+        'reservas_confirmadas':  reservas_confirmadas,
+        'reservas_pendientes':   reservas_pendientes,
+        'reservas_canceladas':   reservas_canceladas,
+        'reservas_completadas':  reservas_completadas,
+
+        # Pagos
+        'total_invertido':       total_invertido,
+        'pagos_aprobados':       pagos_aprobados,
+        'pagos_pendientes':      pagos_pendientes,
+        'pagos_rechazados':      pagos_rechazados,
+        'total_comprobantes':    total_comprobantes,
+        'promedio_por_reserva':  promedio_por_reserva,
+
+        # Reseñas
+        'total_comentarios':            total_comentarios,
+        'promedio_calificacion':        promedio_calificacion,
+        'distribucion_calificaciones':  distribucion_calificaciones,
+
+        # PQRS
+        'total_pqrs':           total_pqrs,
+        'pqrs_abiertas':        pqrs_abiertas,
+        'pqrs_en_gestion':      pqrs_en_gestion,
+        'pqrs_cerradas':        pqrs_cerradas,
+        'pqrs_sin_respuesta':   pqrs_sin_respuesta,
+
+        # Destinos
+        'destinos_frecuentes':  destinos_frecuentes,
+
+        # Actividad
+        'actividad_reciente':   actividad_reciente,
+
+        # Nivel / gamificación
+        'nivel_viajero':        nivel_viajero,
+        'descripcion_nivel':    descripcion_nivel,
+        'progreso_nivel':       progreso_nivel,
+
+        # Cuenta
+        'dias_como_miembro':    dias_como_miembro,
     }
     return render(request, 'private/estadisticas.html', context)
