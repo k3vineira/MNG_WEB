@@ -50,11 +50,12 @@ def dashboard_admin(request):
 
     try:
         from reservas.models import Reserva, Cancelacion
+        from pagos.models import ComprobantePago
         total_reservas = Reserva.objects.count()
         try:
-            total_ventas = Reserva.objects.filter(
-                estado='confirmada'
-            ).aggregate(total=Sum('monto_total'))['total'] or 0
+            total_ventas = ComprobantePago.objects.filter(
+                estado='aprobado'
+            ).aggregate(total=Sum('monto'))['total'] or 0
             reservas_confirmadas = Reserva.objects.filter(estado='confirmada').count()
             reservas_pendientes  = Reserva.objects.filter(estado='pendiente').count()
             reservas_canceladas  = Reserva.objects.filter(estado='cancelada').count()
@@ -63,12 +64,11 @@ def dashboard_admin(request):
             if reservas_confirmadas > 0:
                 ingreso_por_reserva = round(total_ventas / reservas_confirmadas)
             for i, mes in enumerate(range(1, 13)):
-                total_mes = Reserva.objects.filter(
-                    estado='confirmada', fecha__year=anio_actual, fecha__month=mes
-                ).aggregate(total=Sum('monto_total'))['total'] or 0
+                total_mes = ComprobantePago.objects.filter(
+                    estado='aprobado', fecha_envio__year=anio_actual, fecha_envio__month=mes
+                ).aggregate(total=Sum('monto'))['total'] or 0
                 ingresos_mensuales[i] = float(total_mes)
             
-            from pagos.models import ComprobantePago
             total_pagos_rechazados = ComprobantePago.objects.filter(estado='rechazado').count()
             cancelaciones_pendientes = Cancelacion.objects.filter(estado='revision').count()
             cancelaciones_rechazadas = Cancelacion.objects.filter(estado='rechazada').count()
@@ -445,54 +445,10 @@ def mis_resenas_view(request):
 
 @login_required
 def estadisticas_usuario(request):
-    if request.user.is_staff:
-        return redirect('dashboard')
-        
-    from reservas.models import Reserva
-    from pagos.models import ComprobantePago
-    from comunidad.models import PQRS
-    from .models import Comentario, Cliente
-    from django.db.models import Sum
-    
-    total_reservas = Reserva.objects.filter(usuario=request.user).count()
-    reservas_confirmadas = Reserva.objects.filter(usuario=request.user, estado='confirmada').count()
-    reservas_pendientes  = Reserva.objects.filter(usuario=request.user, estado='pendiente').count()
-    reservas_canceladas  = Reserva.objects.filter(usuario=request.user, estado='cancelada').count()
-    
-    total_invertido = ComprobantePago.objects.filter(
-        usuario=request.user, estado='aprobado'
-    ).aggregate(total=Sum('monto'))['total'] or 0.0
-    
-    total_comentarios = Comentario.objects.filter(usuario=request.user).count()
-
-    # Safely query PQRS — only if the user has a Cliente profile
-    total_pqrs = 0
-    try:
-        cliente_obj = Cliente.objects.get(usuario=request.user)
-        total_pqrs = PQRS.objects.filter(cliente=cliente_obj).count()
-    except Cliente.DoesNotExist:
-        pass
-    
-    context = {
-        'total_reservas':       total_reservas,
-        'reservas_confirmadas': reservas_confirmadas,
-        'reservas_pendientes':  reservas_pendientes,
-        'reservas_canceladas':  reservas_canceladas,
-        'total_invertido':      total_invertido,
-        'total_comentarios':    total_comentarios,
-        'total_pqrs':           total_pqrs,
-    }
-    return render(request, 'private/estadisticas.html', context)
-
-@login_required
-def estadisticas_usuario(request):
     """
     Vista de estadísticas personales del turista.
     Alimenta TODOS los datos que necesita templates/private/estadisticas.html
     """
-    if request.user.is_staff:
-        return redirect('dashboard')
-
     from reservas.models import Reserva
     from pagos.models import ComprobantePago
     from comunidad.models import PQRS
@@ -570,10 +526,10 @@ def estadisticas_usuario(request):
         total_pqrs = mis_pqrs.count()
 
         # Ajusta los valores de 'estado' según tu modelo PQRS
-        pqrs_abiertas      = mis_pqrs.filter(estado='abierta').count()
-        pqrs_en_gestion    = mis_pqrs.filter(estado='en_gestion').count()
-        pqrs_cerradas      = mis_pqrs.filter(estado__in=['cerrada', 'resuelta']).count()
-        pqrs_sin_respuesta = mis_pqrs.filter(estado='sin_respuesta').count()
+        pqrs_abiertas      = mis_pqrs.filter(estado='abierto').count()
+        pqrs_en_gestion    = mis_pqrs.filter(estado='en_proceso').count()
+        pqrs_cerradas      = mis_pqrs.filter(estado='cerrado').count()
+        pqrs_sin_respuesta = mis_pqrs.filter(respuesta='').count()
     except Cliente.DoesNotExist:
         pass
 
@@ -714,4 +670,7 @@ def estadisticas_usuario(request):
         # Cuenta
         'dias_como_miembro':    dias_como_miembro,
     }
-    return render(request, 'private/estadisticas.html', context)
+
+    # Elegir template de acuerdo al rol (staff/admin o cliente/turista)
+    template_name = 'admin/estadisticas_admin.html' if request.user.is_staff else 'private/estadisticas.html'
+    return render(request, template_name, context)
