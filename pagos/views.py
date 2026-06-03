@@ -3,15 +3,23 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from .models import ComprobantePago
-from reservas.models import Reserva
-
+from reservas.models import Reserva, Cancelacion
+from django.db.models import Q, OuterRef, Subquery
 
 @login_required
 def enviar_comprobante(request):
-    """Usuario sube un comprobante de pago vinculado a una reserva."""
-    reservas_usuario = Reserva.objects.filter(
-        usuario=request.user, estado='pendiente'
-    )
+    """Usuario sube un comprobante de pago vinculado a una reserva o multa."""
+    penalidad_subquery = Cancelacion.objects.filter(
+        reserva=OuterRef('pk'),
+        estado='aceptada'
+    ).values('penalidad')[:1]
+
+    reservas_usuario = Reserva.objects.filter(usuario=request.user).filter(
+        Q(estado='pendiente') |
+        Q(estado='cancelada', cancelaciones__estado='aceptada', cancelaciones__penalidad__gt=0)
+    ).annotate(
+        multa=Subquery(penalidad_subquery)
+    ).distinct()
 
     if request.method == 'POST':
         imagen      = request.FILES.get('imagen')
@@ -123,14 +131,20 @@ def admin_revisar_comprobante(request, pk):
             comprobante.fecha_revision = timezone.now()
             comprobante.save()
 
-            # Si se aprueba, marcar la reserva como confirmada
+            # Si se aprueba, marcar la reserva como confirmada (solo si no estaba cancelada por multa)
             if nuevo_estado == 'aprobado' and comprobante.reserva:
-                comprobante.reserva.estado = 'confirmada'
-                comprobante.reserva.save()
-                messages.success(
-                    request,
-                    f'Comprobante #{pk} APROBADO y Reserva #{comprobante.reserva.id} marcada como CONFIRMADA.'
-                )
+                if comprobante.reserva.estado != 'cancelada':
+                    comprobante.reserva.estado = 'confirmada'
+                    comprobante.reserva.save()
+                    messages.success(
+                        request,
+                        f'Comprobante #{pk} APROBADO y Reserva #{comprobante.reserva.id} marcada como CONFIRMADA.'
+                    )
+                else:
+                    messages.success(
+                        request,
+                        f'Comprobante #{pk} APROBADO para el pago de la multa de la Reserva #{comprobante.reserva.id}.'
+                    )
             elif nuevo_estado == 'rechazado':
                 messages.warning(
                     request,

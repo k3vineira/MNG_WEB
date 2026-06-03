@@ -745,3 +745,32 @@ def dashboard_turista(request):
         'ultimas_reservas':     ultimas_reservas,
     }
     return render(request, 'private/dashboard_turista.html', context)
+
+
+@login_required
+def mis_rechazos(request):
+    if request.user.is_staff:
+        return redirect('dashboard')
+
+    from pagos.models import ComprobantePago
+    from reservas.models import Cancelacion
+
+    # Fetch rejected payments for the user
+    pagos_rechazados = ComprobantePago.objects.filter(
+        usuario=request.user,
+        estado='rechazado'
+    ).select_related('reserva__paquete').order_by('-fecha_revision')
+
+    # Fetch rejected cancellations for the user
+    cancelaciones_rechazadas = Cancelacion.objects.filter(
+        reserva__usuario=request.user,
+        estado='rechazada'
+    ).select_related('reserva__paquete').order_by('-id')
+
+    context = {
+        'pagos_rechazados': pagos_rechazados,
+        'cancelaciones_rechazadas': cancelaciones_rechazadas,
+        'total_pagos_rechazados': pagos_rechazados.count(),
+        'total_cancelaciones_rechazadas': cancelaciones_rechazadas.count(),
+    }
+    return render(request, 'private/rechazos.html', context)
