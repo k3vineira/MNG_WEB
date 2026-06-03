@@ -5,7 +5,7 @@
       class="w-100 bg-success bg-opacity-25"
       style="
         height: 160px;
-        background-image: url(&quot;{% static &quot;img/Fondo.jpg&quot; %}&quot;);
+        background-image: url('{% static "img/Fondo.jpg" %}');
         background-size: cover;
         background-position: center;
       "
@@ -206,37 +206,19 @@
                     <option value="" disabled>Selecciona una opción</option>
                     <option
                       value="CC"
-                      {%
-                      if
-                      user.tipo_documento=""
-                      ="CC"
-                      %}selected{%
-                      endif
-                      %}
+                      {% if user.tipo_documento == "CC" %}selected{% endif %}
                     >
                       Cédula de Ciudadanía
                     </option>
                     <option
                       value="CE"
-                      {%
-                      if
-                      user.tipo_documento=""
-                      ="CE"
-                      %}selected{%
-                      endif
-                      %}
+                      {% if user.tipo_documento == "CE" %}selected{% endif %}
                     >
                       Cédula de Extranjería
                     </option>
                     <option
                       value="PAS"
-                      {%
-                      if
-                      user.tipo_documento=""
-                      ="PAS"
-                      %}selected{%
-                      endif
-                      %}
+                      {% if user.tipo_documento == "PAS" %}selected{% endif %}
                     >
                       Pasaporte
                     </option>
