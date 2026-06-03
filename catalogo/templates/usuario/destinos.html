@@ -132,6 +132,10 @@
                         <span><i class="bi bi-sun text-success me-1"></i>{{ destino.dias_duracion }} días</span>
                         <span><i class="bi bi-moon text-info me-1"></i>{{ destino.noches_duracion }} noches</span>
                     </div>
+                    <div class="d-flex gap-3 fs-5 fw-normal text-secondary mb-1">
+                        <span><i class="bi bi-clock text-muted me-1"></i>{{ destino.hora_encuentro|time:"H:i" }}</span>
+                        <span><i class="bi bi-geo-alt text-muted me-1"></i>{{ destino.punto_encuentro }}</span>
+                    </div>
                     
                     <p class="text-secondary fw-normal mb-1 lh-base fs-5" style="color: #4a5568 !important;">
                         {{ destino.descripcion|truncatechars:85 }}
