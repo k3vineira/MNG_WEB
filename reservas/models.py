@@ -1,12 +1,13 @@
 from django.db import models
 from django.conf import settings
 from catalogo.models import Paquete
+from django.core.exceptions import ValidationError
+
 
 class Reserva(models.Model):
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente'),
         ('confirmada', 'Confirmada'),
-        ('completada', 'Completada'),
         ('cancelada', 'Cancelada'),
     ]
     
@@ -17,7 +18,7 @@ class Reserva(models.Model):
         verbose_name='Cliente'
     )
     paquete = models.ForeignKey(
-        Paquete, 
+        Paquete, # Asegúrate de que este modelo esté importado arriba
         on_delete=models.PROTECT, 
         related_name='reserva', 
         verbose_name='Paquete Reservado'
@@ -26,7 +27,7 @@ class Reserva(models.Model):
     numero_adultos = models.PositiveIntegerField(verbose_name='Número de Adultos', default=1)
     numero_menores = models.PositiveIntegerField(verbose_name='Número de Menores', default=0)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente', verbose_name='Estado')
-    
+
     # Monto total (se calculará automáticamente)
     monto_total = models.IntegerField(verbose_name='Monto Total', editable=False)
     
@@ -35,8 +36,36 @@ class Reserva(models.Model):
     class Meta:
         verbose_name = 'Reserva'
         verbose_name_plural = 'Reservas'
+        # Blindaje absoluto a nivel Base de Datos
+        constraints = [
+            models.UniqueConstraint(
+                fields=['usuario', 'paquete', 'fecha'], 
+                name='unique_usuario_paquete_fecha'
+            )
+        ]
+
+    def clean(self):
+        super().clean()
+        
+        # Validación inteligente para los formularios del Front-End y Admin
+        if self.usuario and self.paquete and self.fecha:
+            query = Reserva.objects.filter(
+                usuario=self.usuario,
+                paquete=self.paquete,
+                fecha=self.fecha
+            )
+            if self.pk:
+                query = query.exclude(pk=self.pk)
+                
+            if query.exists():
+                raise ValidationError(
+                    f"Ya tienes una reserva registrada para el paquete '{self.paquete.nombre}' en la fecha {self.fecha}."
+                )
 
     def save(self, *args, **kwargs):
+        # NOTA: Se removió self.full_clean() de aquí para que el script corra sin problemas.
+        # Tus vistas con CreateView/ModelForm se encargan de validar automáticamente a través de clean().
+        
         if self.paquete and self.fecha:
             try:
                 from catalogo.models import Temporada, Tarifa
@@ -52,15 +81,14 @@ class Reserva(models.Model):
                     self.monto_total = 0
                     
             except Exception:
-               
                 self.monto_total = 0
         elif not getattr(self, 'monto_total', None):
             self.monto_total = 0
             
+        # Corregida la sangría para que siempre se ejecute el guardado real
         super().save(*args, **kwargs)
 
     def __str__(self):
-      
         nombre_usuario = self.usuario.get_full_name() or self.usuario.username
         return f"Reserva {self.id} - {nombre_usuario} ({self.paquete.nombre})"
 

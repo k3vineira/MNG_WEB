@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
+
 
 class Temporada(models.Model):
     # Definimos las opciones
@@ -67,6 +69,7 @@ class Paquete(models.Model):
     dias_duracion = models.PositiveIntegerField(verbose_name='Días de Duración', default=1)
     noches_duracion = models.PositiveIntegerField(verbose_name='Noches de Duración', default=0)
     punto_encuentro = models.CharField(max_length=200)
+    hora_encuentro = models.TimeField()
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     actividades = models.ManyToManyField(Actividades, through='PaqueteActividad')
     estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
@@ -76,10 +79,19 @@ class Paquete(models.Model):
 
     @property
     def precio_minimo(self):
-        tarifas = self.tarifas.all()
-        if tarifas.exists():
-            return min(t.precio_adulto for t in tarifas)
-        return 0
+        fecha_hoy = timezone.now().date()
+      
+        tarifas_validas = self.tarifas.filter(
+            estado=True,
+            temporada__estado='activa',                  
+            temporada__fecha_inicio__lte=fecha_hoy,       
+            temporada__fecha_fin__gte=fecha_hoy           
+        )
+        
+        if tarifas_validas.exists():
+            return min(t.precio_adulto for t in tarifas_validas)
+            
+        return self.precio_base
 
 
 class Tarifa(models.Model):

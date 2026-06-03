@@ -113,6 +113,7 @@ def poblar_base_datos():
             dias_duracion=random.randint(2, 7),
             noches_duracion=random.randint(1, 6),
             punto_encuentro="Plaza principal",
+            hora_encuentro=timezone.now().time(),
             categoria=random.choice(categorias_creadas)
         )
         p.actividades.add(*random.sample(actividades_creadas, 2))
@@ -139,31 +140,43 @@ def poblar_base_datos():
 
     print("4. Creando Reservas y Cancelaciones...")
     reservas_creadas = []
-    estados_reserva = ['pendiente', 'confirmada', 'completada', 'cancelada']
+    estados_reserva = ['pendiente', 'confirmada', 'cancelada']
     
-    # 🌟 CAMBIO AQUÍ: En lugar de usar range(10), iteramos directamente sobre las tarifas reales creadas
+    combinaciones_unicas = set()
+
     for tarifa_asociada in tarifas_creadas:
         fecha_reserva = tarifa_asociada.temporada.fecha_inicio + timedelta(days=2)
+        usuario_aleatorio = random.choice(clientes_creados).usuario
+        paquete_asociado = tarifa_asociada.paquete
+
+        identificador = (usuario_aleatorio.id, paquete_asociado.id, fecha_reserva)
+
+        # 1. Si ya existe la combinación, saltamos COMPLETAMENTE a la siguiente tarifa
+        if identificador in combinaciones_unicas:
+            continue
+            
+        combinaciones_unicas.add(identificador)
+        
+        # 2. Todo lo que dependa de la nueva reserva va AQUÍ ABAJO
         estado = random.choice(estados_reserva)
         
-        r = Reserva(
-            usuario=random.choice(clientes_creados).usuario,
-            paquete=tarifa_asociada.paquete,
+        r = Reserva.objects.create(
+            usuario=usuario_aleatorio,
+            paquete=paquete_asociado,
             fecha=fecha_reserva,
             numero_adultos=random.randint(1, 4),
             numero_menores=random.randint(0, 3),
             estado=estado
         )
-        r.save() 
         reservas_creadas.append(r)
 
+        # 3. La cancelación ahora está amarrada de forma segura a la 'r' que se acaba de crear arriba
         if estado == 'cancelada':
             Cancelacion.objects.create(
                 reserva=r,
                 motivo="Imprevisto de última hora",
                 penalidad=Decimal(str(random.randint(0, 50000)))
             )
-
 
 
     print("5. Creando Comunidad (Calificaciones, Blog y PQRS)...")
