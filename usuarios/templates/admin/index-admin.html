@@ -1,6 +1,7 @@
 <!-- ── index-admin ── -->
 {% extends 'admin/base-admin.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Dashboard | Monagua Admin{% endblock %}
 
@@ -49,7 +50,7 @@
           </span>
         </div>
         <div class="text-muted small">Ingresos Totales</div>
-        <div class="fw-bold fs-5 text-success">$ {{ total_ventas|floatformat:2|default:"0.00" }}</div>
+        <div class="fw-bold fs-5 text-success">$ {{ total_ventas|floatformat:2|intcomma|default:"0.00" }}</div>
         <div class="text-muted" style="font-size:.75rem"><i class="bi bi-arrow-up-right text-success"></i> Reservas confirmadas</div>
       </div>
     </div>
@@ -64,7 +65,7 @@
           </span>
         </div>
         <div class="text-muted small">Usuarios Registrados</div>
-        <div class="fw-bold fs-5 text-primary">{{ total_usuarios|default:"0" }}</div>
+        <div class="fw-bold fs-5 text-primary">{{ total_usuarios|intcomma|default:"0" }}</div>
         <div class="text-muted" style="font-size:.75rem"><i class="bi bi-arrow-up-right text-primary"></i> Clientes activos</div>
       </div>
     </div>
@@ -79,7 +80,7 @@
           </span>
         </div>
         <div class="text-muted small">Reservas Totales</div>
-        <div class="fw-bold fs-5 text-warning">{{ total_reservas|default:"0" }}</div>
+        <div class="fw-bold fs-5 text-warning">{{ total_reservas|intcomma|default:"0" }}</div>
         <div class="text-muted" style="font-size:.75rem"><i class="bi bi-arrow-up-right text-warning"></i> Paquetes vendidos</div>
       </div>
     </div>
@@ -94,7 +95,7 @@
           </span>
         </div>
         <div class="text-muted small">Tours Activos</div>
-        <div class="fw-bold fs-5 text-danger">{{ total_tours|default:"0" }}</div>
+        <div class="fw-bold fs-5 text-danger">{{ total_tours|intcomma|default:"0" }}</div>
         <div class="text-muted" style="font-size:.75rem"><i class="bi bi-dot"></i> Disponibles ahora</div>
       </div>
     </div>
@@ -109,7 +110,7 @@
           </span>
         </div>
         <div class="text-muted small">Pagos Rechazados</div>
-        <div class="fw-bold fs-5 text-danger">{{ total_pagos_rechazados|default:"0" }}</div>
+        <div class="fw-bold fs-5 text-danger">{{ total_pagos_rechazados|intcomma|default:"0" }}</div>
         <div style="font-size:.75rem">
           <a href="{% url 'admin_comprobantes' %}?estado=rechazado" class="text-decoration-none text-muted">
             Ver detalles <i class="bi bi-arrow-right text-danger"></i>
@@ -128,7 +129,7 @@
           </span>
         </div>
         <div class="text-muted small">Anuncios / Banners</div>
-        <div class="fw-bold fs-5" style="color:#6366f1">{{ total_promociones|default:"0" }}</div>
+        <div class="fw-bold fs-5" style="color:#6366f1">{{ total_promociones|intcomma|default:"0" }}</div>
         <div style="font-size:.75rem">
           <a href="#" class="text-decoration-none text-muted">
             Configurar <i class="bi bi-arrow-right"></i>
@@ -232,7 +233,7 @@
       </div>
       <div class="col-6">
         <div class="card border-0 shadow-sm text-center py-3">
-          <div class="fw-bold fs-5 text-warning">${{ ingreso_por_reserva|floatformat:0|default:"0" }}</div>
+          <div class="fw-bold fs-5 text-warning">${{ ingreso_por_reserva|floatformat:0|intcomma|default:"0" }}</div>
           <div class="text-muted small">Ingreso por reserva</div>
         </div>
       </div>
@@ -299,7 +300,7 @@
             </span>
           </td>
           <td class="fw-semibold">{{ tour.nombre }}</td>
-          <td class="fw-semibold text-success">${{ tour.precio|floatformat:2 }}</td>
+          <td class="fw-semibold text-success">${{ tour.precio|floatformat:2|intcomma }}</td>
           <td>
             <span class="badge rounded-pill bg-success bg-opacity-25 text-success">
               {{ tour.numero_reservas }} <i class="bi bi-ticket-detailed ms-1"></i>

@@ -1,7 +1,9 @@
-<!-- ── base-admin ── -->
+<!-- ── base-turista (dashboard layout) ── -->
 {% load static %}
+
 <head>
-  <title>{% block title %}Panel Admin | Monagua{% endblock %}</title>
+
+  <title>{% block title %}Panel Viajero | Monagua{% endblock %}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" >
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -26,7 +28,7 @@
      style="background:rgba(0,0,0,.5);z-index:1039"></div>
 
 <!-- ══════════════ SIDEBAR ══════════════ -->
-{% include 'partials/aside-admin.html' %}
+{% include 'partials/aside-turista.html' %}
 
 {% include 'partials/accesibilidad.html' %}
 
@@ -37,7 +39,6 @@
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{% static 'js/java.js' %}"></script>
 <script>
 (function () {
   const btn     = document.getElementById('sidebar-toggle');
@@ -61,8 +62,12 @@
     }
   }
 
-  btn.addEventListener('click', () => toggleSidebar());
-  ov.addEventListener('click', () => toggleSidebar(true));
+  if (btn) {
+    btn.addEventListener('click', () => toggleSidebar());
+  }
+  if (ov) {
+    ov.addEventListener('click', () => toggleSidebar(true));
+  }
 
   // Cerrar al hacer clic en un link en móvil
   if (sb) {
@@ -75,3 +80,4 @@
 {% block extra_js %}{% endblock %}
 </body>
 </html>
+
