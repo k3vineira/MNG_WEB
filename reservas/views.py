@@ -71,7 +71,11 @@ class ReservaDeleteView(DeleteView):
 @login_required(login_url='login')
 def mis_reservas_usuario(request):
     reservas_canceladas_ids = Cancelacion.objects.filter(reserva__usuario=request.user).values_list('reserva_id', flat=True)
-    mis_reservas = Reserva.objects.filter(usuario=request.user).exclude(id__in=reservas_canceladas_ids).order_by('-id')
+    mis_reservas = Reserva.objects.filter(usuario=request.user)\
+        .select_related('paquete')\
+        .prefetch_related('comprobantes')\
+        .exclude(id__in=reservas_canceladas_ids)\
+        .order_by('-id')
     
     context = {
         'reservas': mis_reservas
