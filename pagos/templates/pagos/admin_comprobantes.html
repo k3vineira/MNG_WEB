@@ -1,5 +1,6 @@
 {% extends 'base-admin.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Admin | Comprobantes de Pago{% endblock %}
 
@@ -90,17 +91,19 @@
                 </div>
             </div>
         </div>
+
         <div class="col-6 col-lg-3">
             <div class="card stat-card-admin bg-success bg-opacity-10 border-success border-opacity-25 shadow-sm p-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-success small text-uppercase fw-bold">Aprobados</span>
-                        <h3 class="fw-extrabold text-success mb-0 mt-1">{{ total_aprobados }}</h3>
+                        <h3 class="fw-extrabold text-success mb-0 mt-1">${{ total_aprobados|floatformat:2|intcomma }}</h3>
                     </div>
                     <div class="bg-success bg-opacity-20 p-2 rounded-3 text-success fs-4"><i class="bi bi-check-circle-fill"></i></div>
                 </div>
             </div>
         </div>
+
         <div class="col-6 col-lg-3">
             <div class="card stat-card-admin bg-danger bg-opacity-10 border-danger border-opacity-25 shadow-sm p-3">
                 <div class="d-flex align-items-center justify-content-between">
@@ -167,7 +170,7 @@
                                     {% endif %}
                                 </td>
                                 <td class="fw-bold text-success">
-                                    {% if c.monto %}${{ c.monto }}{% else %}—{% endif %}
+                                    {% if c.monto %}${{ c.monto|floatformat:2|intcomma }}{% else %}—{% endif %}
                                 </td>
                                 <td>{{ c.banco_origen|default:"—" }}</td>
                                 <td><code>{{ c.referencia|default:"—" }}</code></td>

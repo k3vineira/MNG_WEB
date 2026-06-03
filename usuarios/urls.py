@@ -8,7 +8,8 @@ from .views import login_view, logout_view
 urlpatterns = [
     path('', views.index_turista, name='inicio'),
     
-    path('dashboard/', views.index_turista, name='index_turista'),
+    path('panel_inicio/', views.index_turista, name='index_turista'),
+    path('mi-dashboard/', views.dashboard_turista, name='dashboard_turista'),
     path('admin-dashboard/', views.dashboard_admin, name='dashboard'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),

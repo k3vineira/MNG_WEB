@@ -1,5 +1,6 @@
 {% extends "private/base_private.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block private_css %}
 <style>
@@ -62,7 +63,7 @@
         <div class="col-6 col-md-4">
             <div class="stat-card bg-success bg-opacity-10 shadow-sm">
                 <div class="stat-icon text-success"><i class="bi bi-check-circle-fill"></i></div>
-                <div class="stat-number text-success">{{ total_aprobados }}</div>
+                <div class="stat-number text-success">${{ total_aprobados|floatformat:0|intcomma }}</div>
                 <div class="stat-label text-success">Aprobados</div>
             </div>
         </div>
@@ -124,7 +125,7 @@
                             <td class="py-3">{{ c.referencia|default:"—" }}</td>
                             <td class="py-3">{{ c.banco_origen|default:"—" }}</td>
                             <td class="py-3 fw-bold text-success">
-                                {% if c.monto %}${{ c.monto }}{% else %}—{% endif %}
+                                {% if c.monto %}${{ c.monto|floatformat:0|intcomma }}{% else %}—{% endif %}
                             </td>
                             <td class="py-3 text-muted">{{ c.fecha_envio|date:"d/m/Y H:i" }}</td>
                             <td class="py-3">
