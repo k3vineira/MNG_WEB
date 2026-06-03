@@ -22,58 +22,68 @@
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1" style="font-size:.65rem;letter-spacing:.1em">Principal</div>
 
     <a href="{% url 'dashboard_turista' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'dashboard_turista' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-grid-1x2-fill"></i> Dashboard
     </a>
 
     <a href="{% url 'index_turista' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'index_turista' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-house-door-fill"></i> Inicio
     </a>
 
     <a href="{% url 'mis_estadisticas' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'mis_estadisticas' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-graph-up-arrow"></i> Mis Estadísticas
     </a>
 
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Mis Viajes</div>
 
     <a href="{% url 'mis_reservas_usuario' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'mis_reservas_usuario' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-calendar-check-fill"></i> Mis Reservas
     </a>
 
     <a href="{% url 'mis_cancelaciones_usuario' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'mis_cancelaciones_usuario' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-x-circle-fill"></i> Mis Cancelaciones
     </a>
 
     <a href="{% url 'mis_comprobantes' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'mis_comprobantes' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-wallet2"></i> Mis Comprobantes
     </a>
 
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Comunidad</div>
 
     <a href="{% url 'mis_resenas' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'mis_resenas' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-star-fill"></i> Mis Reseñas
     </a>
 
     <a href="{% url 'blog_usuario' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'blog_usuario' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-journal-text"></i> Blog
     </a>
 
     <a href="{% url 'mis_pqrs' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'mis_pqrs' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-envelope-fill"></i> Mis PQRS
     </a>
 
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Cuenta</div>
 
     <a href="{% url 'detalles' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'detalles' %}bg-success text-white{% else %}text-white-50{% endif %}">
       <i class="bi bi-person-gear"></i> Mi Perfil
     </a>
 
@@ -99,6 +109,40 @@
     </form>
   </div>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const currentPath = window.location.pathname;
+      const sidebarLinks = document.querySelectorAll("#mainSidebar nav a");
+
+      let activeLink = null;
+      let maxMatchLength = 0;
+
+      sidebarLinks.forEach(link => {
+        const href = link.getAttribute("href");
+        if (!href || href === "#" || href === "") return;
+
+        const hrefPath = href.split('?')[0];
+        const normalizedHref = hrefPath.replace(/\/$/, "");
+        const normalizedPath = currentPath.replace(/\/$/, "");
+
+        if (normalizedPath === normalizedHref || normalizedPath.startsWith(normalizedHref + '/')) {
+          if (normalizedHref.length > maxMatchLength) {
+            maxMatchLength = normalizedHref.length;
+            activeLink = link;
+          }
+        }
+      });
+
+      if (activeLink) {
+        sidebarLinks.forEach(link => {
+          link.classList.remove("bg-success", "text-white");
+          link.classList.add("text-white-50");
+        });
+        activeLink.classList.remove("text-white-50");
+        activeLink.classList.add("bg-success", "text-white");
+      }
+    });
+  </script>
 </aside>
 
 
