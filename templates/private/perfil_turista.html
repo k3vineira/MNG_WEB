@@ -1,5 +1,8 @@
-{% extends "base_turista.html" %} {% load static %} {% block content %}
-<main class="container py-editorial">
+{% extends "private/base-turista-dashboard.html" %} 
+{% load static %} 
+
+{% block content %}
+<div class="container-fluid py-2">
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden bg-white mb-5">
     <div
       class="w-100 bg-success bg-opacity-25"
@@ -307,5 +310,5 @@
       </div>
     </div>
   </div>
-</main>
+</div>
 {% endblock %}

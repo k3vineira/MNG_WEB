@@ -18,6 +18,12 @@
 
   <!-- Nav -->
   <nav class="flex-grow-1 py-2">
+    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Cuenta</div>
+
+    <a href="{% url 'detalles' %}"
+       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+      <i class="bi bi-person-gear"></i> Mi Perfil
+    </a>
 
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1" style="font-size:.65rem;letter-spacing:.1em">Principal</div>
 
@@ -70,13 +76,16 @@
       <i class="bi bi-envelope-fill"></i> Mis PQRS
     </a>
 
-    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Cuenta</div>
+    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">
+      Sistema</div>
 
-    <a href="{% url 'detalles' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-person-gear"></i> Mi Perfil
+    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+      <i class="bi bi-bell-fill"></i> Notificaciones
     </a>
 
+    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+      <i class="bi bi-gear-fill"></i> Configuración
+    </a>
   </nav>
 
   <!-- Footer -->
