@@ -41,8 +41,8 @@ class PaqueteForm(ModelForm):
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
             'duracion_estimada': forms.TextInput(attrs={'class': 'form-control'}),
             'punto_encuentro': forms.TextInput(attrs={'class': 'form-control'}),
+            'hora_encuentro': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
-            
             'actividades': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

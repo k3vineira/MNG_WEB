@@ -79,8 +79,6 @@
                                                         <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="bi bi-clock me-1"></i> Pendiente</span>
                                                     {% elif reserva.estado == 'confirmada' or reserva.estado == 'Confirmada' %}
                                                         <span class="badge bg-success text-white rounded-pill px-3 py-2"><i class="bi bi-check-circle me-1"></i> Confirmada</span>
-                                                    {% elif reserva.estado == 'completada' or reserva.estado == 'Completada' %}
-                                                        <span class="badge bg-info text-dark rounded-pill px-3 py-2"><i class="bi bi-bookmark-star me-1"></i> Completada</span>
                                                     {% elif reserva.estado == 'cancelada' or reserva.estado == 'Cancelada' %}
                                                         <span class="badge bg-danger text-white rounded-pill px-3 py-2"><i class="bi bi-x-circle me-1"></i> Cancelada</span>
                                                     {% endif %}
