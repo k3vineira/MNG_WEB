@@ -1,20 +1,31 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<section class="vh-100 w-100 overflow-hidden">
-  <div class="row g-0 vh-100">
+<style>
+  /* Ocultar el scrollbar forzado del body para evitar un borde blanco a la derecha */
+  html, body {
+      overflow-y: hidden !important;
+  }
+</style>
+
+<!-- Spacer para el header -->
+<div class="d-lg-none" style="height: 5rem; width: 100%; background-color: #ffffff;"></div>
+<div class="d-none d-lg-block" style="height: 5rem; width: 100%; background-color: transparent;"></div>
+
+<section class="container-fluid p-0 overflow-hidden" style="height: calc(100vh - 5rem);">
+  <div class="row g-0 h-100 w-100 m-0">
     
     <!-- Columna Izquierda: Imagen de Naturaleza (Oculta en móviles) -->
-    <div class="col-lg-6 d-none d-lg-block position-relative" 
+    <div class="col-12 col-lg-6 d-none d-lg-block position-relative h-100" 
          style="background-image: url('{% static 'img/Fondo.jpg' %}'); background-size: cover; background-position: center;">
       <!-- Reutilizamos el gradiente del proyecto -->
       <div class="position-absolute top-0 start-0 w-100 h-100 overlay-gradient opacity-50"></div>
     </div>
 
     <!-- Columna Derecha: Formulario Minimalista -->
-    <div class="col-lg-6 bg-white d-flex align-items-center justify-content-center p-4 p-md-5 vh-100 overflow-auto">
+    <div class="col-12 col-lg-6 bg-white d-flex align-items-center justify-content-center p-4 p-md-5 h-100 overflow-auto">
       <div class="w-100" style="max-width: 420px;">
-        
+
         <!-- Cabecera Editorial -->
         <div class="mb-5">
           <h1 class="display-4 fw-bold text-dark mb-1">¡Hola!</h1>

@@ -100,6 +100,11 @@ class Paquete(models.Model):
             return tarifa_estandar.precio_adulto
     
         return 0
+
+    @property
+    def apto_para_menores(self):
+        # Si tiene al menos una actividad no apta, el paquete no es apto para menores
+        return not self.actividades.filter(apto_para_menores=False).exists()
  
 
 class Tarifa(models.Model):

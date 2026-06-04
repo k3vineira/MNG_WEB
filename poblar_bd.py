@@ -66,6 +66,34 @@ def poblar_base_datos():
     ]
 
     print("1. Creando Usuarios, Clientes y Guías...")
+    # Crear usuario administrador solicitado
+    try:
+        user, created = Usuario.objects.get_or_create(
+            username='a@b.com',
+            defaults={
+                'email': 'a@b.com',
+                'first_name': 'Administrador',
+                'last_name': 'Monagua',
+                'is_staff': True,
+                'is_superuser': True,
+                'rol': Usuario.Roles.ADMIN
+            }
+        )
+        if created:
+            user.set_password('@dmin123')
+            user.save()
+            print("Administrador a@b.com creado con éxito.")
+        else:
+            # Si ya existe, actualizamos la contraseña por si acaso
+            user.set_password('@dmin123')
+            user.is_staff = True
+            user.is_superuser = True
+            user.rol = Usuario.Roles.ADMIN
+            user.save()
+            print("Administrador a@b.com actualizado con éxito.")
+    except Exception as e:
+        print(f"Error al crear/actualizar administrador: {e}")
+
     clientes_creados = []
     guias_creados = []
     

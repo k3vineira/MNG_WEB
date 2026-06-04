@@ -7,6 +7,8 @@
 
 
 <main>
+    <!-- Spacer to prevent content from rendering under fixed navbar -->
+    <div style="height: 5rem; width: 100%; background-color: #ffffff;"></div>
     <div id="carouselDestinos" class="carousel slide carousel-fade shadow-lg" data-bs-ride="carousel" data-bs-interval="5000">
         <div class="carousel-indicators mb-4">
             <button type="button" data-bs-target="#carouselDestinos" data-bs-slide-to="0" class="active" aria-current="true"></button>
@@ -122,6 +124,13 @@
                     <div class="position-absolute top-0 start-0 m-2">
                         <span class="badge bg-dark bg-opacity-75 text-white small px-2 py-1 rounded-pill"><i class="bi bi-geo-alt-fill me-1"></i>Mongua</span>
                     </div>
+                    {% if not destino.apto_para_menores %}
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-danger bg-opacity-75 text-white small px-2 py-1 rounded-pill shadow-sm" title="No apto para niños">
+                            <i class="bi bi-person-slash me-1"></i>Solo Adultos
+                        </span>
+                    </div>
+                    {% endif %}
                 </div>
                 
                 <div class="card-body p-4 d-flex flex-column gap-3">
