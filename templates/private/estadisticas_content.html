@@ -3,11 +3,15 @@
 
 <div class="container-fluid py-4 px-md-5">
 
+
     <div class="row align-items-center mb-5 g-3">
         <div class="col-12 col-md-8">
-            <h1 class="fw-bold tracking-tight text-dark mb-1">
-                {% if user.is_staff %}<i class="bi bi-speedometer2 text-success me-2"></i>Consola de Analítica General{%
-                else %}<i class="bi bi-person-badge text-success me-2"></i>Mi Portal de Analítica Individual{% endif %}
+            <h1 class="fw-bold text-dark mb-1">
+                {% if user.is_staff %}
+                <i class="bi bi-speedometer2 text-success me-2"></i>Consola de Analítica General
+                {% else %}
+                <i class="bi bi-person-badge text-success me-2"></i>Mi Portal de Analítica Individual
+                {% endif %}
             </h1>
             <p class="text-muted mb-0">Consolidado métrico avanzado e histórico de comportamiento de viajes,
                 transacciones y soporte en Monagua.</p>
@@ -15,18 +19,20 @@
         <div class="col-12 col-md-4 text-md-end">
             <span
                 class="badge rounded-pill bg-success bg-opacity-10 text-success px-4 py-2 fs-6 fw-semibold border border-success border-opacity-25">
-                <i class="bi bi-shield-check me-1"></i> {% if user.is_staff %}Rol: Administrador{% else %}Rol: Viajero
-                Activo{% endif %}
+                <i class="bi bi-shield-check me-1"></i>
+                {% if user.is_staff %}Rol: Administrador{% else %}Rol: Viajero Activo{% endif %}
             </span>
         </div>
     </div>
+
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase tracking-wider">Inversión Total</span>
-                    <div class="p-2 bg-success bg-opacity-10 text-success rounded-3"><i class="bi bi-wallet2 fs-4"></i>
+                    <span class="text-muted small fw-bold text-uppercase">Inversión Total</span>
+                    <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                        <i class="bi bi-wallet2 fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">${{ total_invertido|floatformat:0|intcomma|default:"0" }}</h2>
@@ -37,9 +43,10 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase tracking-wider">Volumen de Reservas</span>
-                    <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3"><i
-                            class="bi bi-journal-bookmark-fill fs-4"></i></div>
+                    <span class="text-muted small fw-bold text-uppercase">Volumen de Reservas</span>
+                    <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+                        <i class="bi bi-journal-bookmark-fill fs-4"></i>
+                    </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">{{ total_reservas|default:"0" }}</h2>
                 <div class="text-muted small"><i class="bi bi-arrow-up-right text-primary me-1"></i>Historial completo
@@ -49,8 +56,9 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase tracking-wider">Ticket Promedio</span>
-                    <div class="p-2 bg-info bg-opacity-10 text-info rounded-3"><i class="bi bi-calculator fs-4"></i>
+                    <span class="text-muted small fw-bold text-uppercase">Ticket Promedio</span>
+                    <div class="p-2 bg-info bg-opacity-10 text-info rounded-3">
+                        <i class="bi bi-calculator fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">${{ promedio_por_reserva|floatformat:0|intcomma|default:"0" }}</h2>
@@ -60,9 +68,10 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase tracking-wider">Índice del Destino</span>
-                    <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3"><i
-                            class="bi bi-geo-alt-fill fs-4"></i></div>
+                    <span class="text-muted small fw-bold text-uppercase">Índice del Destino</span>
+                    <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3">
+                        <i class="bi bi-geo-alt-fill fs-4"></i>
+                    </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">{{ destinos_frecuentes.count|default:"0" }}</h2>
                 <div class="text-muted small"><i class="bi bi-map me-1"></i>Rutas ecológicas exploradas</div>
@@ -71,11 +80,68 @@
     </div>
 
     <div class="row g-4 mb-5">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Tasa de Éxito</span>
+                    <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                        <i class="bi bi-graph-up-arrow fs-4"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold text-dark mb-1">{{ tasa_exito|default:"0" }}%</h2>
+                <div class="progress rounded-pill mb-2">
+                    <div class="progress-bar bg-success" role="progressbar" id="barTasaExito"></div>
+                </div>
+                <div class="text-muted small">Reservas confirmadas / total</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">PQRS Activas</span>
+                    <div class="p-2 bg-danger bg-opacity-10 text-danger rounded-3">
+                        <i class="bi bi-headset fs-4"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold text-dark mb-1">{{ pqrs_abiertas|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-exclamation-circle text-danger me-1"></i>Requieren
+                    atención</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Reseñas Publicadas</span>
+                    <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3">
+                        <i class="bi bi-star-fill fs-4"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold text-dark mb-1">{{ total_resenas|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-pencil me-1"></i>Opiniones registradas</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Días como Miembro</span>
+                    <div class="p-2 bg-info bg-opacity-10 text-info rounded-3">
+                        <i class="bi bi-person-check-fill fs-4"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold text-dark mb-1">{{ dias_como_miembro|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-calendar3 me-1"></i>Desde {{ user.date_joined|date:"d M Y"
+                    }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
         <div class="col-12 col-lg-7">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-award text-warning me-2"></i>Estatus de
-                        Fidelización y Nivel de Experiencia</h5>
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="bi bi-award text-warning me-2"></i>Estatus de Fidelización y Nivel de Experiencia
+                    </h5>
                     <span
                         class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">Programa
                         Monagua Core</span>
@@ -99,8 +165,7 @@
                             <span class="fw-bold">{{ progreso_nivel }}%</span>
                         </div>
                         <div class="progress rounded-pill mb-0">
-                            <div class="progress-bar bg-warning" role="progressbar"
-                                style="width: {{ progreso_nivel }}%;"></div>
+                            <div class="progress-bar bg-warning" role="progressbar" id="barProgreso"></div>
                         </div>
                         {% endif %}
                     </div>
@@ -116,8 +181,9 @@
                         <span class="fw-bold text-dark small">{{ user.last_login|date:"d M Y"|default:"—" }}</span>
                     </div>
                     <div class="col-4 border-start border-light">
-                        <small class="text-muted d-block">Días Registrado</small>
-                        <span class="fw-bold text-dark small">{{ dias_como_miembro|default:"0" }} días</span>
+                        <small class="text-muted d-block">Promedio Mensual</small>
+                        <span class="fw-bold text-dark small">{{ promedio_mensual_reservas|default:"0" }}
+                            reservas</span>
                     </div>
                 </div>
             </div>
@@ -137,6 +203,16 @@
                         <div class="progress-bar bg-white w-75" role="progressbar"></div>
                     </div>
                 </div>
+                <div class="bg-white bg-opacity-10 rounded-3 p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-semibold">Árboles estimados conservados</span>
+                        <span class="small badge bg-white text-success fw-bold">{{ arboles_conservados|default:"—"
+                            }}</span>
+                    </div>
+                    <div class="progress bg-white bg-opacity-25 rounded-pill">
+                        <div class="progress-bar bg-white w-50" role="progressbar"></div>
+                    </div>
+                </div>
                 <div class="d-flex align-items-center gap-2 small text-white text-opacity-75 mt-auto">
                     <i class="bi bi-heart-pulse-fill"></i>
                     <span>Gracias por ser parte del ecoturismo responsable.</span>
@@ -146,40 +222,124 @@
     </div>
 
     <div class="row g-4 mb-5">
-        <div class="col-12 col-xl-7">
+        <div class="col-12 col-xl-8">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-activity text-primary me-2"></i>Comportamiento y
-                        Tendencia de Flujos</h5>
-                    <span class="text-muted small">Muestreo Mensual</span>
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="bi bi-activity text-primary me-2"></i>Evolución Mensual de Reservas e Inversión
+                    </h5>
+                    <span class="text-muted small">Año en curso</span>
                 </div>
                 <canvas id="chartEvolucionMensual" class="w-100"></canvas>
             </div>
         </div>
-
-        <div class="col-12 col-md-6 col-xl-5">
+        <div class="col-12 col-md-6 col-xl-4">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
-                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-pie-chart-fill text-success me-2"></i>Distribución de
-                    Estados de Reserva</h5>
-                <div class="mx-auto w-75">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-pie-chart-fill text-success me-2"></i>Distribución de Estados de Reserva
+                </h5>
+                <div class="mx-auto" style="max-width:260px;">
                     <canvas id="chartEstadosPie"></canvas>
+                </div>
+                <div class="row g-2 text-center mt-3">
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-success">{{ reservas_confirmadas|default:"0" }}</span>
+                        <small class="text-muted">Confirmadas</small>
+                    </div>
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-warning">{{ reservas_pendientes|default:"0" }}</span>
+                        <small class="text-muted">Pendientes</small>
+                    </div>
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-danger">{{ reservas_canceladas|default:"0" }}</span>
+                        <small class="text-muted">Canceladas</small>
+                    </div>
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-secondary">{{ reservas_completadas|default:"0" }}</span>
+                        <small class="text-muted">Completadas</small>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-12 col-md-6 col-xl-6">
+    <div class="row g-4 mb-5">
+        <div class="col-12 col-md-6 col-xl-4">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
-                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-bar-chart-steps text-warning me-2"></i>Volumen de
-                    Inversión Anualizado</h5>
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-bar-chart-steps text-warning me-2"></i>Inversión Anualizada
+                </h5>
                 <canvas id="chartInversionAnual" class="w-100"></canvas>
             </div>
         </div>
-
-        <div class="col-12 col-xl-6">
+        <div class="col-12 col-md-6 col-xl-4">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
-                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-calendar-week text-info me-2"></i>Preferencia de
-                    Solicitudes (Día de la Semana)</h5>
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-calendar-week text-info me-2"></i>Preferencia por Día de la Semana
+                </h5>
                 <canvas id="chartDiasSemana" class="w-100"></canvas>
+            </div>
+        </div>
+        <div class="col-12 col-xl-4">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-headset text-danger me-2"></i>Estado de PQRS
+                </h5>
+                <canvas id="chartPqrsEstados" class="w-100"></canvas>
+                <div class="row g-2 text-center mt-3">
+                    <div class="col-4">
+                        <span class="d-block fw-bold text-primary">{{ pqrs_abiertas|default:"0" }}</span>
+                        <small class="text-muted">Abiertas</small>
+                    </div>
+                    <div class="col-4">
+                        <span class="d-block fw-bold text-warning">{{ pqrs_en_gestion|default:"0" }}</span>
+                        <small class="text-muted">En gestión</small>
+                    </div>
+                    <div class="col-4">
+                        <span class="d-block fw-bold text-success">{{ pqrs_cerradas|default:"0" }}</span>
+                        <small class="text-muted">Resueltas</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-12 col-md-6">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-layers-fill text-secondary me-2"></i>Comparativa Anual: Reservas vs Cancelaciones
+                </h5>
+                <canvas id="chartComparativaAnual" class="w-100"></canvas>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-geo-fill text-success me-2"></i>Top Destinos por Frecuencia de Reserva
+                </h5>
+                <canvas id="chartTopDestinos" class="w-100"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-12 col-md-5">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-radar text-primary me-2"></i>Perfil de Comportamiento del Viajero
+                </h5>
+                <div class="mx-auto" style="max-width:300px;">
+                    <canvas id="chartRadarPerfil"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-7">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-graph-up text-info me-2"></i>Tendencia Acumulada de Inversión (Mensual)
+                </h5>
+                <canvas id="chartInversionAcumulada" class="w-100"></canvas>
             </div>
         </div>
     </div>
@@ -187,38 +347,56 @@
     <div class="card border border-light shadow-sm rounded-4 p-4 mb-5 bg-white">
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-3">
             <div>
-                <h5 class="fw-bold text-dark mb-1"><i
-                        class="bi bi-file-earmark-bar-graph text-secondary me-2"></i>Módulos de Auditoría e Informes
-                    Consolidados</h5>
+                <h5 class="fw-bold text-dark mb-1">
+                    <i class="bi bi-file-earmark-bar-graph text-secondary me-2"></i>Módulos de Auditoría e Informes
+                    Consolidados
+                </h5>
                 <p class="text-muted small mb-0">Selecciona las pestañas inferiores para desglosar la matriz de datos
                     históricos.</p>
             </div>
         </div>
 
-        <ul class="nav nav-pills bg-light p-2 rounded-3 mb-4 gap-2" id="vistasMatrizTab" role="tablist">
+        <ul class="nav nav-pills bg-light p-2 rounded-3 mb-4 gap-2 flex-wrap" id="vistasMatrizTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active rounded-3 fw-medium" id="tab-mensual-link" data-bs-toggle="tab"
-                    data-bs-target="#panel-mensual" type="button" role="tab"><i class="bi bi-calendar3 me-2"></i>Reporte
-                    Mensual</button>
+                <button class="nav-link active rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-mensual"
+                    type="button" role="tab">
+                    <i class="bi bi-calendar3 me-2"></i>Reporte Mensual
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-3 fw-medium" id="tab-anual-link" data-bs-toggle="tab"
-                    data-bs-target="#panel-anual" type="button" role="tab"><i
-                        class="bi bi-calendar-range me-2"></i>Reporte Anual</button>
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-anual"
+                    type="button" role="tab">
+                    <i class="bi bi-calendar-range me-2"></i>Reporte Anual
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-3 fw-medium" id="tab-destinos-link" data-bs-toggle="tab"
-                    data-bs-target="#panel-destinos" type="button" role="tab"><i class="bi bi-compass me-2"></i>Análisis
-                    de Rutas Frecuentes</button>
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-destinos"
+                    type="button" role="tab">
+                    <i class="bi bi-compass me-2"></i>Análisis de Rutas Frecuentes
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-3 fw-medium" id="tab-soporte-link" data-bs-toggle="tab"
-                    data-bs-target="#panel-soporte" type="button" role="tab"><i
-                        class="bi bi-headset me-2"></i>Trazabilidad de PQRS</button>
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-soporte"
+                    type="button" role="tab">
+                    <i class="bi bi-headset me-2"></i>Trazabilidad de PQRS
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-transacciones"
+                    type="button" role="tab">
+                    <i class="bi bi-credit-card me-2"></i>Historial de Pagos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-resenas"
+                    type="button" role="tab">
+                    <i class="bi bi-star me-2"></i>Reseñas y Calificaciones
+                </button>
             </li>
         </ul>
 
         <div class="tab-content" id="vistasMatrizTabContent">
+
             <div class="tab-pane fade show active" id="panel-mensual" role="tabpanel">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle border-0 mb-0">
@@ -228,6 +406,8 @@
                                 <th class="py-3 border-0 text-center">Reservas Creadas</th>
                                 <th class="py-3 border-0 text-center">Confirmadas</th>
                                 <th class="py-3 border-0 text-center">Canceladas</th>
+                                <th class="py-3 border-0 text-center">Completadas</th>
+                                <th class="py-3 border-0 text-center">Tasa Éxito</th>
                                 <th class="py-3 border-0 text-end">Inversión Recaudada</th>
                             </tr>
                         </thead>
@@ -236,22 +416,35 @@
                             <tr class="border-bottom border-light">
                                 <td class="fw-semibold text-dark py-3">{{ reporte.mes_nombre }} / {{ reporte.anio }}
                                 </td>
-                                <td class="text-center py-3"><span class="badge bg-light text-dark px-2.5">{{
+                                <td class="text-center py-3"><span class="badge bg-light text-dark">{{
                                         reporte.total_creadas }}</span></td>
                                 <td class="text-center py-3"><span
-                                        class="badge bg-success bg-opacity-10 text-success px-2.5">{{
-                                        reporte.total_confirmadas }}</span></td>
-                                <td class="text-center py-3"><span
-                                        class="badge bg-danger bg-opacity-10 text-danger px-2.5">{{
+                                        class="badge bg-success bg-opacity-10 text-success">{{ reporte.total_confirmadas
+                                        }}</span></td>
+                                <td class="text-center py-3"><span class="badge bg-danger bg-opacity-10 text-danger">{{
                                         reporte.total_canceladas }}</span></td>
+                                <td class="text-center py-3"><span
+                                        class="badge bg-secondary bg-opacity-10 text-secondary">{{
+                                        reporte.total_completadas|default:"0" }}</span></td>
+                                <td class="text-center py-3">
+                                    <div class="d-flex align-items-center gap-1 justify-content-center">
+                                        <div class="progress rounded-pill bg-light" style="width:60px;height:6px;">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                id="barMensual{{ forloop.counter }}"></div>
+                                        </div>
+                                        <small class="text-success fw-semibold">{{ reporte.porcentaje_exito|default:"0"
+                                            }}%</small>
+                                    </div>
+                                </td>
                                 <td class="text-end fw-bold text-dark py-3">${{ reporte.inversion|floatformat:0|intcomma
                                     }}</td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-5"><i
-                                        class="bi bi-folder-x fs-2 d-block mb-2 text-opacity-50"></i>Sin registros
-                                    mensuales consolidados.</td>
+                                <td colspan="7" class="text-center text-muted py-5">
+                                    <i class="bi bi-folder-x fs-2 d-block mb-2"></i>Sin registros mensuales
+                                    consolidados.
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -265,8 +458,12 @@
                         <thead class="table-light border-bottom">
                             <tr>
                                 <th class="py-3 border-0">Año</th>
-                                <th class="py-3 border-0 text-center">Volumen Operativo Global</th>
-                                <th class="py-3 border-0 text-center">Tasa de Éxito (Completadas)</th>
+                                <th class="py-3 border-0 text-center">Volumen Operativo</th>
+                                <th class="py-3 border-0 text-center">Confirmadas</th>
+                                <th class="py-3 border-0 text-center">Canceladas</th>
+                                <th class="py-3 border-0 text-center">Completadas</th>
+                                <th class="py-3 border-0 text-center">Ticket Promedio</th>
+                                <th class="py-3 border-0 text-center">Tasa de Éxito</th>
                                 <th class="py-3 border-0 text-end">Caja Acumulada</th>
                             </tr>
                         </thead>
@@ -275,11 +472,21 @@
                             <tr class="border-bottom border-light">
                                 <td class="fw-bold text-dark py-3">{{ reporte.anio }}</td>
                                 <td class="text-center py-3">{{ reporte.total_reservas }} viajes</td>
+                                <td class="text-center py-3"><span
+                                        class="badge bg-success bg-opacity-10 text-success">{{
+                                        reporte.total_confirmadas|default:"—" }}</span></td>
+                                <td class="text-center py-3"><span class="badge bg-danger bg-opacity-10 text-danger">{{
+                                        reporte.total_canceladas|default:"—" }}</span></td>
+                                <td class="text-center py-3"><span
+                                        class="badge bg-secondary bg-opacity-10 text-secondary">{{
+                                        reporte.total_completadas|default:"—" }}</span></td>
+                                <td class="text-center py-3 text-muted">${{
+                                    reporte.ticket_promedio|floatformat:0|intcomma|default:"—" }}</td>
                                 <td class="text-center py-3">
-                                    <div class="d-inline-flex align-items-center gap-2">
-                                        <div class="progress rounded-pill bg-light" style="width: 80px; height: 6px;">
+                                    <div class="d-flex align-items-center gap-2 justify-content-center">
+                                        <div class="progress rounded-pill bg-light" style="width:80px;height:6px;">
                                             <div class="progress-bar bg-success" role="progressbar"
-                                                style="width: {{ reporte.porcentaje_exito }}%;"></div>
+                                                id="barAnual{{ forloop.counter }}"></div>
                                         </div>
                                         <span class="small fw-semibold text-success">{{ reporte.porcentaje_exito
                                             }}%</span>
@@ -290,9 +497,9 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" class="text-center text-muted py-5"><i
-                                        class="bi bi-folder-x fs-2 d-block mb-2 text-opacity-50"></i>Sin registros
-                                    anuales.</td>
+                                <td colspan="8" class="text-center text-muted py-5">
+                                    <i class="bi bi-folder-x fs-2 d-block mb-2"></i>Sin registros anuales.
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -307,6 +514,7 @@
                             <tr>
                                 <th class="py-3 border-0">Ruta / Destino Turístico</th>
                                 <th class="py-3 border-0 text-center">Frecuencia de Reserva</th>
+                                <th class="py-3 border-0 text-center">Inversión Generada</th>
                                 <th class="py-3 border-0 text-end">Último Acceso Registrado</th>
                             </tr>
                         </thead>
@@ -316,21 +524,24 @@
                                 <td class="py-3">
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="p-2 bg-light text-dark rounded-circle small fw-bold text-center"
-                                            style="width: 32px; height: 32px; line-height: 16px;">{{ forloop.counter }}
+                                            style="min-width:32px;height:32px;line-height:16px;">{{ forloop.counter }}
                                         </div>
                                         <span class="fw-semibold text-dark">{{ destino.nombre }}</span>
                                     </div>
                                 </td>
-                                <td class="text-center py-3"><span class="badge bg-primary px-3 py-1.5 rounded-pill">{{
+                                <td class="text-center py-3"><span class="badge bg-primary px-3 py-1 rounded-pill">{{
                                         destino.total_reservas }}</span></td>
+                                <td class="text-center py-3 text-muted">${{
+                                    destino.inversion_total|floatformat:0|intcomma|default:"—" }}</td>
                                 <td class="text-end text-muted py-3">{{ destino.ultima_visita|date:"d M Y"|default:"—"
                                     }}</td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="3" class="text-center text-muted py-5"><i
-                                        class="bi bi-geo fs-2 d-block mb-2 text-opacity-50"></i>Aún no se registran
-                                    destinos geolocalizados en la cuenta.</td>
+                                <td colspan="4" class="text-center text-muted py-5">
+                                    <i class="bi bi-geo fs-2 d-block mb-2"></i>Aún no se registran destinos
+                                    geolocalizados en la cuenta.
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -362,6 +573,17 @@
                                     <span class="badge bg-success text-white font-monospace">{{
                                         pqrs_cerradas|default:"0" }}</span>
                                 </div>
+                                <hr class="my-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted fw-bold">Total de PQRS:</span>
+                                    <span class="badge bg-dark text-white font-monospace">{{ pqrs_total|default:"0"
+                                        }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted">Tasa de resolución:</span>
+                                    <span class="small fw-bold text-success">{{ pqrs_tasa_resolucion|default:"0"
+                                        }}%</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -369,7 +591,7 @@
                         <div class="border border-light rounded-3 p-3 bg-body">
                             <h6 class="fw-bold text-dark mb-3">Auditoría Breve de Actividad Reciente</h6>
                             <div class="vstack gap-2">
-                                {% for evento in actividad_reciente|slice:":4" %}
+                                {% for evento in actividad_reciente|slice:":6" %}
                                 <div
                                     class="p-2 border-bottom border-light d-flex justify-content-between align-items-center small">
                                     <span class="text-dark"><i class="bi bi-clock me-2 text-muted"></i>{{
@@ -385,12 +607,116 @@
                     </div>
                 </div>
             </div>
+
+
+            <div class="tab-pane fade" id="panel-transacciones" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border-0 mb-0">
+                        <thead class="table-light border-bottom">
+                            <tr>
+                                <th class="py-3 border-0"># Transacción</th>
+                                <th class="py-3 border-0">Reserva Asociada</th>
+                                <th class="py-3 border-0 text-center">Método de Pago</th>
+                                <th class="py-3 border-0 text-center">Estado</th>
+                                <th class="py-3 border-0 text-center">Fecha</th>
+                                <th class="py-3 border-0 text-end">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pago in historial_pagos %}
+                            <tr class="border-bottom border-light">
+                                <td class="py-3 font-monospace text-muted small">{{ pago.codigo|default:"#—" }}</td>
+                                <td class="py-3 fw-semibold text-dark">{{ pago.reserva_nombre|default:"—" }}</td>
+                                <td class="text-center py-3">
+                                    <span class="badge bg-light text-dark border border-light">
+                                        <i class="bi bi-credit-card me-1"></i>{{ pago.metodo|default:"—" }}
+                                    </span>
+                                </td>
+                                <td class="text-center py-3">
+                                    {% if pago.estado == "aprobado" %}
+                                    <span class="badge bg-success bg-opacity-10 text-success">Aprobado</span>
+                                    {% elif pago.estado == "pendiente" %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning">Pendiente</span>
+                                    {% elif pago.estado == "rechazado" %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger">Rechazado</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">{{
+                                        pago.estado|default:"—" }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center py-3 text-muted small">{{ pago.fecha|date:"d M Y"|default:"—" }}
+                                </td>
+                                <td class="text-end fw-bold text-dark py-3">${{
+                                    pago.monto|floatformat:0|intcomma|default:"0" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-5">
+                                    <i class="bi bi-credit-card fs-2 d-block mb-2"></i>Sin transacciones registradas.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="panel-resenas" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border-0 mb-0">
+                        <thead class="table-light border-bottom">
+                            <tr>
+                                <th class="py-3 border-0">Destino / Experiencia</th>
+                                <th class="py-3 border-0 text-center">Calificación</th>
+                                <th class="py-3 border-0">Comentario</th>
+                                <th class="py-3 border-0 text-center">Estado</th>
+                                <th class="py-3 border-0 text-end">Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for resena in mis_resenas %}
+                            <tr class="border-bottom border-light">
+                                <td class="py-3 fw-semibold text-dark">{{ resena.destino|default:"—" }}</td>
+                                <td class="text-center py-3">
+                                    <div class="d-flex justify-content-center gap-1">
+                                        {% for i in "12345" %}
+                                        {% if forloop.counter <= resena.calificacion %} <i
+                                            class="bi bi-star-fill text-warning small"></i>
+                                            {% else %}
+                                            <i class="bi bi-star text-muted small"></i>
+                                            {% endif %}
+                                            {% endfor %}
+                                    </div>
+                                </td>
+                                <td class="py-3 text-muted small">{{ resena.comentario|truncatechars:80|default:"—" }}
+                                </td>
+                                <td class="text-center py-3">
+                                    {% if resena.publicada %}
+                                    <span class="badge bg-success bg-opacity-10 text-success">Publicada</span>
+                                    {% else %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning">En revisión</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end text-muted py-3 small">{{ resena.fecha|date:"d M Y"|default:"—" }}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-5">
+                                    <i class="bi bi-star fs-2 d-block mb-2"></i>Aún no has publicado reseñas.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <div class="card border border-light shadow-sm rounded-4 p-4 bg-white mb-4">
-        <h6 class="fw-bold text-dark mb-3 text-uppercase tracking-wider small">Accesos Rápidos de Gestión y Operaciones
-        </h6>
+        <h6 class="fw-bold text-dark mb-3 text-uppercase small">Accesos Rápidos de Gestión y Operaciones</h6>
         <div class="row g-3">
             <div class="col-6 col-md-3">
                 <a href="{% url 'mis_reservas_usuario' %}"
@@ -426,116 +752,692 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        // Configuración Global de Tipografía para coincidir con la UI limpia
         Chart.defaults.font.family = "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
         Chart.defaults.color = "#6c757d";
+        Chart.defaults.plugins.legend.labels.usePointStyle = true;
+        Chart.defaults.plugins.legend.labels.padding = 16;
 
-        // 1. CHART: EVOLUCIÓN MENSUAL (Líneas)
-        const ctxEvolucion = document.getElementById('chartEvolucionMensual').getContext('2d');
-        new Chart(ctxEvolucion, {
-            type: 'line',
-            data: {
-                labels: {{ meses_labels| safe |default: "['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']" }},
-        datasets: [{
-            label: 'Reservas Mensuales',
-            data: {{ meses_datos| safe |default: "[0, 2, 4, 1, 7, 5, 12, 8, 9, 14, 11, 20]" }},
-        borderColor: '#0d6efd',
-        backgroundColor: 'rgba(13, 110, 253, 0.05)',
-        borderWidth: 3,
-        fill: true,
-        tension: 0.35,
-        pointRadius: 4,
-        pointBackgroundColor: '#0d6efd'
-                }]
-            },
-        options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-            y: { grid: { color: '#f8f9fa' }, border: { dashed: [5, 5] } },
-            x: { grid: { display: false } }
-        }
+        // ── Variables de datos desde Django ──────────────────────────────────────
+        const mesesLabels = {{ meses_labels| safe
+    }};
+    const mesesDatos = {{ meses_datos| safe }};
+    const mesesInversion = {{ meses_inversion| safe }};
+    const aniosLabels = {{ anios_labels| safe }};
+    const aniosDatos = {{ anios_datos| safe }};
+    const aniosReservas = {{ anios_reservas| safe }};
+    const aniosCanceladas = {{ anios_canceladas| safe }};
+    const diasDatos = {{ dias_datos| safe }};
+    const pqrsAbiertas = {{ pqrs_abiertas|default: "0" }};
+    const pqrsGestion = {{ pqrs_en_gestion|default: "0" }};
+    const pqrsCerradas = {{ pqrs_cerradas|default: "0" }};
+    const reservasConf = {{ reservas_confirmadas|default: "0" }};
+    const reservasPend = {{ reservas_pendientes|default: "0" }};
+    const reservasCan = {{ reservas_canceladas|default: "0" }};
+    const reservasComp = {{ reservas_completadas|default: "0" }};
+    const destinosLabels = {{ destinos_top_labels| safe }};
+    const destinosDatos = {{ destinos_top_datos| safe }};
+    const tasaExito = {{ tasa_exito|default: "0" }};
+    const progreso = {{ progreso_nivel|default: "0" }};
+
+    // ── Progress bars Django-driven ───────────────────────────────────────────
+    const barTasa = document.getElementById("barTasaExito");
+    if (barTasa) barTasa.style.width = tasaExito + "%";
+    const barProg = document.getElementById("barProgreso");
+    if (barProg) barProg.style.width = progreso + "%";
+
+    // ── Colores reutilizables ─────────────────────────────────────────────────
+    const C = {
+        blue: "#0d6efd",
+        green: "#198754",
+        yellow: "#ffc107",
+        red: "#dc3545",
+        cyan: "#0dcaf0",
+        gray: "#6c757d",
+        purple: "#6f42c1",
+        orange: "#fd7e14",
+        gridLine: "#f1f3f5",
+    };
+
+    function alphaColor(hex, a) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r},${g},${b},${a})`;
     }
-        });
 
-    // 2. CHART: ESTADOS DE RESERVA (Pie / Doughnut)
-    const ctxPie = document.getElementById('chartEstadosPie').getContext('2d');
-    new Chart(ctxPie, {
-        type: 'doughnut',
+    // ── 1. Evolución Mensual — Línea dual (reservas + inversión) ─────────────
+    new Chart(document.getElementById("chartEvolucionMensual"), {
+        type: "line",
         data: {
-            labels: ['Confirmadas', 'Pendientes', 'Canceladas', 'Completadas'],
+            labels: mesesLabels,
+            datasets: [
+                {
+                    label: "Reservas",
+                    data: mesesDatos,
+                    borderColor: C.blue,
+                    backgroundColor: alphaColor(C.blue, 0.06),
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: C.blue,
+                    yAxisID: "yReservas"
+                },
+                {
+                    label: "Inversión (COP)",
+                    data: mesesInversion,
+                    borderColor: C.green,
+                    backgroundColor: alphaColor(C.green, 0.06),
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: C.green,
+                    yAxisID: "yInversion"
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: "index", intersect: false },
+            plugins: { legend: { position: "top" } },
+            scales: {
+                yReservas: {
+                    type: "linear",
+                    position: "left",
+                    grid: { color: C.gridLine },
+                    ticks: { stepSize: 1 }
+                },
+                yInversion: {
+                    type: "linear",
+                    position: "right",
+                    grid: { drawOnChartArea: false },
+                    ticks: {
+                        callback: v => "$" + (v / 1000000).toFixed(1) + "M"
+                    }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 2. Estados de Reserva — Doughnut ─────────────────────────────────────
+    new Chart(document.getElementById("chartEstadosPie"), {
+        type: "doughnut",
+        data: {
+            labels: ["Confirmadas", "Pendientes", "Canceladas", "Completadas"],
             datasets: [{
-                data: [
-                    {{ reservas_confirmadas|default: 5
-            }},
-                        {{ reservas_pendientes|default: 2 }},
-        {{ reservas_canceladas|default: 1 }},
-        {{ reservas_completadas|default: 8 }}
-                    ],
-        backgroundColor: ['#198754', '#ffc107', '#dc3545', '#6c757d'],
-        borderWidth: 4,
-        borderColor: '#ffffff'
-                }]
-            },
+                data: [reservasConf, reservasPend, reservasCan, reservasComp],
+                backgroundColor: [C.green, C.yellow, C.red, C.gray],
+                borderWidth: 4,
+                borderColor: "#ffffff"
+            }]
+        },
         options: {
-        responsive: true,
-        cutout: '75%',
-        plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } }
+            responsive: true,
+            cutout: "72%",
+            plugins: {
+                legend: { position: "bottom", labels: { boxWidth: 10, padding: 12 } }
+            }
         }
-    }
-        });
+    });
 
-    // 3. CHART: INVERSIÓN ANUAL (Barras Verticales)
-    const ctxInversion = document.getElementById('chartInversionAnual').getContext('2d');
-    new Chart(ctxInversion, {
-        type: 'bar',
+    // ── 3. Inversión Anual — Barras verticales ────────────────────────────────
+    new Chart(document.getElementById("chartInversionAnual"), {
+        type: "bar",
         data: {
-            labels: {{ anios_labels| safe |default: "['2024', '2025', '2026']" }},
-        datasets: [{
-            label: 'Facturación / Inversión (COP)',
-            data: {{ anios_datos| safe |default: "[4500000, 7200000, 12800000]" }},
-        backgroundColor: '#ffc107',
-        borderRadius: 8,
-        barThickness: 32
-                }]
-            },
-        options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-            y: { grid: { color: '#f8f9fa' }, beginAtZero: true },
-            x: { grid: { display: false } }
-        }
-    }
-        });
-
-    // 4. CHART: PREFERENCIA POR DÍAS (Barras Horizontales)
-    const ctxDias = document.getElementById('chartDiasSemana').getContext('2d');
-    new Chart(ctxDias, {
-        type: 'bar',
-        data: {
-            labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+            labels: aniosLabels,
             datasets: [{
-                label: 'Solicitudes',
-                data: {{ dias_datos| safe |default: "[3, 5, 2, 4, 9, 15, 18]"
+                label: "Inversión (COP)",
+                data: aniosDatos,
+                backgroundColor: C.yellow,
+                borderRadius: 8,
+                barThickness: 36
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    grid: { color: C.gridLine },
+                    beginAtZero: true,
+                    ticks: { callback: v => "$" + (v / 1000000).toFixed(1) + "M" }
+                },
+                x: { grid: { display: false } }
+            }
         }
+    });
+
+    // ── 4. Días de la Semana — Barras horizontales ────────────────────────────
+    new Chart(document.getElementById("chartDiasSemana"), {
+        type: "bar",
+        data: {
+            labels: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
+            datasets: [{
+                label: "Solicitudes",
+                data: diasDatos,
+                backgroundColor: C.cyan,
+                borderRadius: 6,
+                barThickness: 14
+            }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: C.gridLine }, beginAtZero: true },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 5. PQRS Estados — Polar Area ──────────────────────────────────────────
+    new Chart(document.getElementById("chartPqrsEstados"), {
+        type: "polarArea",
+        data: {
+            labels: ["Abiertas", "En Gestión", "Resueltas"],
+            datasets: [{
+                data: [pqrsAbiertas, pqrsGestion, pqrsCerradas],
+                backgroundColor: [
+                    alphaColor(C.blue, 0.7),
+                    alphaColor(C.yellow, 0.7),
+                    alphaColor(C.green, 0.7)
+                ],
+                borderWidth: 2,
+                borderColor: "#ffffff"
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: "bottom", labels: { boxWidth: 10, padding: 12 } } }
+        }
+    });
+
+    // ── 6. Comparativa Anual — Barras agrupadas ───────────────────────────────
+    new Chart(document.getElementById("chartComparativaAnual"), {
+        type: "bar",
+        data: {
+            labels: aniosLabels,
+            datasets: [
+                {
+                    label: "Total Reservas",
+                    data: aniosReservas,
+                    backgroundColor: alphaColor(C.blue, 0.8),
+                    borderRadius: 6,
+                    barThickness: 24
+                },
+                {
+                    label: "Cancelaciones",
+                    data: aniosCanceladas,
+                    backgroundColor: alphaColor(C.red, 0.75),
+                    borderRadius: 6,
+                    barThickness: 24
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: "top" } },
+            scales: {
+                y: { grid: { color: C.gridLine }, beginAtZero: true },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 7. Top Destinos — Barras horizontales ─────────────────────────────────
+    new Chart(document.getElementById("chartTopDestinos"), {
+        type: "bar",
+        data: {
+            labels: destinosLabels,
+            datasets: [{
+                label: "Reservas",
+                data: destinosDatos,
+                backgroundColor: [
+                    alphaColor(C.green, 0.85),
+                    alphaColor(C.blue, 0.75),
+                    alphaColor(C.cyan, 0.8),
+                    alphaColor(C.orange, 0.75),
+                    alphaColor(C.purple, 0.7)
+                ],
+                borderRadius: 6,
+                barThickness: 16
+            }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: C.gridLine }, beginAtZero: true },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 8. Radar Perfil del Viajero ────────────────────────────────────────────
+    new Chart(document.getElementById("chartRadarPerfil"), {
+        type: "radar",
+        data: {
+            labels: ["Reservas", "Inversión", "Fidelidad", "Reseñas", "PQRS resueltas", "Destinos"],
+            datasets: [{
+                label: "Tu perfil",
+                data: {{ radar_datos| safe }
     },
-        backgroundColor: '#0dcaf0',
-        borderRadius: 6,
-        barThickness: 16
+        borderColor: C.green,
+        backgroundColor: alphaColor(C.green, 0.15),
+        borderWidth: 2,
+        pointBackgroundColor: C.green,
+        pointRadius: 4
                 }]
             },
         options: {
-        indexAxis: 'y',
         responsive: true,
-        plugins: { legend: { display: false } },
         scales: {
-            x: { grid: { color: '#f8f9fa' }, beginAtZero: true },
-            y: { grid: { display: false } }
-        }
+            r: {
+                beginAtZero: true,
+                max: 100,
+                ticks: { stepSize: 20, font: { size: 10 } },
+                grid: { color: C.gridLine },
+                pointLabels: { font: { size: 11 } }
+            }
+        },
+        plugins: { legend: { display: false } }
     }
         });
+
+    // ── 9. Inversión Acumulada Mensual — Área ─────────────────────────────────
+    const acumulados = mesesInversion.reduce((acc, val, i) => {
+        acc.push(i === 0 ? val : acc[i - 1] + val);
+        return acc;
+    }, []);
+
+    new Chart(document.getElementById("chartInversionAcumulada"), {
+        type: "line",
+        data: {
+            labels: mesesLabels,
+            datasets: [{
+                label: "Inversión Acumulada (COP)",
+                data: acumulados,
+                borderColor: C.cyan,
+                backgroundColor: alphaColor(C.cyan, 0.12),
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: C.cyan
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    grid: { color: C.gridLine },
+                    beginAtZero: true,
+                    ticks: { callback: v => "$" + (v / 1000000).toFixed(1) + "M" }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── Progress bars de tabla mensual ────────────────────────────────────────
+    document.querySelectorAll('[id^="barMensual"]').forEach(bar => {
+        const row = bar.closest('tr');
+        if (row) {
+            const small = row.querySelector('.text-success.fw-semibold');
+            if (small) {
+                const pct = parseInt(small.textContent) || 0;
+                bar.style.width = pct + '%';
+            }
+        }
+    });
+
+    // ── Progress bars de tabla anual ──────────────────────────────────────────
+    document.querySelectorAll('[id^="barAnual"]').forEach(bar => {
+        const row = bar.closest('tr');
+        if (row) {
+            const small = row.querySelector('.text-success.fw-semibold');
+            if (small) {
+                const pct = parseInt(small.textContent) || 0;
+                bar.style.width = pct + '%';
+            }
+        }
+    });
 
     });
+</script>
+
+
+
+const mesesInversion = {{ meses_inversion| safe |default:
+"[0,500000,800000,200000,1400000,1000000,2400000,1600000,1800000,2800000,2200000,4000000]" }};
+const aniosLabels = {{ anios_labels| safe |default: "['2024','2025','2026']" }};
+const aniosDatos = {{ anios_datos| safe |default: "[4500000,7200000,12800000]" }};
+const aniosReservas = {{ anios_reservas| safe |default: "[22,38,54]" }};
+const aniosCanceladas = {{ anios_canceladas| safe |default: "[4,7,9]" }};
+const diasDatos = {{ dias_datos| safe |default: "[3,5,2,4,9,15,18]" }};
+const pqrsAbiertas = {{ pqrs_abiertas|default: 0 }};
+const pqrsGestion = {{ pqrs_en_gestion|default: 0 }};
+const pqrsCerradas = {{ pqrs_cerradas|default: 0 }};
+const reservasConf = {{ reservas_confirmadas|default: 5 }};
+const reservasPend = {{ reservas_pendientes|default: 2 }};
+const reservasCan = {{ reservas_canceladas|default: 1 }};
+const reservasComp = {{ reservas_completadas|default: 8 }};
+const destinosLabels = {{ destinos_top_labels| safe |default: "['Páramo Alto','Laguna Verde','Sendero Norte','Cascada
+Sur','Bosque Nativo']" }};
+const destinosDatos = {{ destinos_top_datos| safe |default: "[18,14,11,9,6]" }};
+const tasaExito = {{ tasa_exito|default: 0 }};
+const progreso = {{ progreso_nivel|default: 0 }};
+
+// ── Progress bars Django-driven ───────────────────────────────────────────
+const barTasa = document.getElementById("barTasaExito");
+if (barTasa) barTasa.style.width = tasaExito + "%";
+const barProg = document.getElementById("barProgreso");
+if (barProg) barProg.style.width = progreso + "%";
+
+// ── Colores reutilizables ─────────────────────────────────────────────────
+const C = {
+blue: "#0d6efd",
+green: "#198754",
+yellow: "#ffc107",
+red: "#dc3545",
+cyan: "#0dcaf0",
+gray: "#6c757d",
+purple: "#6f42c1",
+orange: "#fd7e14",
+gridLine: "#f1f3f5",
+};
+
+function alphaColor(hex, a) {
+const r = parseInt(hex.slice(1, 3), 16);
+const g = parseInt(hex.slice(3, 5), 16);
+const b = parseInt(hex.slice(5, 7), 16);
+return `rgba(${r},${g},${b},${a})`;
+}
+
+// ── 1. Evolución Mensual — Línea dual (reservas + inversión) ─────────────
+new Chart(document.getElementById("chartEvolucionMensual"), {
+type: "line",
+data: {
+labels: mesesLabels,
+datasets: [
+{
+label: "Reservas",
+data: mesesDatos,
+borderColor: C.blue,
+backgroundColor: alphaColor(C.blue, 0.06),
+borderWidth: 2.5,
+fill: true,
+tension: 0.4,
+pointRadius: 4,
+pointBackgroundColor: C.blue,
+yAxisID: "yReservas"
+},
+{
+label: "Inversión (COP)",
+data: mesesInversion,
+borderColor: C.green,
+backgroundColor: alphaColor(C.green, 0.06),
+borderWidth: 2.5,
+fill: true,
+tension: 0.4,
+pointRadius: 4,
+pointBackgroundColor: C.green,
+yAxisID: "yInversion"
+}
+]
+},
+options: {
+responsive: true,
+interaction: { mode: "index", intersect: false },
+plugins: { legend: { position: "top" } },
+scales: {
+yReservas: {
+type: "linear",
+position: "left",
+grid: { color: C.gridLine },
+ticks: { stepSize: 1 }
+},
+yInversion: {
+type: "linear",
+position: "right",
+grid: { drawOnChartArea: false },
+ticks: {
+callback: v => "$" + (v / 1000000).toFixed(1) + "M"
+}
+},
+x: { grid: { display: false } }
+}
+}
+});
+
+// ── 2. Estados de Reserva — Doughnut ─────────────────────────────────────
+new Chart(document.getElementById("chartEstadosPie"), {
+type: "doughnut",
+data: {
+labels: ["Confirmadas", "Pendientes", "Canceladas", "Completadas"],
+datasets: [{
+data: [reservasConf, reservasPend, reservasCan, reservasComp],
+backgroundColor: [C.green, C.yellow, C.red, C.gray],
+borderWidth: 4,
+borderColor: "#ffffff"
+}]
+},
+options: {
+responsive: true,
+cutout: "72%",
+plugins: {
+legend: { position: "bottom", labels: { boxWidth: 10, padding: 12 } }
+}
+}
+});
+
+// ── 3. Inversión Anual — Barras verticales ────────────────────────────────
+new Chart(document.getElementById("chartInversionAnual"), {
+type: "bar",
+data: {
+labels: aniosLabels,
+datasets: [{
+label: "Inversión (COP)",
+data: aniosDatos,
+backgroundColor: C.yellow,
+borderRadius: 8,
+barThickness: 36
+}]
+},
+options: {
+responsive: true,
+plugins: { legend: { display: false } },
+scales: {
+y: {
+grid: { color: C.gridLine },
+beginAtZero: true,
+ticks: { callback: v => "$" + (v / 1000000).toFixed(1) + "M" }
+},
+x: { grid: { display: false } }
+}
+}
+});
+
+// ── 4. Días de la Semana — Barras horizontales ────────────────────────────
+new Chart(document.getElementById("chartDiasSemana"), {
+type: "bar",
+data: {
+labels: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
+datasets: [{
+label: "Solicitudes",
+data: diasDatos,
+backgroundColor: C.cyan,
+borderRadius: 6,
+barThickness: 14
+}]
+},
+options: {
+indexAxis: "y",
+responsive: true,
+plugins: { legend: { display: false } },
+scales: {
+x: { grid: { color: C.gridLine }, beginAtZero: true },
+y: { grid: { display: false } }
+}
+}
+});
+
+// ── 5. PQRS Estados — Polar Area ──────────────────────────────────────────
+new Chart(document.getElementById("chartPqrsEstados"), {
+type: "polarArea",
+data: {
+labels: ["Abiertas", "En Gestión", "Resueltas"],
+datasets: [{
+data: [pqrsAbiertas, pqrsGestion, pqrsCerradas],
+backgroundColor: [
+alphaColor(C.blue, 0.7),
+alphaColor(C.yellow, 0.7),
+alphaColor(C.green, 0.7)
+],
+borderWidth: 2,
+borderColor: "#ffffff"
+}]
+},
+options: {
+responsive: true,
+plugins: { legend: { position: "bottom", labels: { boxWidth: 10, padding: 12 } } }
+}
+});
+
+// ── 6. Comparativa Anual — Barras agrupadas ───────────────────────────────
+new Chart(document.getElementById("chartComparativaAnual"), {
+type: "bar",
+data: {
+labels: aniosLabels,
+datasets: [
+{
+label: "Total Reservas",
+data: aniosReservas,
+backgroundColor: alphaColor(C.blue, 0.8),
+borderRadius: 6,
+barThickness: 24
+},
+{
+label: "Cancelaciones",
+data: aniosCanceladas,
+backgroundColor: alphaColor(C.red, 0.75),
+borderRadius: 6,
+barThickness: 24
+}
+]
+},
+options: {
+responsive: true,
+plugins: { legend: { position: "top" } },
+scales: {
+y: { grid: { color: C.gridLine }, beginAtZero: true },
+x: { grid: { display: false } }
+}
+}
+});
+
+// ── 7. Top Destinos — Barras horizontales ─────────────────────────────────
+new Chart(document.getElementById("chartTopDestinos"), {
+type: "bar",
+data: {
+labels: destinosLabels,
+datasets: [{
+label: "Reservas",
+data: destinosDatos,
+backgroundColor: [
+alphaColor(C.green, 0.85),
+alphaColor(C.blue, 0.75),
+alphaColor(C.cyan, 0.8),
+alphaColor(C.orange, 0.75),
+alphaColor(C.purple, 0.7)
+],
+borderRadius: 6,
+barThickness: 16
+}]
+},
+options: {
+indexAxis: "y",
+responsive: true,
+plugins: { legend: { display: false } },
+scales: {
+x: { grid: { color: C.gridLine }, beginAtZero: true },
+y: { grid: { display: false } }
+}
+}
+});
+
+// ── 8. Radar Perfil del Viajero ────────────────────────────────────────────
+new Chart(document.getElementById("chartRadarPerfil"), {
+type: "radar",
+data: {
+labels: ["Reservas", "Inversión", "Fidelidad", "Reseñas", "PQRS resueltas", "Destinos"],
+datasets: [{
+label: "Tu perfil",
+data: {{ radar_datos| safe |default: "[70,55,80,40,90,65]"
+}
+},
+borderColor: C.green,
+backgroundColor: alphaColor(C.green, 0.15),
+borderWidth: 2,
+pointBackgroundColor: C.green,
+pointRadius: 4
+}]
+},
+options: {
+responsive: true,
+scales: {
+r: {
+beginAtZero: true,
+max: 100,
+ticks: { stepSize: 20, font: { size: 10 } },
+grid: { color: C.gridLine },
+pointLabels: { font: { size: 11 } }
+}
+},
+plugins: { legend: { display: false } }
+}
+});
+
+// ── 9. Inversión Acumulada Mensual — Área ─────────────────────────────────
+const acumulados = mesesInversion.reduce((acc, val, i) => {
+acc.push(i === 0 ? val : acc[i - 1] + val);
+return acc;
+}, []);
+
+new Chart(document.getElementById("chartInversionAcumulada"), {
+type: "line",
+data: {
+labels: mesesLabels,
+datasets: [{
+label: "Inversión Acumulada (COP)",
+data: acumulados,
+borderColor: C.cyan,
+backgroundColor: alphaColor(C.cyan, 0.12),
+borderWidth: 2.5,
+fill: true,
+tension: 0.4,
+pointRadius: 4,
+pointBackgroundColor: C.cyan
+}]
+},
+options: {
+responsive: true,
+plugins: { legend: { display: false } },
+scales: {
+y: {
+grid: { color: C.gridLine },
+beginAtZero: true,
+ticks: { callback: v => "$" + (v / 1000000).toFixed(1) + "M" }
+},
+x: { grid: { display: false } }
+}
+}
+});
+
+});
 </script>

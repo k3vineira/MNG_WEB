@@ -448,6 +448,7 @@ def mis_resenas_view(request):
 
 @login_required
 def estadisticas_usuario(request):
+    import json
     from django.utils import timezone
     from django.db.models import Sum, Avg, Count, Max, Q
     from reservas.models import Reserva
@@ -666,34 +667,231 @@ def estadisticas_usuario(request):
 
         template_name = 'private/estadisticas.html'
 
+    # ── Datos compartidos para gráficas y tablas ──────────────────────────────
+    MESES_ES  = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+    MESES_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio',
+                  'Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+
+    anio_actual = now.year
+
+    if is_admin:
+        base_reservas = Reserva.objects.all()
+        base_pagos    = ComprobantePago.objects.filter(estado='aprobado')
+        base_pagos_all = ComprobantePago.objects.all()
+    else:
+        base_reservas = Reserva.objects.filter(usuario=request.user)
+        base_pagos    = ComprobantePago.objects.filter(usuario=request.user, estado='aprobado')
+        base_pagos_all = ComprobantePago.objects.filter(usuario=request.user)
+
+    # ── Tasa de éxito ─────────────────────────────────────────────────────────
+    tasa_exito = round((reservas_confirmadas + reservas_completadas) / total_reservas * 100) if total_reservas > 0 else 0
+
+    # ── Promedio mensual de reservas ──────────────────────────────────────────
+    promedio_mensual_reservas = round(total_reservas / max(1, dias_como_miembro / 30), 1)
+
+    # ── Árboles conservados (estimado decorativo) ─────────────────────────────
+    arboles_conservados = (reservas_confirmadas + reservas_completadas) * 3
+
+    # ── Reporte mensual (año en curso) ────────────────────────────────────────
+    reporte_mensual   = []
+    meses_labels_list = []
+    meses_datos_list  = []
+    meses_inversion_list = []
+
+    for mes in range(1, 13):
+        qs_mes             = base_reservas.filter(fecha__year=anio_actual, fecha__month=mes)
+        total_creadas      = qs_mes.count()
+        total_confirmadas  = qs_mes.filter(estado='confirmada').count()
+        total_canceladas   = qs_mes.filter(estado='cancelada').count()
+        total_completadas  = qs_mes.filter(estado='completada').count()
+        exitosas_mes       = total_confirmadas + total_completadas
+        porcentaje_exito_m = round(exitosas_mes / total_creadas * 100) if total_creadas > 0 else 0
+        inv = base_pagos.filter(
+            fecha_envio__year=anio_actual,
+            fecha_envio__month=mes
+        ).aggregate(total=Sum('monto'))['total'] or 0
+
+        reporte_mensual.append({
+            'mes_nombre':        MESES_FULL[mes - 1],
+            'anio':              anio_actual,
+            'total_creadas':     total_creadas,
+            'total_confirmadas': total_confirmadas,
+            'total_canceladas':  total_canceladas,
+            'total_completadas': total_completadas,
+            'porcentaje_exito':  porcentaje_exito_m,
+            'inversion':         inv,
+        })
+        meses_labels_list.append(MESES_ES[mes - 1])
+        meses_datos_list.append(total_creadas)
+        meses_inversion_list.append(float(inv))
+
+    # ── Reporte anual (todos los años con reservas) ───────────────────────────
+    anios_qs           = base_reservas.values('fecha__year').annotate(total=Count('id')).order_by('fecha__year')
+    reporte_anual      = []
+    anios_labels_list  = []
+    anios_datos_list   = []
+    anios_reservas_list = []
+    anios_canceladas_list = []
+
+    for row in anios_qs:
+        anio = row['fecha__year']
+        if anio is None:
+            continue
+        qs_anio         = base_reservas.filter(fecha__year=anio)
+        total_anio      = qs_anio.count()
+        conf_a          = qs_anio.filter(estado='confirmada').count()
+        canc_a          = qs_anio.filter(estado='cancelada').count()
+        comp_a          = qs_anio.filter(estado='completada').count()
+        exitosas_a      = conf_a + comp_a
+        porcentaje_a    = round((exitosas_a / total_anio) * 100) if total_anio > 0 else 0
+        inversion_anio  = base_pagos.filter(fecha_envio__year=anio).aggregate(
+            total=Sum('monto')
+        )['total'] or 0
+        ticket_prom_a   = round(float(inversion_anio) / exitosas_a) if exitosas_a > 0 else 0
+
+        reporte_anual.append({
+            'anio':              anio,
+            'total_reservas':    total_anio,
+            'total_confirmadas': conf_a,
+            'total_canceladas':  canc_a,
+            'total_completadas': comp_a,
+            'porcentaje_exito':  porcentaje_a,
+            'ticket_promedio':   ticket_prom_a,
+            'inversion':         inversion_anio,
+        })
+        anios_labels_list.append(str(anio))
+        anios_datos_list.append(float(inversion_anio))
+        anios_reservas_list.append(total_anio)
+        anios_canceladas_list.append(canc_a)
+
+    # ── Distribución por día de la semana ─────────────────────────────────────
+    dias_datos_list = [0] * 7
+    for r in base_reservas:
+        if r.fecha:
+            dias_datos_list[r.fecha.weekday()] += 1
+
+    # ── Destinos: enriquecer con inversión y generar labels/datos para chart ──
+    destinos_qs_full = base_reservas.values('paquete__nombre').annotate(
+        total_reservas=Count('id'),
+        ultima_visita=Max('fecha'),
+        inversion_total=Sum('monto_total'),
+    ).order_by('-total_reservas')[:5]
+
+    destinos_frecuentes = []
+    destinos_top_labels_list = []
+    destinos_top_datos_list  = []
+    for item in destinos_qs_full:
+        destinos_frecuentes.append({
+            'nombre':          item['paquete__nombre'],
+            'total_reservas':  item['total_reservas'],
+            'inversion_total': item['inversion_total'] or 0,
+            'ultima_visita':   item['ultima_visita'],
+        })
+        destinos_top_labels_list.append(item['paquete__nombre'] or '—')
+        destinos_top_datos_list.append(item['total_reservas'])
+
+    # ── Historial de pagos (para tab transacciones) ───────────────────────────
+    historial_pagos = []
+    for pago in base_pagos_all.select_related('reserva__paquete').order_by('-fecha_envio')[:15]:
+        historial_pagos.append({
+            'codigo':        f"#CP-{pago.pk}",
+            'reserva_nombre': pago.reserva.paquete.nombre if pago.reserva and pago.reserva.paquete else '—',
+            'metodo':         pago.banco_origen or 'Transferencia',
+            'estado':         pago.estado,
+            'fecha':          pago.fecha_envio,
+            'monto':          pago.monto or 0,
+        })
+
+    # ── Reseñas del usuario (para tab reseñas) ────────────────────────────────
+    if is_admin:
+        resenas_qs = Comentario.objects.select_related('paquete').order_by('-fecha_creacion')[:15]
+    else:
+        resenas_qs = Comentario.objects.filter(usuario=request.user).select_related('paquete').order_by('-fecha_creacion')[:15]
+
+    mis_resenas = []
+    for r in resenas_qs:
+        mis_resenas.append({
+            'destino':      r.paquete.nombre if r.paquete else r.titulo,
+            'calificacion': r.valoracion,
+            'comentario':   r.mensaje,
+            'publicada':    r.visible,
+            'fecha':        r.fecha_creacion,
+        })
+
+    # ── Radar de perfil (normalizado a 100) ───────────────────────────────────
+    max_reservas_r = max(total_reservas, 1)
+    max_inversion_r = max(float(total_invertido), 1)
+    radar_datos_list = [
+        min(100, round(total_reservas / 10 * 100)),              # Reservas
+        min(100, round(float(total_invertido) / 5000000 * 100)), # Inversión
+        min(100, progreso_nivel),                                 # Fidelidad
+        min(100, round(total_comentarios / 5 * 100)),            # Reseñas
+        min(100, round(pqrs_cerradas / max(total_pqrs, 1) * 100)), # PQRS resueltas
+        min(100, round(len(destinos_frecuentes) / 5 * 100)),    # Destinos
+    ]
+
+    # ── PQRS tasa resolución ──────────────────────────────────────────────────
+    pqrs_tasa_resolucion = round(pqrs_cerradas / total_pqrs * 100) if total_pqrs > 0 else 0
+
     context = {
-        'total_reservas': total_reservas,
-        'reservas_confirmadas': reservas_confirmadas,
-        'reservas_pendientes': reservas_pendientes,
-        'reservas_canceladas': reservas_canceladas,
-        'reservas_completadas': reservas_completadas,
-        'total_invertido': total_invertido,
-        'pagos_pendientes': pagos_pendientes,
-        'pagos_rechazados': pagos_rechazados,
-        'total_comprobantes': total_comprobantes,
-        'promedio_por_reserva': promedio_por_reserva,
-        'total_comentarios': total_comentarios,
-        'promedio_calificacion': promedio_calificacion,
+        # KPIs principales
+        'total_reservas':              total_reservas,
+        'reservas_confirmadas':        reservas_confirmadas,
+        'reservas_pendientes':         reservas_pendientes,
+        'reservas_canceladas':         reservas_canceladas,
+        'reservas_completadas':        reservas_completadas,
+        'total_invertido':             total_invertido,
+        'pagos_pendientes':            pagos_pendientes,
+        'pagos_rechazados':            pagos_rechazados,
+        'total_comprobantes':          total_comprobantes,
+        'promedio_por_reserva':        promedio_por_reserva,
+        'tasa_exito':                  tasa_exito,
+        'promedio_mensual_reservas':   promedio_mensual_reservas,
+        'arboles_conservados':         arboles_conservados,
+        # Reseñas
+        'total_comentarios':           total_comentarios,
+        'total_resenas':               total_comentarios,
+        'promedio_calificacion':       promedio_calificacion,
         'distribucion_calificaciones': distribucion_calificaciones,
-        'total_pqrs': total_pqrs,
-        'pqrs_abiertas': pqrs_abiertas,
-        'pqrs_en_gestion': pqrs_en_gestion,
-        'pqrs_cerradas': pqrs_cerradas,
-        'pqrs_sin_respuesta': pqrs_sin_respuesta,
-        'destinos_frecuentes': destinos_frecuentes,
-        'actividad_reciente': actividad_reciente,
-        'nivel_viajero': nivel_viajero,
-        'descripcion_nivel': descripcion_nivel,
-        'progreso_nivel': progreso_nivel,
-        'dias_como_miembro': dias_como_miembro,
+        # PQRS
+        'total_pqrs':                  total_pqrs,
+        'pqrs_total':                  total_pqrs,
+        'pqrs_abiertas':               pqrs_abiertas,
+        'pqrs_en_gestion':             pqrs_en_gestion,
+        'pqrs_cerradas':               pqrs_cerradas,
+        'pqrs_sin_respuesta':          pqrs_sin_respuesta,
+        'pqrs_tasa_resolucion':        pqrs_tasa_resolucion,
+        # Destinos y actividad
+        'destinos_frecuentes':         destinos_frecuentes,
+        'total_destinos':              len(destinos_frecuentes),
+        'actividad_reciente':          actividad_reciente,
+        # Nivel / fidelización
+        'nivel_viajero':               nivel_viajero,
+        'descripcion_nivel':           descripcion_nivel,
+        'progreso_nivel':              progreso_nivel,
+        'dias_como_miembro':           dias_como_miembro,
+        # Tablas de reporte
+        'reporte_mensual':             reporte_mensual,
+        'reporte_anual':               reporte_anual,
+        # Historial de pagos y reseñas
+        'historial_pagos':             historial_pagos,
+        'mis_resenas':                 mis_resenas,
+        # Datos JSON para gráficas Chart.js
+        'meses_labels':          json.dumps(meses_labels_list, ensure_ascii=False),
+        'meses_datos':           json.dumps(meses_datos_list),
+        'meses_inversion':       json.dumps(meses_inversion_list),
+        'anios_labels':          json.dumps(anios_labels_list, ensure_ascii=False),
+        'anios_datos':           json.dumps(anios_datos_list),
+        'anios_reservas':        json.dumps(anios_reservas_list),
+        'anios_canceladas':      json.dumps(anios_canceladas_list),
+        'dias_datos':            json.dumps(dias_datos_list),
+        'destinos_top_labels':   json.dumps(destinos_top_labels_list, ensure_ascii=False),
+        'destinos_top_datos':    json.dumps(destinos_top_datos_list),
+        'radar_datos':           json.dumps(radar_datos_list),
     }
 
     return render(request, template_name, context)
+
 
 
 @login_required
