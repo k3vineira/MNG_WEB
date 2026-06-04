@@ -684,7 +684,8 @@ def estadisticas_usuario(request):
         base_pagos_all = ComprobantePago.objects.filter(usuario=request.user)
 
     # ── Tasa de éxito ─────────────────────────────────────────────────────────
-    tasa_exito = round((reservas_confirmadas + reservas_completadas) / total_reservas * 100) if total_reservas > 0 else 0
+    procesadas_totales = reservas_confirmadas + reservas_canceladas + reservas_completadas
+    tasa_exito = round((reservas_confirmadas + reservas_completadas) / procesadas_totales * 100) if procesadas_totales > 0 else 0
 
     # ── Promedio mensual de reservas ──────────────────────────────────────────
     promedio_mensual_reservas = round(total_reservas / max(1, dias_como_miembro / 30), 1)
@@ -705,7 +706,8 @@ def estadisticas_usuario(request):
         total_canceladas   = qs_mes.filter(estado='cancelada').count()
         total_completadas  = qs_mes.filter(estado='completada').count()
         exitosas_mes       = total_confirmadas + total_completadas
-        porcentaje_exito_m = round(exitosas_mes / total_creadas * 100) if total_creadas > 0 else 0
+        procesadas_mes     = total_confirmadas + total_canceladas + total_completadas
+        porcentaje_exito_m = round(exitosas_mes / procesadas_mes * 100) if procesadas_mes > 0 else 0
         inv = base_pagos.filter(
             fecha_envio__year=anio_actual,
             fecha_envio__month=mes
@@ -743,7 +745,8 @@ def estadisticas_usuario(request):
         canc_a          = qs_anio.filter(estado='cancelada').count()
         comp_a          = qs_anio.filter(estado='completada').count()
         exitosas_a      = conf_a + comp_a
-        porcentaje_a    = round((exitosas_a / total_anio) * 100) if total_anio > 0 else 0
+        procesadas_a    = conf_a + canc_a + comp_a
+        porcentaje_a    = round((exitosas_a / procesadas_a) * 100) if procesadas_a > 0 else 0
         inversion_anio  = base_pagos.filter(fecha_envio__year=anio).aggregate(
             total=Sum('monto')
         )['total'] or 0
@@ -766,7 +769,7 @@ def estadisticas_usuario(request):
 
     # ── Distribución por día de la semana ─────────────────────────────────────
     dias_datos_list = [0] * 7
-    for r in base_reservas:
+    for r in base_reservas.filter(fecha__year=anio_actual):
         if r.fecha:
             dias_datos_list[r.fecha.weekday()] += 1
 
