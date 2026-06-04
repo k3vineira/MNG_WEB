@@ -246,6 +246,14 @@
             >
             <span class="small fw-semibold text-dark">Administrador</span>
           </li>
+
+          <li>
+            <a
+              class="dropdown-item py-2 fw-bold text-success"
+              href="{% url 'detalles' %}"
+              ><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a>
+          </li>
+
           <li>
             <a class="dropdown-item py-2 fw-bold text-primary" href="#"
               ><i class="bi bi-shield-lock me-2"></i>Configuración</a
@@ -270,11 +278,7 @@
               ><i class="bi bi-chat-left-text me-2"></i>Pqrs</a
             >
           </li>
-          <li>
-            <a class="dropdown-item py-2" href="/guardados/"
-              ><i class="bi bi-bookmark me-2"></i>Guardados</a
-            >
-          </li>
+
           <li>
             <a class="dropdown-item py-2" href="/mis-comentarios/"
               ><i class="bi bi-chat-left-text me-2"></i>Comentarios</a
@@ -342,6 +346,13 @@
           </li>
           <li>
             <a
+              class="dropdown-item py-2 fw-bold text-success"
+              href="{% url 'detalles' %}"
+              ><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a
+            >
+          </li>
+          <li>
+            <a
               class="dropdown-item py-2 fw-bold text-primary"
               href="{% url 'dashboard_turista' %}"
               ><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a
@@ -351,6 +362,7 @@
 
           <!-- Opciones comunes o específicas -->
           {% if user.es_turista %}
+
           <li>
             <a
               class="dropdown-item py-2"
@@ -363,23 +375,13 @@
               ><i class="bi bi-chat-left-text me-2"></i>Mis Pqrs</a
             >
           </li>
-          <li>
-            <a class="dropdown-item py-2" href="/guardados/"
-              ><i class="bi bi-bookmark me-2"></i>Guardados</a
-            >
-          </li>
+
           <li>
             <a class="dropdown-item py-2" href="/mis-comentarios/"
               ><i class="bi bi-chat-left-text me-2"></i>Comentarios</a
             >
           </li>
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-success"
-              href="{% url 'detalles' %}"
-              ><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a
-            >
-          </li>
+
           <li>
             <a
               class="dropdown-item py-2 fw-bold text-primary"

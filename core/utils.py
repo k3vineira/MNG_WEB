@@ -1,9 +1,29 @@
 # core/utils.py
 from django.core.mail import send_mail
 from django.conf import settings
+from datetime import datetime, time
 
-def plantilla_reserva_html(nombre_cliente, paquete, fecha, adultos, menores):
-    """Diseño Premium con encabezado verde oscuro sólido (Sin imágenes externas)"""
+def plantilla_reserva_html(nombre_cliente, paquete, fecha, adultos, menores, punto_encuentro, hora_encuentro):
+    # 🌟 PROTECCIÓN: Si la hora llega como texto (str), la convertimos a objeto time de Python
+    if isinstance(hora_encuentro, str):
+        try:
+            # Prueba con formato estándar de formulario (HH:MM)
+            hora_encuentro = datetime.strptime(hora_encuentro, '%H:%M').time()
+        except ValueError:
+            try:
+                # Prueba con formato completo de base de datos (HH:MM:SS)
+                hora_encuentro = datetime.strptime(hora_encuentro, '%H:%M:%S').time()
+            except ValueError:
+                # Si falla todo, lo dejamos como objeto time básico para que no rompa el strftime
+                hora_encuentro = time(0, 0)
+
+    # Si por alguna razón llega vacío o None
+    if not hora_encuentro:
+        hora_encuentro = time(0, 0)
+
+    # Ahora sí, formateamos la hora de manera 100% segura
+    hora_formateada = hora_encuentro.strftime('%H:%M')
+
     return f"""
     <html>
     <body style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f7f5; margin: 0; padding: 40px 15px;">
@@ -35,6 +55,14 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha, adultos, menores):
                             <td style="padding: 12px 0; color: #718096;">Fecha de Salida</td>
                             <td style="padding: 12px 0; text-align: right; color: #1a202c;">{fecha}</td>
                         </tr>
+                        <tr style="border-bottom: 1px solid #edf2f0;">
+                            <td style="padding: 12px 0; color: #718096;">Punto de encuentro</td>
+                            <td style="padding: 12px 0; text-align: right; color: #1a202c;">{punto_encuentro}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #edf2f0;">
+                            <td style="padding: 12px 0; color: #718096;">hora de encuentro</td>
+                            <td style="padding: 12px 0; text-align: right; color: #1a202c;">{hora_formateada}</td>
+                        </tr>
                         <tr>
                             <td style="padding: 12px 0; color: #718096;">Acompañantes</td>
                             <td style="padding: 12px 0; text-align: right; color: #1a202c; font-weight: 500;">
@@ -62,6 +90,7 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha, adultos, menores):
     </body>
     </html>
     """
+    
 
 def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad):
     """Diseño Premium unificado para cancelaciones usando únicamente la paleta verde"""
