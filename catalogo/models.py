@@ -82,17 +82,25 @@ class Paquete(models.Model):
         fecha_hoy = timezone.now().date()
       
         tarifas_validas = self.tarifas.filter(
-            estado=True,
-            temporada__estado='activa',                  
-            temporada__fecha_inicio__lte=fecha_hoy,       
-            temporada__fecha_fin__gte=fecha_hoy           
+            estado='activa',
+            temporada__estado='activa',
+            temporada__fecha_inicio__lte=fecha_hoy,
+            temporada__fecha_fin__gte=fecha_hoy
         )
         
         if tarifas_validas.exists():
             return min(t.precio_adulto for t in tarifas_validas)
-            
-        return self.precio_base
-
+      
+        tarifa_estandar = self.tarifas.filter(
+            estado='activa',
+            temporada__nombre__icontains="Estándar"  
+        ).first()
+        
+        if tarifa_estandar:
+            return tarifa_estandar.precio_adulto
+    
+        return 0
+ 
 
 class Tarifa(models.Model):
     paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='tarifas')
