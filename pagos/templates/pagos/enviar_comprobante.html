@@ -148,17 +148,21 @@
                             <i class="bi bi-calendar-check me-1"></i> Reserva asociada
                         </label>
                         <select name="reserva" class="form-select rounded-3 py-2">
-                            <option value="">— Selecciona una reserva pendiente —</option>
+                            <option value="">— Selecciona una reserva o multa —</option>
                             {% for r in reservas_usuario %}
                                 <option value="{{ r.id }}"
                                     {% if selected_reserva_id and selected_reserva_id|stringformat:"s" == r.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ r.paquete.nombre }} — {{ r.fecha }} — ${{ r.monto_total }}
+                                    {% if r.estado == 'cancelada' %}
+                                        [Multa de Cancelación] {{ r.paquete.nombre }} — Multa: ${{ r.multa }}
+                                    {% else %}
+                                        [Pago de Viaje] {{ r.paquete.nombre }} — {{ r.fecha }} — ${{ r.monto_total }}
+                                    {% endif %}
                                 </option>
                             {% endfor %}
                         </select>
                         {% if not reservas_usuario %}
                             <div class="form-text text-muted mt-1">
-                                <i class="bi bi-info-circle me-1"></i> No tienes reservas pendientes de pago.
+                                <i class="bi bi-info-circle me-1"></i> No tienes reservas ni multas pendientes de pago.
                             </div>
                         {% endif %}
                     </div>

@@ -14,8 +14,8 @@ from catalogo.models import Tarifa
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Count, Q
-
-
+from core.utils import plantilla_reserva_html, plantilla_cancelacion_html, enviar_correo_html_monagua
+from django.contrib.messages.views import SuccessMessageMixin
 
 # =========================
 # RESERVAS ADMIN
@@ -47,13 +47,17 @@ class ReservaListView(ListView):
         return context
 
 
-class ReservaCreateView(CreateView):
+class ReservaCreateView(SuccessMessageMixin, CreateView):
     model = Reserva
     form_class = ReservaForm
-   # fields = ['usuario','paquete','fecha','numero_adultos','numero_menores','estado', ]
     template_name = 'admin/reservas/agregar_reserva.html'
-    success_url = reverse_lazy('listar_reservas')
+    success_url = ('listar_reservas')
+    
+    success_message = "¡La reserva ha sido creada con éxito!"
 
+    def form_valid(self, form):
+        form.instance.usuario = self.request.user
+        return super().form_valid(form)
 
 class ReservaUpdateView(UpdateView):
     model = Reserva
@@ -71,7 +75,11 @@ class ReservaDeleteView(DeleteView):
 @login_required(login_url='login')
 def mis_reservas_usuario(request):
     reservas_canceladas_ids = Cancelacion.objects.filter(reserva__usuario=request.user).values_list('reserva_id', flat=True)
-    mis_reservas = Reserva.objects.filter(usuario=request.user).exclude(id__in=reservas_canceladas_ids).order_by('-id')
+    mis_reservas = Reserva.objects.filter(usuario=request.user)\
+        .select_related('paquete')\
+        .prefetch_related('comprobantes')\
+        .exclude(id__in=reservas_canceladas_ids)\
+        .order_by('-id')
     
     context = {
         'reservas': mis_reservas
@@ -126,8 +134,10 @@ class CancelacionDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def mis_cancelaciones_usuario(request):
-   
-    mis_cancelaciones = Cancelacion.objects.filter(reserva__usuario=request.user).order_by('-id')
+    mis_cancelaciones = Cancelacion.objects.filter(reserva__usuario=request.user)\
+        .select_related('reserva__paquete')\
+        .prefetch_related('reserva__comprobantes')\
+        .order_by('-id')
     
     context = {
         'cancelaciones': mis_cancelaciones
@@ -159,13 +169,25 @@ def administrar_cancelaciones(request):
         cancelacion.reserva.save()
         
         asunto = f"Actualización de cancelación - Monagua"
+        nombre_cliente = cancelacion.reserva.usuario.first_name or cancelacion.reserva.usuario.username
+       
         if cancelacion.estado == 'aceptada':
-            mensaje = f"Hola {cancelacion.reserva.usuario.username}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido aceptada. Se aplicará una penalidad de {cancelacion.penalidad}."
+            mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido aceptada."
         elif cancelacion.estado == 'rechazada':
-            mensaje = f"Hola {cancelacion.reserva.usuario.username}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido rechazada. Tu reserva sigue activa."
+            mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido rechazada."
         else:
-            mensaje = f"Hola {cancelacion.reserva.usuario.username}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} está pendiente de revisión. Te notificaremos una vez que se tome una decisión."
-        enviar_correo_monagua(asunto, mensaje, cancelacion.reserva.usuario.email)
+            mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} está en revisión."
+            
+        
+        html_cancelacion = plantilla_cancelacion_html(
+            nombre_cliente=nombre_cliente,
+            paquete=cancelacion.reserva.paquete.nombre,
+            estado=cancelacion.estado,
+            penalidad=cancelacion.penalidad
+        )
+        
+        
+        enviar_correo_html_monagua(asunto, mensaje_texto, cancelacion.reserva.usuario.email, html_cancelacion)
             
         return redirect('administrar_cancelaciones')
     stats = Cancelacion.objects.aggregate(
@@ -226,47 +248,80 @@ def guardar_reserva(request, paquete_id):
         paquete = get_object_or_404(Paquete, id=paquete_id)
         fecha_viaje = request.POST.get('fecha')
         
-        # 1. Validación de fecha
+      
         if not fecha_viaje:
             messages.error(request, "Por favor selecciona una fecha válida.")
             return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
             
-        # 2. Convertir fecha y buscar tarifa en la base de datos
-        fecha_date = datetime.strptime(fecha_viaje, '%Y-%m-%d').date()
+      
+        try:
+            fecha_date = datetime.strptime(fecha_viaje, '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, "El formato de la fecha no es válido.")
+            return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
+
         tarifa = Tarifa.objects.filter(
             paquete=paquete,
             temporada__fecha_inicio__lte=fecha_date,
             temporada__fecha_fin__gte=fecha_date
         ).first()
         
-        # 3. Si no hay tarifa, no permitimos guardar
+        
         if not tarifa:
             messages.error(request, "No hay tarifas disponibles para esta fecha. Por favor elige otra.")
             return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
             
-        # 4. Obtener pasajeros
+        
         try:
             adultos = int(request.POST.get('adultos', 1))
             menores = int(request.POST.get('menores', 0))
         except ValueError:
             adultos, menores = 1, 0
+       
+        ya_existe = Reserva.objects.filter(
+            usuario=request.user,
+            paquete=paquete,
+            fecha=fecha_date
+        ).exists()
+
+        if ya_existe:
+            messages.warning(
+                request, 
+                f"Ya tienes una reserva para {paquete.nombre} en la fecha {fecha_viaje}. No se puede crear otra reserva para el mismo paquete y fecha."
+            )
         
-        # 5. Crear la reserva
+            return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
+
+    
         reserva = Reserva.objects.create(
             usuario=request.user,        
             paquete=paquete,            
-            fecha=fecha_viaje,
+            fecha=fecha_date, 
             numero_adultos=adultos,
             numero_menores=menores,
-            estado='pendiente' # O el estado inicial que manejes
+            estado='pendiente' 
         )
         
-        # 6. Envío de correo automático
-        asunto = "Confirmación de tu reserva en Monagua"
-        mensaje = f"Hola {request.user.username}, hemos recibido tu solicitud de reserva para {paquete.nombre} el día {fecha_viaje}. Te notificaremos pronto sobre el estado de tu reserva."
-        enviar_correo_monagua(asunto, mensaje, request.user.email)
         
-        messages.success(request, f"¡Reserva para {paquete.nombre} realizada con éxito! Revisa tu correo.")
-        return redirect('mis_reservas_usuario') # Redirige a donde el usuario vea sus reservas
+        asunto = "Confirmación de tu reserva en Monagua"
+        nombre_cliente = request.user.first_name or request.user.username
+        
+        mensaje_texto = f"Hola {nombre_cliente}, hemos recibido tu solicitud de reserva para {paquete.nombre}."
+        
+       
+        html_bonito = plantilla_reserva_html(
+            nombre_cliente=nombre_cliente,
+            paquete=paquete.nombre,
+            fecha=fecha_date,
+            adultos=adultos,
+            menores=menores,
+            punto_encuentro=paquete.punto_encuentro,
+            hora_encuentro=paquete.hora_encuentro.strftime('%H:%M')
+        )
+        
+        enviar_correo_html_monagua(asunto, mensaje_texto, request.user.email, html_bonito)
+        
+        messages.success(request, "¡Tu reserva ha sido creada y confirmada por correo electrónico!")
+        return redirect('mis_reservas_usuario') 
 
     return redirect('reservas')

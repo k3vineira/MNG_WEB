@@ -47,15 +47,20 @@
                             {% if reserva.estado == 'pendiente' %}
                                 <span class="badge bg-warning text-dark px-4 py-2 fs-6 rounded-pill">Pendiente</span>
                             {% elif reserva.estado == 'confirmada' %}
-                                
                                 <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill">Confirmada</span>
                             {% else %}
                                 <span class="badge bg-danger text-white px-4 py-2 fs-6 rounded-pill">Cancelada</span>
                             {% endif %}
                         </td>
-                        <td class="text-center py-3">
-                            <a href="{% url 'editar_reserva' reserva.id %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
-                                    <a href="{% url 'eliminar_reserva' reserva.id %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
+                         <td class="align-middle">
+                        <div class="d-flex align-items-center gap-3"> 
+                        {% if reserva.estado == 'confirmada' %}
+                        <span class="text-muted fs-6 fw-bold"><i class="bi bi-lock-fill"></i> Bloqueada</span>
+                         {% else %}
+                        <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-link text-primary fw-bold text-decoration-none fs-6 p-0">EDITAR</a>
+                         <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-link text-danger fw-bold text-decoration-none fs-6 p-0">ELIMINAR</a>
+                        {% endif %}
+                         </div>
                         </td>
                     </tr>
                     {% empty %}

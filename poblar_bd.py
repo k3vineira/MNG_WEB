@@ -1,11 +1,9 @@
 import os
 import django
 import random
-from datetime import timedelta
+from datetime import timedelta, date
 from django.utils import timezone
 from decimal import Decimal
-
-# Configurar el entorno de Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
@@ -39,6 +37,34 @@ def poblar_base_datos():
     categorias_nombres = ['Aventura', 'Ecoturismo', 'Cultural', 'Playa', 'Montaña', 'Gastronómico', 'Histórico', 'Relajación', 'Deportivo', 'Familiar']
     actividades_nombres = ['Senderismo', 'Buceo', 'Museos', 'Escalada', 'Ciclismo', 'Cata de Vinos', 'Surf', 'Avistamiento de Aves', 'Rappel', 'Canotaje']
     
+    # Nombres de temporadas reales y turísticas para Mongua
+    nombres_temporadas = [
+        "Vacaciones de Mitad de Año",
+        "Temporada Eco-Verano",
+        "Puentes de Agosto",
+        "Aventura de Septiembre",
+        "Semana de Receso Escolar",
+        "Ecoturismo de Fin de Otoño",
+        "Puentes de Noviembre",
+        "Pre-Navidad Turística",
+        "Inicio de Temporada Decembrina",
+        "Fiestas de Fin de Año"
+    ]
+
+    # Fechas consecutivas fijas desde junio hasta diciembre de 2026
+    fechas_temporadas = [
+        (date(2026, 6, 4),   date(2026, 7, 15)),   # Vacaciones de Mitad de Año (Empieza Hoy)
+        (date(2026, 7, 16),  date(2026, 8, 15)),   # Temporada Eco-Verano
+        (date(2026, 8, 16),  date(2026, 8, 31)),   # Puentes de Agosto
+        (date(2026, 9, 1),   date(2026, 9, 30)),   # Aventura de Septiembre
+        (date(2026, 10, 1),  date(2026, 10, 15)),  # Semana de Receso Escolar
+        (date(2026, 10, 16), date(2026, 10, 31)),  # Ecoturismo de Fin de Otoño
+        (date(2026, 11, 1),  date(2026, 11, 16)),  # Puentes de Noviembre
+        (date(2026, 11, 17), date(2026, 11, 30)),  # Pre-Navidad Turística
+        (date(2026, 12, 1),  date(2026, 12, 15)),  # Inicio de Temporada Decembrina
+        (date(2026, 12, 16), date(2026, 12, 31)),  # Fiestas de Fin de Año
+    ]
+
     print("1. Creando Usuarios, Clientes y Guías...")
     clientes_creados = []
     guias_creados = []
@@ -113,48 +139,81 @@ def poblar_base_datos():
             dias_duracion=random.randint(2, 7),
             noches_duracion=random.randint(1, 6),
             punto_encuentro="Plaza principal",
+            hora_encuentro=timezone.now().time(),
             categoria=random.choice(categorias_creadas)
         )
         p.actividades.add(*random.sample(actividades_creadas, 2))
         paquetes_creados.append(p)
 
+
+    temporada_estandar = Temporada.objects.create(
+        nombre="Temporada Estándar 2026",
+        fecha_inicio=date(2026, 1, 1),
+        fecha_fin=date(2026, 12, 31),
+        estado='activa'
+    )
+
     temporadas_creadas = []
-    for i in range(10):
+    for i in range(len(nombres_temporadas)):
+        estado_inicial = 'activa' if i == 0 else 'programada'
         t = Temporada.objects.create(
-            nombre=f"Temporada {i+1} 2026",
-            fecha_inicio=timezone.now().date() + timedelta(days=i*30),
-            fecha_fin=timezone.now().date() + timedelta(days=(i*30)+25)
+            nombre=f"{nombres_temporadas[i]} 2026",
+            fecha_inicio=fechas_temporadas[i][0],
+            fecha_fin=fechas_temporadas[i][1],
+            estado=estado_inicial
         )
         temporadas_creadas.append(t)
 
+
     tarifas_creadas = []
     for i in range(10):
-        tarifa = Tarifa.objects.create(
+      
+        tarifa_especial = Tarifa.objects.create(
             paquete=paquetes_creados[i],
             temporada=temporadas_creadas[i],
-            precio_adulto=Decimal(str(random.randint(100000, 500000))),
-            precio_menor=Decimal(str(random.randint(50000, 250000)))
+            precio_adulto=Decimal(str(random.randint(350000, 600000))), 
+            precio_menor=Decimal(str(random.randint(200000, 300000))),
+            estado='activa'
         )
-        tarifas_creadas.append(tarifa)
+        tarifas_creadas.append(tarifa_especial)
+
+        tarifa_base = Tarifa.objects.create(
+            paquete=paquetes_creados[i],
+            temporada=temporada_estandar, 
+            precio_adulto=Decimal(str(random.randint(150000, 300000))), 
+            precio_menor=Decimal(str(random.randint(80000, 140000))),
+            estado='activa'
+        )
+        tarifas_creadas.append(tarifa_base)
+
 
     print("4. Creando Reservas y Cancelaciones...")
     reservas_creadas = []
-    estados_reserva = ['pendiente', 'confirmada', 'completada', 'cancelada']
-    
-    # 🌟 CAMBIO AQUÍ: En lugar de usar range(10), iteramos directamente sobre las tarifas reales creadas
+    estados_reserva = ['pendiente', 'confirmada', 'cancelada']
+    combinaciones_unicas = set()
+
     for tarifa_asociada in tarifas_creadas:
+       
         fecha_reserva = tarifa_asociada.temporada.fecha_inicio + timedelta(days=2)
+        usuario_aleatorio = random.choice(clientes_creados).usuario
+        paquete_asociado = tarifa_asociada.paquete
+
+        identificador = (usuario_aleatorio.id, paquete_asociado.id, fecha_reserva)
+
+        if identificador in combinaciones_unicas:
+            continue
+            
+        combinaciones_unicas.add(identificador)
         estado = random.choice(estados_reserva)
         
-        r = Reserva(
-            usuario=random.choice(clientes_creados).usuario,
-            paquete=tarifa_asociada.paquete,
+        r = Reserva.objects.create(
+            usuario=usuario_aleatorio,
+            paquete=paquete_asociado,
             fecha=fecha_reserva,
             numero_adultos=random.randint(1, 4),
             numero_menores=random.randint(0, 3),
             estado=estado
         )
-        r.save() 
         reservas_creadas.append(r)
 
         if estado == 'cancelada':
@@ -164,18 +223,14 @@ def poblar_base_datos():
                 penalidad=Decimal(str(random.randint(0, 50000)))
             )
 
-
-
     print("5. Creando Comunidad (Calificaciones, Blog y PQRS)...")
     for i in range(10):
-        # Blog
         Blog.objects.create(
             titulo=f"Artículo de interés {i+1}",
             contenido="Este es el contenido de un artículo muy interesante sobre turismo y viajes.",
             publicado=True
         )
 
-        # PQRS
         PQRS.objects.create(
             cliente=random.choice(clientes_creados),
             tipo=random.choice(['peticion', 'queja', 'reclamo', 'sugerencia']),
@@ -184,7 +239,6 @@ def poblar_base_datos():
             estado=random.choice(['abierto', 'en_proceso', 'cerrado'])
         )
 
-    # Para calificaciones, usaremos combinaciones únicas de cliente-paquete
     combinaciones_calificacion = set()
     while len(combinaciones_calificacion) < 10:
         c = random.choice(clientes_creados)

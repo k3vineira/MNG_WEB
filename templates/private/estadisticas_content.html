@@ -1,423 +1,1077 @@
 {% load static %}
 {% load humanize %}
 
-<div class="container py-4" style="max-width:1100px;">
+<div class="container-fluid py-4 px-md-5">
 
-    <!-- ENCABEZADO -->
-    <div class="mb-5 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-        <div>
-            <h1 class="fw-bold mb-1">{% if user.is_staff %}Estadísticas Generales{% else %}Mis Estadísticas{% endif %}</h1>
-            <p class="text-muted mb-0">Una visión general de tu historial de viajes y actividad en Monagua. Actualizado al día de hoy.</p>
+
+    <div class="row align-items-center mb-5 g-3">
+        <div class="col-12 col-md-8">
+            <h1 class="fw-bold text-dark mb-1">
+                {% if user.is_staff %}
+                <i class="bi bi-speedometer2 text-success me-2"></i>Consola de Analítica General
+                {% else %}
+                <i class="bi bi-person-badge text-success me-2"></i>Mi Portal de Analítica Individual
+                {% endif %}
+            </h1>
+            <p class="text-muted mb-0">Consolidado métrico avanzado e histórico de comportamiento de viajes,
+                transacciones y soporte en Monagua.</p>
         </div>
-        <span class="badge rounded-pill px-3 py-2 fs-6 fw-normal" style="background-color:#e8f5e9; color:#2d4a31;">
-            <i class="bi bi-person-check me-1"></i> {% if user.is_staff %}Administrador{% else %}Viajero activo{% endif %}
-        </span>
+        <div class="col-12 col-md-4 text-md-end">
+            <span
+                class="badge rounded-pill bg-success bg-opacity-10 text-success px-4 py-2 fs-6 fw-semibold border border-success border-opacity-25">
+                <i class="bi bi-shield-check me-1"></i>
+                {% if user.is_staff %}Rol: Administrador{% else %}Rol: Viajero Activo{% endif %}
+            </span>
+        </div>
     </div>
 
-    <!-- TARJETAS RÁPIDAS -->
+
     <div class="row g-4 mb-5">
-        <div class="col-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
-                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                    style="width:52px;height:52px;background-color:#e8f5e9;">
-                    <i class="bi bi-currency-dollar fs-4 text-success"></i>
-                </div>
-                <p class="text-muted small fw-medium mb-1">Inversión en Viajes</p>
-                <h3 class="fw-bold text-success mb-0">${{ total_invertido|floatformat:0|intcomma }}</h3>
-                <small class="text-muted" style="font-size:.7rem;">Solo pagos aprobados</small>
-            </div>
-        </div>
-
-        <div class="col-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
-                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                    style="width:52px;height:52px;background-color:#e3f2fd;">
-                    <i class="bi bi-calendar-check fs-4 text-primary"></i>
-                </div>
-                <p class="text-muted small fw-medium mb-1">Reservas Totales</p>
-                <h3 class="fw-bold text-primary mb-0">{{ total_reservas }}</h3>
-                <small class="text-muted" style="font-size:.7rem;">Registradas en tu cuenta</small>
-            </div>
-        </div>
-
-        <div class="col-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
-                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                    style="width:52px;height:52px;background-color:#fffde7;">
-                    <i class="bi bi-star-fill fs-4 text-warning"></i>
-                </div>
-                <p class="text-muted small fw-medium mb-1">Reseñas Compartidas</p>
-                <h3 class="fw-bold text-warning mb-0">{{ total_comentarios }}</h3>
-                <small class="text-muted" style="font-size:.7rem;">Aportes a la comunidad</small>
-            </div>
-        </div>
-
-        <div class="col-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center h-100">
-                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                    style="width:52px;height:52px;background-color:#fce4ec;">
-                    <i class="bi bi-patch-question fs-4 text-danger"></i>
-                </div>
-                <p class="text-muted small fw-medium mb-1">PQRS Solicitadas</p>
-                <h3 class="fw-bold text-danger mb-0">{{ total_pqrs }}</h3>
-                <small class="text-muted" style="font-size:.7rem;">Peticiones o sugerencias</small>
-            </div>
-        </div>
-    </div>
-
-    <!-- FILA 2: ESTADO RESERVAS + ECO -->
-    <div class="row g-4 mb-4">
-        <div class="col-12 col-lg-6">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                <h5 class="fw-bold mb-4"><i class="bi bi-pie-chart text-success me-2"></i>Estado de mis Reservas</h5>
-                <div class="d-flex flex-column gap-3">
-                    <div>
-                        <div class="d-flex justify-content-between mb-1 small text-muted">
-                            <span><i class="bi bi-check-circle-fill text-success me-1"></i>Confirmadas</span>
-                            <span class="fw-semibold text-dark">{{ reservas_confirmadas }}</span>
-                        </div>
-                        <div class="progress rounded-pill" style="height:8px;">
-                            <div class="progress-bar bg-success" role="progressbar"
-                                style="width:{% if total_reservas > 0 %}{% widthratio reservas_confirmadas total_reservas 100 %}%{% else %}0%{% endif %}">
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="d-flex justify-content-between mb-1 small text-muted">
-                            <span><i class="bi bi-hourglass-split text-warning me-1"></i>Pendientes / En revisión</span>
-                            <span class="fw-semibold text-dark">{{ reservas_pendientes }}</span>
-                        </div>
-                        <div class="progress rounded-pill" style="height:8px;">
-                            <div class="progress-bar bg-warning" role="progressbar"
-                                style="width:{% if total_reservas > 0 %}{% widthratio reservas_pendientes total_reservas 100 %}%{% else %}0%{% endif %}">
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="d-flex justify-content-between mb-1 small text-muted">
-                            <span><i class="bi bi-x-circle-fill text-danger me-1"></i>Canceladas</span>
-                            <span class="fw-semibold text-dark">{{ reservas_canceladas }}</span>
-                        </div>
-                        <div class="progress rounded-pill" style="height:8px;">
-                            <div class="progress-bar bg-danger" role="progressbar"
-                                style="width:{% if total_reservas > 0 %}{% widthratio reservas_canceladas total_reservas 100 %}%{% else %}0%{% endif %}">
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="d-flex justify-content-between mb-1 small text-muted">
-                            <span><i class="bi bi-flag-fill text-secondary me-1"></i>Completadas</span>
-                            <span class="fw-semibold text-dark">{{ reservas_completadas }}</span>
-                        </div>
-                        <div class="progress rounded-pill" style="height:8px;">
-                            <div class="progress-bar" role="progressbar"
-                                style="width:{% if total_reservas > 0 %}{% widthratio reservas_completadas total_reservas 100 %}%{% else %}0%{% endif %};background-color:#607d8b;">
-                            </div>
-                        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Inversión Total</span>
+                    <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                        <i class="bi bi-wallet2 fs-4"></i>
                     </div>
                 </div>
+                <h2 class="fw-bold text-dark mb-1">${{ total_invertido|floatformat:0|intcomma|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-check-circle-fill text-success me-1"></i>Solo fondos
+                    validados</div>
             </div>
         </div>
-
-        <div class="col-12 col-lg-6">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 text-white position-relative overflow-hidden"
-                style="background-color:#2d4a31;">
-                <div class="position-absolute end-0 bottom-0 opacity-10" style="font-size:11rem;line-height:1;pointer-events:none;">
-                    <i class="bi bi-compass"></i>
-                </div>
-                <div class="position-relative">
-                    <h5 class="fw-bold mb-3"><i class="bi bi-tree-fill me-2"></i>Viajero Ecológico</h5>
-                    <p class="small mb-4" style="line-height:1.7;opacity:.9;">
-                        En Monagua nos esforzamos por preservar los senderos del Páramo de Mongua.
-                        Cada viaje confirmado contribuye a la conservación y al apoyo de las comunidades locales.
-                    </p>
-                    <div class="rounded-3 p-3" style="background:rgba(255,255,255,0.15);">
-                        <div class="d-flex gap-3 align-items-center">
-                            <span class="fs-1">🌱</span>
-                            <div>
-                                <h6 class="fw-bold mb-1">¡Gracias por viajar responsablemente!</h6>
-                                <p class="mb-0 small" style="opacity:.7;">Sigue los consejos de Cóndy para mantener el páramo intacto.</p>
-                            </div>
-                        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Volumen de Reservas</span>
+                    <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+                        <i class="bi bi-journal-bookmark-fill fs-4"></i>
                     </div>
                 </div>
+                <h2 class="fw-bold text-dark mb-1">{{ total_reservas|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-arrow-up-right text-primary me-1"></i>Historial completo
+                    activo</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Ticket Promedio</span>
+                    <div class="p-2 bg-info bg-opacity-10 text-info rounded-3">
+                        <i class="bi bi-calculator fs-4"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold text-dark mb-1">${{ promedio_por_reserva|floatformat:0|intcomma|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-info-circle me-1"></i>Valor medio por experiencia</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Índice del Destino</span>
+                    <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3">
+                        <i class="bi bi-geo-alt-fill fs-4"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold text-dark mb-1">{{ destinos_frecuentes.count|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-map me-1"></i>Rutas ecológicas exploradas</div>
             </div>
         </div>
     </div>
 
-    <!-- FILA 3: PAGOS + RESEÑAS -->
-    <div class="row g-4 mb-4">
-        <div class="col-12 col-lg-6">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                <h5 class="fw-bold mb-4"><i class="bi bi-wallet2 text-success me-2"></i>Resumen Financiero</h5>
-                <div class="row g-3 text-center">
-                    <div class="col-6">
-                        <div class="rounded-4 p-3 h-100" style="background-color:#f1f8f2;">
-                            <p class="small text-muted mb-1">Total invertido</p>
-                            <h4 class="fw-bold text-success mb-0">${{ total_invertido|floatformat:0|intcomma }}</h4>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="rounded-4 p-3 h-100" style="background-color:#fff8e1;">
-                            <p class="small text-muted mb-1">Pagos pendientes</p>
-                            <h4 class="fw-bold text-warning mb-0">{{ pagos_pendientes }}</h4>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="rounded-4 p-3 h-100" style="background-color:#fce4ec;">
-                            <p class="small text-muted mb-1">Pagos rechazados</p>
-                            <h4 class="fw-bold text-danger mb-0">{{ pagos_rechazados }}</h4>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="rounded-4 p-3 h-100" style="background-color:#e8eaf6;">
-                            <p class="small text-muted mb-1">Total comprobantes</p>
-                            <h4 class="fw-bold mb-0" style="color:#3949ab;">{{ total_comprobantes }}</h4>
-                        </div>
+    <div class="row g-4 mb-5">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Tasa de Éxito</span>
+                    <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                        <i class="bi bi-graph-up-arrow fs-4"></i>
                     </div>
                 </div>
-                <hr class="my-3">
-                <div class="d-flex justify-content-between align-items-center small text-muted">
-                    <span>Valor promedio por reserva</span>
-                    <span class="fw-semibold text-dark">${{ promedio_por_reserva|floatformat:0|intcomma }}</span>
+                <h2 class="fw-bold text-dark mb-1">{{ tasa_exito|default:"0" }}%</h2>
+                <div class="progress rounded-pill mb-2">
+                    <div class="progress-bar bg-success" role="progressbar" id="barTasaExito"></div>
                 </div>
+                <div class="text-muted small">Reservas confirmadas / total</div>
             </div>
         </div>
-
-        <div class="col-12 col-lg-6">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                <h5 class="fw-bold mb-4"><i class="bi bi-chat-square-text text-warning me-2"></i>Mi Actividad en Reseñas</h5>
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                        style="width:64px;height:64px;background-color:#fffde7;">
-                        <span class="fw-bold fs-4 text-warning">
-                            {% if promedio_calificacion %}{{ promedio_calificacion|floatformat:1 }}{% else %}—{% endif %}
-                        </span>
-                    </div>
-                    <div>
-                        <p class="mb-0 fw-semibold">Calificación promedio que has dado</p>
-                        <div class="text-warning">
-                            {% with promedio_int=promedio_calificacion|floatformat:"0" %}
-                            {% for i in "12345" %}
-                            {% if forloop.counter <= promedio_int|add:"0" %}
-                            <i class="bi bi-star-fill small"></i>
-                            {% else %}
-                            <i class="bi bi-star small"></i>
-                            {% endif %}
-                            {% endfor %}
-                            {% endwith %}
-                        </div>
-                        <p class="mb-0 small text-muted">Sobre {{ total_comentarios }} reseña{{ total_comentarios|pluralize }}</p>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">PQRS Activas</span>
+                    <div class="p-2 bg-danger bg-opacity-10 text-danger rounded-3">
+                        <i class="bi bi-headset fs-4"></i>
                     </div>
                 </div>
-                <div class="d-flex flex-column gap-2">
-                    {% for fila in distribucion_calificaciones %}
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="text-muted small" style="width:14px;">{{ fila.estrellas }}</span>
-                        <i class="bi bi-star-fill text-warning small"></i>
-                        <div class="progress flex-grow-1 rounded-pill" style="height:7px;">
-                            <div class="progress-bar bg-warning" role="progressbar" style="width:{{ fila.porcentaje }}%;"></div>
-                        </div>
-                        <span class="text-muted small" style="width:22px;">{{ fila.cantidad }}</span>
+                <h2 class="fw-bold text-dark mb-1">{{ pqrs_abiertas|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-exclamation-circle text-danger me-1"></i>Requieren
+                    atención</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Reseñas Publicadas</span>
+                    <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3">
+                        <i class="bi bi-star-fill fs-4"></i>
                     </div>
-                    {% empty %}
-                    <p class="text-muted small mb-0">Aún no has dejado reseñas.</p>
-                    {% endfor %}
                 </div>
+                <h2 class="fw-bold text-dark mb-1">{{ total_resenas|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-pencil me-1"></i>Opiniones registradas</div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="text-muted small fw-bold text-uppercase">Días como Miembro</span>
+                    <div class="p-2 bg-info bg-opacity-10 text-info rounded-3">
+                        <i class="bi bi-person-check-fill fs-4"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold text-dark mb-1">{{ dias_como_miembro|default:"0" }}</h2>
+                <div class="text-muted small"><i class="bi bi-calendar3 me-1"></i>Desde {{ user.date_joined|date:"d M Y"
+                    }}</div>
             </div>
         </div>
     </div>
 
-    <!-- FILA 4: PQRS + DESTINOS -->
-    <div class="row g-4 mb-4">
-        <div class="col-12 col-lg-6">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                <h5 class="fw-bold mb-4"><i class="bi bi-clipboard2-check text-danger me-2"></i>Estado de mis PQRS</h5>
-                <div class="row g-3 text-center">
-                    <div class="col-6">
-                        <div class="rounded-4 p-3 h-100" style="background-color:#e3f2fd;">
-                            <p class="small text-muted mb-1">Abiertas</p>
-                            <h4 class="fw-bold text-primary mb-0">{{ pqrs_abiertas }}</h4>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="rounded-4 p-3 h-100" style="background-color:#fff8e1;">
-                            <p class="small text-muted mb-1">En gestión</p>
-                            <h4 class="fw-bold text-warning mb-0">{{ pqrs_en_gestion }}</h4>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="rounded-4 p-3 h-100" style="background-color:#f1f8f2;">
-                            <p class="small text-muted mb-1">Cerradas / Resueltas</p>
-                            <h4 class="fw-bold text-success mb-0">{{ pqrs_cerradas }}</h4>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="rounded-4 p-3 h-100" style="background-color:#fce4ec;">
-                            <p class="small text-muted mb-1">Sin respuesta</p>
-                            <h4 class="fw-bold text-danger mb-0">{{ pqrs_sin_respuesta }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-lg-6">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                <h5 class="fw-bold mb-4"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Mis Destinos Frecuentes</h5>
-                {% if destinos_frecuentes %}
-                <div class="d-flex flex-column gap-3">
-                    {% for destino in destinos_frecuentes %}
-                    <div class="d-flex align-items-center justify-content-between gap-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white flex-shrink-0"
-                                style="width:36px;height:36px;background-color:#3b5e3f;font-size:.8rem;">
-                                {{ forloop.counter }}
-                            </span>
-                            <div>
-                                <p class="mb-0 fw-semibold small">{{ destino.nombre }}</p>
-                                <p class="mb-0 text-muted" style="font-size:.75rem;">
-                                    {{ destino.total_reservas }} reserva{{ destino.total_reservas|pluralize }}
-                                </p>
-                            </div>
-                        </div>
-                        {% if destino.ultima_visita %}
-                        <span class="badge rounded-pill text-bg-light border small">{{ destino.ultima_visita|date:"M Y" }}</span>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <div class="text-center py-4 text-muted">
-                    <i class="bi bi-map fs-2 d-block mb-2 opacity-50"></i>
-                    <p class="small mb-0">Aún no tienes reservas en destinos específicos.</p>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    <!-- FILA 5: ACTIVIDAD + MEMBRESÍA -->
-    <div class="row g-4">
+    <div class="row g-4 mb-5">
         <div class="col-12 col-lg-7">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                <h5 class="fw-bold mb-4"><i class="bi bi-clock-history text-primary me-2"></i>Actividad Reciente</h5>
-                {% if actividad_reciente %}
-                <div class="d-flex flex-column gap-0">
-                    {% for evento in actividad_reciente %}
-                    <div class="d-flex gap-3">
-                        <div class="d-flex flex-column align-items-center">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                style="width:32px;height:32px;background-color:{% if evento.tipo == 'reserva' %}#e3f2fd{% elif evento.tipo == 'pago' %}#e8f5e9{% elif evento.tipo == 'resena' %}#fffde7{% else %}#fce4ec{% endif %};">
-                                <i class="bi {% if evento.tipo == 'reserva' %}bi-calendar-check text-primary{% elif evento.tipo == 'pago' %}bi-credit-card text-success{% elif evento.tipo == 'resena' %}bi-star-fill text-warning{% else %}bi-patch-question text-danger{% endif %} small"></i>
-                            </div>
-                            {% if not forloop.last %}
-                            <div style="width:2px;flex-grow:1;background-color:#e9ecef;margin:4px 0;min-height:24px;"></div>
-                            {% endif %}
-                        </div>
-                        <div class="pb-3 flex-grow-1">
-                            <p class="mb-0 small fw-semibold">{{ evento.descripcion }}</p>
-                            <p class="mb-0 text-muted" style="font-size:.75rem;">
-                                {{ evento.fecha|date:"d M Y" }}
-                                {% if evento.monto %} · <span class="text-success fw-semibold">${{ evento.monto|floatformat:0|intcomma }}</span>{% endif %}
-                            </p>
-                        </div>
-                    </div>
-                    {% endfor %}
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="bi bi-award text-warning me-2"></i>Estatus de Fidelización y Nivel de Experiencia
+                    </h5>
+                    <span
+                        class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">Programa
+                        Monagua Core</span>
                 </div>
-                {% else %}
-                <div class="text-center py-4 text-muted">
-                    <i class="bi bi-hourglass fs-2 d-block mb-2 opacity-50"></i>
-                    <p class="small mb-0">No hay actividad reciente registrada.</p>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="col-12 col-lg-5">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column gap-4">
-                <div>
-                    <h5 class="fw-bold mb-3"><i class="bi bi-award-fill me-2" style="color:#f59e0b;"></i>Nivel de Viajero</h5>
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <span class="fs-2">
+                <div class="row align-items-center g-3">
+                    <div class="col-sm-3 text-center border-end border-light">
+                        <span class="display-4 d-block mb-1">
                             {% if nivel_viajero == "Explorador" %}🥉
                             {% elif nivel_viajero == "Aventurero" %}🥈
                             {% elif nivel_viajero == "Expedicionista" %}🥇
                             {% else %}🌱{% endif %}
                         </span>
-                        <div>
-                            <h6 class="fw-bold mb-0">{{ nivel_viajero }}</h6>
-                            <p class="text-muted small mb-0">{{ descripcion_nivel }}</p>
-                        </div>
+                        <h6 class="fw-bold text-dark mb-0">{{ nivel_viajero|default:"Iniciando" }}</h6>
                     </div>
-                    {% if progreso_nivel is not None %}
-                    <div class="d-flex justify-content-between small text-muted mb-1">
-                        <span>Progreso al siguiente nivel</span>
-                        <span>{{ progreso_nivel }}%</span>
-                    </div>
-                    <div class="progress rounded-pill" style="height:8px;">
-                        <div class="progress-bar" role="progressbar" style="width:{{ progreso_nivel }}%;background-color:#f59e0b;"></div>
-                    </div>
-                    {% endif %}
-                </div>
-
-                <hr class="my-0">
-
-                <div>
-                    <h6 class="fw-semibold mb-3 text-muted text-uppercase" style="font-size:.7rem;letter-spacing:.06em;">
-                        Información de Cuenta
-                    </h6>
-                    <div class="d-flex flex-column gap-2">
-                        <div class="d-flex justify-content-between small">
-                            <span class="text-muted">Miembro desde</span>
-                            <span class="fw-semibold">{{ user.date_joined|date:"M Y" }}</span>
+                    <div class="col-sm-9 ps-md-4">
+                        <p class="text-muted small mb-3">{{ descripcion_nivel|default:"Continúa recorriendo las rutas
+                            del Páramo de Mongua para desbloquear nuevos beneficios y reconocimientos." }}</p>
+                        {% if progreso_nivel is not None %}
+                        <div class="d-flex justify-content-between text-muted small mb-1">
+                            <span>Progreso técnico al siguiente rango</span>
+                            <span class="fw-bold">{{ progreso_nivel }}%</span>
                         </div>
-                        <div class="d-flex justify-content-between small">
-                            <span class="text-muted">Último acceso</span>
-                            <span class="fw-semibold">{{ user.last_login|date:"d M Y"|default:"—" }}</span>
+                        <div class="progress rounded-pill mb-0">
+                            <div class="progress-bar bg-warning" role="progressbar" id="barProgreso"></div>
                         </div>
-                        <div class="d-flex justify-content-between small">
-                            <span class="text-muted">Días en Monagua</span>
-                            <span class="fw-semibold">{{ dias_como_miembro }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between small">
-                            <span class="text-muted">Estado de cuenta</span>
-                            <span class="badge bg-success rounded-pill px-2">Activa</span>
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
+                <hr class="my-4 text-muted opacity-25">
+                <div class="row g-2 text-center">
+                    <div class="col-4">
+                        <small class="text-muted d-block">Comunidad desde</small>
+                        <span class="fw-bold text-dark small">{{ user.date_joined|date:"M Y" }}</span>
+                    </div>
+                    <div class="col-4 border-start border-light">
+                        <small class="text-muted d-block">Último Acceso</small>
+                        <span class="fw-bold text-dark small">{{ user.last_login|date:"d M Y"|default:"—" }}</span>
+                    </div>
+                    <div class="col-4 border-start border-light">
+                        <small class="text-muted d-block">Promedio Mensual</small>
+                        <span class="fw-bold text-dark small">{{ promedio_mensual_reservas|default:"0" }}
+                            reservas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <hr class="my-0">
+        <div class="col-12 col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 text-white bg-success bg-gradient">
+                <h5 class="fw-bold mb-3"><i class="bi bi-tree-fill me-2"></i>Impacto Ecológico Estimado</h5>
+                <p class="small mb-4 text-white text-opacity-75">Tu interacción con nuestra plataforma apoya de forma
+                    directa a la conservación ambiental del Páramo de Mongua y los guías nativos locales.</p>
+                <div class="bg-white bg-opacity-10 rounded-3 p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-semibold">Contribución Comunitaria</span>
+                        <span class="small badge bg-white text-success fw-bold">Nivel Alto</span>
+                    </div>
+                    <div class="progress bg-white bg-opacity-25 rounded-pill">
+                        <div class="progress-bar bg-white w-75" role="progressbar"></div>
+                    </div>
+                </div>
+                <div class="bg-white bg-opacity-10 rounded-3 p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small fw-semibold">Árboles estimados conservados</span>
+                        <span class="small badge bg-white text-success fw-bold">{{ arboles_conservados|default:"—"
+                            }}</span>
+                    </div>
+                    <div class="progress bg-white bg-opacity-25 rounded-pill">
+                        <div class="progress-bar bg-white w-50" role="progressbar"></div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 small text-white text-opacity-75 mt-auto">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                    <span>Gracias por ser parte del ecoturismo responsable.</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <div>
-                    <h6 class="fw-semibold mb-3 text-muted text-uppercase" style="font-size:.7rem;letter-spacing:.06em;">
-                        Acciones Rápidas
-                    </h6>
-                    <div class="d-flex flex-column gap-2">
-                        <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-sm btn-outline-success rounded-pill text-start px-3">
-                            <i class="bi bi-calendar-plus me-2"></i>Ver mis reservas
-                        </a>
-                        <a href="{% url 'mis_comprobantes' %}" class="btn btn-sm btn-outline-primary rounded-pill text-start px-3">
-                            <i class="bi bi-receipt me-2"></i>Ver comprobantes
-                        </a>
-                        <a href="{% url 'mis_resenas' %}" class="btn btn-sm btn-outline-warning rounded-pill text-start px-3">
-                            <i class="bi bi-pencil-square me-2"></i>Escribir una reseña
-                        </a>
-                        <a href="{% url 'mis_pqrs' %}" class="btn btn-sm btn-outline-danger rounded-pill text-start px-3">
-                            <i class="bi bi-chat-dots me-2"></i>Enviar una PQRS
-                        </a>
+    <div class="row g-4 mb-5">
+        <div class="col-12 col-xl-8">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="bi bi-activity text-primary me-2"></i>Evolución Mensual de Reservas e Inversión
+                    </h5>
+                    <span class="text-muted small">Año en curso</span>
+                </div>
+                <canvas id="chartEvolucionMensual" class="w-100"></canvas>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-pie-chart-fill text-success me-2"></i>Distribución de Estados de Reserva
+                </h5>
+                <div class="mx-auto" style="max-width:260px;">
+                    <canvas id="chartEstadosPie"></canvas>
+                </div>
+                <div class="row g-2 text-center mt-3">
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-success">{{ reservas_confirmadas|default:"0" }}</span>
+                        <small class="text-muted">Confirmadas</small>
+                    </div>
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-warning">{{ reservas_pendientes|default:"0" }}</span>
+                        <small class="text-muted">Pendientes</small>
+                    </div>
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-danger">{{ reservas_canceladas|default:"0" }}</span>
+                        <small class="text-muted">Canceladas</small>
+                    </div>
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-secondary">{{ reservas_completadas|default:"0" }}</span>
+                        <small class="text-muted">Completadas</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- NOTA DE PIE -->
-    <div class="mt-5 text-center">
-        <p class="text-muted small">
-            <i class="bi bi-info-circle me-1"></i>
-            Las cifras se actualizan diariamente. Los pagos pendientes pueden tardar hasta 24 h en reflejarse.
-        </p>
+    <div class="row g-4 mb-5">
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-bar-chart-steps text-warning me-2"></i>Inversión Anualizada
+                </h5>
+                <canvas id="chartInversionAnual" class="w-100"></canvas>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-calendar-week text-info me-2"></i>Preferencia por Día de la Semana
+                </h5>
+                <canvas id="chartDiasSemana" class="w-100"></canvas>
+            </div>
+        </div>
+        <div class="col-12 col-xl-4">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-headset text-danger me-2"></i>Estado de PQRS
+                </h5>
+                <canvas id="chartPqrsEstados" class="w-100"></canvas>
+                <div class="row g-2 text-center mt-3">
+                    <div class="col-4">
+                        <span class="d-block fw-bold text-primary">{{ pqrs_abiertas|default:"0" }}</span>
+                        <small class="text-muted">Abiertas</small>
+                    </div>
+                    <div class="col-4">
+                        <span class="d-block fw-bold text-warning">{{ pqrs_en_gestion|default:"0" }}</span>
+                        <small class="text-muted">En gestión</small>
+                    </div>
+                    <div class="col-4">
+                        <span class="d-block fw-bold text-success">{{ pqrs_cerradas|default:"0" }}</span>
+                        <small class="text-muted">Resueltas</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-12 col-md-6">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-layers-fill text-secondary me-2"></i>Comparativa Anual: Reservas vs Cancelaciones
+                </h5>
+                <canvas id="chartComparativaAnual" class="w-100"></canvas>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-geo-fill text-success me-2"></i>Top Destinos por Frecuencia de Reserva
+                </h5>
+                <canvas id="chartTopDestinos" class="w-100"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-12 col-md-5">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-radar text-primary me-2"></i>Perfil de Comportamiento del Viajero
+                </h5>
+                <div class="mx-auto" style="max-width:300px;">
+                    <canvas id="chartRadarPerfil"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-7">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+                <h5 class="fw-bold text-dark mb-4">
+                    <i class="bi bi-graph-up text-info me-2"></i>Tendencia Acumulada de Inversión (Mensual)
+                </h5>
+                <canvas id="chartInversionAcumulada" class="w-100"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border border-light shadow-sm rounded-4 p-4 mb-5 bg-white">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-3">
+            <div>
+                <h5 class="fw-bold text-dark mb-1">
+                    <i class="bi bi-file-earmark-bar-graph text-secondary me-2"></i>Módulos de Auditoría e Informes
+                    Consolidados
+                </h5>
+                <p class="text-muted small mb-0">Selecciona las pestañas inferiores para desglosar la matriz de datos
+                    históricos.</p>
+            </div>
+        </div>
+
+        <ul class="nav nav-pills bg-light p-2 rounded-3 mb-4 gap-2 flex-wrap" id="vistasMatrizTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-mensual"
+                    type="button" role="tab">
+                    <i class="bi bi-calendar3 me-2"></i>Reporte Mensual
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-anual"
+                    type="button" role="tab">
+                    <i class="bi bi-calendar-range me-2"></i>Reporte Anual
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-destinos"
+                    type="button" role="tab">
+                    <i class="bi bi-compass me-2"></i>Análisis de Rutas Frecuentes
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-soporte"
+                    type="button" role="tab">
+                    <i class="bi bi-headset me-2"></i>Trazabilidad de PQRS
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-transacciones"
+                    type="button" role="tab">
+                    <i class="bi bi-credit-card me-2"></i>Historial de Pagos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-resenas"
+                    type="button" role="tab">
+                    <i class="bi bi-star me-2"></i>Reseñas y Calificaciones
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="vistasMatrizTabContent">
+
+            <div class="tab-pane fade show active" id="panel-mensual" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border-0 mb-0">
+                        <thead class="table-light border-bottom">
+                            <tr>
+                                <th class="py-3 border-0">Período Fiscal</th>
+                                <th class="py-3 border-0 text-center">Reservas Creadas</th>
+                                <th class="py-3 border-0 text-center">Confirmadas</th>
+                                <th class="py-3 border-0 text-center">Canceladas</th>
+                                <th class="py-3 border-0 text-center">Completadas</th>
+                                <th class="py-3 border-0 text-center">Tasa Éxito</th>
+                                <th class="py-3 border-0 text-end">Inversión Recaudada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reporte in reporte_mensual %}
+                            <tr class="border-bottom border-light">
+                                <td class="fw-semibold text-dark py-3">{{ reporte.mes_nombre }} / {{ reporte.anio }}</td>
+                                <td class="text-center py-3"><span class="badge bg-light text-dark">{{ reporte.total_creadas }}</span></td>
+                                <td class="text-center py-3"><span class="badge bg-success bg-opacity-10 text-success">{{ reporte.total_confirmadas }}</span></td>
+                                <td class="text-center py-3"><span class="badge bg-danger bg-opacity-10 text-danger">{{ reporte.total_canceladas }}</span></td>
+                                <td class="text-center py-3"><span class="badge bg-secondary bg-opacity-10 text-secondary">{{ reporte.total_completadas|default:"0" }}</span></td>
+                                <td class="text-center py-3">
+                                    <div class="d-flex align-items-center gap-1 justify-content-center">
+                                        <div class="progress rounded-pill bg-light" style="width:60px;height:6px;">
+                                            <div class="progress-bar bg-success" role="progressbar" id="barMensual{{ forloop.counter }}"></div>
+                                        </div>
+                                        <small class="text-success fw-semibold">{{ reporte.porcentaje_exito|default:"0" }}%</small>
+                                    </div>
+                                </td>
+                                <td class="text-end fw-bold text-dark py-3">${{ reporte.inversion|floatformat:0|intcomma }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5">
+                                    <i class="bi bi-folder-x fs-2 d-block mb-2"></i>Sin registros mensuales
+                                    consolidados.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="panel-anual" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border-0 mb-0">
+                        <thead class="table-light border-bottom">
+                            <tr>
+                                <th class="py-3 border-0">Año</th>
+                                <th class="py-3 border-0 text-center">Volumen Operativo</th>
+                                <th class="py-3 border-0 text-center">Confirmadas</th>
+                                <th class="py-3 border-0 text-center">Canceladas</th>
+                                <th class="py-3 border-0 text-center">Completadas</th>
+                                <th class="py-3 border-0 text-center">Ticket Promedio</th>
+                                <th class="py-3 border-0 text-center">Tasa de Éxito</th>
+                                <th class="py-3 border-0 text-end">Caja Acumulada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reporte in reporte_anual %}
+                            <tr class="border-bottom border-light">
+                                <td class="fw-bold text-dark py-3">{{ reporte.anio }}</td>
+                                <td class="text-center py-3">{{ reporte.total_reservas }} viajes</td>
+                                <td class="text-center py-3"><span class="badge bg-success bg-opacity-10 text-success">{{ reporte.total_confirmadas|default:"—" }}</span></td>
+                                <td class="text-center py-3"><span class="badge bg-danger bg-opacity-10 text-danger">{{ reporte.total_canceladas|default:"—" }}</span></td>
+                                <td class="text-center py-3"><span class="badge bg-secondary bg-opacity-10 text-secondary">{{ reporte.total_completadas|default:"—" }}</span></td>
+                                <td class="text-center py-3 text-muted">${{ reporte.ticket_promedio|floatformat:0|intcomma|default:"—" }}</td>
+                                <td class="text-center py-3">
+                                    <div class="d-flex align-items-center gap-2 justify-content-center">
+                                        <div class="progress rounded-pill bg-light" style="width:80px;height:6px;">
+                                            <div class="progress-bar bg-success" role="progressbar" id="barAnual{{ forloop.counter }}"></div>
+                                        </div>
+                                        <span class="small fw-semibold text-success">{{ reporte.porcentaje_exito }}%</span>
+                                    </div>
+                                </td>
+                                <td class="text-end fw-bold text-success py-3">${{ reporte.inversion|floatformat:0|intcomma }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-5">
+                                    <i class="bi bi-folder-x fs-2 d-block mb-2"></i>Sin registros anuales.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="panel-destinos" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border-0 mb-0">
+                        <thead class="table-light border-bottom">
+                            <tr>
+                                <th class="py-3 border-0">Ruta / Destino Turístico</th>
+                                <th class="py-3 border-0 text-center">Frecuencia de Reserva</th>
+                                <th class="py-3 border-0 text-center">Inversión Generada</th>
+                                <th class="py-3 border-0 text-end">Último Acceso Registrado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for destino in destinos_frecuentes %}
+                            <tr class="border-bottom border-light">
+                                <td class="py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="p-2 bg-light text-dark rounded-circle small fw-bold text-center" style="min-width:32px;height:32px;line-height:16px;">{{ forloop.counter }}</div>
+                                        <span class="fw-semibold text-dark">{{ destino.nombre }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-center py-3"><span class="badge bg-primary px-3 py-1 rounded-pill">{{ destino.total_reservas }}</span></td>
+                                <td class="text-center py-3 text-muted">${{ destino.inversion_total|floatformat:0|intcomma|default:"—" }}</td>
+                                <td class="text-end text-muted py-3">{{ destino.ultima_visita|date:"d M Y"|default:"—" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-5">
+                                    <i class="bi bi-geo fs-2 d-block mb-2"></i>Aún no se registran destinos
+                                    geolocalizados en la cuenta.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="panel-soporte" role="tabpanel">
+                <div class="row g-4 p-2">
+                    <div class="col-12 col-md-4">
+                        <div class="bg-light p-4 rounded-3 h-100">
+                            <h6 class="fw-bold text-dark mb-3">Balance Operativo de Casos</h6>
+                            <div class="vstack gap-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted"><i
+                                            class="bi bi-envelope-open text-primary me-2"></i>Casos Abiertos:</span>
+                                    <span class="badge bg-primary text-white font-monospace">{{
+                                        pqrs_abiertas|default:"0" }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted"><i class="bi bi-gear-fill text-warning me-2"></i>En
+                                        Procesamiento:</span>
+                                    <span class="badge bg-warning text-dark font-monospace">{{
+                                        pqrs_en_gestion|default:"0" }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted"><i
+                                            class="bi bi-check-all text-success me-2"></i>Cerrados / Resueltos:</span>
+                                    <span class="badge bg-success text-white font-monospace">{{ pqrs_cerradas|default:"0" }}</span>
+                                </div>
+                                <hr class="my-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted fw-bold">Total de PQRS:</span>
+                                    <span class="badge bg-dark text-white font-monospace">{{ pqrs_total|default:"0" }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small text-muted">Tasa de resolución:</span>
+                                    <span class="small fw-bold text-success">{{ pqrs_tasa_resolucion|default:"0" }}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <div class="border border-light rounded-3 p-3 bg-body">
+                            <h6 class="fw-bold text-dark mb-3">Auditoría Breve de Actividad Reciente</h6>
+                            <div class="vstack gap-2">
+                                {% for evento in actividad_reciente|slice:":6" %}
+                                <div class="p-2 border-bottom border-light d-flex justify-content-between align-items-center small">
+                                    <span class="text-dark"><i class="bi bi-clock me-2 text-muted"></i>{{ evento.descripcion }}</span>
+                                    <span class="text-muted font-monospace">{{ evento.fecha|date:"d M Y" }}</span>
+                                </div>
+                                {% empty %}
+                                <p class="text-muted small text-center py-4 mb-0">Sin trazas operativas recientes en la
+                                    cuenta.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="tab-pane fade" id="panel-transacciones" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border-0 mb-0">
+                        <thead class="table-light border-bottom">
+                            <tr>
+                                <th class="py-3 border-0"># Transacción</th>
+                                <th class="py-3 border-0">Reserva Asociada</th>
+                                <th class="py-3 border-0 text-center">Método de Pago</th>
+                                <th class="py-3 border-0 text-center">Estado</th>
+                                <th class="py-3 border-0 text-center">Fecha</th>
+                                <th class="py-3 border-0 text-end">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pago in historial_pagos %}
+                            <tr class="border-bottom border-light">
+                                <td class="py-3 font-monospace text-muted small">{{ pago.codigo|default:"#—" }}</td>
+                                <td class="py-3 fw-semibold text-dark">{{ pago.reserva_nombre|default:"—" }}</td>
+                                <td class="text-center py-3">
+                                    <span class="badge bg-light text-dark border border-light">
+                                        <i class="bi bi-credit-card me-1"></i>{{ pago.metodo|default:"—" }}
+                                    </span>
+                                </td>
+                                <td class="text-center py-3">
+                                    {% if pago.estado == "aprobado" %}
+                                    <span class="badge bg-success bg-opacity-10 text-success">Aprobado</span>
+                                    {% elif pago.estado == "pendiente" %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning">Pendiente</span>
+                                    {% elif pago.estado == "rechazado" %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger">Rechazado</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">{{ pago.estado|default:"—" }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center py-3 text-muted small">{{ pago.fecha|date:"d M Y"|default:"—" }}</td>
+                                <td class="text-end fw-bold text-dark py-3">${{ pago.monto|floatformat:0|intcomma|default:"0" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-5">
+                                    <i class="bi bi-credit-card fs-2 d-block mb-2"></i>Sin transacciones registradas.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="panel-resenas" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border-0 mb-0">
+                        <thead class="table-light border-bottom">
+                            <tr>
+                                <th class="py-3 border-0">Destino / Experiencia</th>
+                                <th class="py-3 border-0 text-center">Calificación</th>
+                                <th class="py-3 border-0">Comentario</th>
+                                <th class="py-3 border-0 text-center">Estado</th>
+                                <th class="py-3 border-0 text-end">Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for resena in mis_resenas %}
+                            <tr class="border-bottom border-light">
+                                <td class="py-3 fw-semibold text-dark">{{ resena.destino|default:"—" }}</td>
+                                <td class="text-center py-3">
+                                    <div class="d-flex justify-content-center gap-1">
+                                        {% for i in "12345" %}
+                                        {% if forloop.counter <= resena.calificacion %} <i
+                                            class="bi bi-star-fill text-warning small"></i>
+                                            {% else %}
+                                            <i class="bi bi-star text-muted small"></i>
+                                            {% endif %}
+                                            {% endfor %}
+                                    </div>
+                                </td>
+                                <td class="py-3 text-muted small">{{ resena.comentario|truncatechars:80|default:"—" }}</td>
+                                <td class="text-center py-3">
+                                    {% if resena.publicada %}
+                                    <span class="badge bg-success bg-opacity-10 text-success">Publicada</span>
+                                    {% else %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning">En revisión</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end text-muted py-3 small">{{ resena.fecha|date:"d M Y"|default:"—" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-5">
+                                    <i class="bi bi-star fs-2 d-block mb-2"></i>Aún no has publicado reseñas.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card border border-light shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h6 class="fw-bold text-dark mb-3 text-uppercase small">Accesos Rápidos de Gestión y Operaciones</h6>
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <a href="{% url 'mis_reservas_usuario' %}"
+                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small">
+                    <i class="bi bi-calendar-plus text-success me-2"></i>Mis Reservas
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{% url 'mis_comprobantes' %}"
+                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small">
+                    <i class="bi bi-receipt text-primary me-2"></i>Comprobantes
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{% url 'mis_resenas' %}"
+                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small">
+                    <i class="bi bi-pencil-square text-warning me-2"></i>Escribir Reseña
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="{% url 'mis_pqrs' %}"
+                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small">
+                    <i class="bi bi-chat-dots text-danger me-2"></i>Radicar PQRS
+                </a>
+            </div>
+        </div>
     </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        Chart.defaults.font.family = "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+        Chart.defaults.color = "#6c757d";
+        Chart.defaults.plugins.legend.labels.usePointStyle = true;
+        Chart.defaults.plugins.legend.labels.padding = 16;
+
+        // ── Variables de datos desde Django ──────────────────────────────────────
+        const mesesLabels = {{ meses_labels|safe }};
+        const mesesDatos = {{ meses_datos|safe }};
+        const mesesInversion = {{ meses_inversion|safe }};
+        const aniosLabels = {{ anios_labels|safe }};
+        const aniosDatos = {{ anios_datos|safe }};
+        const aniosReservas = {{ anios_reservas|safe }};
+        const aniosCanceladas = {{ anios_canceladas|safe }};
+        const diasDatos = {{ dias_datos|safe }};
+        const pqrsAbiertas = {{ pqrs_abiertas|default:0 }};
+        const pqrsGestion = {{ pqrs_en_gestion|default:0 }};
+        const pqrsCerradas = {{ pqrs_cerradas|default:0 }};
+        const reservasConf = {{ reservas_confirmadas|default:0 }};
+        const reservasPend = {{ reservas_pendientes|default:0 }};
+        const reservasCan = {{ reservas_canceladas|default:0 }};
+        const reservasComp = {{ reservas_completadas|default:0 }};
+        const destinosLabels = {{ destinos_top_labels|safe }};
+        const destinosDatos = {{ destinos_top_datos|safe }};
+        const tasaExito = {{ tasa_exito|default:0 }};
+        const progreso = {{ progreso_nivel|default:0 }};
+
+    // ── Progress bars Django-driven ───────────────────────────────────────────
+    const barTasa = document.getElementById("barTasaExito");
+    if (barTasa) barTasa.style.width = tasaExito + "%";
+    const barProg = document.getElementById("barProgreso");
+    if (barProg) barProg.style.width = progreso + "%";
+
+    // ── Colores reutilizables ─────────────────────────────────────────────────
+    const C = {
+        blue: "#0d6efd",
+        green: "#198754",
+        yellow: "#ffc107",
+        red: "#dc3545",
+        cyan: "#0dcaf0",
+        gray: "#6c757d",
+        purple: "#6f42c1",
+        orange: "#fd7e14",
+        gridLine: "#f1f3f5",
+    };
+
+    function alphaColor(hex, a) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r},${g},${b},${a})`;
+    }
+
+    // ── 1. Evolución Mensual — Línea dual (reservas + inversión) ─────────────
+    new Chart(document.getElementById("chartEvolucionMensual"), {
+        type: "line",
+        data: {
+            labels: mesesLabels,
+            datasets: [
+                {
+                    label: "Reservas",
+                    data: mesesDatos,
+                    borderColor: C.blue,
+                    backgroundColor: alphaColor(C.blue, 0.06),
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: C.blue,
+                    yAxisID: "yReservas"
+                },
+                {
+                    label: "Inversión (COP)",
+                    data: mesesInversion,
+                    borderColor: C.green,
+                    backgroundColor: alphaColor(C.green, 0.06),
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: C.green,
+                    yAxisID: "yInversion"
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: "index", intersect: false },
+            plugins: { legend: { position: "top" } },
+            scales: {
+                yReservas: {
+                    type: "linear",
+                    position: "left",
+                    grid: { color: C.gridLine },
+                    ticks: { stepSize: 1 }
+                },
+                yInversion: {
+                    type: "linear",
+                    position: "right",
+                    grid: { drawOnChartArea: false },
+                    ticks: {
+                        callback: v => "$" + (v / 1000000).toFixed(1) + "M"
+                    }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 2. Estados de Reserva — Doughnut ─────────────────────────────────────
+    new Chart(document.getElementById("chartEstadosPie"), {
+        type: "doughnut",
+        data: {
+            labels: ["Confirmadas", "Pendientes", "Canceladas", "Completadas"],
+            datasets: [{
+                data: [reservasConf, reservasPend, reservasCan, reservasComp],
+                backgroundColor: [C.green, C.yellow, C.red, C.gray],
+                borderWidth: 4,
+                borderColor: "#ffffff"
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: "72%",
+            plugins: {
+                legend: { position: "bottom", labels: { boxWidth: 10, padding: 12 } }
+            }
+        }
+    });
+
+    // ── 3. Inversión Anual — Barras verticales ────────────────────────────────
+    new Chart(document.getElementById("chartInversionAnual"), {
+        type: "bar",
+        data: {
+            labels: aniosLabels,
+            datasets: [{
+                label: "Inversión (COP)",
+                data: aniosDatos,
+                backgroundColor: C.yellow,
+                borderRadius: 8,
+                barThickness: 36
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    grid: { color: C.gridLine },
+                    beginAtZero: true,
+                    ticks: { callback: v => "$" + (v / 1000000).toFixed(1) + "M" }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 4. Días de la Semana — Barras horizontales ────────────────────────────
+    new Chart(document.getElementById("chartDiasSemana"), {
+        type: "bar",
+        data: {
+            labels: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
+            datasets: [{
+                label: "Solicitudes",
+                data: diasDatos,
+                backgroundColor: C.cyan,
+                borderRadius: 6,
+                barThickness: 14
+            }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: C.gridLine }, beginAtZero: true },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 5. PQRS Estados — Polar Area ──────────────────────────────────────────
+    new Chart(document.getElementById("chartPqrsEstados"), {
+        type: "polarArea",
+        data: {
+            labels: ["Abiertas", "En Gestión", "Resueltas"],
+            datasets: [{
+                data: [pqrsAbiertas, pqrsGestion, pqrsCerradas],
+                backgroundColor: [
+                    alphaColor(C.blue, 0.7),
+                    alphaColor(C.yellow, 0.7),
+                    alphaColor(C.green, 0.7)
+                ],
+                borderWidth: 2,
+                borderColor: "#ffffff"
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: "bottom", labels: { boxWidth: 10, padding: 12 } } }
+        }
+    });
+
+    // ── 6. Comparativa Anual — Barras agrupadas ───────────────────────────────
+    new Chart(document.getElementById("chartComparativaAnual"), {
+        type: "bar",
+        data: {
+            labels: aniosLabels,
+            datasets: [
+                {
+                    label: "Total Reservas",
+                    data: aniosReservas,
+                    backgroundColor: alphaColor(C.blue, 0.8),
+                    borderRadius: 6,
+                    barThickness: 24
+                },
+                {
+                    label: "Cancelaciones",
+                    data: aniosCanceladas,
+                    backgroundColor: alphaColor(C.red, 0.75),
+                    borderRadius: 6,
+                    barThickness: 24
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: "top" } },
+            scales: {
+                y: { grid: { color: C.gridLine }, beginAtZero: true },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 7. Top Destinos — Barras horizontales ─────────────────────────────────
+    new Chart(document.getElementById("chartTopDestinos"), {
+        type: "bar",
+        data: {
+            labels: destinosLabels,
+            datasets: [{
+                label: "Reservas",
+                data: destinosDatos,
+                backgroundColor: [
+                    alphaColor(C.green, 0.85),
+                    alphaColor(C.blue, 0.75),
+                    alphaColor(C.cyan, 0.8),
+                    alphaColor(C.orange, 0.75),
+                    alphaColor(C.purple, 0.7)
+                ],
+                borderRadius: 6,
+                barThickness: 16
+            }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: C.gridLine }, beginAtZero: true },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 8. Radar Perfil del Viajero ────────────────────────────────────────────
+    new Chart(document.getElementById("chartRadarPerfil"), {
+        type: "radar",
+        data: {
+            labels: ["Reservas", "Inversión", "Fidelidad", "Reseñas", "PQRS resueltas", "Destinos"],
+            datasets: [{
+                label: "Tu perfil",
+                data: {{ radar_datos|safe }},
+                borderColor: C.green,
+                backgroundColor: alphaColor(C.green, 0.15),
+                borderWidth: 2,
+                pointBackgroundColor: C.green,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { stepSize: 20, font: { size: 10 } },
+                    grid: { color: C.gridLine },
+                    pointLabels: { font: { size: 11 } }
+                }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // ── 9. Inversión Acumulada Mensual — Área ─────────────────────────────────
+    const acumulados = mesesInversion.reduce((acc, val, i) => {
+        acc.push(i === 0 ? val : acc[i - 1] + val);
+        return acc;
+    }, []);
+
+    new Chart(document.getElementById("chartInversionAcumulada"), {
+        type: "line",
+        data: {
+            labels: mesesLabels,
+            datasets: [{
+                label: "Inversión Acumulada (COP)",
+                data: acumulados,
+                borderColor: C.cyan,
+                backgroundColor: alphaColor(C.cyan, 0.12),
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: C.cyan
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    grid: { color: C.gridLine },
+                    beginAtZero: true,
+                    ticks: { callback: v => "$" + (v / 1000000).toFixed(1) + "M" }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── Progress bars de tabla mensual ────────────────────────────────────────
+    document.querySelectorAll('[id^="barMensual"]').forEach(bar => {
+        const row = bar.closest('tr');
+        if (row) {
+            const small = row.querySelector('.text-success.fw-semibold');
+            if (small) {
+                const pct = parseInt(small.textContent) || 0;
+                bar.style.width = pct + '%';
+            }
+        }
+    });
+
+    // ── Progress bars de tabla anual ──────────────────────────────────────────
+    document.querySelectorAll('[id^="barAnual"]').forEach(bar => {
+        const row = bar.closest('tr');
+        if (row) {
+            const small = row.querySelector('.text-success.fw-semibold');
+            if (small) {
+                const pct = parseInt(small.textContent) || 0;
+                bar.style.width = pct + '%';
+            }
+        }
+    });
+
+    });
+
+</script>

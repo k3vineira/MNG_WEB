@@ -8,8 +8,6 @@ from django import forms
 from .forms import TemporadaForm
 
 
-
-
 def destinos(request):
     destinos_list = Paquete.objects.filter(estado=True)
 
@@ -66,7 +64,7 @@ class PaqueteListView(ListView):
 class PaqueteCreateView(CreateView):
     model = Paquete
     fields = [
-        'imagen', 'nombre', 'descripcion', 
+        'imagen', 'nombre', 'descripcion', 'hora_encuentro',
         'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades','estado'
     ]
     template_name = 'admin/paquetes/agregar_paquete.html'
@@ -76,7 +74,7 @@ class PaqueteCreateView(CreateView):
 class PaqueteUpdateView(UpdateView):
     model = Paquete
     fields = [
-        'imagen', 'nombre', 'descripcion', 
+        'imagen', 'nombre', 'descripcion', 'hora_encuentro',
         'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades','estado'
     ]
     template_name = 'admin/paquetes/editar_paquete.html'
@@ -229,7 +227,6 @@ class TarifaListView(ListView):
 
 class TarifaCreateView(CreateView):
     model = Tarifa
-   
     fields = ['paquete', 'temporada', 'precio_adulto', 'precio_menor', 'estado']
     template_name = 'admin/tarifas/agregar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
