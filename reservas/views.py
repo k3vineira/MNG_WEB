@@ -134,8 +134,10 @@ class CancelacionDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def mis_cancelaciones_usuario(request):
-   
-    mis_cancelaciones = Cancelacion.objects.filter(reserva__usuario=request.user).order_by('-id')
+    mis_cancelaciones = Cancelacion.objects.filter(reserva__usuario=request.user)\
+        .select_related('reserva__paquete')\
+        .prefetch_related('reserva__comprobantes')\
+        .order_by('-id')
     
     context = {
         'cancelaciones': mis_cancelaciones
