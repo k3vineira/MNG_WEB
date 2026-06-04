@@ -16,7 +16,9 @@ urlpatterns = [
     path('registro/', views.registro_view, name='registro'),
     path('terminos/', views.terminos_view, name='terminos'),
     path('nosotros/', views.nosotros_view, name='nosotros'),
-    path('perfil/', views.perfil_view, name='detalles'),
+    
+    path('mi-perfil/', views.perfil_detalles, name='perfil_detalles'),
+    path('perfil-administrador/', views.perfil_detalles, name='perfil_administrador'),
     path('comentarios/', views.listar_comentarios, name='listar_comentarios'),
     path('comentarios/toggle/<int:pk>/', views.toggle_visible, name='toggle_visible'),
 

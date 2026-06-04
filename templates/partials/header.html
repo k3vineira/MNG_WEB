@@ -82,7 +82,7 @@
             <a href="/" class="nav-main-link display-3 fw-bold">Inicio</a>
             {% if user.is_authenticated %}
             <a
-              href="{% url 'detalles' %}"
+              href="#"
               class="nav-main-link display-3 fw-bold"
               >Mi Perfil</a
             >
@@ -250,7 +250,7 @@
           <li>
             <a
               class="dropdown-item py-2 fw-bold text-success"
-              href="{% url 'detalles' %}"
+              href="{% url 'perfil_detalles' %}"
               ><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a>
           </li>
 
