@@ -41,14 +41,15 @@
                         <td class="ps-5 fw-bold text-dark py-3">{{ t.nombre }}</td>
                         <td class="py-3">{{ t.fecha_inicio|date:"d M Y" }}</td>
                         <td class="py-3">{{ t.fecha_fin|date:"d M Y" }}</td>
-                        <td class="text-center py-3">
-                           <span class="badge rounded-pill px-4 py-2 fs-6 
-                            {% if t.estado == 'activa' %}bg-success text-white
-                            {% elif t.estado == 'programada' %}bg-warning text-dark
-                            {% elif t.estado == 'finalizada' %}bg-info text-white
-                            {% else %}bg-secondary text-white{% endif %}">
-                            {{ t.estado|capfirst }}
-                            </span>
+                       <td class="text-center py-3">
+                        <span class="badge rounded-pill px-4 py-2 fs-6 
+                        {% if t.estado == 'activa' %}bg-success text-white
+                        {% elif t.estado == 'programada' %}text-white
+                        {% elif t.estado == 'finalizada' %}bg-info text-white
+                        {% else %}bg-secondary text-white{% endif %}"
+                         {% if t.estado == 'programada' %}style="background-color: #406d46;"{% endif %}>
+                         {{ t.estado|capfirst }}
+                        </span>
                         </td>
                         <td class="text-center py-3">
                              <a href="{% url 'editar_temporada' t.pk %}" class="text-primary text-decoration-none fw-bold small">EDITAR</a>

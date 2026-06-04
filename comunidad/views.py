@@ -83,7 +83,7 @@ def mis_pqrs_view(request):
     solicitudes_usuario = PQRS.objects.none()
     try:
         cliente_obj = Cliente.objects.get(usuario=request.user)
-        solicitudes_usuario = PQRS.objects.filter(cliente=cliente_obj).order_by('-fecha')
+        solicitudes_usuario = PQRS.objects.filter(cliente=cliente_obj)
     except Cliente.DoesNotExist:
         pass
 

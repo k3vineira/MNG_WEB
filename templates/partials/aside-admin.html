@@ -62,7 +62,10 @@
               {% if request.resolver_match.url_name == 'listar_reservas' %}bg-success text-white{% endif %}">
       <i class="bi bi-calendar-check-fill"></i> Reservas
     </a>
-
+    <a href="{% url 'administrar_cancelaciones' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}bg-success text-white{% endif %}">
+      <i class="bi bi-calendar-x-fill"></i> Cancelaciones
+    </a>
     <a href="{% url 'admin_comprobantes' %}"
       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
               {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}bg-success text-white{% endif %}">

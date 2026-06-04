@@ -4,9 +4,8 @@
 {% block titulo %}Mis Reservas | Monagua{% endblock %}
 
 {% block private_content %}
-<div class="container py-4" style="max-width:1100px;">
+<div class="container py-4 mx-auto" style="max-width:1000px;">
 
-    <!-- Título -->
     <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
         <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
@@ -15,13 +14,9 @@
                 </h2>
                 <p class="text-muted mb-0">Descubre y administra tus próximas experiencias</p>
             </div>
-            <a href="/" class="btn btn-success rounded-pill px-4 shadow-sm">
-                <i class="bi bi-compass me-1"></i> Explorar Más Tours
-            </a>
         </div>
     </div>
 
-    <!-- Mensajes Django -->
     {% if messages %}
     {% for msg in messages %}
     <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-3" role="alert">
@@ -31,7 +26,6 @@
     {% endfor %}
     {% endif %}
 
-    <!-- Listado de Reservas -->
     {% if reservas %}
         <div class="row g-4">
             {% for reserva in reservas %}
@@ -39,8 +33,7 @@
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
                         <div class="row g-0 align-items-stretch">
                             
-                            <!-- Imagen -->
-                            <div class="col-md-4 position-relative" style="min-height: 220px;">
+                            <div class="col-md-4 position-relative" style="min-height: 240px;">
                                 {% if reserva.paquete.imagen %}
                                     <img src="{{ reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="{{ reserva.paquete.nombre }}">
                                 {% else %}
@@ -48,14 +41,13 @@
                                 {% endif %}
                             </div>
 
-                            <!-- Información -->
                             <div class="col-md-8 d-flex flex-column">
                                 <div class="card-body p-4 d-flex flex-column h-100">
                                     
                                     <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
                                         <div>
                                             <h3 class="fw-bold text-dark mb-1">{{ reserva.paquete.nombre }}</h3>
-                                            <p class="text-muted small mb-0"><i class="bi bi-journal-check me-1"></i> Reserva #{{ reserva.id }}</p>
+                                            <p class="text-muted small mb-0"><i class="bi bi-journal-check me-1"></i> Reserva #{{ reserva.id }} · Turística</p>
                                         </div>
 
                                         <div>
@@ -63,43 +55,24 @@
                                                 <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="bi bi-clock me-1"></i> Pendiente</span>
                                             {% elif reserva.estado == 'confirmada' or reserva.estado == 'Confirmada' %}
                                                 <span class="badge bg-success text-white rounded-pill px-3 py-2"><i class="bi bi-check-circle me-1"></i> Confirmada</span>
-                                            {% elif reserva.estado == 'completada' or reserva.estado == 'Completada' %}
-                                                <span class="badge bg-info text-dark rounded-pill px-3 py-2"><i class="bi bi-bookmark-star me-1"></i> Completada</span>
                                             {% elif reserva.estado == 'cancelada' or reserva.estado == 'Cancelada' %}
                                                 <span class="badge bg-danger text-white rounded-pill px-3 py-2"><i class="bi bi-x-circle me-1"></i> Cancelada</span>
                                             {% endif %}
                                         </div>
                                     </div>
 
-                                    <div class="col-md-8 d-flex flex-column">
-                                        <div class="card-body p-4 d-flex flex-column h-100">
-                                            
-                                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
-                                                <div>
-                                                    <h3 class="fw-bold text-dark mb-1">{{ reserva.paquete.nombre }}</h3>
-                                                    <p class="text-muted small mb-0"><i class="bi bi-journal-check me-1"></i> Reserva turística realizada</p>
-                                                </div>
-
-                                                <div>
-                                                    {% if reserva.estado == 'pendiente' or reserva.estado == 'Pendiente' %}
-                                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="bi bi-clock me-1"></i> Pendiente</span>
-                                                    {% elif reserva.estado == 'confirmada' or reserva.estado == 'Confirmada' %}
-                                                        <span class="badge bg-success text-white rounded-pill px-3 py-2"><i class="bi bi-check-circle me-1"></i> Confirmada</span>
-                                                    {% elif reserva.estado == 'cancelada' or reserva.estado == 'Cancelada' %}
-                                                        <span class="badge bg-danger text-white rounded-pill px-3 py-2"><i class="bi bi-x-circle me-1"></i> Cancelada</span>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-sm-4">
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-sm-6">
                                             <div class="border rounded-4 p-3 bg-light h-100">
                                                 <small class="text-muted d-block mb-1">Pasajeros</small>
-                                                <span class="fw-semibold text-dark small"><i class="bi bi-people me-1 text-success"></i> {{ reserva.numero_adultos }} Adul. / {{ reserva.numero_menores }} Men.</span>
+                                                <span class="fw-semibold text-dark small">
+                                                    <i class="bi bi-people me-1 text-success"></i> 
+                                                    {{ reserva.numero_adultos }} Adul. / {{ reserva.numero_menores }} Men.
+                                                </span>
                                             </div>
                                         </div>
 
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-6">
                                             <div class="border rounded-4 p-3 h-100" style="background-color: #e8f5e9;">
                                                 <small class="text-success-emphasis d-block mb-1 fw-medium">Total de Reserva</small>
                                                 <h5 class="fw-bold text-success mb-0">${{ reserva.monto_total }}</h5>
@@ -107,7 +80,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Relación de Comprobantes de Pago -->
                                     {% if reserva.comprobantes.all %}
                                         <div class="mb-4 border-top pt-3">
                                             <h6 class="fw-bold text-secondary mb-2" style="font-size: 0.85rem; letter-spacing: 0.5px; text-transform: uppercase;">
@@ -139,24 +111,21 @@
                                         </div>
                                     {% endif %}
 
-                                    <!-- Acciones -->
-                                    <div class="mt-auto d-flex gap-2 flex-wrap">
+                                    <div class="mt-auto d-flex gap-2 flex-wrap pt-2 border-top">
                                         {% if reserva.estado == 'pendiente' or reserva.estado == 'Pendiente' %}
                                             <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
-                                                <i class="bi bi-wallet2 me-1"></i> Enviar Comprobante
+                                                <i class="bi bi-wallet2 me-1"></i> Enviar pago
                                             </a>
                                         {% endif %}
                                         {% if reserva.estado != 'cancelada' and reserva.estado != 'Cancelada' %}
                                             <a href="{% url 'crear_cancelacion' %}?reserva_id={{ reserva.id }}" class="btn btn-outline-danger rounded-pill px-4 py-2">
-                                                <i class="bi bi-trash3 me-1"></i> Cancelar
+                                                <i class="bi bi-trash3 me-1"></i> Cancelar Reserva
                                             </a>
                                         {% endif %}
                                     </div>
 
                                 </div>
-                            </div>
-
-                        </div>
+                            </div> </div>
                     </div>
                 </div>
             {% endfor %}

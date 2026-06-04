@@ -43,14 +43,14 @@
                         <td class="py-3">{{ reserva.paquete.nombre }}</td>
                         <td class="py-3">{{ reserva.fecha }}</td>
                         <td class="text-success fw-bold py-3">${{ reserva.monto_total }}</td>
-                        <td class="py-3">
-                            {% if reserva.estado == 'pendiente' %}
-                                <span class="badge bg-warning text-dark px-4 py-2 fs-6 rounded-pill">Pendiente</span>
-                            {% elif reserva.estado == 'confirmada' %}
-                                <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill">Confirmada</span>
-                            {% else %}
-                                <span class="badge bg-danger text-white px-4 py-2 fs-6 rounded-pill">Cancelada</span>
-                            {% endif %}
+                         <td class="py-3">
+                        {% if reserva.estado == 'pendiente' %}
+                         <span class="badge text-white px-4 py-2 fs-6 rounded-pill" style="background-color: #406d46;">Pendiente</span>
+                         {% elif reserva.estado == 'confirmada' %}
+                        <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill">Confirmada</span>
+                         {% else %}
+                        <span class="badge bg-danger text-white px-4 py-2 fs-6 rounded-pill">Cancelada</span>
+                         {% endif %}
                         </td>
                          <td class="align-middle">
                         <div class="d-flex align-items-center gap-3"> 

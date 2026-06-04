@@ -1,28 +1,75 @@
-# core/utils.py
+
 from django.core.mail import send_mail
 from django.conf import settings
 from datetime import datetime, time
 
-def plantilla_reserva_html(nombre_cliente, paquete, fecha, adultos, menores, punto_encuentro, hora_encuentro):
-    # 🌟 PROTECCIÓN: Si la hora llega como texto (str), la convertimos a objeto time de Python
+def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menores=0, punto_encuentro=None, hora_encuentro=None, estado='pendiente', reserva_id='', monto_total='0.00'):
     if isinstance(hora_encuentro, str):
         try:
-            # Prueba con formato estándar de formulario (HH:MM)
             hora_encuentro = datetime.strptime(hora_encuentro, '%H:%M').time()
         except ValueError:
             try:
-                # Prueba con formato completo de base de datos (HH:MM:SS)
                 hora_encuentro = datetime.strptime(hora_encuentro, '%H:%M:%S').time()
             except ValueError:
-                # Si falla todo, lo dejamos como objeto time básico para que no rompa el strftime
                 hora_encuentro = time(0, 0)
 
-    # Si por alguna razón llega vacío o None
     if not hora_encuentro:
         hora_encuentro = time(0, 0)
 
-    # Ahora sí, formateamos la hora de manera 100% segura
     hora_formateada = hora_encuentro.strftime('%H:%M')
+
+    if estado == 'confirmada':
+        color_tag = "#1E4620"
+        bg_caja_estado = "#f4f8f5"
+        texto_estado = "Reserva Confirmada"
+    elif estado == 'cancelada':
+        color_tag = "#dc3545"
+        bg_caja_estado = "#fff5f5"
+        texto_estado = "Reserva Cancelada"
+    else:
+        color_tag = "#2E6F40"
+        bg_caja_estado = "#fafdfb"
+        texto_estado = "Reserva Pendiente"
+
+    bloque_detalles = ""
+    if fecha and punto_encuentro:
+        bloque_detalles = f"""
+        <tr style="border-bottom: 1px solid #edf2f0;">
+            <td style="padding: 12px 0; color: #718096;">Fecha de Salida</td>
+            <td style="padding: 12px 0; text-align: right; color: #1a202c;">{fecha}</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #edf2f0;">
+            <td style="padding: 12px 0; color: #718096;">Punto de encuentro</td>
+            <td style="padding: 12px 0; text-align: right; color: #1a202c;">{punto_encuentro}</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #edf2f0;">
+            <td style="padding: 12px 0; color: #718096;">Hora de encuentro</td>
+            <td style="padding: 12px 0; text-align: right; color: #1a202c;">{hora_formateada}</td>
+        </tr>
+        <tr>
+            <td style="padding: 12px 0; color: #718096;">Acompañantes</td>
+            <td style="padding: 12px 0; text-align: right; color: #1a202c; font-weight: 500;">
+                {adultos} Adultos {f'• {menores} Menores' if int(menores) > 0 else ''}
+            </td>
+        </tr>
+        """
+    else:
+        bloque_detalles = f"""
+        <tr>
+            <td style="padding: 12px 0; color: #718096;">Monto Total</td>
+            <td style="padding: 12px 0; text-align: right; font-weight: 600; color: #1a202c; font-size: 16px;">${monto_total}</td>
+        </tr>
+        """
+
+    bloque_mensaje_estado = ""
+    if estado == 'confirmada':
+        bloque_mensaje_estado = "¡Felicidades! Tu pago ha sido verificado con éxito. Tu lugar está completamente asegurado para vivir esta aventura."
+    elif estado == 'cancelada':
+        bloque_mensaje_estado = "Te confirmamos que la reserva ha sido dada de baja en nuestro sistema según lo solicitado."
+    else:
+        bloque_mensaje_estado = "Nuestro equipo verificará el comprobante de pago y se pondrá en contacto contigo en breve para confirmar tu reserva. ¡Gracias por elegirnos!"
+
+    reserva_num_texto = f" #{reserva_id}" if reserva_id else ""
 
     return f"""
     <html>
@@ -34,48 +81,35 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha, adultos, menores, pun
                     M
                 </div>
                 <div style="font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: 2px; margin-bottom: 6px;">MONAGUA</div>
-                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #a3c7a6; font-weight: bold;">Confirmación de Reserva</div>
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #a3c7a6; font-weight: bold;">Actualización de Reserva</div>
             </div>
             
             <div style="padding: 40px; color: #2d3748; line-height: 1.7;">
-                <h2 style="font-size: 24px; color: #1E4620; margin-top: 0; font-weight: 600; text-align: center;">¡Tu solicitud está en camino, {nombre_cliente}! </h2>
-                <p style="font-size: 15px; color: #4a5568; text-align: center; margin-bottom: 30px;">Hemos recibido tus datos correctamente. Estamos preparando todo para tu próxima gran experiencia de naturaleza.</p>
+                <h2 style="font-size: 24px; color: #1E4620; margin-top: 0; font-weight: 600; text-align: center;">¡Notificación de tu Itinerario, {nombre_cliente}!</h2>
+                <p style="font-size: 15px; color: #4a5568; text-align: center; margin-bottom: 30px;">Se ha registrado un movimiento en el control de tu experiencia de naturaleza.</p>
                 
-                <div style="background-color: #fafdfb; border: 1px solid #e2ece6; border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+                <div style="background-color: {bg_caja_estado}; border: 1px solid {color_tag}40; border-radius: 12px; padding: 25px; margin-bottom: 30px;">
                     <div style="text-align: center; margin-bottom: 20px;">
-                        <span style="font-size: 12px; font-weight: bold; color: #2E6F40; background-color: #e6f2ea; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">Resumen del viaje</span>
+                        <span style="font-size: 12px; font-weight: bold; color: #ffffff; background-color: {color_tag}; padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">{texto_estado}</span>
                     </div>
                     
                     <table style="width: 100%; border-collapse: collapse; font-size: 15px;">
                         <tr style="border-bottom: 1px solid #edf2f0;">
+                            <td style="padding: 12px 0; color: #718096;">Código de Reserva</td>
+                            <td style="padding: 12px 0; text-align: right; font-weight: 600; color: #1a202c;">{reserva_num_texto if reserva_id else 'En proceso'}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #edf2f0;">
                             <td style="padding: 12px 0; color: #718096;">Destino / Paquete</td>
                             <td style="padding: 12px 0; text-align: right; font-weight: 600; color: #1a202c;">{paquete}</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid #edf2f0;">
-                            <td style="padding: 12px 0; color: #718096;">Fecha de Salida</td>
-                            <td style="padding: 12px 0; text-align: right; color: #1a202c;">{fecha}</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #edf2f0;">
-                            <td style="padding: 12px 0; color: #718096;">Punto de encuentro</td>
-                            <td style="padding: 12px 0; text-align: right; color: #1a202c;">{punto_encuentro}</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #edf2f0;">
-                            <td style="padding: 12px 0; color: #718096;">hora de encuentro</td>
-                            <td style="padding: 12px 0; text-align: right; color: #1a202c;">{hora_formateada}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 12px 0; color: #718096;">Acompañantes</td>
-                            <td style="padding: 12px 0; text-align: right; color: #1a202c; font-weight: 500;">
-                                {adultos} Adultos {f'• {menores} Menores' if int(menores) > 0 else ''}
-                            </td>
-                        </tr>
+                        {bloque_detalles}
                     </table>
                 </div>
                 
-                <table style="width: 100%; background-color: #f0f7f3; border-radius: 8px;">
+                <table style="width: 100%; background-color: {bg_caja_estado}; border-radius: 8px; border: 1px dashed {color_tag}30;">
                     <tr>
-                        <td style="padding: 15px; font-size: 13px; color: #2E6F40; text-align: center; font-weight: 500;">
-                             <strong>Estado:</strong> Nuestro equipo verificará el comprobante de pago y se pondrá en contacto contigo en breve para confirmar tu reserva. ¡Gracias por elegirnos!
+                        <td style="padding: 15px; font-size: 13px; color: #2d3748; text-align: center; font-weight: 500;">
+                            <strong>Nota:</strong> {bloque_mensaje_estado}
                         </td>
                     </tr>
                 </table>
@@ -90,22 +124,18 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha, adultos, menores, pun
     </body>
     </html>
     """
-    
 
 def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad):
-    """Diseño Premium unificado para cancelaciones usando únicamente la paleta verde"""
-    
-    
     if estado == 'aceptada':
-        color_tag = "#1E4620"       
+        color_tag = "#1E4620"      
         bg_caja_estado = "#f4f8f5"  
         texto_estado = "Solicitud Aceptada"
     elif estado == 'rechazada':
-        color_tag = "#2E6F40"       
+        color_tag = "#2E6F40"      
         bg_caja_estado = "#f0fff4"  
         texto_estado = "Solicitud Rechazada"
     else:
-        color_tag = "#5a7a61"       
+        color_tag = "#5a7a61"      
         bg_caja_estado = "#f7faf8"  
         texto_estado = "En Revisión"
 
@@ -154,7 +184,6 @@ def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad):
     """
 
 def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_contenido):
-    """Ejecutor global de Django para salida HTML"""
     send_mail(
         asunto,
         mensaje_texto,
@@ -163,4 +192,3 @@ def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_conteni
         fail_silently=False,
         html_message=html_contenido
     )
-    

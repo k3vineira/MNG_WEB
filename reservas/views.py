@@ -166,8 +166,28 @@ def administrar_cancelaciones(request):
             
         cancelacion.reserva.save()
         
-        asunto = f"Actualización de cancelación - Monagua"
         nombre_cliente = cancelacion.reserva.usuario.first_name or cancelacion.reserva.usuario.username
+        
+        asunto_reserva = f"Actualización de tu Reserva #{cancelacion.reserva.id} - Monagua"
+        
+        if cancelacion.reserva.estado == 'cancelada':
+            mensaje_reserva_texto = f"Hola {nombre_cliente}, tu reserva para {cancelacion.reserva.paquete.nombre} ha sido CANCELADA debido a la aprobación de tu solicitud."
+        elif cancelacion.reserva.estado == 'confirmada':
+            mensaje_reserva_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación fue rechazada, por lo tanto tu reserva para {cancelacion.reserva.paquete.nombre} sigue CONFIRMADA."
+        else:
+            mensaje_reserva_texto = f"Hola {nombre_cliente}, tu reserva para {cancelacion.reserva.paquete.nombre} está en estado: {cancelacion.reserva.estado}."
+            
+        html_reserva = plantilla_reserva_html(
+            nombre_cliente=nombre_cliente,
+            paquete=cancelacion.reserva.paquete.nombre,
+            estado=cancelacion.reserva.estado,
+            reserva_id=cancelacion.reserva.id,
+            monto_total=cancelacion.reserva.monto_total
+        )
+        
+        enviar_correo_html_monagua(asunto_reserva, mensaje_reserva_texto, cancelacion.reserva.usuario.email, html_reserva)
+        
+        asunto = f"Actualización de cancelación - Monagua"
        
         if cancelacion.estado == 'aceptada':
             mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido aceptada."
@@ -176,7 +196,6 @@ def administrar_cancelaciones(request):
         else:
             mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} está en revisión."
             
-        
         html_cancelacion = plantilla_cancelacion_html(
             nombre_cliente=nombre_cliente,
             paquete=cancelacion.reserva.paquete.nombre,
@@ -184,10 +203,10 @@ def administrar_cancelaciones(request):
             penalidad=cancelacion.penalidad
         )
         
-        
         enviar_correo_html_monagua(asunto, mensaje_texto, cancelacion.reserva.usuario.email, html_cancelacion)
             
         return redirect('administrar_cancelaciones')
+
     stats = Cancelacion.objects.aggregate(
         total=Count('id'),
         revisando=Count('id', filter=Q(estado__in=['pendiente', 'revision'])),
@@ -196,11 +215,11 @@ def administrar_cancelaciones(request):
     )
     
     stats_list = [
-          ('Total', stats['total'], 'text-dark'),
-           ('En Revisión', stats['revisando'], 'text-warning'),
-           ('Aceptadas', stats['aceptadas'], 'text-success'),
-          ('Rechazadas', stats['rechazadas'], 'text-danger'),
-     ]
+        ('Total', stats['total'], 'text-dark'),
+        ('En Revisión', stats['revisando'], 'text-warning'),
+        ('Aceptadas', stats['aceptadas'], 'text-success'),
+        ('Rechazadas', stats['rechazadas'], 'text-danger'),
+    ]
 
     cancelaciones_raw = Cancelacion.objects.all().order_by('-id')
 
@@ -211,8 +230,6 @@ def administrar_cancelaciones(request):
             c.penalidad = Decimal('0.00')
 
     return render(request, 'admin/cancelaciones/cancelaciones_admin.html', {'cancelaciones': cancelaciones_raw , 'stats_list': stats_list })
-
- 
 
 # VISTA PÚBLICA
 # =========================
@@ -246,12 +263,10 @@ def guardar_reserva(request, paquete_id):
         paquete = get_object_or_404(Paquete, id=paquete_id)
         fecha_viaje = request.POST.get('fecha')
         
-      
         if not fecha_viaje:
             messages.error(request, "Por favor selecciona una fecha válida.")
             return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
             
-      
         try:
             fecha_date = datetime.strptime(fecha_viaje, '%Y-%m-%d').date()
         except ValueError:
@@ -264,12 +279,10 @@ def guardar_reserva(request, paquete_id):
             temporada__fecha_fin__gte=fecha_date
         ).first()
         
-        
         if not tarifa:
             messages.error(request, "No hay tarifas disponibles para esta fecha. Por favor elige otra.")
             return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
             
-        
         try:
             adultos = int(request.POST.get('adultos', 1))
             menores = int(request.POST.get('menores', 0))
@@ -287,10 +300,8 @@ def guardar_reserva(request, paquete_id):
                 request, 
                 f"Ya tienes una reserva para {paquete.nombre} en la fecha {fecha_viaje}. No se puede crear otra reserva para el mismo paquete y fecha."
             )
-        
             return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
 
-    
         reserva = Reserva.objects.create(
             usuario=request.user,        
             paquete=paquete,            
@@ -300,21 +311,17 @@ def guardar_reserva(request, paquete_id):
             estado='pendiente' 
         )
         
-        
         asunto = "Confirmación de tu reserva en Monagua"
         nombre_cliente = request.user.first_name or request.user.username
         
         mensaje_texto = f"Hola {nombre_cliente}, hemos recibido tu solicitud de reserva para {paquete.nombre}."
         
-       
         html_bonito = plantilla_reserva_html(
             nombre_cliente=nombre_cliente,
             paquete=paquete.nombre,
-            fecha=fecha_date,
-            adultos=adultos,
-            menores=menores,
-            punto_encuentro=paquete.punto_encuentro,
-            hora_encuentro=paquete.hora_encuentro.strftime('%H:%M')
+            estado=reserva.estado,
+            reserva_id=reserva.id,
+            monto_total=reserva.monto_total
         )
         
         enviar_correo_html_monagua(asunto, mensaje_texto, request.user.email, html_bonito)
