@@ -213,26 +213,40 @@ def nosotros_view(request):
 
 
 @login_required
-def perfil_view(request):
+def perfil_detalles(request):
+    """
+    Vista única (DRY) para gestionar perfiles de Admin y Turista.
+    Maneja la actualización de imagen de perfil y datos personales.
+    """
     user = request.user
+    
     if request.method == 'POST':
+        # Caso 1: Actualización de Foto de Perfil (Formulario independiente)
         if 'imagen_perfil' in request.FILES:
             user.imagen_perfil = request.FILES['imagen_perfil']
             user.save()
             messages.success(request, "¡Foto de perfil actualizada con éxito!")
-            return redirect('detalles')
-            
+            return redirect('perfil_detalles')
+
+        # Caso 2: Actualización de Datos Personales (identificado por el hidden input 'editar_perfil')
         elif request.POST.get('editar_perfil') == '1':
             form = PerfilUsuarioForm(request.POST, instance=user)
             if form.is_valid():
                 form.save()
-                messages.success(request, '¡Información actualizada correctamente!')
+                messages.success(request, "Tus datos han sido actualizados correctamente.")
+                return redirect('perfil_detalles')
             else:
+                messages.error(request, "Error al actualizar el perfil. Por favor, revisa los datos.")
                 for field, errors in form.errors.items():
                     for error in errors:
                         messages.error(request, f"{field.replace('_', ' ').capitalize()}: {error}")
-        return redirect('detalles')
-    return render(request, 'private/perfil_turista.html')
+        return redirect('perfil_detalles')
+
+    # Selección dinámica de template basada en el rol (DRY)
+    # Si es staff/admin usa el layout de admin, de lo contrario el de turista
+    template_name = 'private/perfil_admin.html' if user.is_staff or user.is_superuser else 'private/perfil_turista.html'
+    
+    return render(request, template_name)
 
 
 @user_passes_test(lambda u: u.is_staff)
