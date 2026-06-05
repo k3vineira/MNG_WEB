@@ -38,7 +38,7 @@
   <!-- Contenido del Panel - PROTEGIDO DE CAMBIOS -->
   <div class="a11y-panel-content p-3 d-flex flex-column gap-3">
 
-    <!-- TAB 1: Tamaño & Fuente -->
+    <!-- TAB 1: Tamaño -->
     <div id="panel-tamaño" class="a11y-tab-panel a11y-tab-panel-active" role="tabpanel" aria-labelledby="tab-tamaño">
       
       <!-- Brillo -->
@@ -58,25 +58,6 @@
         </div>
         <input type="range" class="form-range form-range-sm" id="sl-font" min="80" max="160" value="100" step="1">
       </div>
-
-      <!-- Espaciado -->
-      <div class="mb-2">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-          <label for="sl-spacing" class="form-label small mb-0"><i class="bi bi-arrows-expand text-danger"></i> Espaciado</label>
-          <span class="small fw-bold" id="val-spacing">Normal</span>
-        </div>
-        <input type="range" class="form-range form-range-sm" id="sl-spacing" min="0" max="2" value="0" step="1">
-      </div>
-
-      <!-- Fuente -->
-      <div>
-        <label for="sel-font" class="form-label small mb-1"><i class="bi bi-fonts text-secondary"></i> Tipo de fuente</label>
-        <select id="sel-font" class="form-select form-select-sm">
-          <option value="default">Predeterminada</option>
-          <option value="dyslexia">Amigable (Dislexia)</option>
-          <option value="monospace">Monoespaciada</option>
-        </select>
-      </div>
     </div>
 
     <!-- TAB 2: Visualización -->
@@ -90,8 +71,6 @@
           <option value="light">Claro</option>
           <option value="dark">Oscuro</option>
           <option value="high-contrast">Alto Contraste</option>
-          <option value="deuteranopia">Deuteranopia (Daltonismo)</option>
-          <option value="protanopia">Protanopia (Daltonismo)</option>
         </select>
       </div>
 
@@ -110,7 +89,6 @@
         <label class="form-check-label small" for="tog-cursor">
           <i class="bi bi-cursor"></i> Cursor grande
         </label>
-        <div class="text-secondary small" style="font-size:.65rem;margin-left:1.5rem">Aumenta el puntero del ratón</div>
       </div>
 
       <!-- Resaltar enlaces -->
@@ -119,16 +97,6 @@
         <label class="form-check-label small" for="tog-links">
           <i class="bi bi-link-45deg"></i> Resaltar enlaces
         </label>
-        <div class="text-secondary small" style="font-size:.65rem;margin-left:1.5rem">Subraya y colorea los vínculos</div>
-      </div>
-
-      <!-- Alto contraste -->
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="tog-contrast">
-        <label class="form-check-label small" for="tog-contrast">
-          <i class="bi bi-circle-half"></i> Alto contraste adicional
-        </label>
-        <div class="text-secondary small" style="font-size:.65rem;margin-left:1.5rem">Mejora la visibilidad del texto</div>
       </div>
     </div>
 
@@ -160,8 +128,8 @@
 (function () {
   // Valores por defecto
   var D = { 
-    bright: 100, font: 100, spacing: 0, fontType: 'default',
-    theme: 'auto', saturate: 100, bigCursor: false, hlLinks: false, hiContrast: false
+    bright: 100, font: 100,
+    theme: 'auto', saturate: 100, bigCursor: false, hlLinks: false
   };
   var s = Object.assign({}, D);
   var _toast = null;
@@ -180,23 +148,15 @@
     'auto': {},
     'light': {
       bg: '#ffffff', text: '#000000', accent: '#0066cc', 
-      secondary: '#666666', border: '#cccccc'
+      secondary: '#333333', border: '#cccccc'
     },
     'dark': {
-      bg: '#1a1a1a', text: '#ffffff', accent: '#58a6ff',
-      secondary: '#bbbbbb', border: '#444444'
+      bg: '#1a1a1a', text: '#e0e0e0', accent: '#58a6ff',
+      secondary: '#b0b0b0', border: '#444444'
     },
     'high-contrast': {
       bg: '#000000', text: '#ffffff', accent: '#ffff00',
       secondary: '#ffffff', border: '#ffffff'
-    },
-    'deuteranopia': {
-      bg: '#ffffff', text: '#000000', accent: '#0173b2',
-      secondary: '#cc78bc', border: '#000000'
-    },
-    'protanopia': {
-      bg: '#ffffff', text: '#000000', accent: '#ca9161',
-      secondary: '#56b4e9', border: '#000000'
     }
   };
 
@@ -230,26 +190,6 @@
     document.documentElement.style.fontSize = (v / 100 * 16) + 'px'; 
   }
 
-  function applySpacing(level) {
-    var el = document.getElementById('a11y-spacing-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-spacing-style'; document.head.appendChild(el); }
-    var spacingMultipliers = [1, 1.5, 2];
-    var multiplier = spacingMultipliers[level] || 1;
-    el.textContent = level > 0 
-      ? 'body, body * { line-height: ' + (1.5 * multiplier) + '!important; letter-spacing: ' + (0.05 * multiplier) + 'em!important; } p, li, td, th { margin-bottom: ' + (0.5 * multiplier) + 'rem!important; } .card, .list-group-item { padding: ' + (1 * multiplier) + 'rem!important; }'
-      : '';
-  }
-
-  function applyFontType(type) {
-    var el = document.getElementById('a11y-font-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-font-style'; document.head.appendChild(el); }
-    var styles = {
-      'default': '',
-      'dyslexia': 'body, body * { font-family: "Comic Sans MS", "Trebuchet MS", sans-serif!important; font-weight: 600!important; font-size: 1.1em!important; letter-spacing: 0.1em!important; }',
-      'monospace': 'body, body * { font-family: "Courier New", monospace!important; }'
-    };
-    el.textContent = styles[type] || '';
-  }
 
   function applySaturate(v) {
     var el = document.getElementById('a11y-saturate-style');
@@ -277,7 +217,7 @@
     var el = document.getElementById('a11y-cursor-style');
     if (!el) { el = document.createElement('style'); el.id = 'a11y-cursor-style'; document.head.appendChild(el); }
     el.textContent = on
-      ? 'body,body *{cursor:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27%3E%3Ccircle cx=%2720%27 cy=%2720%27 r=%2718%27 fill=%27%2322c55e%27 opacity=%27.4%27/%3E%3Ccircle cx=%2720%27 cy=%2720%27 r=%278%27 fill=%27%2322c55e%27/%3E%3C/svg%3E") 20 20,crosshair!important}'
+      ? 'body,body *{cursor:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2760%27 height=%2760%27%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2728%27 fill=%27%2322c55e%27 opacity=%27.3%27/%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2712%27 fill=%27%2322c55e%27/%3E%3C/svg%3E") 30 30,crosshair!important}'
       : '';
   }
 
@@ -287,35 +227,25 @@
     el.textContent = on ? 'a, .nav-link { text-decoration: underline!important; color: #0066cc!important; font-weight: 600!important; } a:visited { color: #6600cc!important; }' : '';
   }
 
-  function applyContrast(on) {
-    var el = document.getElementById('a11y-contrast-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-contrast-style'; document.head.appendChild(el); }
-    el.textContent = on 
-      ? 'html, body, main, div, header, footer, section, article, aside, nav, table, tr, td, th, thead, tbody, .card, .card-body, .card-header, .card-footer, .list-group-item, .main-wrapper, .content-wrapper, .modal-content, .offcanvas { background-color: #000000!important; background: #000000!important; color: #ffffff!important; border-color: #ffffff!important; box-shadow: none!important; } h1, h2, h3, h4, h5, h6, p, span, li, td, th, label, small, strong, i, em, dd, dt, figcaption { color: #ffffff!important; } .text-muted, .text-secondary, .text-white-50 { color: #dddddd!important; } .text-success, .text-primary, .text-warning, .text-danger, .text-info { color: #ffff00!important; } .bg-success, .bg-primary, .bg-warning, .bg-danger, .bg-info, .bg-dark, .bg-light, .bg-white { background-color: #000000!important; background: #000000!important; border: 2px solid #ffffff!important; } a, .btn-link, .nav-link { color: #00ffff!important; text-decoration: underline!important; } a:hover, .nav-link:hover, .nav-link.active { color: #ffffff!important; background-color: #00ffff!important; } .btn, button, input[type="submit"], input[type="button"] { background-color: #000000!important; color: #ffff00!important; border: 2px solid #ffff00!important; } .btn:hover, button:hover { background-color: #ffff00!important; color: #000000!important; } input, select, textarea { background-color: #000000!important; color: #ffffff!important; border: 2px solid #ffffff!important; } .badge { background-color: #000000!important; color: #ffffff!important; border: 1px solid #ffffff!important; }'
-      : '';
-  }
-
   function syncUI() {
-    ['sl-bright', 'sl-font', 'sl-spacing', 'sl-saturate'].forEach(function(id) {
+    ['sl-bright', 'sl-font', 'sl-saturate'].forEach(function(id) {
       var el = document.getElementById(id);
       if (!el) return;
       var key = id.replace('sl-', '');
-      var abbr = { 'bright': 'bright', 'font': 'font', 'spacing': 'spacing', 'saturate': 'saturate' };
+      var abbr = { 'bright': 'bright', 'font': 'font', 'saturate': 'saturate' };
       el.value = s[abbr[key]];
     });
     
     var vb = document.getElementById('val-bright'); if (vb) vb.textContent = s.bright + '%';
     var vf = document.getElementById('val-font'); if (vf) vf.textContent = s.font + '%';
-    var vs = document.getElementById('val-spacing'); if (vs) vs.textContent = ['Normal', 'Medio', 'Alto'][s.spacing];
     var vsat = document.getElementById('val-saturate'); if (vsat) vsat.textContent = s.saturate + '%';
     
     var selTheme = document.getElementById('sel-theme'); if (selTheme) selTheme.value = s.theme;
-    var selFont = document.getElementById('sel-font'); if (selFont) selFont.value = s.fontType;
     
-    ['tog-cursor', 'tog-links', 'tog-contrast'].forEach(function(id) {
+    ['tog-cursor', 'tog-links'].forEach(function(id) {
       var el = document.getElementById(id);
       if (!el) return;
-      var key = { 'tog-cursor': 'bigCursor', 'tog-links': 'hlLinks', 'tog-contrast': 'hiContrast' }[id];
+      var key = { 'tog-cursor': 'bigCursor', 'tog-links': 'hlLinks' }[id];
       el.checked = s[key];
     });
   }
@@ -352,17 +282,17 @@
   function reset() {
     s = Object.assign({}, D);
     try { localStorage.removeItem('a11y'); } catch (_) {}
-    applyBright(100); applyFont(100); applySpacing(0); applyFontType('default');
-    applyTheme('auto'); applySaturate(100); applyBigCursor(false); applyLinks(false); applyContrast(false);
+    applyBright(100); applyFont(100);
+    applyTheme('auto'); applySaturate(100); applyBigCursor(false); applyLinks(false);
     syncUI();
     showToast('Todas las opciones restablecidas ✓');
   }
 
   function init() {
     load();
-    applyBright(s.bright); applyFont(s.font); applySpacing(s.spacing); applyFontType(s.fontType);
+    applyBright(s.bright); applyFont(s.font);
     applyTheme(s.theme); applySaturate(s.saturate); applyBigCursor(s.bigCursor);
-    applyLinks(s.hlLinks); applyContrast(s.hiContrast);
+    applyLinks(s.hlLinks);
     syncUI();
 
     // ═══ INICIALIZAR TABS ═══
@@ -401,22 +331,6 @@
       save();
     });
 
-    // Espaciado
-    var slSpacing = document.getElementById('sl-spacing');
-    if (slSpacing) slSpacing.addEventListener('input', function(e) {
-      s.spacing = +e.target.value; applySpacing(s.spacing);
-      var v = document.getElementById('val-spacing'); if (v) v.textContent = ['Normal', 'Medio', 'Alto'][s.spacing];
-      save();
-      showToast('Espaciado: ' + ['Normal', 'Medio', 'Alto'][s.spacing]);
-    });
-
-    // Tipo de fuente
-    var selFont = document.getElementById('sel-font');
-    if (selFont) selFont.addEventListener('change', function(e) {
-      s.fontType = e.target.value; applyFontType(s.fontType); save();
-      showToast('Fuente: ' + e.target.options[e.target.selectedIndex].text);
-    });
-
     // Tema
     var selTheme = document.getElementById('sel-theme');
     if (selTheme) selTheme.addEventListener('change', function(e) {
@@ -444,13 +358,6 @@
     if (togLinks) togLinks.addEventListener('change', function(e) {
       s.hlLinks = e.target.checked; applyLinks(s.hlLinks); save();
       showToast(s.hlLinks ? '🔗 Enlaces resaltados' : '🔗 Enlaces normales');
-    });
-
-    // Alto contraste
-    var togContrast = document.getElementById('tog-contrast');
-    if (togContrast) togContrast.addEventListener('change', function(e) {
-      s.hiContrast = e.target.checked; applyContrast(s.hiContrast); save();
-      showToast(s.hiContrast ? '⚫⚪ Alto contraste activado' : '⚫⚪ Contraste normal');
     });
 
     // Botón reset
