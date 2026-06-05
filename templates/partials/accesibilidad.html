@@ -41,41 +41,13 @@
       <input type="range" class="form-range" id="sl-font" min="80" max="160" value="100" step="1">
     </div>
 
-    <!-- Espaciado -->
-    <div>
-      <div class="d-flex justify-content-between mb-1">
-        <span class="small text-white"><i class="bi bi-arrows-expand me-1 text-info"></i>Espaciado</span>
-        <span class="small text-warning fw-bold" id="val-spacing">Estándar</span>
-      </div>
-      <select id="sel-spacing" class="form-select form-select-sm rounded-2">
-        <option value="0">Estándar</option>
-        <option value="1">Amplio</option>
-        <option value="2">Muy amplio</option>
-      </select>
-    </div>
-
-    <!-- Tema de color -->
-    <div>
-      <div class="d-flex justify-content-between mb-1">
-        <span class="small text-white"><i class="bi bi-palette me-1 text-success"></i>Tema</span>
-        <span class="small text-warning fw-bold" id="val-theme">Normal</span>
-      </div>
-      <select id="sel-theme" class="form-select form-select-sm rounded-2">
-        <option value="normal">Normal</option>
-        <option value="dark">Oscuro</option>
-        <option value="sepia">Sepia</option>
-        <option value="highcontrast">Alto contraste</option>
-        <option value="bluelight">Reducir luz azul</option>
-      </select>
-    </div>
-
     <hr class="border-secondary my-0">
 
     <!-- Cursor grande -->
     <div class="d-flex justify-content-between align-items-center">
       <div>
         <div class="small text-white"><i class="bi bi-cursor me-1 text-secondary"></i>Cursor grande</div>
-        <div class="text-secondary" style="font-size:.65rem">Aumenta el puntero (60px)</div>
+        <div class="text-secondary" style="font-size:.65rem">Aumenta el puntero del ratón</div>
       </div>
       <div class="form-check form-switch mb-0 ms-2">
         <input class="form-check-input" type="checkbox" role="switch" id="tog-cursor">
@@ -93,25 +65,14 @@
       </div>
     </div>
 
-    <!-- Fuente legible -->
+    <!-- Alto contraste -->
     <div class="d-flex justify-content-between align-items-center">
       <div>
-        <div class="small text-white"><i class="bi bi-fonts me-1 text-secondary"></i>Fuente legible</div>
-        <div class="text-secondary" style="font-size:.65rem">Cambiar a Dyslexic</div>
+        <div class="small text-white"><i class="bi bi-circle-half me-1 text-secondary"></i>Alto contraste</div>
+        <div class="text-secondary" style="font-size:.65rem">Mejora la visibilidad del texto</div>
       </div>
       <div class="form-check form-switch mb-0 ms-2">
-        <input class="form-check-input" type="checkbox" role="switch" id="tog-dyslexic">
-      </div>
-    </div>
-
-    <!-- Reducir animaciones -->
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <div class="small text-white"><i class="bi bi-hourglass me-1 text-secondary"></i>Reducir animaciones</div>
-        <div class="text-secondary" style="font-size:.65rem">Disminuye transiciones</div>
-      </div>
-      <div class="form-check form-switch mb-0 ms-2">
-        <input class="form-check-input" type="checkbox" role="switch" id="tog-animations">
+        <input class="form-check-input" type="checkbox" role="switch" id="tog-contrast">
       </div>
     </div>
 
@@ -135,7 +96,7 @@
 <script>
 /* ── Widget de accesibilidad — se inicializa cuando Bootstrap esté listo ── */
 (function () {
-  var D = { bright: 100, font: 100, bigCursor: false, hlLinks: false, spacing: 0, theme: 'normal', dyslexic: false, reduceAnimations: false };
+  var D = { bright: 100, font: 100, bigCursor: false, hlLinks: false, hiContrast: false };
   var s = Object.assign({}, D);
   var _toast = null;
 
@@ -152,60 +113,25 @@
     if (!el) { el = document.createElement('style'); el.id = 'a11y-bright-style'; document.head.appendChild(el); }
     el.textContent = +v === 100 ? '' : 'html{filter:brightness(' + v + '%)!important}';
   }
-  
   function applyFont(v) { document.documentElement.style.fontSize = (v / 100 * 16) + 'px'; }
-  
-  function applySpacing(level) {
-    var el = document.getElementById('a11y-spacing-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-spacing-style'; document.head.appendChild(el); }
-    var css = '';
-    if (level === 1) css = 'body * { padding: 1.2em !important; margin: 1.2em 0 !important; line-height: 1.8 !important; }';
-    else if (level === 2) css = 'body * { padding: 1.5em !important; margin: 1.5em 0 !important; line-height: 2 !important; }';
-    el.textContent = css;
-  }
-  
   function applyBigCursor(on) {
     var el = document.getElementById('a11y-cursor-style');
     if (!el) { el = document.createElement('style'); el.id = 'a11y-cursor-style'; document.head.appendChild(el); }
     el.textContent = on
-      ? "body,body *{cursor:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='28' fill='%2322c55e' opacity='.3'/%3E%3Ccircle cx='30' cy='30' r='12' fill='%2322c55e'/%3E%3Ccircle cx='30' cy='30' r='20' fill='none' stroke='%2322c55e' stroke-width='2'/%3E%3C/svg%3E\") 30 30, auto !important}"
+      ? "body,body *{cursor:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2322c55e' opacity='.35'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2322c55e'/%3E%3C/svg%3E\") 16 16,crosshair!important}"
       : '';
   }
-  
   function applyLinks(on) {
     var el = document.getElementById('a11y-links-style');
     if (!el) { el = document.createElement('style'); el.id = 'a11y-links-style'; document.head.appendChild(el); }
-    el.textContent = on ? 'a{text-decoration:underline!important;color:#58a6ff!important;font-weight:bold!important}' : '';
+    el.textContent = on ? 'a{text-decoration:underline!important;color:#58a6ff!important;outline:2px solid #58a6ff!important}' : '';
   }
-  
-  function applyTheme(theme) {
-    var el = document.getElementById('a11y-theme-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-theme-style'; document.head.appendChild(el); }
-    var css = '';
-    
-    if (theme === 'dark') {
-      css = 'html, body { background-color: #0a0e27 !important; color: #e0e0e0 !important; } .card, .bg-white { background-color: #1a1f3a !important; } input, select, textarea { background-color: #0f1419 !important; color: #e0e0e0 !important; border-color: #444 !important; } a { color: #64b5f6 !important; }';
-    } else if (theme === 'sepia') {
-      css = 'html { filter: sepia(0.3) !important; } body { background-color: #fffdf5 !important; color: #5c4033 !important; }';
-    } else if (theme === 'highcontrast') {
-      css = 'html, body { background-color: #000000 !important; color: #ffffff !important; } .card, .bg-light, .bg-white { background-color: #000000 !important; border: 2px solid #ffff00 !important; } a { color: #00ffff !important; font-weight: bold !important; } button, .btn { background-color: #000000 !important; color: #ffff00 !important; border: 2px solid #ffff00 !important; } .text-muted { color: #dddddd !important; } input, select, textarea { background-color: #000000 !important; color: #ffff00 !important; border: 2px solid #ffffff !important; }';
-    } else if (theme === 'bluelight') {
-      css = 'html { filter: invert(0.1) sepia(0.2) !important; } body { background-color: #f5f6fa !important; } a { color: #1a73e8 !important; }';
-    }
-    
-    el.textContent = css;
-  }
-  
-  function applyDyslexic(on) {
-    var el = document.getElementById('a11y-dyslexic-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-dyslexic-style'; document.head.appendChild(el); }
-    el.textContent = on ? 'body { font-family: "OpenDyslexic", "Comic Sans MS", cursive !important; letter-spacing: 0.1em !important; word-spacing: 0.15em !important; line-height: 1.6 !important; }' : '';
-  }
-  
-  function applyReduceAnimations(on) {
-    var el = document.getElementById('a11y-animations-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-animations-style'; document.head.appendChild(el); }
-    el.textContent = on ? '* { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }' : '';
+  function applyContrast(on) {
+    var el = document.getElementById('a11y-contrast-style');
+    if (!el) { el = document.createElement('style'); el.id = 'a11y-contrast-style'; document.head.appendChild(el); }
+    el.textContent = on 
+      ? 'html, body, main, div, header, footer, section, article, aside, nav, table, tr, td, th, thead, tbody, card, .card, .card-body, .card-header, .card-footer, .list-group-item, .main-wrapper, .content-wrapper, .modal-content, .offcanvas { background-color: #000000 !important; background: #000000 !important; color: #ffffff !important; border-color: #ffffff !important; box-shadow: none !important; } h1, h2, h3, h4, h5, h6, p, span, li, td, th, label, small, strong, i, em, dd, dt, figcaption { color: #ffffff !important; } .text-muted, .text-secondary, .text-white-50 { color: #dddddd !important; } .text-success, .text-primary, .text-warning, .text-danger, .text-info, .text-brand { color: #ffff00 !important; } .bg-success, .bg-primary, .bg-warning, .bg-danger, .bg-info, .bg-dark, .bg-light, .bg-white, .sidebar-monagua { background-color: #000000 !important; background: #000000 !important; border: 1px solid #ffffff !important; } a, .btn-link, .nav-link { color: #00ffff !important; text-decoration: underline !important; } a:hover, .nav-link:hover, .nav-link.active { color: #ffffff !important; background-color: #00ffff !important; } .btn, button, input[type="submit"], input[type="button"] { background-color: #000000 !important; color: #ffff00 !important; border: 2px solid #ffff00 !important; background-image: none !important; } .btn:hover, button:hover { background-color: #ffff00 !important; color: #000000 !important; } input, select, textarea { background-color: #000000 !important; color: #ffffff !important; border: 2px solid #ffffff !important; } .badge { background-color: #000000 !important; color: #ffffff !important; border: 1px solid #ffffff !important; } img, svg, video, iframe, .bi { filter: none !important; }'
+      : '';
   }
 
   function syncUI() {
@@ -213,14 +139,9 @@
     var vb = document.getElementById('val-bright'); if (vb) vb.textContent = s.bright + '%';
     var sf = document.getElementById('sl-font');   if (sf) sf.value = s.font;
     var vf = document.getElementById('val-font');  if (vf) vf.textContent = s.font + '%';
-    var ss = document.getElementById('sel-spacing'); if (ss) ss.value = s.spacing;
-    var vs = document.getElementById('val-spacing'); if (vs) vs.textContent = s.spacing === 0 ? 'Estándar' : (s.spacing === 1 ? 'Amplio' : 'Muy amplio');
-    var st = document.getElementById('sel-theme'); if (st) st.value = s.theme;
-    var vt = document.getElementById('val-theme'); if (vt) vt.textContent = s.theme.charAt(0).toUpperCase() + s.theme.slice(1);
     var tc = document.getElementById('tog-cursor');   if (tc) tc.checked = s.bigCursor;
     var tl = document.getElementById('tog-links');    if (tl) tl.checked = s.hlLinks;
-    var td = document.getElementById('tog-dyslexic'); if (td) td.checked = s.dyslexic;
-    var ta = document.getElementById('tog-animations'); if (ta) ta.checked = s.reduceAnimations;
+    var tco = document.getElementById('tog-contrast'); if (tco) tco.checked = s.hiContrast;
   }
 
   function showToast(msg) {
@@ -228,6 +149,7 @@
     var me = document.getElementById('a11y-toast-msg');
     if (!el || !me) return;
     me.textContent = msg;
+    /* Intentar con bootstrap, si no está disponible usar CSS */
     try {
       if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
         if (!_toast) _toast = new bootstrap.Toast(el, { delay: 2000 });
@@ -251,7 +173,7 @@
     b.setAttribute('aria-expanded', open ? 'true' : 'false');
     if (open) {
       setTimeout(function() {
-        var f = p.querySelector('button,input,select');
+        var f = p.querySelector('button,input');
         if (f) f.focus();
       }, 50);
     }
@@ -260,15 +182,15 @@
   function reset() {
     s = Object.assign({}, D);
     try { localStorage.removeItem('a11y'); } catch (_) {}
-    applyBright(100); applyFont(100); applySpacing(0); applyBigCursor(false); applyLinks(false); applyTheme('normal'); applyDyslexic(false); applyReduceAnimations(false);
+    applyBright(100); applyFont(100); applyBigCursor(false); applyLinks(false); applyContrast(false);
     syncUI();
     showToast('Restablecido ✓');
   }
 
   function init() {
     load();
-    applyBright(s.bright); applyFont(s.font); applySpacing(s.spacing); applyBigCursor(s.bigCursor);
-    applyLinks(s.hlLinks); applyTheme(s.theme); applyDyslexic(s.dyslexic); applyReduceAnimations(s.reduceAnimations);
+    applyBright(s.bright); applyFont(s.font); applyBigCursor(s.bigCursor);
+    applyLinks(s.hlLinks); applyContrast(s.hiContrast);
     syncUI();
 
     var slBright = document.getElementById('sl-bright');
@@ -276,86 +198,6 @@
       s.bright = +e.target.value; applyBright(s.bright);
       var v = document.getElementById('val-bright'); if (v) v.textContent = s.bright + '%';
       save();
-    });
-
-    var slFont = document.getElementById('sl-font');
-    if (slFont) slFont.addEventListener('input', function(e) {
-      s.font = +e.target.value; applyFont(s.font);
-      var v = document.getElementById('val-font'); if (v) v.textContent = s.font + '%';
-      save();
-    });
-
-    var selSpacing = document.getElementById('sel-spacing');
-    if (selSpacing) selSpacing.addEventListener('change', function(e) {
-      s.spacing = +e.target.value; applySpacing(s.spacing); save();
-      var labels = ['Estándar', 'Amplio', 'Muy amplio'];
-      var v = document.getElementById('val-spacing'); if (v) v.textContent = labels[s.spacing];
-      showToast('Espaciado: ' + labels[s.spacing]);
-    });
-
-    var selTheme = document.getElementById('sel-theme');
-    if (selTheme) selTheme.addEventListener('change', function(e) {
-      s.theme = e.target.value; applyTheme(s.theme); save();
-      var v = document.getElementById('val-theme'); if (v) v.textContent = s.theme.charAt(0).toUpperCase() + s.theme.slice(1);
-      showToast('Tema: ' + s.theme);
-    });
-
-    var togCursor = document.getElementById('tog-cursor');
-    if (togCursor) togCursor.addEventListener('change', function(e) {
-      s.bigCursor = e.target.checked; applyBigCursor(s.bigCursor); save();
-      showToast(s.bigCursor ? 'Cursor grande activado' : 'Cursor normal');
-    });
-
-    var togLinks = document.getElementById('tog-links');
-    if (togLinks) togLinks.addEventListener('change', function(e) {
-      s.hlLinks = e.target.checked; applyLinks(s.hlLinks); save();
-      showToast(s.hlLinks ? 'Enlaces resaltados' : 'Enlaces normales');
-    });
-
-    var togDyslexic = document.getElementById('tog-dyslexic');
-    if (togDyslexic) togDyslexic.addEventListener('change', function(e) {
-      s.dyslexic = e.target.checked; applyDyslexic(s.dyslexic); save();
-      showToast(s.dyslexic ? 'Fuente Dyslexic activada' : 'Fuente normal');
-    });
-
-    var togAnimations = document.getElementById('tog-animations');
-    if (togAnimations) togAnimations.addEventListener('change', function(e) {
-      s.reduceAnimations = e.target.checked; applyReduceAnimations(s.reduceAnimations); save();
-      showToast(s.reduceAnimations ? 'Animaciones reducidas' : 'Animaciones normales');
-    });
-
-    var btnReset = document.getElementById('btn-reset');
-    if (btnReset) btnReset.addEventListener('click', reset);
-
-    /* Cerrar panel al hacer clic fuera */
-    document.addEventListener('click', function(e) {
-      var p = document.getElementById('a11y-panel');
-      var b = document.getElementById('a11y-btn');
-      if (p && b && !p.classList.contains('d-none') && !p.contains(e.target) && !b.contains(e.target)) {
-        p.classList.add('d-none');
-        b.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    /* Atajos de teclado */
-    document.addEventListener('keydown', function(e) {
-      if (e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); toggle(); }
-      if (e.altKey && e.key.toLowerCase() === 'r') { e.preventDefault(); reset(); }
-    });
-  }
-
-  /* Exponer globalmente */
-  window.A11y = { toggle: toggle, reset: reset };
-
-  /* Inicializar cuando el DOM esté listo */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
-</script>
-
     });
 
     var slFont = document.getElementById('sl-font');
