@@ -17,7 +17,7 @@ class PqrsForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Cuéntanos más...'}),
         }
 class BlogForm(forms.ModelForm):
-    class Meta:
+    class Meta: 
         model = Blog
         fields = ['titulo', 'contenido', 'informacion_adicional', 'imagen', 'publicado']
         labels = {
