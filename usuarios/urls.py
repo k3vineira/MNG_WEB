@@ -3,8 +3,6 @@ from . import views
 from .views import login_view, logout_view
 
 
-
-
 urlpatterns = [
     path('', views.index_turista, name='inicio'),
     

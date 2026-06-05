@@ -10,10 +10,8 @@ from .forms import RegistroForm, PerfilUsuarioForm
 
 @login_required
 def index_turista(request):
-    # if request.user.is_staff:
-    #     return redirect('dashboard')
     context = {'titulo': 'Bienvenido a Monagua'}
-    return render(request, 'index_turista.html', context)
+    return render(request, 'partials/panel_rapido.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff, login_url='inicio')
