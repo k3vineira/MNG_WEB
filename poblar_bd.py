@@ -4,6 +4,7 @@ import random
 from datetime import timedelta, date
 from django.utils import timezone
 from decimal import Decimal
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
@@ -53,7 +54,7 @@ def poblar_base_datos():
 
     # Fechas consecutivas fijas desde junio hasta diciembre de 2026
     fechas_temporadas = [
-        (date(2026, 6, 4),   date(2026, 7, 15)),   # Vacaciones de Mitad de Año (Empieza Hoy)
+        (date(2026, 6, 4),   date(2026, 7, 15)),   # Vacaciones de Mitad de Año
         (date(2026, 7, 16),  date(2026, 8, 15)),   # Temporada Eco-Verano
         (date(2026, 8, 16),  date(2026, 8, 31)),   # Puentes de Agosto
         (date(2026, 9, 1),   date(2026, 9, 30)),   # Aventura de Septiembre
@@ -107,6 +108,26 @@ def poblar_base_datos():
             biografia="Guía profesional con amplia experiencia."
         )
         guias_creados.append(g)
+        
+        username = f"guia_{i}_{random.randint(1000, 9999)}"
+        u = Usuario.objects.create_user(
+            username=username,
+            password='password123',
+            first_name=nombres[9-i],
+            last_name=apellidos[9-i],
+            email=f"{username}@ejemplo.com",
+            rol=Usuario.Roles.GUIA,
+            tipo_documento=Usuario.TipoDocumento.CC,
+            numero_documento=f"2000{i}{random.randint(100,999)}",
+            residencia=f"{ciudades[i]}, {paises[i]}"
+        )
+        g = GuiaTuristico.objects.create(
+            usuario=u, 
+            licencia_turismo=f"LIC-{random.randint(10000, 99999)}",
+            experiencia_anos=random.randint(1, 15), # Cambiado a experience_anos o experiencia_anos según tu modelo original
+            biografia="Guía profesional con amplia experiencia."
+        )
+        guias_creados.append(g)
 
     print("2. Creando Categorías y Actividades...")
     categorias_creadas = []
@@ -145,7 +166,6 @@ def poblar_base_datos():
         p.actividades.add(*random.sample(actividades_creadas, 2))
         paquetes_creados.append(p)
 
-
     temporada_estandar = Temporada.objects.create(
         nombre="Temporada Estándar 2026",
         fecha_inicio=date(2026, 1, 1),
@@ -164,10 +184,8 @@ def poblar_base_datos():
         )
         temporadas_creadas.append(t)
 
-
     tarifas_creadas = []
     for i in range(10):
-      
         tarifa_especial = Tarifa.objects.create(
             paquete=paquetes_creados[i],
             temporada=temporadas_creadas[i],
@@ -186,14 +204,12 @@ def poblar_base_datos():
         )
         tarifas_creadas.append(tarifa_base)
 
-
     print("4. Creando Reservas y Cancelaciones...")
     reservas_creadas = []
     estados_reserva = ['pendiente', 'confirmada', 'cancelada']
     combinaciones_unicas = set()
 
     for tarifa_asociada in tarifas_creadas:
-       
         fecha_reserva = tarifa_asociada.temporada.fecha_inicio + timedelta(days=2)
         usuario_aleatorio = random.choice(clientes_creados).usuario
         paquete_asociado = tarifa_asociada.paquete
@@ -224,13 +240,41 @@ def poblar_base_datos():
             )
 
     print("5. Creando Comunidad (Calificaciones, Blog y PQRS)...")
-    for i in range(10):
+    
+    # 5.1 Creación de los 4 Blogs específicos solicitados
+    blogs_reales = [
+        {
+            "titulo": "Laguna Negra",
+            "contenido": "Este es el contenido de un artículo muy interesante sobre turismo y viajes.",
+            "informacion_adicional": "El misterio natural de Mongua"
+        },
+        {
+            "titulo": "Legado Ancestral",
+            "contenido": "Este es el contenido de un artículo muy interesante sobre turismo y viajes.",
+            "informacion_adicional": "Iconografía de una cultura milenaria"
+        },
+        {
+            "titulo": "Rutas de Aventura",
+            "contenido": "Este es el contenido de un artículo muy interesante sobre turismo y viajes.",
+            "informacion_adicional": "Senderismo en las mountains\nFotografía de naturaleza"
+        },
+        {
+            "titulo": "Vivencias",
+            "contenido": "Este es el contenido de un artículo muy interesante sobre turismo y viajes.",
+            "informacion_adicional": "Gastronomía local\nTalleres de artesanías\nHospedaje tradicional"
+        }
+    ]
+
+    for data in blogs_reales:
         Blog.objects.create(
-            titulo=f"Artículo de interés {i+1}",
-            contenido="Este es el contenido de un artículo muy interesante sobre turismo y viajes.",
+            titulo=data["titulo"],
+            contenido=data["contenido"],
+            informacion_adicional=data["informacion_adicional"],
             publicado=True
         )
 
+    # 5.2 Creación de PQRS de prueba
+    for i in range(10):
         PQRS.objects.create(
             cliente=random.choice(clientes_creados),
             tipo=random.choice(['peticion', 'queja', 'reclamo', 'sugerencia']),
@@ -239,6 +283,7 @@ def poblar_base_datos():
             estado=random.choice(['abierto', 'en_proceso', 'cerrado'])
         )
 
+    # 5.3 Creación de Calificaciones aleatorias
     combinaciones_calificacion = set()
     while len(combinaciones_calificacion) < 10:
         c = random.choice(clientes_creados)
@@ -252,7 +297,7 @@ def poblar_base_datos():
                 comentario="¡Excelente experiencia, recomendada!"
             )
 
-    print("¡Poblado de base de datos finalizado con éxito! Se han creado al menos 10 registros de cada entidad.")
+    print("¡Poblado de base de datos finalizado con éxito! Se han creado al menos 10 registros de cada entidad y tus 4 blogs cerrados.")
 
 if __name__ == '__main__':
     poblar_base_datos()

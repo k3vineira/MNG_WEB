@@ -13,6 +13,11 @@ def blog(request):
     blogs = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
     return render(request, 'usuario/blog.html', {'blogs': blogs})
 
+def detalle_blog(request, id):
+    post = get_object_or_404(Blog, id=id)
+    
+    return render(request, 'usuario/detalle_blog.html', {'post': post})
+
 def pqrs(request):
     pqrs = PQRS.objects.all()
     form = PqrsForm()
@@ -119,12 +124,12 @@ class BlogListView(ListView):
 class BlogCreateView(CreateView):
     model = Blog
     form = BlogForm()
-    fields = ['titulo', 'contenido', 'imagen', 'publicado']
+    fields = ['titulo', 'contenido', 'informacion_adicional', 'imagen', 'publicado']
     template_name = 'admin/blog/agregar_blog.html'
     success_url = reverse_lazy('listar_blog')
 class BlogUpdateView(UpdateView):
     model = Blog
-    fields = ['titulo', 'contenido', 'imagen','publicado']
+    fields = ['titulo', 'contenido', 'informacion_adicional', 'imagen','publicado']
     template_name = 'admin/blog/editar_blog.html'
     success_url = reverse_lazy('listar_blog')
 class BlogDeleteView(DeleteView):

@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 class Calificacion(models.Model):
@@ -13,15 +14,19 @@ class Calificacion(models.Model):
 
 
 class Blog(models.Model):
-    titulo             = models.CharField(max_length=200)
+    titulo            = models.CharField(max_length=200)
     contenido          = models.TextField()
+    informacion_adicional = models.TextField(blank=True)
     imagen             = models.ImageField(upload_to='blog/', blank=True, null=True)
     fecha_publicacion  = models.DateTimeField(auto_now_add=True)
     publicado = models.BooleanField(default=True, verbose_name='¿Está Publicado?')
 
     class Meta:
         ordering = ['-fecha_publicacion']
-
+        
+    def get_absolute_url(self):
+        return reverse('detalle_blog', kwargs={'id': self.id})
+    
     def __str__(self):
         return self.titulo
 

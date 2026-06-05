@@ -19,10 +19,11 @@ class PqrsForm(forms.ModelForm):
 class BlogForm(forms.ModelForm):
     class Meta:
         model = Blog
-        fields = ['titulo', 'contenido','imagen', 'publicado']
+        fields = ['titulo', 'contenido', 'informacion_adicional', 'imagen', 'publicado']
         labels = {
             'titulo': 'Título del Blog',
             'contenido': 'Contenido del Blog',
+            'informacion_adicional': 'Información Adicional',
             'imagen': 'Imagen del Blog',
             'fecha_publicacion': 'Fecha de Publicación',
             'publicado': '¿Publicar ahora?',
