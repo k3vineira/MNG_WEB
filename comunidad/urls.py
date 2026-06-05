@@ -6,7 +6,8 @@ from comunidad import views   # o: from nombre_app import views
 
 
 urlpatterns = [
-    path('blog/', views.blog, name='blog'), 
+    path('blog/', views.blog, name='blog'),
+    path('blog/<int:id>/', views.detalle_blog, name='detalle_blog'),
     path('pqrs/', views.pqrs, name='pqrs'), 
  
     #PQRS

@@ -1,118 +1,111 @@
-
 {% extends "base.html" %}
 {% load static %}
 
 {% block content %}
 
-<!-- HERO -->
 <header class="position-relative overflow-hidden"
-        style="background: url('{% static 'img/blogg.png' %}') center/cover no-repeat; min-height: 70vh;">
-
+        style="background: url('{% static 'img/carousel/img1.png' %}') center/cover no-repeat; min-height: 70vh;">
     <div class="container">
-        <div class="row justify-content-center align-items-center text-center text-white"
-             style="min-height: 70vh;">
-
+        <div class="row justify-content-center align-items-center text-center text-white" style="min-height: 70vh;">
             <div class="col-lg-8">
-
                 <h1 class="display-1 fw-bold mb-5">
                     El Corazón Verde de Mongua
                 </h1>
-
-                <a href="#historias"
-                   class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow">
+                <a href="#historias" class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow">
                     Explorar Historias
                 </a>
-
             </div>
-
         </div>
     </div>
 </header>
 
-<!-- SECCIÓN -->
 <section class="py-5 bg-light" id="historias">
     <div class="container">
 
-        <!-- TITULO -->
         <div class="text-center mb-5">
-
-            <h2 class="display-4 fw-bold text-dark">
+            <h2 class="display-4 fw-bold text-dark mb-2">
                 Historias de Mongua
             </h2>
-
-            <p class="text-muted fs-5 col-lg-7 mx-auto">
+            <p class="text-secondary fs-5 col-lg-7 mx-auto">
                 Descubre paisajes, cultura y experiencias únicas.
             </p>
-
         </div>
 
-        <!-- TARJETAS -->
         <div class="row g-4">
 
             {% for post in blogs %}
             <div class="col-md-6 col-lg-4">
+                
+                <div class="card border-0 shadow-lg rounded-5 overflow-hidden h-100 position-relative bg-white text-decoration-none">
 
-                <div class="card border-0 shadow-lg rounded-5 overflow-hidden h-100">
-
-                    <!-- IMAGEN -->
                     <div class="position-relative">
-
                         <div class="ratio ratio-4x3">
-                            {% if post.imagen_destacada %}
-                                <img src="{{ post.imagen_destacada.url }}"
+                            {% if post.imagen %}
+                                <img src="{{ post.imagen.url }}"
                                      class="object-fit-cover w-100 h-100"
                                      alt="{{ post.titulo }}">
                             {% else %}
                                 <img src="{% static 'img/lagunanegra.png' %}"
                                      class="object-fit-cover w-100 h-100"
-                                     alt="Default">
+                                     alt="Imagen por defecto">
                             {% endif %}
                         </div>
 
                         <div class="position-absolute top-0 start-0 m-3">
-                            <span class="badge bg-success px-3 py-2 rounded-pill shadow">
-                                 Turismo
+                            <span class="badge bg-dark bg-opacity-75 px-3 py-2 rounded-pill text-white small fw-bold">
+                                📅 {{ post.fecha_publicacion|date:"d M, Y" }}
                             </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body d-flex flex-column p-4 justify-content-between">
+                        
+                        <div>
+                            <h3 class="h4 fw-bold text-dark mb-3">
+                                {{ post.titulo }}
+                            </h3>
+
+                            <p class="text-muted mb-4 lh-relaxed text-start" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                {{ post.contenido|truncatewords:20 }}
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <hr class="text-muted opacity-25 mb-4">
+
+                            <div class="d-flex align-items-center justify-content-between">
+                                
+                               <div class="d-flex align-items-center justify-content-between">
+    
+                                <a href="{{ post.get_absolute_url }}" class="btn btn-outline-success btn-sm rounded-pill px-4 py-2 fw-bold text-uppercase tracking-wider stretched-link shadow-sm d-inline-flex align-items-center text-decoration-none">
+                                        Leer Más
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short ms-1" viewBox="0 0 16 16">
+                                     <path fill-rule="evenodd" d="4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
+                                     </svg>
+    |                               </a> 
+                                  </div>
+                            </div>
                         </div>
 
                     </div>
 
-                    <!-- CONTENIDO -->
-                    <div class="card-body d-flex flex-column p-4">
-
-                        <h3 class="fw-bold mb-3 text-dark">
-                            {{ post.titulo }}
-                        </h3>
-
-                        <p class="text-secondary fs-5 flex-grow-1">
-                            {{ post.contenido|truncatewords:20 }}
-                        </p>
-                    </div>
-
                 </div>
-
             </div>
 
             {% empty %}
-
             <div class="col-12">
                 <div class="card border-0 shadow-lg rounded-5 p-5 text-center bg-white">
-
                     <div class="mb-4">
-                        <span class="display-1">📖</span>
+                        <span class="display-3"></span>
                     </div>
-
-                    <h3 class="fw-bold text-dark mb-3">
+                    <h3 class="fw-bold text-dark mb-2">
                         Aún no hay historias publicadas
                     </h3>
-
-                    <p class="text-muted fs-5">
+                    <p class="text-muted mb-0">
                         Muy pronto encontrarás contenido increíble sobre Mongua.
                     </p>
-
                 </div>
             </div>
-
             {% endfor %}
 
         </div>
@@ -121,4 +114,3 @@
 </section>
 
 {% endblock %}
-
