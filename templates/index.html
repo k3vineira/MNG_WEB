@@ -2,46 +2,37 @@
 {% load static %}
 {% block content %}
 
-<section class="bg-white w-100" style="padding-top: 5rem; padding-bottom: 5rem;">
-  <div class="container-fluid px-4 px-xl-5 mb-5">
-    <div class="row pt-4 align-items-center">
-      <!-- Columna Izquierda: Contenido -->
-      <div class="col-lg-6">
+<section id="hero-reveal-section" class="bg-white w-100 position-relative overflow-hidden d-flex flex-column justify-content-between" style="padding-top: 5rem; padding-bottom: 0; min-height: 100vh;">
+  
+  <!-- Efecto Linterna: Actúa como fondo (por debajo del texto) -->
+  <div id="flashlight-container" 
+       class="position-absolute top-0 start-0 w-100 h-100 d-none d-lg-block" 
+       style="z-index: 0; cursor: none; -webkit-mask-image: radial-gradient(circle, black 70%, transparent 90%); mask-image: radial-gradient(circle, black 70%, transparent 90%);">
+    
+    <img id="flashlight-img" 
+         src="{% static 'img/Fondo.jpg' %}" 
+         alt="Paisaje Monagua" 
+         class="w-100 h-100" 
+         style="object-fit: cover; pointer-events: none; -webkit-mask-image: radial-gradient(circle 0px at 50% 50%, black, transparent); mask-image: radial-gradient(circle 0px at 50% 50%, black, transparent); transition: -webkit-mask-image 0.1s ease-out, mask-image 0.1s ease-out;">
+  </div>
+
+  <!-- Contenido de Texto: Flota sobre la imagen -->
+  <div class="container-fluid px-4 px-xl-5 position-relative" style="z-index: 1; pointer-events: none;">
+    <div class="row pt-4">
+      <div class="col-lg-9 col-xl-8" style="pointer-events: auto;">
         <h2 class="display-4 fw-bold text-dark mt-4 mb-4">Explora lo inexplorado</h2>
         <p class="lead text-muted"><strong>Explora la magia de Mongua</strong> y déjate sorprender por los <strong>paisajes más auténticos de Boyacá</strong>. En <strong>Agencia de Viajes y Turismo Monagua</strong> te invitamos a vivir <strong>experiencias únicas</strong> 
           entre montañas, senderos naturales, páramos, cascadas y la riqueza cultural de nuestra tierra. Conecta con la <strong>tranquilidad de la naturaleza</strong>, descubre tradiciones locales y crea <strong>recuerdos inolvidables</strong> en uno de los destinos más
            encantadores de Colombia. Cada recorrido es una oportunidad para aventurarte, respirar aire puro y conocer la <strong>esencia de Mongua</strong> desde una perspectiva diferente.</p>
-        <div class="mt-4">
+        <div class="mt-4 mb-5">
             <a href="{% url 'destinos' %}" class="btn btn-success btn-lg rounded-pill px-4 shadow-sm">Ver Paquetes</a>
-        </div>
-      </div>
-
-      <!-- Columna Derecha: Efecto Linterna (Oculto en móviles con d-none d-lg-block) -->
-      <div class="col-lg-6 d-none d-lg-block mt-5 mt-lg-0">
-        <div id="flashlight-container" 
-             class="rounded-5 shadow-sm position-relative overflow-hidden" 
-             style="height: 500px; background-color: #ffffff; cursor: none;">
-          
-          <img id="flashlight-img" 
-               src="{% static 'img/Fondo.jpg' %}" 
-               alt="Paisaje Monagua" 
-               class="position-absolute top-0 start-0 w-100 h-100" 
-               style="object-fit: cover; pointer-events: none; -webkit-mask-image: radial-gradient(circle 0px at 50% 50%, black, transparent); mask-image: radial-gradient(circle 0px at 50% 50%, black, transparent); transition: -webkit-mask-image 0.1s ease-out, mask-image 0.1s ease-out;">
-          
-          <!-- Indicador visual opcional (puedes quitarlo si prefieres vacío total) -->
-          <div id="flashlight-hint" class="position-absolute top-50 start-50 translate-middle text-muted opacity-50 text-center">
-            <i class="bi bi-cursor-fill fs-1"></i>
-            <p class="small fw-bold">Pasa el cursor para descubrir</p>
-          </div>
         </div>
       </div>
     </div>
   </div>
 
-  
-
   <!-- Contenedor de cartas "Flotantes" -->
-  <div class="container-fluid px-0 mb-5 overflow-hidden marquee-container">
+  <div class="container-fluid px-0 mb-0 overflow-hidden marquee-container">
     <div class="marquee-wrapper">
       {# Generamos 16 cartas (un set de 8 repetido 2 veces) para lograr el bucle infinito suave #}
       {% for i in "1234" %}
@@ -314,42 +305,37 @@
 
 <script>
     (function() {
+      const section = document.getElementById('hero-reveal-section');
       const container = document.getElementById('flashlight-container');
       const img = document.getElementById('flashlight-img');
-      const hint = document.getElementById('flashlight-hint');
       
-      // Si el contenedor no existe o está oculto por Bootstrap, no inicializamos
       if (!container || window.getComputedStyle(container.parentElement).display === 'none') return;
 
       let rafId = null;
 
       const updateFlashlight = (e) => {
-        // Verificación adicional de rendimiento
         if (rafId) cancelAnimationFrame(rafId);
 
         rafId = requestAnimationFrame(() => {
-          const rect = container.getBoundingClientRect();
+          // Usamos el rect de la sección completa ya que la imagen es el fondo
+          const rect = section.getBoundingClientRect();
           const x = e.clientX - rect.left;
           const y = e.clientY - rect.top;
           
-          // Creamos un gradiente circular con bordes suaves
-          // El centro es negro sólido (revela 100%), luego pasa a un 40% de opacidad y termina en transparente
-          const maskValue = `radial-gradient(circle 150px at ${x}px ${y}px, black 0%, rgba(0,0,0,0.5) 60%, transparent 100%)`;
+          // Círculo de revelación más grande para que el texto sea legible sobre la imagen
+          const maskValue = `radial-gradient(circle 300px at ${x}px ${y}px, black 0%, rgba(0, 0, 0, 0.41) 50%, transparent 80%)`;
           
           img.style.webkitMaskImage = maskValue;
           img.style.maskImage = maskValue;
-          
-          if (hint) hint.style.display = 'none';
         });
       };
 
-      container.addEventListener('mousemove', updateFlashlight);
+      section.addEventListener('mousemove', updateFlashlight);
 
-      container.addEventListener('mouseleave', () => {
+      section.addEventListener('mouseleave', () => {
         if (rafId) cancelAnimationFrame(rafId);
         img.style.webkitMaskImage = 'radial-gradient(circle 0px at 50% 50%, black, transparent)';
         img.style.maskImage = 'radial-gradient(circle 0px at 50% 50%, black, transparent)';
-        if (hint) hint.style.display = 'block';
       });
     })();
   </script>
