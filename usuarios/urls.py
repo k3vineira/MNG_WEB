@@ -3,8 +3,6 @@ from . import views
 from .views import login_view, logout_view
 
 
-
-
 urlpatterns = [
     path('', views.index_turista, name='inicio'),
     
@@ -21,6 +19,7 @@ urlpatterns = [
     path('perfil-administrador/', views.perfil_detalles, name='perfil_administrador'),
     path('comentarios/', views.listar_comentarios, name='listar_comentarios'),
     path('comentarios/toggle/<int:pk>/', views.toggle_visible, name='toggle_visible'),
+    path('comentarios/responder/<int:pk>/', views.responder_comentario, name='responder_comentario'),
 
     # Rutas de Gestión de Personal y Guías
     path('gestion-guias/', views.gestion_guias, name='gestion_guias'),
