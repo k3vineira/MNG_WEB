@@ -384,10 +384,26 @@ def toggle_visible(request, pk):
         messages.success(request, f'Comentario marcado como {estado}.')
     return redirect('listar_comentarios')
 
+@user_passes_test(lambda u: u.is_staff)
+def responder_comentario(request, pk):
+    if request.method == 'POST':
+        comentario = get_object_or_404(Comentario, pk=pk)
+        respuesta = request.POST.get('admin_respuesta', '').strip()
+        comentario.admin_respuesta = respuesta
+        comentario.save()
+        messages.success(request, 'Respuesta al comentario guardada correctamente.')
+    return redirect('listar_comentarios')
+
 @login_required
 def mis_resenas_view(request):
     from django.db.models import Avg, Count
     from catalogo.models import Paquete
+    from reservas.models import Reserva
+
+    paquetes_reservados = Paquete.objects.filter(
+        reserva__usuario=request.user,
+        reserva__estado='confirmada'
+    ).distinct()
 
     # ── POST: crear nueva reseña ─────────────────────────────────────────
     if request.method == 'POST':
@@ -407,9 +423,20 @@ def mis_resenas_view(request):
                 paquete = Paquete.objects.filter(id=paquete_id).first()
                 tipo = 'experiencia'
             except (ValueError, IndexError):
-                pass
+                paquete = None
+                tipo = 'experiencia'
 
         if titulo and mensaje:
+            if paquete:
+                reserva_valida = Reserva.objects.filter(
+                    usuario=request.user,
+                    paquete=paquete,
+                    estado='confirmada'
+                ).exists()
+                if not reserva_valida:
+                    messages.error(request, 'Solo puedes reseñar paquetes que hayas reservado y confirmado.')
+                    return redirect('mis_resenas')
+
             Comentario.objects.create(
                 usuario=request.user,
                 tipo=tipo,
@@ -450,11 +477,12 @@ def mis_resenas_view(request):
     paquetes_activos = Paquete.objects.filter(estado=True)
 
     context = {
-        'mis_resenas':       mis_resenas,
-        'resenas_publicas':  resenas_publicas,
-        'stats':             stats,
-        'distribucion':      distribucion,
-        'paquetes_activos':  paquetes_activos,
+        'mis_resenas':        mis_resenas,
+        'resenas_publicas':   resenas_publicas,
+        'stats':              stats,
+        'distribucion':       distribucion,
+        'paquetes_activos':   paquetes_activos,
+        'paquetes_reservados': paquetes_reservados,
     }
     return render(request, 'private/resenas.html', context)
 

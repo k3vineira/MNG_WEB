@@ -65,12 +65,22 @@
                   <option value="felicitacion">Felicitación</option>
                   <option value="queja">Queja</option>
                 </optgroup>
-                <optgroup label="Paquetes Turísticos Activos">
-                  {% for p in paquetes_activos %}
-                    <option value="paquete_{{ p.id }}">{{ p.nombre }}</option>
-                  {% endfor %}
+                <optgroup label="Paquetes Reservados">
+                  {% if paquetes_reservados %}
+                    {% for p in paquetes_reservados %}
+                      <option value="paquete_{{ p.id }}">{{ p.nombre }}</option>
+                    {% endfor %}
+                  {% else %}
+                    <option value="" disabled>No tienes paquetes confirmados</option>
+                  {% endif %}
                 </optgroup>
               </select>
+              <div class="form-text text-muted">Solo puedes reseñar paquetes que hayas reservado y confirmado.</div>
+              {% if not paquetes_reservados %}
+              <div class="alert alert-warning rounded-3 mt-3 mb-0 py-2" role="alert">
+                No tienes paquetes confirmados disponibles para reseñar. Visita <a href="{% url 'mis_reservas_usuario' %}" class="alert-link">Mis Reservas</a> y confirma tu reserva para poder enviar una reseña del paquete correspondiente.
+              </div>
+              {% endif %}
             </div>
 
             <div class="mb-3">
@@ -101,8 +111,9 @@
               <input type="hidden" name="valoracion" id="id_valoracion" value="5">
             </div>
 
-            <button type="submit" class="btn btn-success w-100 rounded-3 py-2 fw-bold">
-              <i class="bi bi-send-fill me-2"></i>Enviar Reseña
+            <button type="submit" class="btn btn-success w-100 rounded-3 py-2 fw-bold" {% if not paquetes_reservados %}disabled title="Para enviar una reseña debes tener al menos una reserva confirmada"{% endif %}>
+              <i class="bi bi-send-fill me-2"></i>
+              {% if paquetes_reservados %}Enviar Reseña{% else %}No puedes enviar reseña aún{% endif %}
             </button>
           </form>
         </div>
@@ -136,6 +147,12 @@
               style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">
               {{ r.mensaje|truncatechars:90 }}
             </p>
+            {% if r.admin_respuesta %}
+            <div class="bg-light rounded-3 p-3 mb-2">
+              <strong class="small text-success">Respuesta del administrador:</strong>
+              <p class="small text-secondary mb-0">{{ r.admin_respuesta|truncatechars:140 }}</p>
+            </div>
+            {% endif %}
             <div class="d-flex justify-content-between align-items-center">
               <span class="text-warning small">
                 {% for s in r.estrellas %}★{% endfor %}{% for s in r.estrellas_vacias %}<span
