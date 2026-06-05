@@ -71,6 +71,7 @@ class Comentario(models.Model):
     )
     titulo = models.CharField(max_length=150)
     mensaje = models.TextField()
+    admin_respuesta = models.TextField(blank=True, verbose_name='Respuesta del Administrador')
     valoracion = models.IntegerField(default=5)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     visible = models.BooleanField(default=True)
