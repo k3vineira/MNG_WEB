@@ -10,4 +10,6 @@ urlpatterns = [
     path('admin/comprobantes/', views.admin_comprobantes, name='admin_comprobantes'),
     path('admin/comprobantes/revisar/<int:pk>/', views.admin_revisar_comprobante, name='admin_revisar_comprobante'),
     path('admin/comprobantes/eliminar/<int:pk>/', views.admin_eliminar_comprobante, name='admin_eliminar_comprobante'),
+
+    path('mis-rechazos/', views.mis_rechazos, name='mis_rechazos'),
 ]
