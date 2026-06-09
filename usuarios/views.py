@@ -891,11 +891,18 @@ def estadisticas_usuario(request):
         'tasa_exito':                  tasa_exito,
         'promedio_mensual_reservas':   promedio_mensual_reservas,
         'arboles_conservados':         arboles_conservados,
+        'destinos_total':              destinos_total,
+        'analitica_titulo':            'Consola de Analítica General' if is_admin else 'Mi Portal de Analítica Individual',
+        'analitica_subtitulo':         'Matriz de datos administrativos y operativos consolidados.' if is_admin else 'Resumen de tu actividad, pagos y reservas personales.',
+        'view_mode':                   'admin' if is_admin else 'usuario',
         # Reseñas
         'total_comentarios':           total_comentarios,
         'total_resenas':               total_comentarios,
         'promedio_calificacion':       promedio_calificacion,
         'distribucion_calificaciones': distribucion_calificaciones,
+        'admin_mode':                  is_admin,
+        'analitica_titulo':            'Consola de Analítica General' if is_admin else 'Mi Portal de Analítica Individual',
+        'analitica_subtitulo':         'Matriz de datos administrativos y operativos consolidados.' if is_admin else 'Resumen de tu actividad, pagos y reservas personales.',
         # PQRS
         'total_pqrs':                  total_pqrs,
         'pqrs_total':                  total_pqrs,
@@ -906,7 +913,7 @@ def estadisticas_usuario(request):
         'pqrs_tasa_resolucion':        pqrs_tasa_resolucion,
         # Destinos y actividad
         'destinos_frecuentes':         destinos_frecuentes,
-        'total_destinos':              len(destinos_frecuentes),
+        'destinos_total':              len(destinos_frecuentes),
         'actividad_reciente':          actividad_reciente,
         # Nivel / fidelización
         'nivel_viajero':               nivel_viajero,
