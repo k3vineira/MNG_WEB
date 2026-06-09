@@ -141,3 +141,4 @@ def blog_usuario(request):
     
     articulos = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
     return render(request, 'usuario/blog.html', {'blogs': articulos})
+

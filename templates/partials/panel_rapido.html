@@ -11,17 +11,17 @@
         Hola, {{ user.first_name|default:user.username }}
       </h1>
       <p class="lead text-muted mb-4">
-        Bienvenido de vuelta a las montañas. Tentyjdtrujdtemos nuevas rutas esperándote en
+        Bienvenido de vuelta a las montañas. Nuevas rutas esperándote en
         el páramo.
       </p>
       <div class="d-flex gap-3">
         <a
-          href="/destinos/"
+          href="{% url 'destinos' %}"
           class="btn btn-success rounded-pill px-5 py-3 fw-bold shadow-sm transition-all"
           >Explorar Destinos</a
         >
         <a
-          href="{% url 'listar_reservas' %}"
+          href="{% url 'mis_reservas_usuario' %}"
           class="btn btn-outline-dark rounded-pill px-5 py-3 fw-bold"
           >Ver Mis Reservas</a
         >

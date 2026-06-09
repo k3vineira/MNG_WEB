@@ -107,6 +107,12 @@
             <div class="text-dark small lh-base" style="max-width: 350px; white-space: normal; word-break: break-word;">
               {{ comentario.mensaje|default:"*Sin comentario escrito.*" }}
             </div>
+            {% if comentario.admin_respuesta %}
+            <div class="mt-2 bg-light rounded-3 p-3">
+              <div class="text-success small fw-semibold mb-1">Respuesta del administrador</div>
+              <div class="text-secondary small" style="white-space:pre-wrap;">{{ comentario.admin_respuesta }}</div>
+            </div>
+            {% endif %}
           </td>
           
           <!-- Estado -->
@@ -123,13 +129,18 @@
             <div class="text-muted small mb-2">{{ comentario.fecha_creacion|date:"d M, Y" }}</div>
             <form method="post" action="{% url 'toggle_visible' comentario.id %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm {% if comentario.visible %}btn-outline-danger{% else %}btn-outline-success{% endif %} rounded-pill px-3" style="font-size: 0.7rem;">
+                <button type="submit" class="btn btn-sm {% if comentario.visible %}btn-outline-danger{% else %}btn-outline-success{% endif %} rounded-pill px-3 mb-2" style="font-size: 0.7rem;">
                     {% if comentario.visible %}
                         <i class="bi bi-eye-slash-fill me-1"></i>Ocultar
                     {% else %}
                         <i class="bi bi-eye-fill me-1"></i>Publicar
                     {% endif %}
                 </button>
+            </form>
+            <form method="post" action="{% url 'responder_comentario' comentario.id %}">
+                {% csrf_token %}
+                <textarea name="admin_respuesta" class="form-control form-control-sm mb-2" rows="2" placeholder="Respuesta admin...">{{ comentario.admin_respuesta }}</textarea>
+                <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" style="font-size: 0.7rem;">Responder</button>
             </form>
           </td>
         </tr>

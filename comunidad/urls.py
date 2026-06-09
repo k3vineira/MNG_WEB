@@ -22,7 +22,11 @@ urlpatterns = [
     path('admin/blog/editar/<int:pk>/', views.BlogUpdateView.as_view(), name='editar_blog'),
     path('admin/blog/eliminar/<int:pk>/', views.BlogDeleteView.as_view(), name='eliminar_blog'),
     path('blog/usuario/', views.blog_usuario, name='blog_usuario'),
-    
+
+    #Comentarios
+
+
+
     
     
 ]

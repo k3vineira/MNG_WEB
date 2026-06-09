@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-p!+*=!t4f^dbv14nx*gk375-ieyq##$kmmd(^0&$gkyiuy=jdd
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.20.182','192.168.1.149','*']
 
 
 # Application definition
@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'crispy_forms', 
     'crispy_bootstrap5', 
+    
     'catalogo',
     'usuarios',
     'comunidad',
@@ -132,3 +133,9 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'webmonagua@gmail.com'  
 EMAIL_HOST_PASSWORD = 'hmwb jeod fcsi zfic'
+
+
+# En settings.py
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False

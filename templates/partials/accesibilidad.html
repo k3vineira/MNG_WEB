@@ -2,91 +2,121 @@
 
 <!-- ── Botón flotante de Accesibilidad ── -->
 <button id="a11y-btn" onclick="A11y.toggle()" aria-label="Opciones de accesibilidad" aria-expanded="false"
-  class="btn btn-success rounded-circle position-fixed shadow-lg p-0 d-flex align-items-center justify-content-center"
+  class="a11y-btn-main position-fixed shadow-lg p-0 d-flex align-items-center justify-content-center"
   style="bottom:1.5rem;right:1.5rem;z-index:9999;width:60px;height:60px;border:3px solid rgba(255,255,255,0.4)">
   <i class="bi bi-universal-access fs-3"></i>
 </button>
 
 <!-- ── Panel de Accesibilidad ── -->
-<div id="a11y-panel" class="card border-secondary shadow-lg position-fixed d-none"
-  style="bottom:5.5rem;right:1.5rem;width:300px;z-index:9998;border-radius:16px;overflow:hidden"
+<div id="a11y-panel" class="card a11y-panel position-fixed d-none shadow-lg"
+  style="bottom:5.5rem;right:1.5rem;z-index:9998;border-radius:16px;overflow:hidden"
   role="dialog" aria-modal="true" aria-label="Panel de accesibilidad">
 
-  <div class="d-flex justify-content-between align-items-center px-3 py-2 bg-dark border-bottom border-secondary">
-    <span class="small fw-semibold text-white d-flex align-items-center gap-2">
-      <i class="bi bi-universal-access text-success"></i> Accesibilidad
+  <!-- Header del Panel con Botón Reset -->
+  <div class="a11y-panel-header d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+    <span class="small fw-semibold d-flex align-items-center gap-2">
+      <i class="bi bi-universal-access fs-5"></i> 
+      <span class="d-none d-sm-inline">Accesibilidad</span>
     </span>
-    <button class="btn btn-outline-secondary btn-sm py-0 px-2" id="btn-reset" style="font-size:.7rem">
-      <i class="bi bi-arrow-counterclockwise me-1"></i>Restablecer
+    <button class="btn btn-sm py-0 px-2" id="btn-reset" style="font-size:.7rem" title="Restablecer todas las opciones">
+      <i class="bi bi-arrow-counterclockwise me-1"></i><span class="d-none d-sm-inline">Restablecer</span>
     </button>
   </div>
 
-  <div class="bg-dark p-3 d-flex flex-column gap-3">
+  <!-- Barra de Navegación (Tabs) - PROTEGIDA DE CAMBIOS -->
+  <div class="a11y-tabs-nav border-bottom d-flex" role="tablist">
+    <button class="a11y-tab-btn a11y-tab-active" id="tab-tamaño" role="tab" aria-selected="true" aria-controls="panel-tamaño">
+      <i class="bi bi-fonts"></i>
+      <span class="d-none d-sm-inline">Tamaño</span>
+    </button>
+    <button class="a11y-tab-btn" id="tab-visualización" role="tab" aria-selected="false" aria-controls="panel-visualización">
+      <i class="bi bi-eye"></i>
+      <span class="d-none d-sm-inline">Color</span>
+    </button>
+  </div>
 
-    <!-- Brillo -->
-    <div>
-      <div class="d-flex justify-content-between mb-1">
-        <span class="small text-white"><i class="bi bi-brightness-high me-1 text-warning"></i>Brillo</span>
-        <span class="small text-warning fw-bold" id="val-bright">100%</span>
+  <!-- Contenido del Panel - PROTEGIDO DE CAMBIOS -->
+  <div class="a11y-panel-content p-3 d-flex flex-column gap-3">
+
+    <!-- TAB 1: Tamaño -->
+    <div id="panel-tamaño" class="a11y-tab-panel a11y-tab-panel-active" role="tabpanel" aria-labelledby="tab-tamaño">
+      
+      <!-- Brillo -->
+      <div class="mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label for="sl-bright" class="form-label small mb-0"><i class="bi bi-brightness-high text-warning"></i> Brillo</label>
+          <span class="small fw-bold" id="val-bright">100%</span>
+        </div>
+        <input type="range" class="form-range form-range-sm" id="sl-bright" min="50" max="120" value="100" step="1">
       </div>
-      <input type="range" class="form-range" id="sl-bright" min="50" max="120" value="100" step="1">
+
+      <!-- Tamaño de texto -->
+      <div class="mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label for="sl-font" class="form-label small mb-0"><i class="bi bi-textbox text-info"></i> Texto</label>
+          <span class="small fw-bold" id="val-font">100%</span>
+        </div>
+        <input type="range" class="form-range form-range-sm" id="sl-font" min="80" max="160" value="100" step="1">
+      </div>
     </div>
 
-    <!-- Tamaño de texto -->
-    <div>
-      <div class="d-flex justify-content-between mb-1">
-        <span class="small text-white"><i class="bi bi-fonts me-1 text-info"></i>Tamaño de texto</span>
-        <span class="small text-warning fw-bold" id="val-font">100%</span>
+    <!-- TAB 2: Visualización -->
+    <div id="panel-visualización" class="a11y-tab-panel" role="tabpanel" aria-labelledby="tab-visualización" style="display:none;">
+      
+      <!-- Tema de Colores -->
+      <div class="mb-2">
+        <label for="sel-theme" class="form-label small mb-1"><i class="bi bi-palette text-primary"></i> Tema</label>
+        <select id="sel-theme" class="form-select form-select-sm">
+          <option value="auto">Automático</option>
+          <option value="light">Claro</option>
+          <option value="dark">Oscuro</option>
+          <option value="high-contrast">Alto Contraste</option>
+        </select>
       </div>
-      <input type="range" class="form-range" id="sl-font" min="80" max="160" value="100" step="1">
-    </div>
 
-    <hr class="border-secondary my-0">
-
-    <!-- Cursor grande -->
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <div class="small text-white"><i class="bi bi-cursor me-1 text-secondary"></i>Cursor grande</div>
-        <div class="text-secondary" style="font-size:.65rem">Aumenta el puntero del ratón</div>
+      <!-- Saturación -->
+      <div class="mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label for="sl-saturate" class="form-label small mb-0"><i class="bi bi-circle-fill text-success"></i> Saturación</label>
+          <span class="small fw-bold" id="val-saturate">100%</span>
+        </div>
+        <input type="range" class="form-range form-range-sm" id="sl-saturate" min="30" max="100" value="100" step="5">
       </div>
-      <div class="form-check form-switch mb-0 ms-2">
+
+      <!-- Cursor grande -->
+      <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="tog-cursor">
+        <label class="form-check-label small" for="tog-cursor">
+          <i class="bi bi-cursor"></i> Cursor grande
+        </label>
       </div>
-    </div>
 
-    <!-- Resaltar enlaces -->
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <div class="small text-white"><i class="bi bi-link-45deg me-1 text-secondary"></i>Resaltar enlaces</div>
-        <div class="text-secondary" style="font-size:.65rem">Colorea y subraya los vínculos</div>
-      </div>
-      <div class="form-check form-switch mb-0 ms-2">
+      <!-- Resaltar enlaces -->
+      <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="tog-links">
-      </div>
-    </div>
-
-    <!-- Alto contraste -->
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <div class="small text-white"><i class="bi bi-circle-half me-1 text-secondary"></i>Alto contraste</div>
-        <div class="text-secondary" style="font-size:.65rem">Mejora la visibilidad del texto</div>
-      </div>
-      <div class="form-check form-switch mb-0 ms-2">
-        <input class="form-check-input" type="checkbox" role="switch" id="tog-contrast">
+        <label class="form-check-label small" for="tog-links">
+          <i class="bi bi-link-45deg"></i> Resaltar enlaces
+        </label>
       </div>
     </div>
 
   </div>
 
-  <div class="card-footer bg-black border-top border-secondary d-flex align-items-center gap-2 py-2">
-    <span class="badge bg-success rounded-circle p-1" style="width:8px;height:8px;display:inline-block"></span>
-    <span class="text-secondary" style="font-size:.6rem">Guardado automáticamente · Alt+A para abrir</span>
+  <!-- Footer del Panel -->
+  <div class="a11y-panel-footer border-top d-flex align-items-center justify-content-between px-3 py-2" style="font-size:.65rem">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge rounded-circle p-1" style="width:8px;height:8px;display:inline-block"></span>
+      <span>Guardado automáticamente</span>
+    </div>
+    <div class="d-none d-sm-block">
+      <kbd>Alt</kbd>+<kbd>A</kbd>
+    </div>
   </div>
 </div>
 
 <!-- ── Toast de confirmación ── -->
-<div id="a11y-toast" class="toast position-fixed text-white bg-success border-0"
-  style="bottom:6rem;right:1.5rem;z-index:10000" role="status" aria-live="polite">
+<div id="a11y-toast" class="toast position-fixed border-0"
+  style="bottom:6rem;right:1.5rem;z-index:10000;--bs-toast-bg: #22c55e;--bs-toast-color: white" role="status" aria-live="polite">
   <div class="d-flex">
     <div class="toast-body small fw-semibold" id="a11y-toast-msg"></div>
     <button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
@@ -94,11 +124,16 @@
 </div>
 
 <script>
-/* ── Widget de accesibilidad — se inicializa cuando Bootstrap esté listo ── */
+/* ── Widget Avanzado de Accesibilidad ── */
 (function () {
-  var D = { bright: 100, font: 100, bigCursor: false, hlLinks: false, hiContrast: false };
+  // Valores por defecto
+  var D = { 
+    bright: 100, font: 100,
+    theme: 'auto', saturate: 100, bigCursor: false, hlLinks: false
+  };
   var s = Object.assign({}, D);
   var _toast = null;
+  var currentTab = 'tamaño';
 
   function save() { try { localStorage.setItem('a11y', JSON.stringify(s)); } catch (_) {} }
   function load() {
@@ -108,40 +143,111 @@
     } catch (_) {}
   }
 
+  // Paletas de colores para diferentes esquemas
+  var colorSchemes = {
+    'auto': {},
+    'light': {
+      bg: '#ffffff', text: '#000000', accent: '#0066cc', 
+      secondary: '#333333', border: '#cccccc'
+    },
+    'dark': {
+      bg: '#1a1a1a', text: '#e0e0e0', accent: '#58a6ff',
+      secondary: '#b0b0b0', border: '#444444'
+    },
+    'high-contrast': {
+      bg: '#000000', text: '#ffffff', accent: '#ffff00',
+      secondary: '#ffffff', border: '#ffffff'
+    }
+  };
+
+  // ═══ FUNCIONES DE TABS ═══
+  function switchTab(tabName) {
+    // Ocultar todos los tabs
+    var panels = document.querySelectorAll('.a11y-tab-panel');
+    panels.forEach(function(p) { p.style.display = 'none'; p.classList.remove('a11y-tab-panel-active'); });
+    
+    // Desactivar todos los botones
+    var btns = document.querySelectorAll('.a11y-tab-btn');
+    btns.forEach(function(b) { b.classList.remove('a11y-tab-active'); b.setAttribute('aria-selected', 'false'); });
+    
+    // Activar tab seleccionado
+    var activePanel = document.getElementById('panel-' + tabName);
+    var activeBtn = document.getElementById('tab-' + tabName);
+    
+    if (activePanel) { activePanel.style.display = 'block'; activePanel.classList.add('a11y-tab-panel-active'); }
+    if (activeBtn) { activeBtn.classList.add('a11y-tab-active'); activeBtn.setAttribute('aria-selected', 'true'); }
+    
+    currentTab = tabName;
+  }
+
   function applyBright(v) {
     var el = document.getElementById('a11y-bright-style');
     if (!el) { el = document.createElement('style'); el.id = 'a11y-bright-style'; document.head.appendChild(el); }
     el.textContent = +v === 100 ? '' : 'html{filter:brightness(' + v + '%)!important}';
   }
-  function applyFont(v) { document.documentElement.style.fontSize = (v / 100 * 16) + 'px'; }
+
+  function applyFont(v) { 
+    document.documentElement.style.fontSize = (v / 100 * 16) + 'px'; 
+  }
+
+
+  function applySaturate(v) {
+    var el = document.getElementById('a11y-saturate-style');
+    if (!el) { el = document.createElement('style'); el.id = 'a11y-saturate-style'; document.head.appendChild(el); }
+    el.textContent = +v === 100 ? '' : 'html{filter:saturate(' + v + '%)!important}';
+  }
+
+  function applyTheme(theme) {
+    var el = document.getElementById('a11y-theme-style');
+    if (!el) { el = document.createElement('style'); el.id = 'a11y-theme-style'; document.head.appendChild(el); }
+    
+    if (theme === 'auto') { el.textContent = ''; return; }
+    
+    var scheme = colorSchemes[theme] || colorSchemes['dark'];
+    var css = 'html, body { background-color: ' + scheme.bg + '!important; color: ' + scheme.text + '!important; }' +
+      'a { color: ' + scheme.accent + '!important; }' +
+      '.card, .modal-content { background-color: ' + scheme.bg + '!important; color: ' + scheme.text + '!important; border-color: ' + scheme.border + '!important; }' +
+      '.text-muted, .text-secondary { color: ' + scheme.secondary + '!important; }' +
+      '.btn-outline-* { color: ' + scheme.accent + '!important; border-color: ' + scheme.accent + '!important; }' +
+      'input, textarea, select { background-color: ' + scheme.bg + '!important; color: ' + scheme.text + '!important; border-color: ' + scheme.border + '!important; }';
+    el.textContent = css;
+  }
+
   function applyBigCursor(on) {
     var el = document.getElementById('a11y-cursor-style');
     if (!el) { el = document.createElement('style'); el.id = 'a11y-cursor-style'; document.head.appendChild(el); }
     el.textContent = on
-      ? "body,body *{cursor:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%2322c55e' opacity='.35'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2322c55e'/%3E%3C/svg%3E\") 16 16,crosshair!important}"
-      : '';
-  }
-  function applyLinks(on) {
-    var el = document.getElementById('a11y-links-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-links-style'; document.head.appendChild(el); }
-    el.textContent = on ? 'a{text-decoration:underline!important;color:#58a6ff!important;outline:2px solid #58a6ff!important}' : '';
-  }
-  function applyContrast(on) {
-    var el = document.getElementById('a11y-contrast-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-contrast-style'; document.head.appendChild(el); }
-    el.textContent = on 
-      ? 'html, body, main, div, header, footer, section, article, aside, nav, table, tr, td, th, thead, tbody, card, .card, .card-body, .card-header, .card-footer, .list-group-item, .main-wrapper, .content-wrapper, .modal-content, .offcanvas { background-color: #000000 !important; background: #000000 !important; color: #ffffff !important; border-color: #ffffff !important; box-shadow: none !important; } h1, h2, h3, h4, h5, h6, p, span, li, td, th, label, small, strong, i, em, dd, dt, figcaption { color: #ffffff !important; } .text-muted, .text-secondary, .text-white-50 { color: #dddddd !important; } .text-success, .text-primary, .text-warning, .text-danger, .text-info, .text-brand { color: #ffff00 !important; } .bg-success, .bg-primary, .bg-warning, .bg-danger, .bg-info, .bg-dark, .bg-light, .bg-white, .sidebar-monagua { background-color: #000000 !important; background: #000000 !important; border: 1px solid #ffffff !important; } a, .btn-link, .nav-link { color: #00ffff !important; text-decoration: underline !important; } a:hover, .nav-link:hover, .nav-link.active { color: #ffffff !important; background-color: #00ffff !important; } .btn, button, input[type="submit"], input[type="button"] { background-color: #000000 !important; color: #ffff00 !important; border: 2px solid #ffff00 !important; background-image: none !important; } .btn:hover, button:hover { background-color: #ffff00 !important; color: #000000 !important; } input, select, textarea { background-color: #000000 !important; color: #ffffff !important; border: 2px solid #ffffff !important; } .badge { background-color: #000000 !important; color: #ffffff !important; border: 1px solid #ffffff !important; } img, svg, video, iframe, .bi { filter: none !important; }'
+      ? 'body,body *{cursor:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2760%27 height=%2760%27%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2728%27 fill=%27%2322c55e%27 opacity=%27.3%27/%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2712%27 fill=%27%2322c55e%27/%3E%3C/svg%3E") 30 30,crosshair!important}'
       : '';
   }
 
+  function applyLinks(on) {
+    var el = document.getElementById('a11y-links-style');
+    if (!el) { el = document.createElement('style'); el.id = 'a11y-links-style'; document.head.appendChild(el); }
+    el.textContent = on ? 'a, .nav-link { text-decoration: underline!important; color: #0066cc!important; font-weight: 600!important; } a:visited { color: #6600cc!important; }' : '';
+  }
+
   function syncUI() {
-    var sb = document.getElementById('sl-bright'); if (sb) sb.value = s.bright;
+    ['sl-bright', 'sl-font', 'sl-saturate'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var key = id.replace('sl-', '');
+      var abbr = { 'bright': 'bright', 'font': 'font', 'saturate': 'saturate' };
+      el.value = s[abbr[key]];
+    });
+    
     var vb = document.getElementById('val-bright'); if (vb) vb.textContent = s.bright + '%';
-    var sf = document.getElementById('sl-font');   if (sf) sf.value = s.font;
-    var vf = document.getElementById('val-font');  if (vf) vf.textContent = s.font + '%';
-    var tc = document.getElementById('tog-cursor');   if (tc) tc.checked = s.bigCursor;
-    var tl = document.getElementById('tog-links');    if (tl) tl.checked = s.hlLinks;
-    var tco = document.getElementById('tog-contrast'); if (tco) tco.checked = s.hiContrast;
+    var vf = document.getElementById('val-font'); if (vf) vf.textContent = s.font + '%';
+    var vsat = document.getElementById('val-saturate'); if (vsat) vsat.textContent = s.saturate + '%';
+    
+    var selTheme = document.getElementById('sel-theme'); if (selTheme) selTheme.value = s.theme;
+    
+    ['tog-cursor', 'tog-links'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var key = { 'tog-cursor': 'bigCursor', 'tog-links': 'hlLinks' }[id];
+      el.checked = s[key];
+    });
   }
 
   function showToast(msg) {
@@ -149,7 +255,6 @@
     var me = document.getElementById('a11y-toast-msg');
     if (!el || !me) return;
     me.textContent = msg;
-    /* Intentar con bootstrap, si no está disponible usar CSS */
     try {
       if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
         if (!_toast) _toast = new bootstrap.Toast(el, { delay: 2000 });
@@ -171,28 +276,46 @@
     var open = p.classList.contains('d-none');
     p.classList.toggle('d-none', !open);
     b.setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (open) {
-      setTimeout(function() {
-        var f = p.querySelector('button,input');
-        if (f) f.focus();
-      }, 50);
-    }
+    if (open) setTimeout(function() { var f = p.querySelector('button,input,select'); if (f) f.focus(); }, 50);
   }
 
   function reset() {
     s = Object.assign({}, D);
     try { localStorage.removeItem('a11y'); } catch (_) {}
-    applyBright(100); applyFont(100); applyBigCursor(false); applyLinks(false); applyContrast(false);
+    applyBright(100); applyFont(100);
+    applyTheme('auto'); applySaturate(100); applyBigCursor(false); applyLinks(false);
     syncUI();
-    showToast('Restablecido ✓');
+    showToast('Todas las opciones restablecidas ✓');
   }
 
   function init() {
     load();
-    applyBright(s.bright); applyFont(s.font); applyBigCursor(s.bigCursor);
-    applyLinks(s.hlLinks); applyContrast(s.hiContrast);
+    applyBright(s.bright); applyFont(s.font);
+    applyTheme(s.theme); applySaturate(s.saturate); applyBigCursor(s.bigCursor);
+    applyLinks(s.hlLinks);
     syncUI();
 
+    // ═══ INICIALIZAR TABS ═══
+    var tabBtns = document.querySelectorAll('.a11y-tab-btn');
+    tabBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var tabName = this.id.replace('tab-', '');
+        switchTab(tabName);
+      });
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          var allBtns = Array.from(document.querySelectorAll('.a11y-tab-btn'));
+          var currentIndex = allBtns.indexOf(this);
+          var nextIndex = e.key === 'ArrowRight' ? (currentIndex + 1) % allBtns.length : (currentIndex - 1 + allBtns.length) % allBtns.length;
+          var nextBtn = allBtns[nextIndex];
+          nextBtn.focus();
+          nextBtn.click();
+        }
+      });
+    });
+
+    // Brillo
     var slBright = document.getElementById('sl-bright');
     if (slBright) slBright.addEventListener('input', function(e) {
       s.bright = +e.target.value; applyBright(s.bright);
@@ -200,6 +323,7 @@
       save();
     });
 
+    // Tamaño de fuente
     var slFont = document.getElementById('sl-font');
     if (slFont) slFont.addEventListener('input', function(e) {
       s.font = +e.target.value; applyFont(s.font);
@@ -207,28 +331,40 @@
       save();
     });
 
+    // Tema
+    var selTheme = document.getElementById('sel-theme');
+    if (selTheme) selTheme.addEventListener('change', function(e) {
+      s.theme = e.target.value; applyTheme(s.theme); save();
+      showToast('Tema: ' + e.target.options[e.target.selectedIndex].text);
+    });
+
+    // Saturación
+    var slSaturate = document.getElementById('sl-saturate');
+    if (slSaturate) slSaturate.addEventListener('input', function(e) {
+      s.saturate = +e.target.value; applySaturate(s.saturate);
+      var v = document.getElementById('val-saturate'); if (v) v.textContent = s.saturate + '%';
+      save();
+    });
+
+    // Cursor grande
     var togCursor = document.getElementById('tog-cursor');
     if (togCursor) togCursor.addEventListener('change', function(e) {
       s.bigCursor = e.target.checked; applyBigCursor(s.bigCursor); save();
-      showToast(s.bigCursor ? 'Cursor grande activado' : 'Cursor normal');
+      showToast(s.bigCursor ? '🔍 Cursor grande activado' : '🔍 Cursor normal');
     });
 
+    // Enlaces resaltados
     var togLinks = document.getElementById('tog-links');
     if (togLinks) togLinks.addEventListener('change', function(e) {
       s.hlLinks = e.target.checked; applyLinks(s.hlLinks); save();
-      showToast(s.hlLinks ? 'Enlaces resaltados' : 'Enlaces normales');
+      showToast(s.hlLinks ? '🔗 Enlaces resaltados' : '🔗 Enlaces normales');
     });
 
-    var togContrast = document.getElementById('tog-contrast');
-    if (togContrast) togContrast.addEventListener('change', function(e) {
-      s.hiContrast = e.target.checked; applyContrast(s.hiContrast); save();
-      showToast(s.hiContrast ? 'Alto contraste activado' : 'Contraste normal');
-    });
-
+    // Botón reset
     var btnReset = document.getElementById('btn-reset');
     if (btnReset) btnReset.addEventListener('click', reset);
 
-    /* Cerrar panel al hacer clic fuera */
+    // Cerrar panel al hacer clic fuera
     document.addEventListener('click', function(e) {
       var p = document.getElementById('a11y-panel');
       var b = document.getElementById('a11y-btn');
@@ -238,17 +374,15 @@
       }
     });
 
-    /* Atajos de teclado */
+    // Atajos de teclado
     document.addEventListener('keydown', function(e) {
       if (e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); toggle(); }
       if (e.altKey && e.key.toLowerCase() === 'r') { e.preventDefault(); reset(); }
     });
   }
 
-  /* Exponer globalmente */
   window.A11y = { toggle: toggle, reset: reset };
 
-  /* Inicializar cuando el DOM esté listo */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
