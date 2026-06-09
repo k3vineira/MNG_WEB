@@ -85,24 +85,21 @@
           >
         </a>
         <ul
-          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2"
-        >
+          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2">
           {% include 'partials/user_dropdown_items.html' %}
         </ul>
       </div>
       {% else %}
       <a
         class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 fw-bold"
-        href="{% url 'login' %}"
-        >Acceder</a
-      >
+        href="{% url 'login' %}">Acceder
+      </a>
       {% endif %}
 
       <!-- Carrito -->
       <a
         class="btn btn-link text-dark p-2 position-relative shadow-none"
-        href="{% url 'mis_reservas_usuario' %}"
-      >
+        href="{% url 'mis_reservas_usuario' %}">
         <i class="bi bi-cart3 fs-5"></i>
       </a>
 
@@ -119,6 +116,4 @@
     </div>
   </div>
 </nav>
-
-<!-- El menú se incluye al final para evitar conflictos de inicialización JS -->
 {% include 'partials/user_dropdown_items.html' with modo_hamburguesa=True %}

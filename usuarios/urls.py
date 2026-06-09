@@ -26,11 +26,14 @@ urlpatterns = [
     path('comentarios/', views.listar_comentarios, name='listar_comentarios'),
     path('comentarios/toggle/<int:pk>/', views.toggle_visible, name='toggle_visible'),
     path('comentarios/responder/<int:pk>/', views.responder_comentario, name='responder_comentario'),
+    path('gestion-usuarios/', views.gestion_usuarios, name='gestion_usuarios'),
+    path('gestion-usuarios/guardar/', views.usuarios_guardar, name='usuarios_guardar'),
+    path('gestion-usuarios/toggle/<int:user_id>/', views.usuarios_toggle_estado, name='usuarios_toggle_estado'),
 
     # 4. GESTIÓN DE GUÍAS (PERSONAL)
     path('gestion-guias/', views.gestion_guias, name='gestion_guias'),
     path('gestion-guias/<int:id>/', views.gestion_guias, name='gestion_guias_sel'),
     path('asignar-rol-guia/<int:user_id>/', views.asignar_rol_guia, name='asignar_rol_guia'),
-    path('guia-estado/<int:id>/<str:estado>/', views.guias_baja_reactivar, name='guias_baja_reactivar'),
     path('guias-guardar/', views.guias_guardar, name='guias_guardar'),
-] 
+
+]

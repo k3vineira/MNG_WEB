@@ -1,13 +1,13 @@
-{% load static %} 
-
-{% if modo_hamburguesa %}
+{% load static %} {% if modo_hamburguesa %}
 <div
   class="offcanvas offcanvas-top h-100 offcanvas-premium"
   tabindex="-1"
   id="menuPremium"
   aria-labelledby="menuPremiumLabel"
 >
-  <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom border-dark border-opacity-10">
+  <div
+    class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom border-dark border-opacity-10"
+  >
     <a class="navbar-brand m-0 d-flex align-items-center text-white" href="/">
       <span class="fw-bold me-2" id="menuPremiumLabel">MONAGUA</span>
       <img
@@ -42,17 +42,35 @@
           {% endif %}
           <span>Hola, {{ user.first_name|default:user.username }}</span>
         </button>
-        
-        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4" aria-labelledby="offcanvasNavbarDropdown">
-          
-          {# ── ROL: ADMINISTRADOR (Dentro de Hamburguesa) ── #}
-          {% if user.is_staff or user.is_superuser %}
-          <li class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column">
-            <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Gestión Global</span>
+
+        <ul
+          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4"
+          aria-labelledby="offcanvasNavbarDropdown"
+        >
+          {# ── ROL: ADMINISTRADOR (Dentro de Hamburguesa) ── #} {% if user.is_staff or user.is_superuser %}
+          <li
+            class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column"
+          >
+            <span
+              class="text-muted fw-bold text-uppercase"
+              style="font-size: 0.65rem; letter-spacing: 0.5px"
+              >Gestión Global</span
+            >
             <span class="small fw-semibold text-dark">Administrador</span>
           </li>
           <li>
-            <a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'dashboard' %}">
+            <a
+              class="dropdown-item py-2 fw-bold text-dark"
+              href="{% url 'perfil_detalles' %}"
+            >
+              <i class="bi bi-person-vcard me-2"></i>Mi Perfil
+            </a>
+          </li>
+          <li>
+            <a
+              class="dropdown-item py-2 fw-bold text-primary"
+              href="{% url 'dashboard' %}"
+            >
               <i class="bi bi-grid-1x2-fill me-2"></i>Dashboard
             </a>
           </li>
@@ -63,21 +81,31 @@
           </li>
           <li>
             <a class="dropdown-item py-2" href="{% url 'listar_reservas' %}">
-              <i class="bi bi-calendar-check me-2"></i>Reservas (Admin)
+              <i class="bi bi-calendar-check me-2"></i>Reservas
             </a>
           </li>
           <li>
             <a class="dropdown-item py-2" href="{% url 'listar_pqrs' %}">
-              <i class="bi bi-envelope me-2"></i>PQRS (Admin)
+              <i class="bi bi-envelope me-2"></i>PQRS
             </a>
           </li>
-          {% endif %}
-
-          {# ── ROL: GUÍA TURÍSTICO (Dentro de Hamburguesa) ── #}
+          {% endif %} {# ── ROL: GUÍA TURÍSTICO (Dentro de Hamburguesa) ── #}
           {% if user.es_guia %}
           <li class="px-3 py-2 border-bottom mb-2 bg-light d-flex flex-column">
-            <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Panel de Trabajo</span>
+            <span
+              class="text-muted fw-bold text-uppercase"
+              style="font-size: 0.65rem; letter-spacing: 0.5px"
+              >Panel de Trabajo</span
+            >
             <span class="small fw-semibold text-dark">Guía Turístico</span>
+          </li>
+          <li>
+            <a
+              class="dropdown-item py-2 fw-bold text-dark"
+              href="{% url 'perfil_detalles' %}"
+            >
+              <i class="bi bi-person-vcard me-2"></i>Mi Perfil
+            </a>
           </li>
           <li>
             <a class="dropdown-item py-2" href="#">
@@ -89,21 +117,29 @@
               <i class="bi bi-chat-left-text me-2"></i>Mis Reseñas
             </a>
           </li>
-          {% endif %}
-
-          {# ── ROL: VIAJERO / TURISTA (Dentro de Hamburguesa) ── #}
+          {% endif %} {# ── ROL: VIAJERO / TURISTA (Dentro de Hamburguesa) ── #}
           {% if user.es_turista %}
           <li class="px-3 py-2 border-bottom mb-2 bg-light d-flex flex-column">
-            <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Mi Cuenta</span>
+            <span
+              class="text-muted fw-bold text-uppercase"
+              style="font-size: 0.65rem; letter-spacing: 0.5px"
+              >Mi Cuenta</span
+            >
             <span class="small fw-semibold text-dark">Viajero</span>
           </li>
           <li>
-            <a class="dropdown-item py-2 fw-bold text-success" href="{% url 'index_turista' %}">
+            <a
+              class="dropdown-item py-2 fw-bold text-success"
+              href="{% url 'index_turista' %}"
+            >
               <i class="bi bi-grid-1x2-fill me-2"></i>Mi Panel
             </a>
           </li>
           <li>
-            <a class="dropdown-item py-2" href="{% url 'mis_reservas_usuario' %}">
+            <a
+              class="dropdown-item py-2"
+              href="{% url 'mis_reservas_usuario' %}"
+            >
               <i class="bi bi-calendar-check me-2"></i>Mis Reservas
             </a>
           </li>
@@ -117,15 +153,8 @@
               <i class="bi bi-envelope me-2"></i>Mis PQRS
             </a>
           </li>
-          {% endif %}
-
-          {# ── ACCIONES COMUNES ── #}
+          {% endif %} {# ── ACCIONES COMUNES ── #}
           <li><hr class="dropdown-divider" /></li>
-          <li>
-            <a class="dropdown-item py-2 fw-bold text-dark" href="{% url 'perfil_detalles' %}">
-              <i class="bi bi-person-vcard me-2"></i>Mi Perfil
-            </a>
-          </li>
           <li>
             <form action="{% url 'logout' %}" method="post">
               {% csrf_token %}
@@ -137,9 +166,13 @@
         </ul>
       </div>
       {% else %}
-      <a class="btn btn-outline-light rounded-pill px-4 py-2" href="{% url 'login' %}">Acceder</a>
+      <a
+        class="btn btn-outline-light rounded-pill px-4 py-2"
+        href="{% url 'login' %}"
+        >Acceder</a
+      >
       {% endif %}
-      
+
       <a class="nav-link text-white" href="{% url 'mis_reservas_usuario' %}">
         <i class="bi bi-cart3 fs-5"></i>
       </a>
@@ -151,7 +184,7 @@
       ></button>
     </div>
   </div>
-
+  {# ── NAVEGACIÓN DERECHA (Dentro de Hamburguesa)── #}
   <div class="offcanvas-body d-flex align-items-center">
     <div class="container-fluid px-md-5">
       <div class="row align-items-start">
@@ -159,37 +192,68 @@
           <nav class="d-flex flex-column gap-3 gap-md-4">
             <a href="/" class="nav-main-link display-3 fw-bold">Inicio</a>
             {% if user.is_authenticated %}
-            <a href="#" class="nav-main-link display-3 fw-bold">Mi Perfil</a>
+            <a
+              href="{% url 'perfil_detalles' %}"
+              class="nav-main-link display-3 fw-bold"
+              >Mi Perfil</a
+            >
             {% if user.es_turista %}
-            <a href="{% url 'listar_reservas' %}" class="nav-main-link display-3 fw-bold">Mis Reservas</a>
-            {% endif %} 
+            <a
+              href="{% url 'listar_reservas' %}"
+              class="nav-main-link display-3 fw-bold"
+              >Mis Reservas</a
+            >
             {% endif %}
-            <a href="{% url 'destinos' %}" class="nav-main-link display-3 fw-bold">Tours</a>
+
+            {% else %}
+            <a
+              href="{% url 'login' %}"
+              class="nav-main-link display-3 fw-bold"
+              >Acceder</a
+            >
+            {% endif %}
+            <a
+              href="{% url 'destinos' %}"
+              class="nav-main-link display-3 fw-bold"
+              >Tours</a
+            >
             <a href="#" class="nav-main-link display-3 fw-bold">Experiencias</a>
           </nav>
         </div>
-
+        {# ── NAVEGACIÓN IZQUIERDA (Dentro de Hamburguesa)── #}
         <div class="col-lg-3 nav-secondary-menu mt-lg-4">
           <ul class="nav flex-column gap-3">
             <li>
-              <a class="nav-secondary-link" href="#"><i class="bi bi-envelope me-2"></i>Contacto</a>
+              <a class="nav-secondary-link" href="#"
+                ><i class="bi bi-envelope me-2"></i>Contacto</a
+              >
             </li>
             {% if user.is_authenticated %}
             <li>
-              <a class="nav-secondary-link" href="#"><i class="bi bi-question-circle me-2"></i>Soporte</a>
+              <a class="nav-secondary-link" href="#"
+                ><i class="bi bi-question-circle me-2"></i>Soporte</a
+              >
             </li>
             <li>
-              <a class="nav-secondary-link" href="#"><i class="bi bi-shield-lock me-2"></i>Privacidad</a>
+              <a class="nav-secondary-link" href="#"
+                ><i class="bi bi-shield-lock me-2"></i>Privacidad</a
+              >
             </li>
             {% endif %}
             <li>
-              <a class="nav-secondary-link" href="#"><i class="bi bi-people me-2"></i>Nosotros</a>
+              <a class="nav-secondary-link" href="#"
+                ><i class="bi bi-people me-2"></i>Nosotros</a
+              >
             </li>
             <li>
-              <a class="nav-secondary-link" href="{% url 'pqrs'%}"><i class="bi bi-chat-left-dots me-2"></i>PQRS</a>
+              <a class="nav-secondary-link" href="{% url 'pqrs'%}"
+                ><i class="bi bi-chat-left-dots me-2"></i>PQRS</a
+              >
             </li>
             <li>
-              <a class="nav-secondary-link" href="{% url 'listar_blog' %}"><i class="bi bi-journal-text me-2"></i>Blog</a>
+              <a class="nav-secondary-link" href="{% url 'listar_blog' %}"
+                ><i class="bi bi-journal-text me-2"></i>Blog</a
+              >
             </li>
           </ul>
         </div>
@@ -198,68 +262,111 @@
   </div>
 </div>
 
-{% else %} 
-{# ── SECCIÓN: MODO ESCRITORIO (No Hamburguesa) ── #}
-
-{% if user.is_staff or user.is_superuser %}
-<li class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column">
-  <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Gestión Global</span>
+{% else %} {# ── SECCIÓN: MODO ESCRITORIO (No Hamburguesa) ── #} {% if user.is_staff or user.is_superuser %}
+<li
+  class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column"
+>
+  <span
+    class="text-muted fw-bold text-uppercase"
+    style="font-size: 0.65rem; letter-spacing: 0.5px"
+    >Gestión Global</span
+  >
   <span class="small fw-semibold text-dark">Administrador</span>
 </li>
 <li>
-  <a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'dashboard' %}"><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a>
+  <a class="dropdown-item py-2 fw-bold text-dark" href="{% url 'perfil_detalles' %}">
+    <i class="bi bi-person-vcard me-2"></i>Mi Perfil
+  </a>
 </li>
 <li>
-  <a class="dropdown-item py-2" href="{% url 'gestion_guias' %}"><i class="bi bi-people me-2"></i>Gestión Guías</a>
+  <a
+    class="dropdown-item py-2 fw-bold text-primary"
+    href="{% url 'dashboard' %}"
+    ><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a
+  >
 </li>
 <li>
-  <a class="dropdown-item py-2" href="{% url 'listar_reservas' %}"><i class="bi bi-calendar-check me-2"></i>Reservas (Admin)</a>
+  <a class="dropdown-item py-2" href="{% url 'gestion_guias' %}"
+    ><i class="bi bi-people me-2"></i>Gestión Guías</a
+  >
 </li>
 <li>
-  <a class="dropdown-item py-2" href="{% url 'listar_pqrs' %}"><i class="bi bi-envelope me-2"></i>PQRS (Admin)</a>
+  <a class="dropdown-item py-2" href="{% url 'listar_reservas' %}"
+    ><i class="bi bi-calendar-check me-2"></i>Reservas</a
+  >
 </li>
-{% endif %}
-
-{% if user.es_guia %}
+<li>
+  <a class="dropdown-item py-2" href="{% url 'listar_pqrs' %}"
+    ><i class="bi bi-envelope me-2"></i>PQRS</a>
+</li>
+{% endif %} {% if user.es_guia %}
 <li class="px-3 py-2 border-bottom mb-2 bg-light d-flex flex-column">
-  <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Panel de Trabajo</span>
+  <span
+    class="text-muted fw-bold text-uppercase"
+    style="font-size: 0.65rem; letter-spacing: 0.5px"
+    >Panel de Trabajo</span
+  >
   <span class="small fw-semibold text-dark">Guía Turístico</span>
 </li>
 <li>
-  <a class="dropdown-item py-2" href="#"><i class="bi bi-calendar-event me-2"></i>Mis Rutas</a>
+  <a class="dropdown-item py-2 fw-bold text-dark" href="{% url 'perfil_detalles' %}">
+    <i class="bi bi-person-vcard me-2"></i>Mi Perfil
+  </a>
 </li>
 <li>
-  <a class="dropdown-item py-2" href="{% url 'mis_resenas' %}"><i class="bi bi-chat-left-text me-2"></i>Mis Reseñas</a>
+  <a class="dropdown-item py-2" href="#"
+    ><i class="bi bi-calendar-event me-2"></i>Mis Rutas</a
+  >
 </li>
-{% endif %}
-
-{% if user.es_turista %}
+<li>
+  <a class="dropdown-item py-2" href="{% url 'mis_resenas' %}"
+    ><i class="bi bi-chat-left-text me-2"></i>Mis Reseñas</a
+  >
+</li>
+{% endif %} {% if user.es_turista %}
 <li class="px-3 py-2 border-bottom mb-2 bg-light d-flex flex-column">
-  <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Mi Cuenta</span>
+  <span
+    class="text-muted fw-bold text-uppercase"
+    style="font-size: 0.65rem; letter-spacing: 0.5px"
+    >Mi Cuenta</span
+  >
   <span class="small fw-semibold text-dark">Viajero</span>
 </li>
 <li>
-  <a class="dropdown-item py-2 fw-bold text-success" href="{% url 'index_turista' %}"><i class="bi bi-grid-1x2-fill me-2"></i>Mi Panel</a>
+  <a class="dropdown-item py-2 fw-bold text-dark" href="{% url 'perfil_detalles' %}">
+    <i class="bi bi-person-vcard me-2"></i>Mi Perfil
+  </a>
 </li>
 <li>
-  <a class="dropdown-item py-2" href="{% url 'mis_reservas_usuario' %}"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a>
+  <a
+    class="dropdown-item py-2 fw-bold text-success"
+    href="{% url 'index_turista' %}"
+    ><i class="bi bi-grid-1x2-fill me-2"></i>Mi Panel</a
+  >
 </li>
 <li>
-  <a class="dropdown-item py-2" href="{% url 'mis_comprobantes' %}"><i class="bi bi-cash-stack me-2"></i>Mis Comprobantes</a>
+  <a class="dropdown-item py-2" href="{% url 'mis_reservas_usuario' %}"
+    ><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a
+  >
 </li>
 <li>
-  <a class="dropdown-item py-2" href="{% url 'mis_pqrs' %}"><i class="bi bi-envelope me-2"></i>Mis PQRS</a>
+  <a class="dropdown-item py-2" href="{% url 'mis_comprobantes' %}"
+    ><i class="bi bi-cash-stack me-2"></i>Mis Comprobantes</a
+  >
 </li>
+<li>
+  <a class="dropdown-item py-2" href="{% url 'mis_pqrs' %}"
+    ><i class="bi bi-envelope me-2"></i>Mis PQRS</a
+  >
+</li>
+{% endif %} 
 <li><hr class="dropdown-divider" /></li>
-<li>
-  <a class="dropdown-item py-2 fw-bold text-dark" href="#"><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a>
-</li>
 <li>
   <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
-    <button type="submit" class="dropdown-item text-danger py-2"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</button>
+    <button type="submit" class="dropdown-item text-danger py-2">
+      <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+    </button>
   </form>
 </li>
-{% endif %}
-
 {% endif %}

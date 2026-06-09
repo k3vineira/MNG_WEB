@@ -12,6 +12,7 @@ urlpatterns = [
     path('reservas/', include('reservas.urls')),
     path('comunidad/', include('comunidad.urls')),
     path('pagos/', include('pagos.urls')),
+    path('promociones/', include('promociones.urls')),
     path('', inicio, name='inicio'),
 ]
 

@@ -1,0 +1,636 @@
+{% extends 'base-admin.html' %} {% load static %} {% block content %}
+<div class="container-fluid py-4">
+  <!-- 1. Panel de Control y Encabezado (Header & Stats) -->
+  <div class="card border-0 shadow-sm mb-4 bg-success bg-opacity-10">
+    <div
+      class="card-body p-4 d-flex justify-content-between align-items-center rounded"
+    >
+      <div>
+        <h1 class="display-6 text-success fw-bold mb-1">
+          <i class="bi bi-compass me-2"></i>
+          Gestión de Guías Turísticos
+        </h1>
+        <p class="text-muted mb-0">
+          Administración de perfiles y documentación de guías locales de
+          Monagua.
+        </p>
+        <div class="d-flex gap-2 flex-wrap">
+          <span
+            class="badge bg-warning text-dark p-2 rounded-pill shadow-sm d-flex align-items-center"
+          >
+            <i class="bi bi-compass me-1"></i> {{ guias.count }} Guías
+            Registrados
+          </span>
+        </div>
+      </div>
+      <div class="text-end d-flex align-items-center gap-3">
+        <span
+          class="badge bg-success bg-opacity-75 fs-6 px-4 py-3 shadow-sm rounded-pill d-flex align-items-center d-none d-md-flex"
+        >
+          <i class="bi bi-people-fill me-2"></i>
+          <span>{{ guias_activos }} Guías Activos</span>
+        </span>
+        <button
+          class="btn btn-success d-flex align-items-center gap-2 px-4 py-3 shadow-sm rounded-pill"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasRegistroGuia"
+          onclick="resetForm()"
+        >
+          <i class="bi bi-person-plus-fill fs-5"></i>
+          <span class="fw-bold">Nuevo Guía</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna Única: Listado Completo -->
+    <div class="col-12">
+      <!-- 2. Vista de Usuarios con Rol de Guía (Listado General) -->
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+          <h5 class="h5 text-success fw-bold mb-0">Directorio de Guías</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light text-muted">
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Guía</th>
+                  <th scope="col">Documento</th>
+                  <th scope="col">Contacto</th>
+                  <th scope="col" class="text-center">Exp.</th>
+                  <th scope="col" class="text-center">Estado</th>
+                  <th scope="col" class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user_guia in guias %}
+                <tr>
+                  <td class="text-muted fw-bold">#{{ user_guia.id }}</td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      {% if user_guia.imagen_perfil %}
+                      <img
+                        src="{{ user_guia.imagen_perfil.url }}"
+                        alt="Foto"
+                        class="rounded-circle shadow-sm me-3 border border-success border-opacity-25"
+                        width="45"
+                        height="45"
+                        style="object-fit: cover"
+                      />
+                      {% else %}
+                      <img
+                        src="https://ui-avatars.com/api/?name={{ user_guia.first_name }}+{{ user_guia.last_name }}&background=198754&color=fff"
+                        alt="Foto"
+                        class="rounded-circle shadow-sm me-3 border border-success border-opacity-25"
+                        width="45"
+                        height="45"
+                      />
+                      {% endif %}
+                      <div>
+                        <div class="fw-bold text-dark">
+                          {{ user_guia.get_full_name }}
+                        </div>
+                        <div class="text-muted small">
+                          @{{ user_guia.username }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="text-dark fw-semibold">
+                      {{ user_guia.tipo_documento }}
+                    </div>
+                    <div class="text-muted small">
+                      {{ user_guia.numero_documento }}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="text-dark small mb-1">
+                      <i class="bi bi-envelope text-success me-1"></i> {{
+                      user_guia.email }}
+                    </div>
+                    <div class="text-muted small">
+                      <i class="bi bi-telephone text-success me-1"></i> {{
+                      user_guia.telefono }}
+                    </div>
+                  </td>
+                  <td class="text-center align-middle">
+                    <div class="fw-bold text-success fs-5">
+                      {{ user_guia.guia.experiencia_anos }}<span
+                        class="text-muted fw-normal small fs-6"
+                      >
+                        años</span
+                      >
+                    </div>
+                  </td>
+                  <td class="text-center align-middle">
+                    {% if user_guia.is_active %}
+                    <span
+                      class="badge bg-success bg-opacity-75 rounded-pill px-3 py-2"
+                      >Activo</span
+                    >
+                    {% else %}
+                    <span
+                      class="badge bg-danger bg-opacity-75 rounded-pill px-3 py-2"
+                      >Inactivo</span
+                    >
+                    {% endif %}
+                  </td>
+                  <td class="text-center align-middle">
+                    <div class="btn-group shadow-sm" role="group">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-success"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalDocumentacion"
+                        title="Ver Documentación"
+                        onclick="verDetalles('{{ user_guia.get_full_name }}', '{{ user_guia.guia.licencia_turismo }}', '{{ user_guia.guia.biografia|escapejs }}', '{{ user_guia.guia.experiencia_anos }}')"
+                      >
+                        <i class="bi bi-file-earmark-person"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary"
+                        title="Editar"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasRegistroGuia"
+                        onclick="cargarEdicion('{{ user_guia.id }}', '{{ user_guia.username }}', '{{ user_guia.email }}', '{{ user_guia.first_name }}', '{{ user_guia.last_name }}', '{{ user_guia.guia.licencia_turismo }}', '{{ user_guia.guia.experiencia_anos }}', '{{ user_guia.guia.biografia|escapejs }}')"
+                      >
+                        <i class="bi bi-pencil-square"></i>
+                      </button>
+                      <form
+                        action="{% url 'asignar_rol_guia' user_guia.id %}"
+                        method="POST"
+                        class="d-inline"
+                      >
+                        {% csrf_token %}
+                        <button
+                          type="submit"
+                          class="btn btn-sm btn-outline-danger"
+                          title="Alternar Rol"
+                        >
+                          <i class="bi bi-arrow-left-right"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center p-5 text-muted small">
+                    No hay guías turísticos registrados.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Offcanvas de Registro (Formulario Desplegable) -->
+<div
+  class="offcanvas offcanvas-end border-0 shadow"
+  tabindex="-1"
+  id="offcanvasRegistroGuia"
+  aria-labelledby="offcanvasRegistroGuiaLabel"
+  style="width: 400px"
+>
+  <div class="offcanvas-header bg-success bg-opacity-10 border-bottom">
+    <h5
+      class="offcanvas-title fw-bold text-success"
+      id="offcanvasRegistroGuiaLabel"
+    >
+      Gestión de Guía
+    </h5>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="offcanvas"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="offcanvas-body">
+    <form
+      id="formGuia"
+      action="{% url 'guias_guardar' %}"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      {% csrf_token %}
+      <input type="hidden" name="id" id="guia_id" />
+
+      <h6 class="text-muted fw-bold mb-3 border-bottom pb-2">
+        Datos del Usuario
+      </h6>
+      <div class="col-12 mb-3">
+        <label for="username" class="form-label text-muted small fw-bold"
+          >Usuario</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          name="username"
+          placeholder="user_guia"
+          required
+        />
+      </div>
+      <div class="col-12 mb-3">
+        <label for="email" class="form-label text-muted small fw-bold"
+          >Email</label
+        >
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          name="email"
+          placeholder="correo@ejemplo.com"
+          required
+        />
+      </div>
+      <div class="col-12 mb-3">
+        <label for="first_name" class="form-label text-muted small fw-bold"
+          >Nombres</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="first_name"
+          name="first_name"
+          placeholder="Ej: Juan"
+          required
+        />
+      </div>
+      <div class="col-12 mb-3">
+        <label for="last_name" class="form-label text-muted small fw-bold"
+          >Apellidos</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="last_name"
+          name="last_name"
+          placeholder="Ej: Pérez"
+          required
+        />
+      </div>
+      <div class="col-12 mb-3">
+        <label for="tipo_documento" class="form-label text-muted small fw-bold"
+          >Tipo Doc.</label
+        >
+        <select
+          class="form-select"
+          id="tipo_documento"
+          name="tipo_documento"
+          required
+        >
+          <option value="CC" selected>CC</option>
+          <option value="CE">CE</option>
+          <option value="PASAPORTE">PASAPORTE</option>
+        </select>
+      </div>
+      <div class="col-12 mb-3">
+        <label
+          for="numero_documento"
+          class="form-label text-muted small fw-bold"
+          >Número de Documento</label
+        >
+        <input
+          type="number"
+          class="form-control"
+          id="numero_documento"
+          name="numero_documento"
+          placeholder="Ej: 1000000000"
+          required
+        />
+      </div>
+      <div class="col-12 mb-3">
+        <label for="telefono" class="form-label text-muted small fw-bold"
+          >Teléfono</label
+        >
+        <input
+          type="tel"
+          class="form-control"
+          id="telefono"
+          name="telefono"
+          placeholder="+57 300 000 0000"
+        />
+      </div>
+      <div class="col-12 mb-3">
+        <label for="residencia" class="form-label text-muted small fw-bold"
+          >Residencia</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="residencia"
+          name="residencia"
+          placeholder="Mongua, Boyacá"
+        />
+      </div>
+      <div class="col-12 mb-4">
+        <label for="imagen_perfil" class="form-label text-muted small fw-bold"
+          >Foto de Perfil</label
+        >
+        <input
+          class="form-control"
+          type="file"
+          id="imagen_perfil"
+          name="imagen_perfil"
+          accept="image/*"
+        />
+      </div>
+
+      <h6 class="text-muted fw-bold mb-3 border-bottom pb-2 mt-2">
+        Perfil del Guía
+      </h6>
+      <div class="col-12 mb-3">
+        <label
+          for="licencia_turismo"
+          class="form-label text-muted small fw-bold"
+          >Licencia de Turismo</label
+        >
+        <input
+          type="text"
+          class="form-control text-uppercase"
+          id="licencia_turismo"
+          name="licencia_turismo"
+          placeholder="COL-12345"
+          required
+        />
+      </div>
+      <div class="col-12 mb-3">
+        <label
+          for="experiencia_anos"
+          class="form-label text-muted small fw-bold"
+          >Años de Experiencia</label
+        >
+        <input
+          type="number"
+          class="form-control"
+          id="experiencia_anos"
+          name="experiencia_anos"
+          placeholder="0"
+          min="0"
+          required
+        />
+      </div>
+      <div class="col-12 mb-4">
+        <label for="biografia" class="form-label text-muted small fw-bold"
+          >Biografía / Perfil</label
+        >
+        <textarea
+          class="form-control"
+          id="biografia"
+          name="biografia"
+          rows="4"
+          placeholder="Breve descripción de su especialidad..."
+        ></textarea>
+      </div>
+
+      <div class="d-grid gap-2 mb-4">
+        <button type="submit" class="btn btn-success fw-bold py-2 shadow-sm">
+          Guardar Guía
+        </button>
+        <button
+          type="reset"
+          class="btn btn-outline-secondary"
+          data-bs-dismiss="offcanvas"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 4. Modal de Revisión de Documentación (Visualizador) -->
+<div
+  class="modal fade"
+  id="modalDocumentacion"
+  tabindex="-1"
+  aria-labelledby="modalDocumentacionLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success bg-opacity-10 border-bottom-0 pb-3">
+        <h5
+          class="modal-title text-success fw-bold"
+          id="modalDocumentacionLabel"
+        >
+          Expediente del Guía
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body p-4 bg-light">
+        <div class="row g-4">
+          <!-- Tarjeta de Perfil Resumido -->
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-4">
+              <!-- Datos dinámicos del modal, idealmente llenados vía JS -->
+              <img
+                src="https://ui-avatars.com/api/?name=Carlos+Perez&background=198754&color=fff&size=128"
+                alt="Foto Perfil"
+                class="rounded-circle shadow-sm mx-auto mb-3 border border-success border-opacity-50"
+                width="100"
+                height="100"
+              />
+              <h5 class="text-dark fw-bold mb-0">Carlos Pérez</h5>
+              <p class="text-success fw-bold small mb-3">Guía Especializado</p>
+
+              <hr class="text-muted w-75 mx-auto my-2 opacity-25" />
+
+              <div class="text-start mt-4 px-2">
+                <p class="mb-2 small text-dark d-flex align-items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-telephone text-success me-2"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"
+                    />
+                  </svg>
+                  +57 300 123 4567
+                </p>
+                <p class="mb-2 small text-dark d-flex align-items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-envelope text-success me-2"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2-2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"
+                    />
+                  </svg>
+                  cperez@email.com
+                </p>
+                <p class="mb-0 small text-dark d-flex align-items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-geo-alt text-success me-2"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"
+                    />
+                    <path
+                      d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"
+                    />
+                  </svg>
+                  Mongua, Boyacá
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta de Documentación y Biografía -->
+          <div class="col-md-8">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body p-4">
+                <h6 class="text-muted fw-bold mb-3 border-bottom pb-2">
+                  Licencia de Turismo
+                </h6>
+                <div
+                  class="bg-success bg-opacity-10 p-4 rounded mb-4 d-flex align-items-center border border-success border-opacity-25 shadow-sm"
+                >
+                  <div
+                    class="bg-white p-3 rounded-circle shadow-sm me-4 border border-success border-opacity-25"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      fill="currentColor"
+                      class="bi bi-award text-success"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68L9.669.864zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.8l-1.38-.716-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.2l1.38.716 1.51.229z"
+                      />
+                      <path
+                        d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1 4 11.794z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="text-muted small text-uppercase fw-bold mb-1">
+                      Número de Registro Nacional
+                    </div>
+                    <div
+                      class="fs-3 fw-bold text-dark font-monospace tracking-wide"
+                    >
+                      COL-12345
+                    </div>
+                    <span
+                      class="badge bg-success mt-2 px-3 py-2 rounded-pill shadow-sm"
+                      >Verificado Oficalmente</span
+                    >
+                  </div>
+                </div>
+
+                <h6 class="text-muted fw-bold mb-3 border-bottom pb-2">
+                  Biografía y Experiencia
+                </h6>
+                <div class="bg-light p-4 rounded border border-light shadow-sm">
+                  <p class="text-dark small mb-3 lh-lg text-justify">
+                    Experto en ecoturismo y senderismo con más de 5 años de
+                    experiencia guiando grupos en el Páramo de Siscunsí.
+                    Apasionado por la conservación ambiental y conocedor de la
+                    flora y fauna local de la región de Mongua.
+                  </p>
+                  <div
+                    class="d-flex justify-content-between align-items-center bg-white p-2 rounded border"
+                  >
+                    <span class="text-muted small fw-bold ms-2" id="labelExp"
+                      >Años de experiencia documentada:</span
+                    >
+                    <span
+                      class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 fs-6 px-3 py-2 rounded"
+                      id="valExp"
+                      >5 años</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0 bg-light rounded-bottom">
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-4"
+          data-bs-dismiss="modal"
+        >
+          Cerrar
+        </button>
+        <button type="button" class="btn btn-success px-4 shadow-sm">
+          Imprimir Expediente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /**
+   * Carga los datos del guía en el Offcanvas para su edición
+   */
+  function cargarEdicion(id, username, email, first, last, licencia, exp, bio) {
+    document.getElementById("offcanvasRegistroGuiaLabel").innerText =
+      "Editar Perfil de Guía";
+    document.getElementById("guia_id").value = id;
+    document.getElementById("username").value = username;
+    document.getElementById("email").value = email;
+    document.getElementById("first_name").value = first;
+    document.getElementById("last_name").value = last;
+    document.getElementById("licencia_turismo").value = licencia;
+    document.getElementById("experiencia_anos").value = exp;
+    document.getElementById("biografia").value = bio;
+    // Deshabilitamos username/email en edición si es necesario por seguridad
+    document.getElementById("username").readOnly = true;
+  }
+
+  function resetForm() {
+    document.getElementById("offcanvasRegistroGuiaLabel").innerText =
+      "Registrar Nuevo Guía Turístico";
+    document.getElementById("formGuia").reset();
+    document.getElementById("guia_id").value = "";
+    document.getElementById("username").readOnly = false;
+  }
+
+  function verDetalles(nombre, licencia, bio, exp) {
+    // Esta función se encarga de llenar el modal de visualización (paso 4)
+    document.getElementById("modalDocumentacionLabel").innerText =
+      "Expediente: " + nombre;
+    document.querySelector("#modalDocumentacion .font-monospace").innerText =
+      licencia;
+    document.querySelector("#modalDocumentacion .lh-lg").innerText = bio;
+    document.getElementById("valExp").innerText = exp + " años";
+  }
+</script>
+{% endblock %}

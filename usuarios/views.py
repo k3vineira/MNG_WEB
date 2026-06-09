@@ -5,7 +5,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login
 from django.contrib import messages
 from django.db.models import Count, Avg, Sum
-
+from django.utils import timezone
 from .models import Usuario, Cliente, GuiaTuristico, Comentario
 from .forms import RegistroForm, PerfilUsuarioForm
 
@@ -137,17 +137,134 @@ def perfil_detalles(request):
     })
 
 @user_passes_test(lambda u: u.is_staff)
+def gestion_usuarios(request, id=None):
+    """Renderiza el panel de control integral para la gestión de todos los Usuarios."""
+    # Filtro por rol (viene del query string ?filtro=ADMIN|GUIA|CLIENTE)
+    filtro = request.GET.get('filtro', '')
+    usuarios = Usuario.objects.all().select_related('cliente', 'guia')
+    if filtro in [r.value for r in Usuario.Roles]:
+        usuarios = usuarios.filter(rol=filtro)
+
+    # Conteos rápidos para los badges del encabezado
+    total_admins = Usuario.objects.filter(rol=Usuario.Roles.ADMIN).count()
+    total_guias = Usuario.objects.filter(rol=Usuario.Roles.GUIA).count()
+    total_clientes = Usuario.objects.filter(rol=Usuario.Roles.CLIENTE).count()
+
+    return render(request, 'admin/gestion_usuarios.html', {
+        'titulo': 'Gestión de Usuarios — Monagua',
+        'usuarios': usuarios,
+        'filtro_actual': filtro,
+        'total_admins': total_admins,
+        'total_guias': total_guias,
+        'total_clientes': total_clientes,
+    })
+
+@user_passes_test(lambda u: u.is_staff)
+def usuarios_guardar(request):
+    """
+    Acción unificada para crear o actualizar un Usuario de cualquier rol.
+    Si el POST incluye 'id', edita; si no, crea uno nuevo.
+    Según el rol seleccionado, crea/actualiza el perfil Cliente o GuiaTuristico.
+    """
+    if request.method != 'POST':
+        return redirect('gestion_usuarios')
+
+    user_id = request.POST.get('id')
+    rol = request.POST.get('rol', Usuario.Roles.CLIENTE)
+
+    if user_id:
+        # --- MODO EDICIÓN ---
+        user = get_object_or_404(Usuario, id=user_id)
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.email = request.POST.get('email', user.email)
+        user.tipo_documento = request.POST.get('tipo_documento', user.tipo_documento)
+        user.numero_documento = request.POST.get('numero_documento', user.numero_documento)
+        user.telefono = request.POST.get('telefono', user.telefono)
+        user.residencia = request.POST.get('residencia', user.residencia)
+        user.rol = rol
+        user.es_guia = (rol == Usuario.Roles.GUIA)
+        if rol == Usuario.Roles.ADMIN:
+            user.is_staff = True
+        if 'imagen_perfil' in request.FILES:
+            user.imagen_perfil = request.FILES['imagen_perfil']
+        password = request.POST.get('password', '').strip()
+        if password:
+            user.set_password(password)
+        user.save()
+    else:
+        # --- MODO CREACIÓN ---
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        if not username or not email:
+            messages.error(request, 'El nombre de usuario y el email son obligatorios.')
+            return redirect('gestion_usuarios')
+        if Usuario.objects.filter(username=username).exists():
+            messages.error(request, f'El usuario «{username}» ya existe.')
+            return redirect('gestion_usuarios')
+
+        user = Usuario(
+            username=username,
+            email=email,
+            first_name=request.POST.get('first_name', ''),
+            last_name=request.POST.get('last_name', ''),
+            tipo_documento=request.POST.get('tipo_documento', ''),
+            numero_documento=request.POST.get('numero_documento', ''),
+            telefono=request.POST.get('telefono', ''),
+            residencia=request.POST.get('residencia', ''),
+            rol=rol,
+            es_guia=(rol == Usuario.Roles.GUIA),
+            is_staff=(rol == Usuario.Roles.ADMIN),
+        )
+        password = request.POST.get('password', '').strip()
+        user.set_password(password if password else request.POST.get('numero_documento', username))
+        if 'imagen_perfil' in request.FILES:
+            user.imagen_perfil = request.FILES['imagen_perfil']
+        user.save()
+
+    # --- Crear / actualizar perfil específico según rol ---
+    if rol == Usuario.Roles.CLIENTE:
+        perfil, _ = Cliente.objects.get_or_create(usuario=user)
+        perfil.pais = request.POST.get('pais', perfil.pais)
+        perfil.ciudad = request.POST.get('ciudad', perfil.ciudad)
+        perfil.save()
+    elif rol == Usuario.Roles.GUIA:
+        perfil, _ = GuiaTuristico.objects.get_or_create(usuario=user)
+        perfil.licencia_turismo = request.POST.get('licencia_turismo', perfil.licencia_turismo)
+        experiencia = request.POST.get('experiencia_anos', '0')
+        perfil.experiencia_anos = int(experiencia) if experiencia.isdigit() else 0
+        perfil.biografia = request.POST.get('biografia', perfil.biografia)
+        perfil.save()
+
+    accion = 'actualizado' if user_id else 'registrado'
+    messages.success(request, f'Usuario «{user.get_full_name()}» {accion} correctamente.')
+    return redirect('gestion_usuarios')
+
+@user_passes_test(lambda u: u.is_staff)
+def usuarios_toggle_estado(request, user_id):
+    """Acción de backend para alternar el estado activo/inactivo de un usuario (Redirecciona)."""
+    if request.method == 'POST':
+        user = get_object_or_404(Usuario, id=user_id)
+        user.is_active = not user.is_active
+        user.save()
+        estado = 'activado' if user.is_active else 'inactivado'
+        messages.info(request, f'Usuario «{user.get_full_name()}» {estado}.')
+    return redirect('gestion_usuarios')
+
+@user_passes_test(lambda u: u.is_staff)
 def gestion_guias(request, id=None):
     """Renderiza el panel de control y auditoría para la gestión de Guías."""
     guias = Usuario.objects.filter(rol=Usuario.Roles.GUIA).select_related('guia')
+    guias_activos = guias.filter(is_active=True).count()
     guia_seleccionado = None
     if id:
         guia_seleccionado = get_object_or_404(Usuario, id=id, rol=Usuario.Roles.GUIA)
-
-    return render(request, 'admin/index-guias.html', {
-        'titulo': 'Panel de Gestión de Guías — Administración',
+    return render(request, 'admin/gestion_guias.html', {
+        'titulo': 'Gestión de Guías — Monagua',
         'guias': guias,
-        'guia_seleccionado': guia_seleccionado
+        'guias_activos': guias_activos,
+        'guia_seleccionado': guia_seleccionado,
+        'id': id
     })
 
 @user_passes_test(lambda u: u.is_staff)
@@ -168,41 +285,85 @@ def asignar_rol_guia(request, user_id):
             messages.info(request, f'Rol de guía removido de {user.username}')
     return redirect('gestion_guias')
 
-@user_passes_test(lambda u: u.is_staff)
-def guias_baja_reactivar(request, id, estado):
-    """Acción de backend para suspender o reactivar cuentas de guías (Redirecciona)."""
-    if request.method == 'POST':
-        guia = get_object_or_404(Usuario, id=id, rol=Usuario.Roles.GUIA)
-        if estado == 'baja':
-            guia.is_active = False
-            messages.warning(request, f'Guía {guia.username} dado de baja.')
-        elif estado == 'reactivar':
-            guia.is_active = True
-            messages.success(request, f'Guía {guia.username} reactivado.')
-        guia.save()
-    return redirect('gestion_guias')
 
 @user_passes_test(lambda u: u.is_staff)
 def guias_guardar(request):
-    """Acción de backend para salvar modificaciones del perfil del guía (Redirecciona)."""
-    if request.method == 'POST':
-        guia_id = request.POST.get('id')
-        if guia_id:
-            guia = get_object_or_404(Usuario, id=guia_id, rol=Usuario.Roles.GUIA)
-            guia.first_name = request.POST.get('first_name', guia.first_name)
-            guia.last_name = request.POST.get('last_name', guia.last_name)
-            guia.email = request.POST.get('email', guia.email)
-            guia.save()
+    """
+    Acción de backend unificada para crear o actualizar un Guía Turístico.
+    Si el POST incluye 'id', edita el usuario existente.
+    Si no, crea un nuevo Usuario con rol GUIA y su perfil GuiaTuristico.
+    """
+    if request.method != 'POST':
+        return redirect('gestion_guias')
 
-            guia_perfil = getattr(guia, 'guia', None)
-            if guia_perfil:
-                guia_perfil.licencia_turismo = request.POST.get('licencia_turismo', guia_perfil.licencia_turismo)
-                experiencia = request.POST.get('experiencia_anos')
-                if experiencia and experiencia.isdigit():
-                    guia_perfil.experiencia_anos = int(experiencia)
-                guia_perfil.biografia = request.POST.get('biografia', guia_perfil.biografia)
-                guia_perfil.save()
-            messages.success(request, 'Datos del guía actualizados correctamente.')
+    guia_id = request.POST.get('id')
+
+    if guia_id:
+        # --- MODO EDICIÓN ---
+        user = get_object_or_404(Usuario, id=guia_id, rol=Usuario.Roles.GUIA)
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.email = request.POST.get('email', user.email)
+        user.tipo_documento = request.POST.get('tipo_documento', user.tipo_documento)
+        user.numero_documento = request.POST.get('numero_documento', user.numero_documento)
+        user.telefono = request.POST.get('telefono', user.telefono)
+        user.residencia = request.POST.get('residencia', user.residencia)
+        if 'imagen_perfil' in request.FILES:
+            user.imagen_perfil = request.FILES['imagen_perfil']
+        user.save()
+
+        perfil, _ = GuiaTuristico.objects.get_or_create(usuario=user)
+        perfil.licencia_turismo = request.POST.get('licencia_turismo', perfil.licencia_turismo)
+        experiencia = request.POST.get('experiencia_anos')
+        if experiencia and experiencia.isdigit():
+            perfil.experiencia_anos = int(experiencia)
+        perfil.biografia = request.POST.get('biografia', perfil.biografia)
+        perfil.save()
+        messages.success(request, f'Guía «{user.get_full_name()}» actualizado correctamente.')
+
+    else:
+        # --- MODO CREACIÓN ---
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+
+        if not username or not email:
+            messages.error(request, 'El nombre de usuario y el email son obligatorios.')
+            return redirect('gestion_guias')
+
+        if Usuario.objects.filter(username=username).exists():
+            messages.error(request, f'El nombre de usuario «{username}» ya está en uso.')
+            return redirect('gestion_guias')
+
+        # Crear el usuario base con rol GUIA
+        user = Usuario(
+            username=username,
+            email=email,
+            first_name=request.POST.get('first_name', ''),
+            last_name=request.POST.get('last_name', ''),
+            tipo_documento=request.POST.get('tipo_documento', ''),
+            numero_documento=request.POST.get('numero_documento', ''),
+            telefono=request.POST.get('telefono', ''),
+            residencia=request.POST.get('residencia', ''),
+            rol=Usuario.Roles.GUIA,
+            es_guia=True,
+        )
+        # Contraseña temporal = número de documento (el guía la cambiará después)
+        password = request.POST.get('numero_documento', username)
+        user.set_password(password)
+        if 'imagen_perfil' in request.FILES:
+            user.imagen_perfil = request.FILES['imagen_perfil']
+        user.save()
+
+        # Crear el perfil profesional del guía
+        experiencia = request.POST.get('experiencia_anos', '0')
+        GuiaTuristico.objects.create(
+            usuario=user,
+            licencia_turismo=request.POST.get('licencia_turismo', ''),
+            experiencia_anos=int(experiencia) if experiencia.isdigit() else 0,
+            biografia=request.POST.get('biografia', ''),
+        )
+        messages.success(request, f'Guía «{user.get_full_name()}» registrado exitosamente.')
+
     return redirect('gestion_guias')
 
 # 5. MÓDULO DE INTERACCIÓN / COMENTARIOS
@@ -338,4 +499,3 @@ def estadisticas_turista(request):
         'nivel_viajero': nivel_viajero,
         'comentarios_count': comentarios_count
     })
-
