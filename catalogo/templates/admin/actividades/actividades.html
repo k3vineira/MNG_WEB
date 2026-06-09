@@ -12,16 +12,40 @@
         </div>
     </div>
 
-    <div class="row g-4 mb-4 mx-auto justify-content-center" style="max-width: 1200px;">
-        {% for label, count, color in stats_list %}
-        <div class="col-6 col-md-4">
-            <div class="card border-0 shadow-sm rounded-3 py-4 px-4 text-center">
-                <span class="text-muted fs-5 mb-2">{{ label }}</span>
-                <h2 class="fw-bold mb-0 {{ color }}" style="font-size: 2.5rem;">{{ count }}</h2>
+  <div class="row g-4 mb-4 mx-auto justify-content-center" style="max-width: 1200px;">
+    {% for label, count, color in stats_list %}
+    <div class="col-6 col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 text-center p-4 h-100" style="background: #ffffff;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                
+                <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" 
+                     style="width: 75px; height: 75px; 
+                            {% if color == 'text-success' %} background-color: #e8f5e9; 
+                            {% elif color == 'text-danger' %} background-color: #ffebee; 
+                            {% else %} background-color: #f1f3f5; {% endif %}">
+                    
+                    {% if color == 'text-dark' %}
+                        <i class="bi bi-luggage-fill text-secondary" style="font-size: 2.2rem;"></i>
+                    {% elif color == 'text-success' %}
+                        <i class="bi bi-airplane-engines-fill text-success" style="font-size: 2.2rem;"></i>
+                    {% else %}
+                        <i class="bi bi-ticket-detailed-fill text-danger" style="font-size: 2.2rem;"></i>
+                    {% endif %}
+                </div>
+
+                <span class="text-muted text-uppercase fw-bold mb-2" style="font-size: 0.85rem; letter-spacing: 0.8px;">
+                    {{ label }}
+                </span>
+                
+                <h2 class="fw-black mb-0 {{ color }}" style="font-size: 2.8rem; font-weight: 800; line-height: 1;">
+                    {{ count }}
+                </h2>
+                
             </div>
         </div>
-        {% endfor %}
     </div>
+    {% endfor %}
+</div>
 
     <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 1200px; overflow: hidden;">
         <div class="table-responsive">
