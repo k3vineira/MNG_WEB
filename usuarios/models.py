@@ -21,9 +21,26 @@ class Usuario(AbstractUser):
     imagen_perfil = models.ImageField(upload_to='perfiles/', null=True, blank=True, verbose_name='Imagen de Perfil')
     es_guia = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if self.is_superuser and self.rol != self.Roles.ADMIN:
+            self.rol = self.Roles.ADMIN
+        super().save(*args, **kwargs)
+
     @property
     def es_turista(self):
         return self.rol == self.Roles.CLIENTE and not self.es_guia and not self.is_staff and not self.is_superuser
+
+    @property
+    def nombre_completo(self):
+        """Retorna el nombre completo del usuario (primero + apellido)."""
+        return f"{self.first_name} {self.last_name}".strip()
+
+    @property
+    def avatar_url(self):
+        """Retorna la URL de la imagen o una por defecto si no existe."""
+        if self.imagen_perfil and hasattr(self.imagen_perfil, 'url'):
+            return self.imagen_perfil.url
+        return f"{settings.STATIC_URL}img/avatar_pred.png"
 
     class Meta:
         verbose_name = 'Usuario'

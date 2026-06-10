@@ -14,6 +14,13 @@ class RegistroForm(UserCreationForm):
             'tipo_documento', 'numero_documento', 'telefono'
         )
 
+    def clean_numero_documento(self):
+        numero_documento = self.cleaned_data.get('numero_documento')
+        if numero_documento:
+            if Usuario.objects.filter(numero_documento=numero_documento).exists():
+                raise forms.ValidationError("Ya existe un usuario registrado con este número de documento.")
+        return numero_documento
+
 class PerfilUsuarioForm(forms.ModelForm):
     """
     Formulario especializado para la actualización de perfil de usuario.
@@ -23,5 +30,5 @@ class PerfilUsuarioForm(forms.ModelForm):
         model = Usuario
         fields = [
             'first_name', 'last_name', 'tipo_documento', 
-            'numero_documento', 'telefono', 'residencia'
+            'numero_documento', 'telefono', 'residencia', 'imagen_perfil'
         ]

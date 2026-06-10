@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-p!+*=!t4f^dbv14nx*gk375-ieyq##$kmmd(^0&$gkyiuy=jdd
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.20.182','192.168.1.149','*']
+ALLOWED_HOSTS = ['192.168.20.182','192.168.1.149', '192.168.1.112','*']
 
 
 # Application definition

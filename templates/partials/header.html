@@ -1,214 +1,68 @@
 {% load static %}
 
-<!-- ── Menú Fullscreen Overlay ── -->
-<div
-  class="offcanvas offcanvas-top h-100 offcanvas-premium"
-  tabindex="-1"
-  id="menuPremium"
-  aria-labelledby="menuPremiumLabel"
->
-  <div
-    class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom border-dark border-opacity-10"
-  >
-    <a class="navbar-brand m-0 d-flex align-items-center text-white" href="/">
-      <span class="fw-bold me-2">MONAGUA</span>
-      <img
-        src="{% static 'img/Logo.png' %}"
-        alt="Monagua"
-        width="60"
-        height="60"
-        class="object-fit-contain"
-      />
-    </a>
-
-    <div class="d-flex align-items-center gap-4">
-      {% if user.is_authenticated %}
-
-      <!-- Caso: Usuario Logueado (Dropdown en Menú Premium) -->
-      <div class="dropdown">
-        <button
-          class="dropdown-toggle d-flex align-items-center gap-2 btn btn-outline-light rounded-pill px-3 py-1 text-decoration-none"
-          type="button"
-          id="offcanvasNavbarDropdown"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          {% if user.imagen_perfil %}
-          <img
-            src="{{ user.imagen_perfil.url }}"
-            alt="Avatar"
-            width="28"
-            height="28"
-            class="rounded-circle object-fit-cover"
-          />
-          {% else %}
-          <i class="bi bi-person-circle fs-5"></i>
-          {% endif %}
-          <span>Hola, {{ user.first_name|default:user.username }}</span>
-        </button>
-        <ul
-          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4"
-          aria-labelledby="offcanvasNavbarDropdown"
-        >
-          {% include 'partials/user_dropdown_items.html' %}
-        </ul>
-      </div>
-      {% else %}
-      <a
-        class="btn btn-outline-light rounded-pill px-4 py-2"
-        href="{% url 'login' %}"
-        >Acceder</a
-      >
-      {% endif %}
-      <a class="nav-link text-white" href="{% url 'mis_reservas_usuario' %}"
-        ><i class="bi bi-cart3 fs-5"></i
-      ></a>
-      <button
-        type="button"
-        class="btn-close btn-close-white shadow-none"
-        data-bs-dismiss="offcanvas"
-        aria-label="Close"
-      ></button>
-    </div>
-  </div>
-
-  <!-- Cuerpo del Menú -->
-  <div class="offcanvas-body d-flex align-items-center">
-    <div class="container-fluid px-md-5">
-      <div class="row align-items-start">
-        <!-- Columna Izquierda: Menú Principal -->
-        <div class="col-lg-7 offset-lg-1 mb-5 mb-lg-0">
-          <nav class="d-flex flex-column gap-3 gap-md-4">
-            <a href="/" class="nav-main-link display-3 fw-bold">Inicio</a>
-            {% if user.is_authenticated %}
-            <a
-              href="#"
-              class="nav-main-link display-3 fw-bold"
-              >Mi Perfil</a
-            >
-            {% if user.es_turista %}
-            <a
-              href="{% url 'listar_reservas' %}"
-              class="nav-main-link display-3 fw-bold"
-              >Mis Reservas</a
-            >
-            {% endif %} {% endif %}
-
-            <a
-              href="{% url 'destinos' %}"
-              class="nav-main-link display-3 fw-bold"
-              >Tours</a
-            >
-            <a href="#" class="nav-main-link display-3 fw-bold">Experiencias</a>
-          </nav>
-        </div>
-
-        <!-- Columna Derecha: Menú Secundario -->
-        <div class="col-lg-3 nav-secondary-menu mt-lg-4">
-          <ul class="nav flex-column gap-3">
-            <li>
-              <a class="nav-secondary-link" href="#"
-                ><i class="bi bi-envelope me-2"></i>Contacto</a
-              >
-            </li>
-            {% if user.is_authenticated %}
-            <li>
-              <a class="nav-secondary-link" href="#"
-                ><i class="bi bi-question-circle me-2"></i>Soporte</a
-              >
-            </li>
-            <li>
-              <a class="nav-secondary-link" href="#"
-                ><i class="bi bi-shield-lock me-2"></i>Privacidad</a
-              >
-            </li>
-            {% endif %}
-            <li>
-              <a class="nav-secondary-link" href="#"
-                ><i class="bi bi-people me-2"></i>Nosotros</a
-              >
-            </li>
-            <li>
-              <a class="nav-secondary-link" href="{% url 'pqrs'%}"
-                ><i class="bi bi-chat-left-dots me-2"></i>PQRS</a
-              >
-            </li>
-            <li>
-              <a class="nav-secondary-link" href="{% url 'listar_blog' %}"
-                ><i class="bi bi-journal-text me-2"></i>Blog</a
-              >
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ── Navbar Principal ── -->
 <nav
-  class="navbar navbar-glass border-bottom px-3 py-2 fixed-top rounded-bottom-2 shadow-sm"
+  class="navbar navbar-light navbar-glass border-bottom px-2 px-md-3 py-2 fixed-top rounded-bottom-2 shadow-sm"
 >
   <div
-    class="container-fluid d-flex align-items-center justify-content-between"
+    class="container-fluid d-flex align-items-center justify-content-between flex-nowrap"
   >
-    <a class="navbar-brand m-0 d-flex align-items-center text-dark" href="/">
-      <span class="fw-bold me-2">MONAGUA</span>
+    <!-- Logo -->
+    <a
+      class="navbar-brand m-0 d-flex align-items-center text-dark py-0"
+      href="/"
+    >
+      <span class="fw-bold me-2 d-none d-sm-inline">MONAGUA</span>
       <img
         src="{% static 'img/Logo.png' %}"
         alt="Monagua"
-        width="50"
-        height="50"
+        width="45"
+        height="45"
       />
     </a>
 
-    <!-- Links centrales rápidos -->
-    <ul class="nav justify-content-center d-none d-lg-flex m-0 gap-4">
+    <!-- Links centrales (Solo Desktop) -->
+    <ul class="nav justify-content-center d-none d-lg-flex m-0 gap-3 gap-xl-4">
       <li>
-        <a
-          class="nav-link text-dark small fw-bold d-flex align-items-center gap-2"
-          href="/"
-          ><i class="bi bi-house-door fs-6"></i>INICIO</a
+        <a class="nav-link text-dark small fw-bold px-2" href="/"
+          ><i class="bi bi-house-door me-1"></i>INICIO</a
         >
       </li>
       <li>
         <a
-          class="nav-link text-dark small fw-bold d-flex align-items-center gap-2"
+          class="nav-link text-dark small fw-bold px-2"
           href="{% url 'destinos' %}"
-          ><i class="bi bi-geo-alt fs-6"></i>TOURS</a
+          ><i class="bi bi-geo-alt me-1"></i>TOURS</a
         >
       </li>
       <li>
         <a
-          class="nav-link text-dark small fw-bold d-flex align-items-center gap-2"
+          class="nav-link text-dark small fw-bold px-2"
           href="{% url 'mis_resenas' %}"
-          ><i class="bi bi-chat-left-text fs-6"></i>RESEÑAS</a
+          ><i class="bi bi-chat-left-text me-1"></i>RESEÑAS</a
         >
       </li>
       <li>
         <a
-          class="nav-link text-dark small fw-bold d-flex align-items-center gap-2"
+          class="nav-link text-dark small fw-bold px-2"
           href="{% url 'nosotros' %}"
           target="_blank"
-          ><i class="bi bi-people fs-6"></i>NOSOTROS</a
+          ><i class="bi bi-people me-1"></i>NOSOTROS</a
         >
       </li>
       <li>
-        <a
-          class="nav-link text-dark small fw-bold d-flex align-items-center gap-2"
-          href="{% url 'blog' %}"
-          ><i class="bi bi-journal-text fs-6"></i>BLOG</a
+        <a class="nav-link text-dark small fw-bold px-2" href="{% url 'blog' %}"
+          ><i class="bi bi-journal-text me-1"></i>BLOG</a
         >
       </li>
     </ul>
 
-    <div class="d-flex align-items-center gap-3">
+    <!-- Lado Derecho: Acciones de Usuario -->
+    <div class="d-flex align-items-center gap-1 gap-md-2">
       {% if user.is_authenticated %}
-
-      <!-- Caso: Usuario Logueado (Dropdown en Navbar Principal) -->
       <div class="dropdown">
         <a
-          class="nav-link dropdown-toggle d-flex align-items-center gap-2 btn btn-outline-success rounded-pill px-3 py-1"
+          class="dropdown-toggle btn btn-outline-success rounded-pill px-2 py-1 d-flex align-items-center gap-2 shadow-none border-0 border-md"
           href="#"
           id="navbarDropdown"
           role="button"
@@ -218,202 +72,40 @@
           {% if user.imagen_perfil %}
           <img
             src="{{ user.imagen_perfil.url }}"
-            alt="{{ user.username }}"
-            width="28"
-            height="28"
+            alt="Perfil"
+            width="24"
+            height="24"
             class="rounded-circle object-fit-cover"
           />
           {% else %}
           <i class="bi bi-person-circle fs-5"></i>
           {% endif %}
-          <span class="d-none d-md-inline"
+          <span class="d-none d-md-inline small fw-bold"
             >Hola, {{ user.first_name|default:user.username }}</span
           >
         </a>
         <ul
-          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4"
-          aria-labelledby="navbarDropdown"
-        >
-          <!-- SECCIÓN: ADMINISTRADOR -->
-          {% if user.is_superuser or user.is_staff %}
-          <li
-            class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column"
-          >
-            <span
-              class="text-muted fw-bold text-uppercase"
-              style="font-size: 0.65rem; letter-spacing: 0.5px"
-              >Gestión Global</span
-            >
-            <span class="small fw-semibold text-dark">Administrador</span>
-          </li>
-
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-success"
-              href="{% url 'perfil_detalles' %}"
-              ><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a>
-          </li>
-
-          <li>
-            <a class="dropdown-item py-2 fw-bold text-primary" href="#"
-              ><i class="bi bi-shield-lock me-2"></i>Configuración</a
-            >
-          </li>
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-primary"
-              href="{% url 'dashboard' %}"
-              ><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a
-            >
-          </li>
-          <li>
-            <a
-              class="dropdown-item py-2"
-              href="{% url 'mis_reservas_usuario' %}"
-              ><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="{% url 'mis_pqrs' %}"
-              ><i class="bi bi-chat-left-text me-2"></i>Pqrs</a
-            >
-          </li>
-
-          <li>
-            <a class="dropdown-item py-2" href="/mis-comentarios/"
-              ><i class="bi bi-chat-left-text me-2"></i>Comentarios</a
-            >
-          </li>
-
-          {% endif %}
-
-          <!-- SECCIÓN: GUÍA TURÍSTICO -->
-          {% if user.es_guia %}
-          <li class="px-3 py-2 border-bottom mb-2 bg-light d-flex flex-column">
-            <span
-              class="text-muted fw-bold text-uppercase"
-              style="font-size: 0.65rem; letter-spacing: 0.5px"
-              >Panel de Trabajo</span
-            >
-            <span class="small fw-semibold text-dark">Guía Turístico</span>
-          </li>
-
-          <li>
-            <a class="dropdown-item py-2" href="#"
-              ><i class="bi bi-calendar-event me-2"></i>Mis Rutas</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2 fw-bold text-primary" href="#"
-              ><i class="bi bi-shield-lock me-2"></i>Configuración</a
-            >
-          </li>
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-primary"
-              href="{% url 'dashboard' %}"
-              ><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a
-            >
-          </li>
-          <li>
-            <a
-              class="dropdown-item py-2"
-              href="{% url 'mis_reservas_usuario' %}"
-              ><i class="bi bi-calendar-check me-2"></i>Reservas</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="{% url 'mis_pqrs' %}"
-              ><i class="bi bi-chat-left-text me-2"></i>Pqrs</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="/mis-comentarios/"
-              ><i class="bi bi-chat-left-text me-2"></i>Comentarios</a
-            >
-          </li>
-
-          {% endif %}
-
-          <!-- SECCIÓN: VIAJERO / TURISTA -->
-          {% if user.es_turista %}
-          <li class="px-3 py-2 border-bottom mb-2 bg-light d-flex flex-column">
-            <span
-              class="text-muted fw-bold text-uppercase"
-              style="font-size: 0.65rem; letter-spacing: 0.5px"
-              >Mi Cuenta</span
-            ><span class="small fw-semibold text-dark">Viajero</span>
-          </li>
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-success"
-              href="{% url 'perfil_detalles' %}"
-              ><i class="bi bi-person-vcard me-2"></i>Mi Perfil</a
-            >
-          </li>
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-primary"
-              href="{% url 'dashboard_turista' %}"
-              ><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a
-            >
-          </li>
-          {% endif %}
-
-          <!-- Opciones comunes o específicas -->
-          {% if user.es_turista %}
-
-          <li>
-            <a
-              class="dropdown-item py-2"
-              href="{% url 'mis_reservas_usuario' %}"
-              ><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item py-2" href="{% url 'mis_pqrs' %}"
-              ><i class="bi bi-chat-left-text me-2"></i>Mis Pqrs</a
-            >
-          </li>
-
-          <li>
-            <a class="dropdown-item py-2" href="/mis-comentarios/"
-              ><i class="bi bi-chat-left-text me-2"></i>Comentarios</a
-            >
-          </li>
-
-          <li>
-            <a
-              class="dropdown-item py-2 fw-bold text-primary"
-              href="{% url 'index_turista' %}"
-              ><i class="bi bi-grid-1x2-fill me-2"></i>Panel rapido</a
-            >
-          </li>
-          {% endif %}
-          <li><hr class="dropdown-divider" /></li>
-          <li>
-            <form action="{% url 'logout' %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="dropdown-item text-danger py-2">
-                Cerrar Sesión
-              </button>
-            </form>
-          </li>
+          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2">
+          {% include 'partials/user_dropdown_items.html' %}
         </ul>
       </div>
       {% else %}
       <a
-        class="nav-link btn btn-outline-success rounded-pill px-4 py-2"
-        href="{% url 'login' %}"
-        >Acceder</a
-      >
+        class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 fw-bold"
+        href="{% url 'login' %}">Acceder
+      </a>
       {% endif %}
-      <a class="nav-link text-dark" href="{% url 'mis_reservas_usuario' %}"
-        ><i class="bi bi-cart3 fs-5"></i
-      ></a>
 
+      <!-- Carrito -->
+      <a
+        class="btn btn-link text-dark p-2 position-relative shadow-none"
+        href="{% url 'mis_reservas_usuario' %}">
+        <i class="bi bi-cart3 fs-5"></i>
+      </a>
+
+      <!-- Botón Hamburguesa -->
       <button
-        class="navbar-toggler border-0 shadow-none"
+        class="navbar-toggler border-0 shadow-none p-1 ms-1"
         type="button"
         data-bs-toggle="offcanvas"
         data-bs-target="#menuPremium"
@@ -424,3 +116,4 @@
     </div>
   </div>
 </nav>
+{% include 'partials/user_dropdown_items.html' with modo_hamburguesa=True %}

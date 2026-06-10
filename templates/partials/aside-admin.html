@@ -94,11 +94,17 @@
     </a>
 
     <a href="{% url 'gestion_guias' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'gestion_guias' %}bg-success text-white{% endif %}">
-      <i class="bi bi-people-fill"></i> Guías y Usuarios
+              {% if 'gestion_guias' in request.resolver_match.url_name %}bg-success text-white{% endif %}">
+      <i class="bi bi-people-fill"></i> Gestionar Guías
+    </a>
+    
+    <a href="{% url 'gestion_usuarios' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
+              {% if request.resolver_match.url_name == 'gestion_usuarios' %}bg-success text-white{% endif %}">
+      <i class="bi bi-people-fill"></i> Gestionar Usuarios
     </a>
 
-    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
+    <a href="{% url 'gestion_promociones' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
+              {% if 'promociones' in request.resolver_match.url_name %}bg-success text-white{% endif %}">
       <i class="bi bi-megaphone-fill"></i> Promociones
     </a>
 
@@ -172,10 +178,7 @@
       if (normalizedPath.includes('/cancelaciones') && normalizedHref.includes('/reservas')) {
         activeLink = link;
       }
-      // Special case for guias-guardar/rol-guia -> Guías y Usuarios
-      if ((normalizedPath.includes('/asignar-rol-guia') || normalizedPath.includes('/guia-estado') || normalizedPath.includes('/guias-guardar')) && normalizedHref.includes('/gestion-guias')) {
-        activeLink = link;
-      }
+
     });
 
     if (activeLink) {

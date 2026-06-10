@@ -1,0 +1,512 @@
+{% extends 'base-admin.html' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- 1. Panel Superior: Encabezado y Acciones Rápidas -->
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+            <div class="mb-3 mb-md-0">
+                <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
+                    <i class="bi bi-people-fill me-3"></i>Gestión Integral de Usuarios
+                </h1>
+                <div class="d-flex gap-2 flex-wrap">
+                    <span class="badge bg-success bg-opacity-75 p-2 rounded-pill shadow-sm d-flex align-items-center"><i class="bi bi-person-badge me-1"></i> {{ total_admins }} Administradores</span>
+                    <span class="badge bg-warning text-dark p-2 rounded-pill shadow-sm d-flex align-items-center"><i class="bi bi-compass me-1"></i> {{ total_guias }} Guías</span>
+                    <span class="badge bg-info text-dark p-2 rounded-pill shadow-sm d-flex align-items-center"><i class="bi bi-person-walking me-1"></i> {{ total_clientes }} Clientes</span>
+                </div>
+            </div>
+            <div class="text-md-end">
+                <button class="btn btn-success px-4 py-2 shadow-sm rounded-pill fw-bold d-inline-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasUsuario" aria-controls="offcanvasUsuario" onclick="resetFormUsuario()">
+                    <i class="bi bi-plus-circle-fill fs-5"></i>
+                    <span>Nuevo Usuario</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Visualización y Filtros (Listado General de Usuarios) -->
+    <div class="card border-0 shadow-sm p-3 mb-4">
+        <!-- Zona de Filtros -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div class="btn-group shadow-sm" role="group" aria-label="Filtros de usuario">
+                <a href="{% url 'gestion_usuarios' %}" class="btn btn-outline-success {% if not filtro_actual %}active{% endif %}">Todos</a>
+                <a href="{% url 'gestion_usuarios' %}?filtro=ADMIN" class="btn btn-outline-success {% if filtro_actual == 'ADMIN' %}active{% endif %}">Administradores</a>
+                <a href="{% url 'gestion_usuarios' %}?filtro=GUIA" class="btn btn-outline-success {% if filtro_actual == 'GUIA' %}active{% endif %}">Guías Turísticos</a>
+                <a href="{% url 'gestion_usuarios' %}?filtro=CLIENTE" class="btn btn-outline-success {% if filtro_actual == 'CLIENTE' %}active{% endif %}">Clientes/Turistas</a>
+            </div>
+            <div class="input-group" style="max-width: 300px;">
+                <span class="input-group-text bg-light border-success border-opacity-25"><i class="bi bi-search text-success"></i></span>
+                <input type="text" class="form-control border-success border-opacity-25" placeholder="Buscar usuario..." id="buscadorUsuarios" onkeyup="filtrarTabla()">
+            </div>
+        </div>
+
+        <!-- Tabla Responsiva -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="tablaUsuarios">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th scope="col" class="fw-bold">ID</th>
+                        <th scope="col" class="fw-bold">Perfil</th>
+                        <th scope="col" class="fw-bold">Identificación</th>
+                        <th scope="col" class="fw-bold">Contacto</th>
+                        <th scope="col" class="fw-bold">Ubicación</th>
+                        <th scope="col" class="fw-bold text-center">Rol</th>
+                        <th scope="col" class="fw-bold text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td class="text-muted fw-bold">#{{ u.id }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if u.imagen_perfil %}
+                                <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm me-3 border {% if u.rol == 'ADMIN' %}border-primary{% elif u.rol == 'GUIA' %}border-warning{% else %}border-info{% endif %} border-opacity-50" width="45" height="45" style="object-fit: cover;">
+                                {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ u.first_name }}+{{ u.last_name }}&background={% if u.rol == 'ADMIN' %}0d6efd{% elif u.rol == 'GUIA' %}ffc107{% else %}0dcaf0{% endif %}&color={% if u.rol == 'ADMIN' %}fff{% else %}000{% endif %}" alt="Avatar" class="rounded-circle shadow-sm me-3 border {% if u.rol == 'ADMIN' %}border-primary{% elif u.rol == 'GUIA' %}border-warning{% else %}border-info{% endif %} border-opacity-50" width="45" height="45">
+                                {% endif %}
+                                <div>
+                                    <div class="fw-bold text-dark mb-0">{{ u.get_full_name|default:u.username }}</div>
+                                    <div class="text-muted small">@{{ u.username }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-dark fw-semibold">{{ u.tipo_documento|default:"—" }}</div>
+                            <div class="text-muted small">{{ u.numero_documento|default:"—" }}</div>
+                        </td>
+                        <td>
+                            <div class="text-dark small d-flex align-items-center mb-1"><i class="bi bi-envelope text-success me-2"></i> {{ u.email|default:"—" }}</div>
+                            <div class="text-muted small d-flex align-items-center"><i class="bi bi-telephone text-success me-2"></i> {{ u.telefono|default:"—" }}</div>
+                        </td>
+                        <td>
+                            <div class="text-dark small d-flex align-items-center"><i class="bi bi-geo-alt text-success me-2"></i> {{ u.residencia|default:"—" }}</div>
+                        </td>
+                        <td class="text-center">
+                            {% if u.rol == 'ADMIN' %}
+                            <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">ADMIN</span>
+                            {% elif u.rol == 'GUIA' %}
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm">GUIA</span>
+                            {% else %}
+                            <span class="badge bg-info text-dark px-3 py-2 rounded-pill shadow-sm">CLIENTE</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group shadow-sm" role="group">
+                                <!-- Ver Detalles -->
+                                <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalDetallesUsuario" title="Ver Detalles"
+                                    onclick="verDetallesUsuario(
+                                        '{{ u.get_full_name|escapejs }}',
+                                        '{{ u.username|escapejs }}',
+                                        '{{ u.tipo_documento|escapejs }}',
+                                        '{{ u.numero_documento|escapejs }}',
+                                        '{{ u.email|escapejs }}',
+                                        '{{ u.telefono|escapejs }}',
+                                        '{{ u.residencia|escapejs }}',
+                                        '{{ u.rol }}',
+                                        '{{ u.is_active }}',
+                                        '{% if u.rol == "CLIENTE" and u.cliente %}{{ u.cliente.pais|escapejs }}{% endif %}',
+                                        '{% if u.rol == "CLIENTE" and u.cliente %}{{ u.cliente.ciudad|escapejs }}{% endif %}',
+                                        '{% if u.rol == "GUIA" and u.guia %}{{ u.guia.licencia_turismo|escapejs }}{% endif %}',
+                                        '{% if u.rol == "GUIA" and u.guia %}{{ u.guia.experiencia_anos }}{% endif %}',
+                                        '{% if u.rol == "GUIA" and u.guia %}{{ u.guia.biografia|escapejs }}{% endif %}'
+                                    )"
+                                ><i class="bi bi-eye"></i></button>
+                                <!-- Editar -->
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasUsuario" title="Editar"
+                                    onclick="cargarEdicionUsuario(
+                                        '{{ u.id }}',
+                                        '{{ u.username|escapejs }}',
+                                        '{{ u.email|escapejs }}',
+                                        '{{ u.first_name|escapejs }}',
+                                        '{{ u.last_name|escapejs }}',
+                                        '{{ u.tipo_documento }}',
+                                        '{{ u.numero_documento|escapejs }}',
+                                        '{{ u.telefono|escapejs }}',
+                                        '{{ u.residencia|escapejs }}',
+                                        '{{ u.rol }}',
+                                        '{% if u.rol == "CLIENTE" and u.cliente %}{{ u.cliente.pais|escapejs }}{% endif %}',
+                                        '{% if u.rol == "CLIENTE" and u.cliente %}{{ u.cliente.ciudad|escapejs }}{% endif %}',
+                                        '{% if u.rol == "GUIA" and u.guia %}{{ u.guia.licencia_turismo|escapejs }}{% endif %}',
+                                        '{% if u.rol == "GUIA" and u.guia %}{{ u.guia.experiencia_anos }}{% endif %}',
+                                        '{% if u.rol == "GUIA" and u.guia %}{{ u.guia.biografia|escapejs }}{% endif %}'
+                                    )"
+                                ><i class="bi bi-pencil"></i></button>
+                                <!-- Toggle Estado -->
+                                <form action="{% url 'usuarios_toggle_estado' u.id %}" method="POST" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="{% if u.is_active %}Inactivar{% else %}Activar{% endif %}"><i class="bi bi-power"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center p-5 text-muted small">No hay usuarios registrados con este filtro.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- 3. Componente Desplegable: Offcanvas Derecho -->
+<div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="offcanvasUsuario" aria-labelledby="offcanvasUsuarioLabel" style="width: 450px;">
+    <div class="offcanvas-header bg-success bg-opacity-10 border-bottom border-success border-opacity-10 p-4">
+        <h5 class="offcanvas-title fw-bold text-success d-flex align-items-center gap-2 m-0" id="offcanvasUsuarioLabel">
+            <i class="bi bi-person-gear fs-4"></i>Registrar Nuevo Usuario
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-4">
+        <form id="formUsuario" action="{% url 'usuarios_guardar' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="id" id="usuario_id">
+
+            <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-person me-2 text-success"></i>Datos Base</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-control-sm" id="username" name="username" placeholder="Usuario" required>
+                        <label for="username" class="text-muted small">Username</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="password" class="form-control form-control-sm" id="password" name="password" placeholder="Contraseña">
+                        <label for="password" class="text-muted small">Contraseña</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-floating">
+                        <input type="email" class="form-control form-control-sm" id="email" name="email" placeholder="Correo electrónico" required>
+                        <label for="email" class="text-muted small">Email</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-control-sm" id="first_name" name="first_name" placeholder="Nombres" required>
+                        <label for="first_name" class="text-muted small">Nombres</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-control-sm" id="last_name" name="last_name" placeholder="Apellidos" required>
+                        <label for="last_name" class="text-muted small">Apellidos</label>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-floating">
+                        <select class="form-select form-select-sm" id="tipo_documento" name="tipo_documento" aria-label="Tipo de documento">
+                            <option value="CC" selected>CC</option>
+                            <option value="CE">CE</option>
+                            <option value="PASAPORTE">Pasaporte</option>
+                        </select>
+                        <label for="tipo_documento" class="text-muted small">Tipo Doc.</label>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-control-sm" id="numero_documento" name="numero_documento" placeholder="Número" required>
+                        <label for="numero_documento" class="text-muted small">Número Documento</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="tel" class="form-control form-control-sm" id="telefono" name="telefono" placeholder="Teléfono">
+                        <label for="telefono" class="text-muted small">Teléfono</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-control-sm" id="residencia" name="residencia" placeholder="Residencia">
+                        <label for="residencia" class="text-muted small">Residencia (Local)</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label for="imagen_perfil" class="form-label text-muted small fw-bold mb-1">Foto de Perfil</label>
+                    <input class="form-control form-control-sm" type="file" id="imagen_perfil" name="imagen_perfil" accept="image/*">
+                </div>
+                
+                <div class="col-12 mt-4">
+                    <div class="form-floating border border-success border-opacity-50 rounded shadow-sm">
+                        <select class="form-select form-select-sm fw-bold text-success bg-success bg-opacity-10" id="rol" name="rol" aria-label="Rol del usuario" onchange="toggleSections(this.value)">
+                            <option value="" disabled selected>Seleccione un rol...</option>
+                            <option value="ADMIN">Administrador</option>
+                            <option value="CLIENTE">Cliente / Turista</option>
+                            <option value="GUIA">Guía Turístico</option>
+                        </select>
+                        <label for="rol" class="text-success fw-bold">Asignar Rol del Usuario</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Condicional 1: Cliente/Turista -->
+            <div id="seccionCliente" class="d-none bg-info bg-opacity-10 p-3 rounded mb-4 border border-info border-opacity-25">
+                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-airplane me-2 text-info"></i>Datos de Cliente/Turista</h6>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-sm" id="pais" name="pais" placeholder="País">
+                            <label for="pais" class="text-muted small">País de Origen</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-sm" id="ciudad" name="ciudad" placeholder="Ciudad">
+                            <label for="ciudad" class="text-muted small">Ciudad</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Condicional 2: Guía Turístico -->
+            <div id="seccionGuia" class="d-none bg-warning bg-opacity-10 p-3 rounded mb-4 border border-warning border-opacity-25">
+                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-compass me-2 text-warning"></i>Perfil de Guía Turístico</h6>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-sm text-uppercase" id="licencia_turismo" name="licencia_turismo" placeholder="COL-12345">
+                            <label for="licencia_turismo" class="text-muted small">Licencia de Turismo</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="number" class="form-control form-control-sm text-center" id="experiencia_anos" name="experiencia_anos" placeholder="Años" min="0">
+                            <label for="experiencia_anos" class="text-muted small">Exp. (Años)</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea class="form-control form-control-sm" placeholder="Biografía" id="biografia" name="biografia" style="height: 100px"></textarea>
+                            <label for="biografia" class="text-muted small">Biografía / Presentación</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Fijas del Offcanvas -->
+            <div class="d-grid gap-2 mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-success fw-bold py-2 shadow-sm"><i class="bi bi-save me-2"></i>Guardar Usuario</button>
+                <button type="button" class="btn btn-outline-secondary py-2" data-bs-dismiss="offcanvas">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 4. Modal de Revisión de Documentación y Perfil Extendida -->
+<div class="modal fade" id="modalDetallesUsuario" tabindex="-1" aria-labelledby="modalDetallesUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-light border-bottom-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-3" id="modalDetallesUsuarioLabel">
+                    <i class="bi bi-person-circle text-success fs-3"></i>
+                    <span id="modalNombreUsuario">Detalles del Usuario</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                
+                <!-- Pestañas de Navegación -->
+                <ul class="nav nav-tabs px-4 pt-3 bg-light border-bottom" id="usuarioTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active text-success fw-bold" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-tab-pane" type="button" role="tab" aria-controls="general-tab-pane" aria-selected="true"><i class="bi bi-person-vcard me-2"></i>Información General</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-dark fw-bold" id="perfil-tab" data-bs-toggle="tab" data-bs-target="#perfil-tab-pane" type="button" role="tab" aria-controls="perfil-tab-pane" aria-selected="false"><i class="bi bi-journal-richtext me-2"></i>Perfil Específico</button>
+                    </li>
+                </ul>
+
+                <!-- Contenido de las Pestañas -->
+                <div class="tab-content p-4" id="usuarioTabContent">
+                    
+                    <!-- Pestaña 1 (General) -->
+                    <div class="tab-pane fade show active" id="general-tab-pane" role="tabpanel" aria-labelledby="general-tab" tabindex="0">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <h6 class="text-muted fw-bold mb-3 border-bottom pb-2">Datos Personales</h6>
+                                <p class="mb-1 small text-muted">Nombre Completo</p>
+                                <p class="fw-bold text-dark mb-3" id="modalFullName">—</p>
+                                
+                                <p class="mb-1 small text-muted">Documento de Identidad</p>
+                                <p class="fw-bold text-dark mb-3" id="modalDocumento">—</p>
+                                
+                                <p class="mb-1 small text-muted">Usuario (Username)</p>
+                                <p class="fw-bold text-dark mb-0" id="modalUsername">—</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted fw-bold mb-3 border-bottom pb-2">Contacto y Estado</h6>
+                                <p class="mb-1 small text-muted">Correo Electrónico</p>
+                                <p class="fw-bold text-dark d-flex align-items-center mb-3"><i class="bi bi-envelope text-success me-2"></i><span id="modalEmail">—</span></p>
+                                
+                                <p class="mb-1 small text-muted">Teléfono</p>
+                                <p class="fw-bold text-dark d-flex align-items-center mb-3"><i class="bi bi-telephone text-success me-2"></i><span id="modalTelefono">—</span></p>
+                                
+                                <p class="mb-1 small text-muted">Estado Actual</p>
+                                <span id="modalEstado" class="badge bg-success bg-opacity-75 rounded-pill px-3 py-2 shadow-sm">Activo</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pestaña 2 (Perfil Específico) -->
+                    <div class="tab-pane fade" id="perfil-tab-pane" role="tabpanel" aria-labelledby="perfil-tab" tabindex="0">
+                        
+                        <!-- Bloque Guía -->
+                        <div id="modalPerfilGuia" class="d-none bg-warning bg-opacity-10 p-4 rounded border border-warning border-opacity-25 shadow-sm">
+                            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 border-bottom border-warning border-opacity-50 pb-3">
+                                <div>
+                                    <h6 class="text-dark fw-bold mb-1"><i class="bi bi-award text-warning fs-4 me-2"></i>Licencia de Turismo</h6>
+                                    <p class="fs-4 fw-bold text-dark font-monospace mb-0" id="modalLicencia">—</p>
+                                </div>
+                                <div class="text-md-end mt-3 mt-md-0">
+                                    <span class="badge bg-warning text-dark px-3 py-2 rounded shadow-sm mb-2 d-inline-block">Rol: GUIA</span>
+                                    <div class="text-muted small fw-bold"><i class="bi bi-briefcase me-1"></i> <span id="modalExpAnos">0</span> Años de Exp.</div>
+                                </div>
+                            </div>
+                            <h6 class="text-dark fw-bold mb-2">Biografía Profesional</h6>
+                            <div class="bg-white p-4 rounded shadow-sm border border-light">
+                                <p class="text-dark small mb-0 lh-lg text-justify" id="modalBiografia">—</p>
+                            </div>
+                        </div>
+
+                        <!-- Bloque Cliente -->
+                        <div id="modalPerfilCliente" class="d-none bg-info bg-opacity-10 p-4 rounded border border-info border-opacity-25 shadow-sm">
+                            <h6 class="text-dark fw-bold mb-3 border-bottom border-info border-opacity-50 pb-2"><i class="bi bi-airplane text-info fs-5 me-2"></i>Información de Origen (Cliente)</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-1 small text-muted">País de Procedencia</p>
+                                    <p class="fw-bold text-dark d-flex align-items-center fs-5"><i class="bi bi-globe-americas text-info me-2"></i> <span id="modalPais">—</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1 small text-muted">Ciudad</p>
+                                    <p class="fw-bold text-dark d-flex align-items-center fs-5"><i class="bi bi-building text-info me-2"></i> <span id="modalCiudad">—</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bloque Admin -->
+                        <div id="modalPerfilAdmin" class="d-none bg-primary bg-opacity-10 p-4 rounded border border-primary border-opacity-25 shadow-sm text-center">
+                            <i class="bi bi-shield-lock text-primary fs-1 mb-3 d-block"></i>
+                            <h6 class="text-dark fw-bold mb-2">Usuario Administrador</h6>
+                            <p class="text-muted small">Este usuario tiene privilegios completos de administración del sistema Monagua.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-top-0 rounded-bottom p-3">
+                <button type="button" class="btn btn-outline-secondary px-4 py-2 shadow-sm fw-bold" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /**
+     * Alterna la visibilidad de las secciones condicionales del Offcanvas
+     * según el rol seleccionado en el <select>.
+     */
+    function toggleSections(rol) {
+        const seccionCliente = document.getElementById('seccionCliente');
+        const seccionGuia = document.getElementById('seccionGuia');
+        seccionCliente.classList.add('d-none');
+        seccionGuia.classList.add('d-none');
+        if (rol === 'CLIENTE') seccionCliente.classList.remove('d-none');
+        else if (rol === 'GUIA') seccionGuia.classList.remove('d-none');
+    }
+
+    /**
+     * Carga los datos del usuario seleccionado en el Offcanvas para su edición.
+     */
+    function cargarEdicionUsuario(id, username, email, first, last, tipoDoc, numDoc, tel, residencia, rol, pais, ciudad, licencia, exp, bio) {
+        document.getElementById('offcanvasUsuarioLabel').innerHTML = '<i class="bi bi-person-gear fs-4"></i>Editar Usuario';
+        document.getElementById('usuario_id').value = id;
+        document.getElementById('username').value = username;
+        document.getElementById('username').readOnly = true;
+        document.getElementById('email').value = email;
+        document.getElementById('first_name').value = first;
+        document.getElementById('last_name').value = last;
+        document.getElementById('tipo_documento').value = tipoDoc;
+        document.getElementById('numero_documento').value = numDoc;
+        document.getElementById('telefono').value = tel;
+        document.getElementById('residencia').value = residencia;
+        document.getElementById('rol').value = rol;
+        toggleSections(rol);
+        // Campos condicionales
+        if (rol === 'CLIENTE') {
+            document.getElementById('pais').value = pais || '';
+            document.getElementById('ciudad').value = ciudad || '';
+        } else if (rol === 'GUIA') {
+            document.getElementById('licencia_turismo').value = licencia || '';
+            document.getElementById('experiencia_anos').value = exp || '';
+            document.getElementById('biografia').value = bio || '';
+        }
+    }
+
+    /**
+     * Resetea el Offcanvas al modo de registro de nuevo usuario.
+     */
+    function resetFormUsuario() {
+        document.getElementById('offcanvasUsuarioLabel').innerHTML = '<i class="bi bi-person-gear fs-4"></i>Registrar Nuevo Usuario';
+        document.getElementById('formUsuario').reset();
+        document.getElementById('usuario_id').value = '';
+        document.getElementById('username').readOnly = false;
+        document.getElementById('seccionCliente').classList.add('d-none');
+        document.getElementById('seccionGuia').classList.add('d-none');
+    }
+
+    /**
+     * Llena el modal de detalles con la información del usuario seleccionado.
+     */
+    function verDetallesUsuario(nombre, username, tipoDoc, numDoc, email, tel, residencia, rol, activo, pais, ciudad, licencia, exp, bio) {
+        document.getElementById('modalNombreUsuario').innerText = nombre || username;
+        document.getElementById('modalFullName').innerText = nombre || '—';
+        document.getElementById('modalUsername').innerText = '@' + username;
+        document.getElementById('modalDocumento').innerText = (tipoDoc || '—') + ' - ' + (numDoc || '—');
+        document.getElementById('modalEmail').innerText = email || '—';
+        document.getElementById('modalTelefono').innerText = tel || '—';
+
+        const badgeEstado = document.getElementById('modalEstado');
+        if (activo === 'True') {
+            badgeEstado.className = 'badge bg-success bg-opacity-75 rounded-pill px-3 py-2 shadow-sm';
+            badgeEstado.innerText = 'Activo en el Sistema';
+        } else {
+            badgeEstado.className = 'badge bg-danger bg-opacity-75 rounded-pill px-3 py-2 shadow-sm';
+            badgeEstado.innerText = 'Inactivo';
+        }
+
+        // Ocultar todos los bloques de perfil específico
+        document.getElementById('modalPerfilGuia').classList.add('d-none');
+        document.getElementById('modalPerfilCliente').classList.add('d-none');
+        document.getElementById('modalPerfilAdmin').classList.add('d-none');
+
+        if (rol === 'GUIA') {
+            document.getElementById('modalPerfilGuia').classList.remove('d-none');
+            document.getElementById('modalLicencia').innerText = licencia || '—';
+            document.getElementById('modalExpAnos').innerText = exp || '0';
+            document.getElementById('modalBiografia').innerText = bio || 'Sin biografía registrada.';
+        } else if (rol === 'CLIENTE') {
+            document.getElementById('modalPerfilCliente').classList.remove('d-none');
+            document.getElementById('modalPais').innerText = pais || '—';
+            document.getElementById('modalCiudad').innerText = ciudad || '—';
+        } else {
+            document.getElementById('modalPerfilAdmin').classList.remove('d-none');
+        }
+    }
+
+    /**
+     * Filtro de búsqueda rápida sobre la tabla de usuarios (client-side).
+     */
+    function filtrarTabla() {
+        const filtro = document.getElementById('buscadorUsuarios').value.toLowerCase();
+        const filas = document.querySelectorAll('#tablaUsuarios tbody tr');
+        filas.forEach(fila => {
+            const texto = fila.textContent.toLowerCase();
+            fila.style.display = texto.includes(filtro) ? '' : 'none';
+        });
+    }
+</script>
+{% endblock %}

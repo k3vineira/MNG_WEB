@@ -1,0 +1,250 @@
+{% extends "base-admin.html" %} 
+{% load static %} 
+
+{% block content %}
+<div class="container-fluid py-2">
+  
+  <!-- Bloque de Mensajes de Feedback -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 shadow-sm mb-4" role="alert">
+        <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden bg-white mb-5">
+    
+    <div
+      class="w-100 bg-dark bg-opacity-75"
+      style="
+        height: 160px;
+        background-image: url('{% static "img/Fondo.jpg" %}');
+        background-size: cover;
+        background-position: center;
+      "
+    ></div>
+
+    <div class="card-body p-4 p-md-5 pt-0">
+      <div class="row">
+        
+        <div
+          class="col-lg-4 text-center text-lg-start mb-5 mb-lg-0 border-end-lg"
+          style="margin-top: -80px"
+        >
+          <div class="d-flex justify-content-center justify-content-lg-start mb-4">
+            <div class="position-relative d-inline-block bg-white p-2 rounded-circle shadow-sm">
+              {% if user.imagen_perfil %}
+                <img src="{{ user.imagen_perfil.url }}" alt="{{ user.username }}" class="rounded-circle object-fit-cover shadow" style="width: 140px; height: 140px" />
+              {% else %}
+                <img src="{% static 'img/user-default.png' %}" alt="Avatar" class="rounded-circle object-fit-cover shadow" style="width: 140px; height: 140px" />
+              {% endif %}
+              
+              <form method="POST" enctype="multipart/form-data" class="position-absolute bottom-0 end-0 m-1" id="form_imagen_perfil">
+                {% csrf_token %}
+                <label
+                  for="id_imagen_perfil"
+                  class="btn btn-dark btn-sm rounded-circle shadow border border-2 border-white d-flex align-items-center justify-content-center p-0"
+                  style="width: 38px; height: 38px; cursor: pointer"
+                  title="Cambiar foto de perfil"
+                >
+                  <i class="bi bi-camera-fill fs-6"></i>
+                </label>
+                <input
+                  type="file"
+                  name="imagen_perfil"
+                  id="id_imagen_perfil"
+                  class="d-none"
+                  accept="image/*"
+                />
+              </form>
+            </div>
+          </div>
+
+          <div class="ps-2">
+            <h3 class="fw-bold text-dark mb-1">
+              {{ user.first_name|default:user.username }} {{ user.last_name }}
+            </h3>
+            <span class="badge bg-dark bg-opacity-10 text-dark rounded-pill px-3 py-1 fw-bold mb-3">
+              <i class="bi bi-shield-lock-fill me-1"></i> {% if user.is_superuser %}Administrador{% else %}{{ user.get_rol_display }}{% endif %}
+            </span>
+            <p class="text-muted small mb-4">
+              <i class="bi bi-calendar3 me-1"></i>Miembro desde: {{ user.date_joined|date:"d F, Y" }}
+            </p>
+          </div>
+
+          <div class="list-group list-group-flush rounded-3 overflow-hidden border border-light shadow-sm">
+            <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3 transition-all">
+              <i class="bi bi-speedometer2 text-dark fs-5"></i>
+              <span class="fw-semibold text-secondary">Dashboard Admin</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3 transition-all">
+              <i class="bi bi-people-fill text-dark fs-5"></i>
+              <span class="fw-semibold text-secondary">Gestión de Usuarios</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3 transition-all">
+              <i class="bi bi-map-fill text-dark fs-5"></i>
+              <span class="fw-semibold text-secondary">Gestión de Catálogo</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-8 ps-lg-5 pt-3">
+          <div class="d-flex align-items-center gap-2 mb-4">
+            <i class="bi bi-person-gear text-dark fs-3"></i>
+            <h4 class="fw-bold text-dark mb-0">Configuración del Perfil</h4>
+          </div>
+
+          <form method="POST" enctype="multipart/form-data" id="form_perfil_principal">
+            {% csrf_token %}
+            <input type="hidden" name="editar_perfil" value="1" />
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="form-floating mb-1">
+                  <input type="text" class="form-control rounded-4 shadow-sm bg-light border-0 text-muted" id="username" value="{{ user.username }}" readonly disabled />
+                  <label for="username"><i class="bi bi-person-badge text-dark me-2"></i>Nombre de Usuario</label>
+                </div>
+                <span class="text-muted small ps-2" style="font-size: 0.75rem">No es modificable.</span>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating mb-1">
+                  <input type="email" class="form-control rounded-4 shadow-sm bg-light border-0 text-muted" id="email" value="{{ user.email }}" readonly disabled />
+                  <label for="email"><i class="bi bi-envelope text-dark me-2"></i>Correo Electrónico</label>
+                </div>
+                <span class="text-muted small ps-2" style="font-size: 0.75rem">No es modificable.</span>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="text" name="first_name" class="form-control rounded-4 shadow-sm border-secondary-subtle" id="first_name" value="{{ user.first_name }}" placeholder="Nombres" required />
+                  <label for="first_name">Nombres</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="text" name="last_name" class="form-control rounded-4 shadow-sm border-secondary-subtle" id="last_name" value="{{ user.last_name }}" placeholder="Apellidos" required />
+                  <label for="last_name">Apellidos</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select name="tipo_documento" class="form-select rounded-4 shadow-sm border-secondary-subtle" id="tipo_documento" required>
+                    <option value="" disabled>Selecciona una opción</option>
+                    <option value="CC" {% if user.tipo_documento == "CC" %}selected{% endif %}>Cédula de Ciudadanía</option>
+                    <option value="CE" {% if user.tipo_documento == "CE" %}selected{% endif %}>Cédula de Extranjería</option>
+                    <option value="PAS" {% if user.tipo_documento == "PAS" %}selected{% endif %}>Pasaporte</option>
+                  </select>
+                  <label for="tipo_documento"><i class="bi bi-card-heading text-dark me-2"></i>Tipo de Documento</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="text" name="numero_documento" class="form-control rounded-4 shadow-sm border-secondary-subtle" id="numero_documento" value="{{ user.numero_documento|default:'' }}" placeholder="Número de Documento" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                  <label for="numero_documento"><i class="bi bi-123 text-dark me-2"></i>Número de Documento</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="tel" name="telefono" class="form-control rounded-4 shadow-sm border-secondary-subtle" id="telefono" value="{{ user.telefono }}" placeholder="Número de Teléfono" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                  <label for="telefono"><i class="bi bi-telephone text-dark me-2"></i>Teléfono</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="text" name="residencia" class="form-control rounded-4 shadow-sm border-secondary-subtle" id="residencia" value="{{ user.residencia }}" placeholder="Ciudad y País de Residencia" required />
+                  <label for="residencia"><i class="bi bi-geo-alt text-dark me-2"></i>Ciudad y País</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-5">
+              <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+                Cancelar
+              </a>
+              <button type="submit" class="btn btn-dark rounded-pill px-5 fw-bold shadow-sm transition-all hover-shadow-lg">
+                <i class="bi bi-check-circle me-2"></i>Guardar Cambios
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmación General -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="confirmModalLabel"><i class="bi bi-question-circle text-dark me-2"></i>Confirmar Cambios</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4">
+        <p class="mb-0 text-muted" id="confirmModalMessage">¿Estás seguro de que deseas guardar estos cambios?</p>
+      </div>
+      <div class="modal-footer border-top-0 pt-0">
+        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" id="btnCancelConfirm">Cancelar</button>
+        <button type="button" class="btn btn-dark rounded-pill px-4 fw-bold" id="btnAcceptConfirm">Sí, estoy seguro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const confirmModalEl = document.getElementById('confirmModal');
+  if(!confirmModalEl) return;
+  const confirmModal = new bootstrap.Modal(confirmModalEl);
+  const btnAccept = document.getElementById('btnAcceptConfirm');
+  const modalMessage = document.getElementById('confirmModalMessage');
+  
+  let currentFormToSubmit = null;
+
+  const imgInput = document.getElementById('id_imagen_perfil');
+  const imgForm = document.getElementById('form_imagen_perfil');
+  
+  if(imgInput && imgForm) {
+    imgInput.addEventListener('change', function(e) {
+      if (this.files && this.files.length > 0) {
+        currentFormToSubmit = imgForm;
+        modalMessage.textContent = "¿Estás seguro de que deseas actualizar tu foto de perfil?";
+        confirmModal.show();
+      }
+    });
+  }
+
+  const profileForm = document.getElementById('form_perfil_principal');
+  if(profileForm) {
+    profileForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      currentFormToSubmit = profileForm;
+      modalMessage.textContent = "¿Estás seguro de que deseas guardar los cambios en tu perfil?";
+      confirmModal.show();
+    });
+  }
+
+  btnAccept.addEventListener('click', function() {
+    if (currentFormToSubmit) {
+      currentFormToSubmit.submit();
+    }
+  });
+
+  confirmModalEl.addEventListener('hidden.bs.modal', function () {
+    if (currentFormToSubmit === imgForm) {
+      imgInput.value = ""; 
+    }
+    currentFormToSubmit = null;
+  });
+});
+</script>
+{% endblock %}

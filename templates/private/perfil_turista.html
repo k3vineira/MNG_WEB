@@ -26,25 +26,17 @@
             <div
               class="position-relative d-inline-block bg-white p-2 rounded-circle shadow-sm"
             >
-              {% if user.imagen_perfil %}
               <img
-                src="{{ user.imagen_perfil.url }}"
+                src="{{ user.avatar_url }}"
                 alt="{{ user.username }}"
                 class="rounded-circle object-fit-cover shadow"
                 style="width: 140px; height: 140px"
               />
-              {% else %}
-              <img
-                src="{% static 'img/avatar_pred.png' %}"
-                alt="Avatar"
-                class="rounded-circle object-fit-cover shadow"
-                style="width: 140px; height: 140px"
-              />
-              {% endif %}
               <form
                 method="POST"
                 enctype="multipart/form-data"
                 class="position-absolute bottom-0 end-0 m-1"
+                id="form_imagen_perfil"
               >
                 {% csrf_token %}
                 <label
@@ -61,7 +53,6 @@
                   id="id_imagen_perfil"
                   class="d-none"
                   accept="image/*"
-                  onchange="this.form.submit()"
                 />
               </form>
             </div>
@@ -123,7 +114,7 @@
             <h4 class="fw-bold text-dark mb-0">Configuración del Perfil</h4>
           </div>
 
-          <form method="POST">
+          <form method="POST" enctype="multipart/form-data" id="form_perfil_principal">
             {% csrf_token %}
             <input type="hidden" name="editar_perfil" value="1" />
 
@@ -311,4 +302,72 @@
     </div>
   </div>
 </div>
+</div>
+
+<!-- Modal Confirmación General -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="confirmModalLabel"><i class="bi bi-question-circle text-success me-2"></i>Confirmar Cambios</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4">
+        <p class="mb-0 text-muted" id="confirmModalMessage">¿Estás seguro de que deseas guardar estos cambios?</p>
+      </div>
+      <div class="modal-footer border-top-0 pt-0">
+        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" id="btnCancelConfirm">Cancelar</button>
+        <button type="button" class="btn btn-success rounded-pill px-4 fw-bold" id="btnAcceptConfirm">Sí, estoy seguro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const confirmModalEl = document.getElementById('confirmModal');
+  if(!confirmModalEl) return;
+  const confirmModal = new bootstrap.Modal(confirmModalEl);
+  const btnAccept = document.getElementById('btnAcceptConfirm');
+  const modalMessage = document.getElementById('confirmModalMessage');
+  
+  let currentFormToSubmit = null;
+
+  const imgInput = document.getElementById('id_imagen_perfil');
+  const imgForm = document.getElementById('form_imagen_perfil');
+  
+  if(imgInput && imgForm) {
+    imgInput.addEventListener('change', function(e) {
+      if (this.files && this.files.length > 0) {
+        currentFormToSubmit = imgForm;
+        modalMessage.textContent = "¿Estás seguro de que deseas actualizar tu foto de perfil?";
+        confirmModal.show();
+      }
+    });
+  }
+
+  const profileForm = document.getElementById('form_perfil_principal');
+  if(profileForm) {
+    profileForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      currentFormToSubmit = profileForm;
+      modalMessage.textContent = "¿Estás seguro de que deseas guardar los cambios en tu perfil?";
+      confirmModal.show();
+    });
+  }
+
+  btnAccept.addEventListener('click', function() {
+    if (currentFormToSubmit) {
+      currentFormToSubmit.submit();
+    }
+  });
+
+  confirmModalEl.addEventListener('hidden.bs.modal', function () {
+    if (currentFormToSubmit === imgForm) {
+      imgInput.value = ""; 
+    }
+    currentFormToSubmit = null;
+  });
+});
+</script>
 {% endblock %}

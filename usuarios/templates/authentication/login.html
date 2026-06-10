@@ -37,6 +37,9 @@
         <form method="POST" action="" class="mb-4">
           {% csrf_token %}
           
+          {# Captura el destino previo si existe en la URL #}
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+          
           {# Errores de validación del formulario (Login fallido) #}
           {% if form.errors %}
           <div class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">

@@ -172,3 +172,35 @@ def admin_eliminar_comprobante(request, pk):
         comprobante.delete()
         messages.info(request, f'Comprobante #{pk} eliminado.')
     return redirect('admin_comprobantes')
+
+    # PÁGINA DE PAGOS RECHAZADOS Y CANCELACIONES RECHAZADAS
+
+@login_required
+def mis_rechazos(request):
+    if request.user.is_staff:
+        return redirect('dashboard')
+
+    try:
+        from pagos.models import ComprobantePago
+        pagos_rechazados = ComprobantePago.objects.filter(
+            usuario=request.user,
+            estado='rechazado'
+        ).select_related('reserva__paquete').order_by('-fecha_revision')
+    except ImportError:
+        pagos_rechazados = []
+
+    try:
+        from reservas.models import Cancelacion
+        cancelaciones_rechazadas = Cancelacion.objects.filter(
+            reserva__usuario=request.user,
+            estado='rechazada'
+        ).select_related('reserva__paquete').order_by('-id')
+    except ImportError:
+        cancelaciones_rechazadas = []
+
+    context = {
+        'pagos_rechazados': pagos_rechazados,
+        'cancelaciones_rechazadas': cancelaciones_rechazadas,
+    }
+    
+    return render(request, 'private/rechazos.html', context)
