@@ -53,3 +53,41 @@ class PQRS(models.Model):
 
     class Meta:
         verbose_name_plural = 'PQRS'
+
+
+class Comentario(models.Model):
+    """Comentarios y reseñas de experiencias de usuarios."""
+    usuario = models.ForeignKey(
+        'usuarios.Usuario',
+        on_delete=models.CASCADE,
+        related_name='comentarios',
+        verbose_name='Usuario'
+    )
+    tipo = models.CharField(
+        max_length=20,
+        default='experiencia',
+        verbose_name='Tipo',
+        help_text='Tipo de comentario: experiencia, pregunta, etc.'
+    )
+    titulo = models.CharField(max_length=255, blank=True, verbose_name='Título')
+    mensaje = models.TextField(verbose_name='Mensaje')
+    valoracion = models.PositiveSmallIntegerField(default=5, verbose_name='Valoración')
+    paquete = models.ForeignKey(
+        'catalogo.Paquete',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='comentarios',
+        verbose_name='Paquete'
+    )
+    visible = models.BooleanField(default=True, verbose_name='¿Visible?')
+    admin_respuesta = models.TextField(blank=True, null=True, verbose_name='Respuesta del Admin')
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creación')
+
+    class Meta:
+        ordering = ['-fecha_creacion']
+        verbose_name = 'Comentario'
+        verbose_name_plural = 'Comentarios'
+
+    def __str__(self):
+        return f"Comentario de {self.usuario.username} - {self.titulo or 'sin título'}"

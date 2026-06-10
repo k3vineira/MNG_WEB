@@ -6,7 +6,8 @@ from django.contrib.auth import login
 from django.contrib import messages
 from django.db.models import Count, Avg, Sum
 from django.utils import timezone
-from .models import Usuario, Cliente, GuiaTuristico, Comentario
+from .models import Usuario, Cliente, GuiaTuristico
+from comunidad.models import Comentario
 from .forms import RegistroForm, PerfilUsuarioForm
 
 # 1. VISTAS PÚBLICAS / ESTÁTICAS
