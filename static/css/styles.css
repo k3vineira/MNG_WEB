@@ -299,21 +299,33 @@ body.sidebar-open #sidebar-overlay {
     /* Animación continua hacia la derecha */
     animation: scroll-right 150s linear infinite;
 }
+
 .marquee-wrapper:hover {
-     animation-play-state: paused;
+    animation-play-state: paused;
 }
+
 .marquee-item {
     width: 340px;
     padding: 0 10px;
     flex-shrink: 0;
 }
+
 @keyframes scroll-right {
-    from { transform: translateX(-50%); }
-    to { transform: translateX(0); }
+    from {
+        transform: translateX(-50%);
+    }
+    to {
+        transform: translateX(0);
+    }
 }
+
+
 /* Ajuste responsivo para que las cartas no sean demasiado grandes en móviles */
+
 @media (max-width: 576px) {
-    .marquee-item { width: 280px; }
+    .marquee-item {
+        width: 280px;
+    }
 }
 
 .foto-miembro {
@@ -584,6 +596,18 @@ body.sidebar-open #sidebar-overlay {
     }
     .a11y-panel {
         max-width: calc(100vw - 20px);
+    }
+}
+
+
+/* Texto y contenido móvil al 80% */
+
+@media (max-width: 768px) {
+    .wrapper .content-wrapper main {
+        width: 80vw !important;
+        max-width: 80vw !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 }
 
