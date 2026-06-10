@@ -288,8 +288,15 @@
     showToast('Todas las opciones restablecidas ✓');
   }
 
+  function isMobileView() {
+    return window.innerWidth <= 768;
+  }
+
   function init() {
     load();
+    if (isMobileView() && !localStorage.getItem('a11y')) {
+      s.font = 80;
+    }
     applyBright(s.bright); applyFont(s.font);
     applyTheme(s.theme); applySaturate(s.saturate); applyBigCursor(s.bigCursor);
     applyLinks(s.hlLinks);
