@@ -200,16 +200,23 @@
   function applyTheme(theme) {
     var el = document.getElementById('a11y-theme-style');
     if (!el) { el = document.createElement('style'); el.id = 'a11y-theme-style'; document.head.appendChild(el); }
-    
-    if (theme === 'auto') { el.textContent = ''; return; }
-    
+
+    document.documentElement.classList.remove('a11y-theme-light', 'a11y-theme-dark', 'a11y-theme-high-contrast');
+    document.body.classList.remove('a11y-theme-light', 'a11y-theme-dark', 'a11y-theme-high-contrast');
+    if (theme === 'auto') {
+      el.textContent = '';
+      return;
+    }
+
+    document.documentElement.classList.add('a11y-theme-' + theme);
+    document.body.classList.add('a11y-theme-' + theme);
     var scheme = colorSchemes[theme] || colorSchemes['dark'];
     var css = 'html, body { background-color: ' + scheme.bg + '!important; color: ' + scheme.text + '!important; }' +
-      'a { color: ' + scheme.accent + '!important; }' +
-      '.card, .modal-content { background-color: ' + scheme.bg + '!important; color: ' + scheme.text + '!important; border-color: ' + scheme.border + '!important; }' +
-      '.text-muted, .text-secondary { color: ' + scheme.secondary + '!important; }' +
-      '.btn-outline-* { color: ' + scheme.accent + '!important; border-color: ' + scheme.accent + '!important; }' +
-      'input, textarea, select { background-color: ' + scheme.bg + '!important; color: ' + scheme.text + '!important; border-color: ' + scheme.border + '!important; }';
+      'a, .nav-link, .btn, .form-label, .form-check-label, .badge, .text-muted, .text-secondary { color: ' + scheme.text + ' !important; }' +
+      'a, .nav-link { color: ' + scheme.accent + ' !important; }' +
+      '.card, .modal-content, .offcanvas, .dropdown-menu, .navbar, .footer-monagua, .a11y-panel, .a11y-toast, .alert, .table { background-color: ' + scheme.bg + ' !important; color: ' + scheme.text + ' !important; border-color: ' + scheme.border + ' !important; }' +
+      '.btn, .btn-outline-primary, .btn-outline-success, .btn-outline-dark, .btn-outline-secondary, .btn-outline-info { background-color: transparent !important; color: ' + scheme.accent + ' !important; border-color: ' + scheme.accent + ' !important; }' +
+      'input, textarea, select, .form-control, .form-select { background-color: ' + scheme.bg + ' !important; color: ' + scheme.text + ' !important; border-color: ' + scheme.border + ' !important; }';
     el.textContent = css;
   }
 
