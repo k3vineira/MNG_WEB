@@ -10,7 +10,6 @@ from .forms import TemporadaForm
 
 def destinos(request):
     destinos_list = Paquete.objects.filter(estado=True)
-
     busqueda = request.GET.get('q', '').strip()
     precio_max = request.GET.get('precio_max')
     apto_menores = request.GET.get('apto_menores') 
@@ -100,8 +99,6 @@ class ActividadesListView(ListView):
     context_object_name = 'actividades'
     def get_context_data(self, **kwargs):
        context = super().get_context_data(**kwargs)
-    
-       # Contamos estados de actividades
        stats = Actividades.objects.aggregate(
           total=Count('id'),
           activas=Count('id', filter=Q(estado=True)),
