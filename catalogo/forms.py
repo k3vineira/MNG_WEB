@@ -1,6 +1,21 @@
 from django import forms 
 from django.forms import ModelForm 
 from .models import Categoria, Actividades, Paquete, Tarifa , Temporada
+import datetime
+
+
+def generate_time_choices(start_hour=6, end_hour=18, step_minutes=15):
+    choices = []
+    current = datetime.datetime.combine(datetime.date.today(), datetime.time(start_hour, 0))
+    end = datetime.datetime.combine(datetime.date.today(), datetime.time(end_hour, 0))
+    while current <= end:
+        value = current.strftime('%H:%M')
+        display = current.strftime('%I:%M %p').lstrip('0').lower()
+        choices.append((value, display))
+        current += datetime.timedelta(minutes=step_minutes)
+    return choices
+
+TIME_CHOICES = generate_time_choices()
 
 # FORMULARIO DE CATEGORÍA
 class CategoriaForm(ModelForm):
@@ -31,6 +46,12 @@ class ActividadesForm(ModelForm):
 
 # FORMULARIO DE PAQUETE
 class PaqueteForm(ModelForm):
+    hora_encuentro = forms.TimeField(
+        widget=forms.Select(choices=TIME_CHOICES, attrs={'class': 'form-select'}),
+        input_formats=['%H:%M'],
+        required=True,
+        label='Hora encuentro'
+    )
     class Meta:
         model = Paquete
         fields = '__all__'
@@ -41,7 +62,7 @@ class PaqueteForm(ModelForm):
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
             'duracion_estimada': forms.TextInput(attrs={'class': 'form-control'}),
             'punto_encuentro': forms.TextInput(attrs={'class': 'form-control'}),
-            'hora_encuentro': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            # 'hora_encuentro' ahora se maneja como campo TimeField con Select arriba
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             'actividades': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

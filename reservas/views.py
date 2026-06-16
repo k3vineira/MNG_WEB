@@ -16,6 +16,8 @@ from django.contrib import messages
 from django.db.models import Count, Q
 from core.utils import plantilla_reserva_html, plantilla_cancelacion_html, enviar_correo_html_monagua
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 
 # =========================
 # RESERVAS ADMIN
@@ -257,6 +259,57 @@ def reservas_view(request):
     paquete = None
     if paquete_id:
         paquete = get_object_or_404(Paquete, id=paquete_id)
+
+
+@login_required(login_url='login')
+def carrito_view(request):
+    """Muestra las reservas pendientes del usuario en formato carrito y permite generar comprobante imprimible."""
+    reservas_pendientes = Reserva.objects.filter(usuario=request.user, estado__in=['pendiente', 'Pendiente']).select_related('paquete').order_by('-id')
+    context = {
+        'reservas': reservas_pendientes
+    }
+    return render(request, 'usuario/carrito.html', context)
+
+
+@login_required(login_url='login')
+def comprobante_reserva_html(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
+    # Render HTML comprobante (Bootstrap) que el usuario puede imprimir/guardar como PDF
+    context = {
+        'reserva': reserva,
+    }
+    return render(request, 'usuario/comprobante_reserva.html', context)
+
+
+@login_required(login_url='login')
+def comprobante_multiple(request):
+    """Genera un comprobante combinado para varias reservas seleccionadas por el usuario."""
+    if request.method != 'POST':
+        return redirect('carrito')
+
+    ids = request.POST.getlist('reservas')
+    if not ids:
+        return redirect('carrito')
+
+    # Convertir a enteros y filtrar reservas válidas del usuario
+    try:
+        ids_int = [int(i) for i in ids]
+    except ValueError:
+        return redirect('carrito')
+
+    reservas_qs = Reserva.objects.filter(id__in=ids_int, usuario=request.user).select_related('paquete')
+    reservas = list(reservas_qs)
+
+    if not reservas:
+        return redirect('carrito')
+
+    total = sum((r.monto_total or 0) for r in reservas)
+
+    context = {
+        'reservas': reservas,
+        'total': total,
+    }
+    return render(request, 'usuario/comprobante_multiple.html', context)
 
     context = {
         'paquetes': paquetes,
