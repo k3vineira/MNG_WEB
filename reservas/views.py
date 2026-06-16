@@ -260,6 +260,17 @@ def reservas_view(request):
     if paquete_id:
         paquete = get_object_or_404(Paquete, id=paquete_id)
 
+    context = {
+        'paquetes': paquetes,
+        'paquete': paquete
+    }
+
+    return render(
+        request,
+        'usuario/reservas.html',
+        context
+    )
+
 
 @login_required(login_url='login')
 def carrito_view(request):
@@ -310,17 +321,6 @@ def comprobante_multiple(request):
         'total': total,
     }
     return render(request, 'usuario/comprobante_multiple.html', context)
-
-    context = {
-        'paquetes': paquetes,
-        'paquete': paquete
-    }
-
-    return render(
-        request,
-        'usuario/reservas.html',
-        context
-    )
 
 
 # =========================

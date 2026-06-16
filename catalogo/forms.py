@@ -44,11 +44,10 @@ class ActividadesForm(ModelForm):
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-# FORMULARIO DE PAQUETE
 class PaqueteForm(ModelForm):
     hora_encuentro = forms.TimeField(
-        widget=forms.Select(choices=TIME_CHOICES, attrs={'class': 'form-select'}),
-        input_formats=['%H:%M'],
+        widget=forms.TimeInput(format='%H:%M', attrs={'class': 'form-control', 'type': 'time'}),
+        input_formats=['%H:%M', '%H:%M:%S'],
         required=True,
         label='Hora encuentro'
     )
@@ -59,10 +58,9 @@ class PaqueteForm(ModelForm):
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'imagen': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control'}),
-            'duracion_estimada': forms.TextInput(attrs={'class': 'form-control'}),
+            'dias_duracion': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            'noches_duracion': forms.NumberInput(attrs={'class': 'form-control', 'min': 0}),
             'punto_encuentro': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'hora_encuentro' ahora se maneja como campo TimeField con Select arriba
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             'actividades': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

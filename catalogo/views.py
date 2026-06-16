@@ -5,7 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Paquete, Actividades, Categoria, Tarifa ,Temporada
 from django.db.models import Count, Q
 from django import forms
-from .forms import TemporadaForm
+from .forms import TemporadaForm, PaqueteForm
 
 
 def destinos(request):
@@ -63,28 +63,16 @@ class PaqueteListView(ListView):
 
 class PaqueteCreateView(CreateView):
     model = Paquete
-    fields = [
-        'imagen', 'nombre', 'descripcion', 'hora_encuentro',
-        'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades','estado'
-    ]
+    form_class = PaqueteForm
     template_name = 'admin/paquetes/agregar_paquete.html'
     success_url = reverse_lazy('listar_paquetes') 
 
 
 class PaqueteUpdateView(UpdateView):
     model = Paquete
-    fields = [
-        'imagen', 'nombre', 'descripcion', 'hora_encuentro',
-        'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades','estado'
-    ]
+    form_class = PaqueteForm
     template_name = 'admin/paquetes/editar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
-    def get_form(self, form_class=None):
-         form = super().get_form(form_class)
-         for field in form.fields.values():
-          if not isinstance(field.widget, forms.CheckboxInput):
-            field.widget.attrs.update({'class': 'form-control'})
-         return form
 
 
 class PaqueteDeleteView(DeleteView):
