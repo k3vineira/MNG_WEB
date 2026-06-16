@@ -190,16 +190,50 @@
       <div class="row align-items-start">
         <div class="col-lg-7 offset-lg-1 mb-5 mb-lg-0">
           <nav class="d-flex flex-column gap-3 gap-md-4">
-            <a href="/" class="nav-main-link display-3 fw-bold">Inicio</a>
+            <a href="{% url 'inicio' %}" class="nav-main-link display-3 fw-bold">Inicio</a>
             {% if user.is_authenticated %}
             <a
               href="{% url 'perfil_detalles' %}"
               class="nav-main-link display-3 fw-bold"
               >Mi Perfil</a
             >
-            {% if user.es_turista %}
+            {# ── ROL: ADMINISTRADOR ── #}
+            {% if user.is_staff or user.is_superuser %}
+            <a
+              href="{% url 'dashboard' %}"
+              class="nav-main-link display-3 fw-bold"
+              >Dashboard</a
+            >
             <a
               href="{% url 'listar_reservas' %}"
+              class="nav-main-link display-3 fw-bold"
+              >Reservas</a
+            >
+            {% endif %}
+
+            {# ── ROL: GUÍA TURÍSTICO ── #}
+            {% if user.es_guia %}
+            <a
+              href="#"
+              class="nav-main-link display-3 fw-bold"
+              >Mis Rutas</a
+            >
+            <a
+              href="{% url 'mis_resenas' %}"
+              class="nav-main-link display-3 fw-bold"
+              >Mis Reseñas</a
+            >
+            {% endif %}
+
+            {# ── ROL: VIAJERO / TURISTA ── #}
+            {% if user.es_turista %}
+            <a
+              href="{% url 'index_turista' %}"
+              class="nav-main-link display-3 fw-bold"
+              >Mi Panel</a
+            >
+            <a
+              href="{% url 'mis_reservas_usuario' %}"
               class="nav-main-link display-3 fw-bold"
               >Mis Reservas</a
             >
@@ -224,24 +258,24 @@
         <div class="col-lg-3 nav-secondary-menu mt-lg-4">
           <ul class="nav flex-column gap-3">
             <li>
-              <a class="nav-secondary-link" href="#"
+              <a class="nav-secondary-link" href="{% url 'inicio' %}#contacto"
                 ><i class="bi bi-envelope me-2"></i>Contacto</a
               >
             </li>
             {% if user.is_authenticated %}
             <li>
-              <a class="nav-secondary-link" href="#"
+              <a class="nav-secondary-link" href="{% url 'pqrs' %}"
                 ><i class="bi bi-question-circle me-2"></i>Soporte</a
               >
             </li>
             <li>
-              <a class="nav-secondary-link" href="#"
+              <a class="nav-secondary-link" href="{% url 'terminos' %}"
                 ><i class="bi bi-shield-lock me-2"></i>Privacidad</a
               >
             </li>
             {% endif %}
             <li>
-              <a class="nav-secondary-link" href="#"
+              <a class="nav-secondary-link" href="{% url 'nosotros' %}"
                 ><i class="bi bi-people me-2"></i>Nosotros</a
               >
             </li>
@@ -251,7 +285,7 @@
               >
             </li>
             <li>
-              <a class="nav-secondary-link" href="{% url 'listar_blog' %}"
+              <a class="nav-secondary-link" href="{% url 'blog' %}"
                 ><i class="bi bi-journal-text me-2"></i>Blog</a
               >
             </li>

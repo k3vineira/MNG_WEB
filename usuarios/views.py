@@ -184,7 +184,6 @@ def usuarios_guardar(request):
         user.telefono = request.POST.get('telefono', user.telefono)
         user.residencia = request.POST.get('residencia', user.residencia)
         user.rol = rol
-        user.es_guia = (rol == Usuario.Roles.GUIA)
         if rol == Usuario.Roles.ADMIN:
             user.is_staff = True
         if 'imagen_perfil' in request.FILES:
@@ -214,7 +213,6 @@ def usuarios_guardar(request):
             telefono=request.POST.get('telefono', ''),
             residencia=request.POST.get('residencia', ''),
             rol=rol,
-            es_guia=(rol == Usuario.Roles.GUIA),
             is_staff=(rol == Usuario.Roles.ADMIN),
         )
         password = request.POST.get('password', '').strip()
@@ -275,13 +273,11 @@ def asignar_rol_guia(request, user_id):
         user = get_object_or_404(Usuario, id=user_id)
         if user.rol != Usuario.Roles.GUIA:
             user.rol = Usuario.Roles.GUIA
-            user.es_guia = True
             user.save()
             GuiaTuristico.objects.get_or_create(usuario=user)
             messages.success(request, f'Rol de guía asignado a {user.username}')
         else:
             user.rol = Usuario.Roles.CLIENTE
-            user.es_guia = False
             user.save()
             messages.info(request, f'Rol de guía removido de {user.username}')
     return redirect('gestion_guias')
@@ -346,7 +342,6 @@ def guias_guardar(request):
             telefono=request.POST.get('telefono', ''),
             residencia=request.POST.get('residencia', ''),
             rol=Usuario.Roles.GUIA,
-            es_guia=True,
         )
         # Contraseña temporal = número de documento (el guía la cambiará después)
         password = request.POST.get('numero_documento', username)

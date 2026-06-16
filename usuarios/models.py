@@ -79,6 +79,16 @@ class Usuario(AbstractUser):
             return self.imagen_perfil.url
         return f"{settings.STATIC_URL}img/avatar_pred.png"
 
+    @property
+    def es_guia(self):
+        """Retorna si el usuario tiene el rol de Guía Turístico."""
+        return self.rol == self.Roles.GUIA
+
+    @property
+    def es_turista(self):
+        """Retorna si el usuario tiene el rol de Cliente / Turista."""
+        return self.rol == self.Roles.CLIENTE
+
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
