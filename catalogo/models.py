@@ -70,7 +70,7 @@ class Paquete(models.Model):
     noches_duracion = models.PositiveIntegerField(verbose_name='Noches de Duración', default=0)
     punto_encuentro = models.CharField(max_length=200)
     hora_encuentro = models.TimeField()
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    categoria = models.ForeignKey(Categoria, models.CASCADE, related_name='paquetes')
     actividades = models.ManyToManyField(Actividades, through='PaqueteActividad')
     estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
 
