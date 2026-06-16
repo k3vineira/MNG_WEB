@@ -1,5 +1,5 @@
 {% extends 'admin/base-admin.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container py-5">
     
@@ -49,7 +49,7 @@
 
     <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 1200px; overflow: hidden;">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table id="tablaActividades" class="table table-hover align-middle mb-0" style="width:100%">
                 <thead class="table-light">
                     <tr class="text-uppercase text-muted" style="font-size: 1rem;">
                         <th class="ps-5 py-4">Actividad</th>
@@ -106,3 +106,7 @@
     </div>
 </div>
 {% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/tconf/tconf-tablaActividades.js' %}"></script>
+{% endblock %}
+

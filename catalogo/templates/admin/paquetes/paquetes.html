@@ -1,5 +1,5 @@
 {% extends 'admin/base-admin.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container py-5">
     
@@ -15,11 +15,11 @@
     <div class="row g-4 mb-4 mx-auto justify-content-center" style="max-width: 1200px;">
     {% for label, count, color in stats_list %}
     <div class="col-12 col-sm-6 col-md-4">
-        <!-- Tarjeta centrada con sombra suave y bordes redondeados -->
+      
         <div class="card border-0 shadow-sm rounded-4 text-center p-4 h-100" style="background: #ffffff;">
             <div class="card-body d-flex flex-column align-items-center justify-content-center">
                 
-                <!-- CONTENEDOR DE ICONOS PARA AGENCIA DE VIAJES -->
+           
                 <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" 
                      style="width: 75px; height: 75px; 
                             {% if color == 'text-success' %} background-color: #e8f5e9; 
@@ -27,10 +27,10 @@
                             {% else %} background-color: #f1f3f5; {% endif %}">
                     
                     {% if color == 'text-dark' %}
-                        <!-- Icono de Maleta / Equipaje para el Total -->
+                       
                         <i class="bi bi-luggage-fill text-secondary" style="font-size: 2.2rem;"></i>
                     {% elif color == 'text-success' %}
-                        <!-- Icono de Avión para Viajes Activos -->
+                  
                         <i class="bi bi-airplane-engines-fill text-success" style="font-size: 2.2rem;"></i>
                     {% else %}
                         
@@ -56,7 +56,7 @@
 
     <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 1200px;">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table id="tablaPaquetes" class="table table-hover align-middle mb-0" style="width:100%">
                 <thead class="table-light">
                     <tr class="text-uppercase text-muted" style="font-size: 1rem;">
                         <th class="ps-5 py-4">Nombre del Paquete</th>
@@ -96,4 +96,7 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/tconf/tconf-tablaPaquetes.js' %}"></script>
 {% endblock %}
