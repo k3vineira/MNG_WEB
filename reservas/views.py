@@ -74,11 +74,11 @@ class ReservaDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def mis_reservas_usuario(request):
-    reservas_canceladas_ids = Cancelacion.objects.filter(reserva__usuario=request.user).values_list('reserva_id', flat=True)
+    # Mostrar todas las reservas del usuario, incluyendo aquellas canceladas,
+    # para que el usuario pueda ver su historial y el estado real de cada reserva.
     mis_reservas = Reserva.objects.filter(usuario=request.user)\
         .select_related('paquete')\
-        .prefetch_related('comprobantes')\
-        .exclude(id__in=reservas_canceladas_ids)\
+        .prefetch_related('comprobantes', 'cancelaciones')\
         .order_by('-id')
     
     context = {
@@ -108,14 +108,26 @@ class CancelacionListView(ListView):
 class CancelacionCreateView(CreateView):
     model = Cancelacion
     fields = ['motivo']
-    template_name = 'usuario/cancelaciones/crear_cancelacion.html' 
-    success_url = reverse_lazy('mis_cancelaciones_usuario') 
+    template_name = 'usuario/cancelaciones/crear_cancelacion.html'
+    success_url = reverse_lazy('mis_cancelaciones_usuario')
+
     def form_valid(self, form):
         reserva_id = self.request.GET.get('reserva_id')
-        if reserva_id:
-            reserva = get_object_or_404(Reserva, id=reserva_id)
-            form.instance.reserva = reserva
-            
+        if not reserva_id:
+            messages.error(self.request, 'No se encontró la reserva para la cancelación.')
+            return redirect('mis_cancelaciones_usuario')
+
+        reserva = get_object_or_404(Reserva, id=reserva_id, usuario=self.request.user)
+
+        if reserva.estado == 'cancelada':
+            messages.warning(self.request, 'Esta reserva ya está cancelada.')
+            return redirect('mis_cancelaciones_usuario')
+
+        if Cancelacion.objects.filter(reserva=reserva, estado__in=['revision', 'aceptada']).exists():
+            messages.warning(self.request, 'Ya existe una solicitud de cancelación activa para esta reserva.')
+            return redirect('mis_cancelaciones_usuario')
+
+        form.instance.reserva = reserva
         form.instance.usuario = self.request.user
         return super().form_valid(form)
 
@@ -158,16 +170,19 @@ def administrar_cancelaciones(request):
             cancelacion.penalidad = Decimal('0.00')
             
         cancelacion.save()
-    
+
+        # Mantener el estado real de la reserva sin producir cambios inesperados.
         if cancelacion.estado == 'aceptada':
             cancelacion.reserva.estado = 'cancelada'
+            cancelacion.reserva.save()
         elif cancelacion.estado == 'rechazada':
-            cancelacion.reserva.estado = 'confirmada'
+            # No se altera el estado original de la reserva. Si estaba confirmada, sigue confirmada;
+            # si estaba pendiente, continúa pendiente hasta que el administrador defina otro comportamiento.
+            cancelacion.reserva.save()
         else:
-            cancelacion.reserva.estado = 'pendiente'
-            
-        cancelacion.reserva.save()
-        
+            # En revisión no se debe cambiar el estado de la reserva.
+            cancelacion.reserva.save()
+
         nombre_cliente = cancelacion.reserva.usuario.first_name or cancelacion.reserva.usuario.username
         
         asunto_reserva = f"Actualización de tu Reserva #{cancelacion.reserva.id} - Monagua"

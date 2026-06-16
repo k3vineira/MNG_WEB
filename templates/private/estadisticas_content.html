@@ -7,14 +7,13 @@
     <div class="row align-items-center mb-5 g-3">
         <div class="col-12 col-md-8">
             <h1 class="fw-bold text-dark mb-1">
-                {% if user.is_staff %}
-                <i class="bi bi-speedometer2 text-success me-2"></i>Consola de Analítica General
+                {% if analitica_titulo %}
+                <i class="bi {% if admin_mode %}bi-speedometer2{% else %}bi-person-badge{% endif %} text-success me-2"></i>{{ analitica_titulo }}
                 {% else %}
-                <i class="bi bi-person-badge text-success me-2"></i>Mi Portal de Analítica Individual
+                <i class="bi bi-bar-chart-line text-success me-2"></i>Panel de Estadísticas
                 {% endif %}
             </h1>
-            <p class="text-muted mb-0">Consolidado métrico avanzado e histórico de comportamiento de viajes,
-                transacciones y soporte en Monagua.</p>
+            <p class="text-muted mb-0">{{ analitica_subtitulo|default:'Consolidado métrico avanzado e histórico de comportamiento de viajes, transacciones y soporte en Monagua.' }}</p>
         </div>
         <div class="col-12 col-md-4 text-md-end">
             <span
@@ -73,7 +72,7 @@
                         <i class="bi bi-geo-alt-fill fs-4"></i>
                     </div>
                 </div>
-                <h2 class="fw-bold text-dark mb-1">{{ destinos_frecuentes.count|default:"0" }}</h2>
+                <h2 class="fw-bold text-dark mb-1">{{ destinos_total|default:"0" }}</h2>
                 <div class="text-muted small"><i class="bi bi-map me-1"></i>Rutas ecológicas exploradas</div>
             </div>
         </div>
