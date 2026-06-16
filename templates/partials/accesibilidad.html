@@ -187,7 +187,11 @@
   }
 
   function applyFont(v) { 
-    document.documentElement.style.fontSize = (v / 100 * 16) + 'px'; 
+    var baseSize = 16;
+    if (window.innerWidth <= 768) {
+      baseSize = 16 * 0.8; // 80% base font size for tablets/mobile (<= 768px)
+    }
+    document.documentElement.style.fontSize = (v / 100 * baseSize) + 'px'; 
   }
 
 
@@ -378,6 +382,11 @@
     document.addEventListener('keydown', function(e) {
       if (e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); toggle(); }
       if (e.altKey && e.key.toLowerCase() === 'r') { e.preventDefault(); reset(); }
+    });
+
+    // Escuchar redimensionado para recalcular tamaño base
+    window.addEventListener('resize', function() {
+      applyFont(s.font);
     });
   }
 
