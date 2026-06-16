@@ -10,7 +10,8 @@ SECRET_KEY = 'django-insecure-p!+*=!t4f^dbv14nx*gk375-ieyq##$kmmd(^0&$gkyiuy=jdd
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.20.182','192.168.1.149',  '192.168.1.112', '192.168.1.125','*']
+ALLOWED_HOSTS = ['192.168.20.182', '192.168.1.149',
+                 '192.168.1.112', '192.168.1.125', '*']
 
 
 # Application definition
@@ -23,9 +24,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'crispy_forms', 
-    'crispy_bootstrap5', 
-    
+    'crispy_forms',
+    'crispy_bootstrap5',
+
     'catalogo',
     'usuarios',
     'comunidad',
@@ -113,10 +114,9 @@ USE_I18N = True
 USE_TZ = True
 
 
-
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -131,7 +131,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'webmonagua@gmail.com'  
+EMAIL_HOST_USER = 'webmonagua@gmail.com'
 EMAIL_HOST_PASSWORD = 'hmwb jeod fcsi zfic'
 
 

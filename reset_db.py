@@ -16,7 +16,7 @@ for root, dirs, files in os.walk('.'):
     for venv in ['.venv', 'venv', '.git', '__pycache__']:
         if venv in dirs:
             dirs.remove(venv)
-    
+
     # Buscar solo dentro de carpetas llamadas 'migrations'
     if 'migrations' in root:
         for file in files:
@@ -35,26 +35,28 @@ for archivo in archivos_a_borrar:
 if db_existe:
     print(f"\nTambién se encontró la base de datos: {DB_FILE}")
 else:
-    print(f"\nNo se encontró la base de datos '{DB_FILE}' (ya fue borrada o no existe).")
+    print(
+        f"\nNo se encontró la base de datos '{DB_FILE}' (ya fue borrada o no existe).")
 
 if len(archivos_a_borrar) == 0 and not db_existe:
     print("\nNo hay nada que borrar. ¡El proyecto ya está limpio!")
     exit()
 
 # 4. Pedir confirmación por seguridad
-respuesta = input("\n¿Estás seguro de que deseas ELIMINAR estos archivos? Esta acción NO se puede deshacer. (s/n): ")
+respuesta = input(
+    "\n¿Estás seguro de que deseas ELIMINAR estos archivos? Esta acción NO se puede deshacer. (s/n): ")
 
 if respuesta.lower() == 's':
     # Borrar migraciones
     for archivo in archivos_a_borrar:
         os.remove(archivo)
         print(f"Borrado: {archivo}")
-    
+
     # Borrar base de datos
     if db_existe:
         os.remove(DB_FILE)
         print(f"Borrado: {DB_FILE}")
-    
+
     print("\n✅ ¡Limpieza completada exitosamente! Tu proyecto está listo para el nuevo AbstractUser.")
 else:
     print("\n🚫 Operación cancelada. No se borró ningún archivo.")
