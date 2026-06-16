@@ -67,14 +67,16 @@
                     <td class="py-4 text-muted fst-italic">"{{ cancelacion.motivo|truncatechars:30 }}"</td>
                     <td class="py-4 text-center fw-bold text-danger">${{ cancelacion.penalidad }}</td>
                     
-                   <td class="text-center py-4">
-                    <span class="badge rounded-pill px-4 py-2 
-                    {% if cancelacion.estado == 'pendiente' or cancelacion.estado == 'revision' %}bg-warning text-dark
-                    {% elif cancelacion.estado == 'confirmada' or cancelacion.estado == 'aceptada' %}bg-success text-white
-                    {% else %}bg-danger text-white{% endif %}">
-                    {{ cancelacion.estado|capfirst }}
-                    </span>
-                    </td>
+                  <td class="text-center py-4">
+    <span class="badge rounded-pill px-4 py-2 fs-6
+    {% if cancelacion.estado == 'pendiente' %}bg-warning text-dark
+    {% elif cancelacion.estado == 'revision' %}text-white
+    {% elif cancelacion.estado == 'confirmada' or cancelacion.estado == 'aceptada' %}bg-success text-white
+    {% else %}bg-danger text-white{% endif %}"
+    {% if cancelacion.estado == 'revision' %}style="background-color: #406d46;"{% endif %}>
+        {{ cancelacion.estado|capfirst }}
+    </span>
+</td>
                     
                     <td class="text-center py-4">
                         <a href="{% url 'editar_cancelacion' cancelacion.id %}" class="btn btn-outline-primary btn-sm px-3 py-2 fw-bold" style="background-color: var(--verde-oscuro); color: white;">
