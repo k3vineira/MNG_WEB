@@ -3,13 +3,15 @@ from django.core.mail import send_mail
 from django.conf import settings
 from datetime import datetime, time
 
+
 def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menores=0, punto_encuentro=None, hora_encuentro=None, estado='pendiente', reserva_id='', monto_total='0.00'):
     if isinstance(hora_encuentro, str):
         try:
             hora_encuentro = datetime.strptime(hora_encuentro, '%H:%M').time()
         except ValueError:
             try:
-                hora_encuentro = datetime.strptime(hora_encuentro, '%H:%M:%S').time()
+                hora_encuentro = datetime.strptime(
+                    hora_encuentro, '%H:%M:%S').time()
             except ValueError:
                 hora_encuentro = time(0, 0)
 
@@ -125,18 +127,19 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menor
     </html>
     """
 
+
 def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad):
     if estado == 'aceptada':
-        color_tag = "#1E4620"      
-        bg_caja_estado = "#f4f8f5"  
+        color_tag = "#1E4620"
+        bg_caja_estado = "#f4f8f5"
         texto_estado = "Solicitud Aceptada"
     elif estado == 'rechazada':
-        color_tag = "#2E6F40"      
-        bg_caja_estado = "#f0fff4"  
+        color_tag = "#2E6F40"
+        bg_caja_estado = "#f0fff4"
         texto_estado = "Solicitud Rechazada"
     else:
-        color_tag = "#5a7a61"      
-        bg_caja_estado = "#f7faf8"  
+        color_tag = "#5a7a61"
+        bg_caja_estado = "#f7faf8"
         texto_estado = "En Revisión"
 
     return f"""
@@ -182,6 +185,7 @@ def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad):
     </body>
     </html>
     """
+
 
 def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_contenido):
     send_mail(
