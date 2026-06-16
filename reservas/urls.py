@@ -6,6 +6,9 @@ urlpatterns = [
      path('reservar/', views.reservas_view, name='reservas'),
      path('guardar/<int:paquete_id>/', views.guardar_reserva, name='guardar_reserva'),
      path('mis-reservas/', views.mis_reservas_usuario, name='mis_reservas_usuario'),
+     path('carrito/', views.carrito_view, name='carrito'),
+     path('comprobante/<int:reserva_id>/', views.comprobante_reserva_html, name='comprobante_reserva'),
+     path('comprobante-multiple/', views.comprobante_multiple, name='comprobante_multiple'),
      
      
      #Rutas para CRUD de reservas
