@@ -12,9 +12,36 @@
 <div class="row g-3 mb-4 mx-auto justify-content-center" style="max-width: 1100px;">
     {% for label, count, color in stats_list %}
     <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm rounded-3 py-3 text-center">
-            <span class="text-muted small text-uppercase">{{ label }}</span>
-            <h2 class="fw-bold mb-0 {{ color }}" style="font-size: 2rem;">{{ count|default:0 }}</h2>
+        <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background: #ffffff;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center p-1">
+                
+                <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" 
+                     style="width: 65px; height: 65px; 
+                            {% if color == 'text-success' %} background-color: #e8f5e9; 
+                            {% elif color == 'text-danger' %} background-color: #ffebee; 
+                            {% elif color == 'text-warning' %} background-color: #fff3cd; 
+                            {% else %} background-color: #f1f3f5; {% endif %}">
+                    
+                    {% if color == 'text-dark' or color == 'text-primary' %}
+                        <i class="bi bi-luggage-fill text-secondary" style="font-size: 1.8rem;"></i>
+                    {% elif color == 'text-success' %}
+                        <i class="bi bi-airplane-engines-fill text-success" style="font-size: 1.8rem;"></i>
+                    {% elif color == 'text-danger' %}
+                        <i class="bi bi-ticket-detailed-fill text-danger" style="font-size: 1.8rem;"></i>
+                    {% else %}
+                        <i class="bi bi-compass-fill text-warning" style="font-size: 1.8rem;"></i>
+                    {% endif %}
+                </div>
+
+                <span class="text-muted small text-uppercase fw-semibold mb-2" style="letter-spacing: 0.5px;">
+                    {{ label }}
+                </span>
+                
+                <h2 class="fw-black mb-0 {{ color }}" style="font-size: 2.3rem; font-weight: 800; line-height: 1;">
+                    {{ count|default:0 }}
+                </h2>
+                
+            </div>
         </div>
     </div>
     {% endfor %}
@@ -40,14 +67,16 @@
                     <td class="py-4 text-muted fst-italic">"{{ cancelacion.motivo|truncatechars:30 }}"</td>
                     <td class="py-4 text-center fw-bold text-danger">${{ cancelacion.penalidad }}</td>
                     
-                   <td class="text-center py-4">
-                    <span class="badge rounded-pill px-4 py-2 
-                    {% if cancelacion.estado == 'pendiente' or cancelacion.estado == 'revision' %}bg-warning text-dark
-                    {% elif cancelacion.estado == 'confirmada' or cancelacion.estado == 'aceptada' %}bg-success text-white
-                    {% else %}bg-danger text-white{% endif %}">
-                    {{ cancelacion.estado|capfirst }}
-                    </span>
-                    </td>
+                  <td class="text-center py-4">
+    <span class="badge rounded-pill px-4 py-2 fs-6
+    {% if cancelacion.estado == 'pendiente' %}bg-warning text-dark
+    {% elif cancelacion.estado == 'revision' %}text-white
+    {% elif cancelacion.estado == 'confirmada' or cancelacion.estado == 'aceptada' %}bg-success text-white
+    {% else %}bg-danger text-white{% endif %}"
+    {% if cancelacion.estado == 'revision' %}style="background-color: #406d46;"{% endif %}>
+        {{ cancelacion.estado|capfirst }}
+    </span>
+</td>
                     
                     <td class="text-center py-4">
                         <a href="{% url 'editar_cancelacion' cancelacion.id %}" class="btn btn-outline-primary btn-sm px-3 py-2 fw-bold" style="background-color: var(--verde-oscuro); color: white;">

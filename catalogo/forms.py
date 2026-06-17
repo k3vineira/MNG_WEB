@@ -1,27 +1,14 @@
-from django import forms 
-from django.forms import ModelForm 
-from .models import Categoria, Actividades, Paquete, Tarifa , Temporada
-import datetime
-
-
-def generate_time_choices(start_hour=6, end_hour=18, step_minutes=15):
-    choices = []
-    current = datetime.datetime.combine(datetime.date.today(), datetime.time(start_hour, 0))
-    end = datetime.datetime.combine(datetime.date.today(), datetime.time(end_hour, 0))
-    while current <= end:
-        value = current.strftime('%H:%M')
-        display = current.strftime('%I:%M %p').lstrip('0').lower()
-        choices.append((value, display))
-        current += datetime.timedelta(minutes=step_minutes)
-    return choices
-
-TIME_CHOICES = generate_time_choices()
+from django import forms
+from django.forms import ModelForm
+from .models import Categoria, Actividades, Paquete, Tarifa, Temporada
 
 # FORMULARIO DE CATEGORÍA
+
+
 class CategoriaForm(ModelForm):
     class Meta:
-        model = Categoria 
-        fields = '__all__' 
+        model = Categoria
+        fields = '__all__'
         widgets = {
             # Aplicas estilos CSS de Bootstrap para que se vea bien
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
@@ -30,6 +17,8 @@ class CategoriaForm(ModelForm):
         }
 
 # FORMULARIO DE ACTIVIDADES
+
+
 class ActividadesForm(ModelForm):
     class Meta:
         model = Actividades
@@ -37,20 +26,17 @@ class ActividadesForm(ModelForm):
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'nivel_dificultad': forms.Select(attrs={'class': 'form-select'}), 
-            'apto_para_menores': forms.CheckboxInput(attrs={'class': 'form-check-input'}), 
+            'nivel_dificultad': forms.Select(attrs={'class': 'form-select'}),
+            'apto_para_menores': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'equipo_requerimiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'recomendacion_salud': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
+# FORMULARIO DE PAQUETE
+
+
 class PaqueteForm(ModelForm):
-    hora_encuentro = forms.TimeField(
-        widget=forms.TimeInput(format='%H:%M', attrs={'class': 'form-control', 'type': 'time'}),
-        input_formats=['%H:%M', '%H:%M:%S'],
-        required=True,
-        label='Hora encuentro'
-    )
     class Meta:
         model = Paquete
         fields = '__all__'
@@ -58,13 +44,16 @@ class PaqueteForm(ModelForm):
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'imagen': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control'}),
-            'dias_duracion': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
-            'noches_duracion': forms.NumberInput(attrs={'class': 'form-control', 'min': 0}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control'}),
+            'duracion_estimada': forms.TextInput(attrs={'class': 'form-control'}),
             'punto_encuentro': forms.TextInput(attrs={'class': 'form-control'}),
+            'hora_encuentro': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             'actividades': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+
 class TarifaForm(ModelForm):
     class Meta:
         model = Tarifa
@@ -75,6 +64,8 @@ class TarifaForm(ModelForm):
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+
 class TemporadaForm(ModelForm):
     class Meta:
         model = Temporada
@@ -82,13 +73,13 @@ class TemporadaForm(ModelForm):
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'fecha_inicio': forms.DateInput(
-                format='%Y-%m-%d', 
+                format='%Y-%m-%d',
                 attrs={'class': 'form-control', 'type': 'date'}
             ),
             'fecha_fin': forms.DateInput(
-                format='%Y-%m-%d', 
+                format='%Y-%m-%d',
                 attrs={'class': 'form-control', 'type': 'date'}
             ),
-            'estado': forms.Select(choices=Temporada.ESTADOS,attrs={'class': 'form-select'} 
-            ),
+            'estado': forms.Select(choices=Temporada.ESTADOS, attrs={'class': 'form-select'}
+                                   ),
         }

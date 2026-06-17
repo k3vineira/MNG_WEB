@@ -1,3 +1,7 @@
+from comunidad.models import Calificacion, Blog, PQRS
+from reservas.models import Reserva, Cancelacion
+from catalogo.models import Categoria, Actividades, Paquete, Temporada, Tarifa
+from usuarios.models import Usuario, Cliente, GuiaTuristico
 import os
 import django
 import random
@@ -8,10 +12,6 @@ from decimal import Decimal
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
-from usuarios.models import Usuario, Cliente, GuiaTuristico
-from catalogo.models import Categoria, Actividades, Paquete, Temporada, Tarifa
-from reservas.models import Reserva, Cancelacion
-from comunidad.models import Calificacion, Blog, PQRS
 
 def poblar_base_datos():
     print("Iniciando el poblado de la base de datos...")
@@ -31,13 +31,19 @@ def poblar_base_datos():
     Usuario.objects.exclude(is_superuser=True).delete()
 
     # Listas de datos falsos
-    nombres = ['Carlos', 'Ana', 'Luis', 'Marta', 'Pedro', 'Sofia', 'Jorge', 'Lucia', 'Diego', 'Elena']
-    apellidos = ['Gomez', 'Perez', 'Rodriguez', 'Lopez', 'Martinez', 'Garcia', 'Sanchez', 'Diaz', 'Torres', 'Ramirez']
-    ciudades = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena', 'Cúcuta', 'Bucaramanga', 'Pereira', 'Santa Marta', 'Manizales']
-    paises = ['Colombia', 'México', 'Argentina', 'Chile', 'Perú', 'España', 'Ecuador', 'Panamá', 'Costa Rica', 'Brasil']
-    categorias_nombres = ['Aventura', 'Ecoturismo', 'Cultural', 'Playa', 'Montaña', 'Gastronómico', 'Histórico', 'Relajación', 'Deportivo', 'Familiar']
-    actividades_nombres = ['Senderismo', 'Buceo', 'Museos', 'Escalada', 'Ciclismo', 'Cata de Vinos', 'Surf', 'Avistamiento de Aves', 'Rappel', 'Canotaje']
-    
+    nombres = ['Carlos', 'Ana', 'Luis', 'Marta', 'Pedro',
+               'Sofia', 'Jorge', 'Lucia', 'Diego', 'Elena']
+    apellidos = ['Gomez', 'Perez', 'Rodriguez', 'Lopez',
+                 'Martinez', 'Garcia', 'Sanchez', 'Diaz', 'Torres', 'Ramirez']
+    ciudades = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena',
+                'Cúcuta', 'Bucaramanga', 'Pereira', 'Santa Marta', 'Manizales']
+    paises = ['Colombia', 'México', 'Argentina', 'Chile', 'Perú',
+              'España', 'Ecuador', 'Panamá', 'Costa Rica', 'Brasil']
+    categorias_nombres = ['Aventura', 'Ecoturismo', 'Cultural', 'Playa', 'Montaña',
+                          'Gastronómico', 'Histórico', 'Relajación', 'Deportivo', 'Familiar']
+    actividades_nombres = ['Senderismo', 'Buceo', 'Museos', 'Escalada', 'Ciclismo',
+                           'Cata de Vinos', 'Surf', 'Avistamiento de Aves', 'Rappel', 'Canotaje']
+
     # Nombres de temporadas reales y turísticas para Mongua
     nombres_temporadas = [
         "Vacaciones de Mitad de Año",
@@ -62,7 +68,8 @@ def poblar_base_datos():
         (date(2026, 10, 16), date(2026, 10, 31)),  # Ecoturismo de Fin de Otoño
         (date(2026, 11, 1),  date(2026, 11, 16)),  # Puentes de Noviembre
         (date(2026, 11, 17), date(2026, 11, 30)),  # Pre-Navidad Turística
-        (date(2026, 12, 1),  date(2026, 12, 15)),  # Inicio de Temporada Decembrina
+        # Inicio de Temporada Decembrina
+        (date(2026, 12, 1),  date(2026, 12, 15)),
         (date(2026, 12, 16), date(2026, 12, 31)),  # Fiestas de Fin de Año
     ]
 
@@ -97,7 +104,7 @@ def poblar_base_datos():
 
     clientes_creados = []
     guias_creados = []
-    
+
     # Crear 10 Clientes
     for i in range(10):
         username = f"cliente_{i}_{random.randint(1000, 9999)}"
@@ -109,10 +116,11 @@ def poblar_base_datos():
             email=f"{username}@ejemplo.com",
             rol=Usuario.Roles.CLIENTE,
             tipo_documento=Usuario.TipoDocumento.CC,
-            numero_documento=f"1000{i}{random.randint(100,999)}",
+            numero_documento=f"1000{i}{random.randint(100, 999)}",
             residencia=f"{ciudades[i]}, {paises[i]}"
         )
-        c = Cliente.objects.create(usuario=u, pais=paises[i], ciudad=ciudades[i])
+        c = Cliente.objects.create(
+            usuario=u, pais=paises[i], ciudad=ciudades[i])
         clientes_creados.append(c)
 
     # Crear 10 Guías
@@ -126,17 +134,17 @@ def poblar_base_datos():
             email=f"{username}@ejemplo.com",
             rol=Usuario.Roles.GUIA,
             tipo_documento=Usuario.TipoDocumento.CC,
-            numero_documento=f"2000{i}{random.randint(100,999)}",
+            numero_documento=f"2000{i}{random.randint(100, 999)}",
             residencia=f"{ciudades[i]}, {paises[i]}"
         )
         g = GuiaTuristico.objects.create(
-            usuario=u, 
+            usuario=u,
             licencia_turismo=f"LIC-{random.randint(10000, 99999)}",
             experiencia_anos=random.randint(1, 15),
             biografia="Guía profesional con amplia experiencia."
         )
         guias_creados.append(g)
-        
+
         username = f"guia_{i}_{random.randint(1000, 9999)}"
         u = Usuario.objects.create_user(
             username=username,
@@ -146,13 +154,14 @@ def poblar_base_datos():
             email=f"{username}@ejemplo.com",
             rol=Usuario.Roles.GUIA,
             tipo_documento=Usuario.TipoDocumento.CC,
-            numero_documento=f"2000{i}{random.randint(100,999)}",
+            numero_documento=f"2000{i}{random.randint(100, 999)}",
             residencia=f"{ciudades[i]}, {paises[i]}"
         )
         g = GuiaTuristico.objects.create(
-            usuario=u, 
+            usuario=u,
             licencia_turismo=f"LIC-{random.randint(10000, 99999)}",
-            experiencia_anos=random.randint(1, 15), # Cambiado a experience_anos o experiencia_anos según tu modelo original
+            # Cambiado a experience_anos o experiencia_anos según tu modelo original
+            experiencia_anos=random.randint(1, 15),
             biografia="Guía profesional con amplia experiencia."
         )
         guias_creados.append(g)
@@ -217,7 +226,7 @@ def poblar_base_datos():
         tarifa_especial = Tarifa.objects.create(
             paquete=paquetes_creados[i],
             temporada=temporadas_creadas[i],
-            precio_adulto=Decimal(str(random.randint(350000, 600000))), 
+            precio_adulto=Decimal(str(random.randint(350000, 600000))),
             precio_menor=Decimal(str(random.randint(200000, 300000))),
             estado='activa'
         )
@@ -225,8 +234,8 @@ def poblar_base_datos():
 
         tarifa_base = Tarifa.objects.create(
             paquete=paquetes_creados[i],
-            temporada=temporada_estandar, 
-            precio_adulto=Decimal(str(random.randint(150000, 300000))), 
+            temporada=temporada_estandar,
+            precio_adulto=Decimal(str(random.randint(150000, 300000))),
             precio_menor=Decimal(str(random.randint(80000, 140000))),
             estado='activa'
         )
@@ -238,18 +247,20 @@ def poblar_base_datos():
     combinaciones_unicas = set()
 
     for tarifa_asociada in tarifas_creadas:
-        fecha_reserva = tarifa_asociada.temporada.fecha_inicio + timedelta(days=2)
+        fecha_reserva = tarifa_asociada.temporada.fecha_inicio + \
+            timedelta(days=2)
         usuario_aleatorio = random.choice(clientes_creados).usuario
         paquete_asociado = tarifa_asociada.paquete
 
-        identificador = (usuario_aleatorio.id, paquete_asociado.id, fecha_reserva)
+        identificador = (usuario_aleatorio.id,
+                         paquete_asociado.id, fecha_reserva)
 
         if identificador in combinaciones_unicas:
             continue
-            
+
         combinaciones_unicas.add(identificador)
         estado = random.choice(estados_reserva)
-        
+
         r = Reserva.objects.create(
             usuario=usuario_aleatorio,
             paquete=paquete_asociado,
@@ -268,7 +279,7 @@ def poblar_base_datos():
             )
 
     print("5. Creando Comunidad (Calificaciones, Blog y PQRS)...")
-    
+
     # 5.1 Creación de los 4 Blogs específicos solicitados
     blogs_reales = [
         {
@@ -326,6 +337,7 @@ def poblar_base_datos():
             )
 
     print("¡Poblado de base de datos finalizado con éxito! Se han creado al menos 10 registros de cada entidad y tus 4 blogs cerrados.")
+
 
 if __name__ == '__main__':
     poblar_base_datos()
