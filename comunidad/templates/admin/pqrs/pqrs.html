@@ -2,8 +2,7 @@
 {% load static %}
 
 {% block extra_head %}
-<!-- 1. El CSS se carga inmediatamente antes del HTML para evitar saltos visuales -->
-<link rel="stylesheet" href="{% static 'css/datatable.css' %}">
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -100,7 +99,10 @@
     {% include 'partials/pqrs_modals.html' %}
 {% endfor %}
 {% endblock %}
+
 {% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="{% static 'js/datatables.js' %}"></script>
 <script src="{% static 'js/tconf/tconf-tablaPQRS.js' %}"></script>
 {% endblock %}
