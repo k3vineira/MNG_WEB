@@ -1,5 +1,6 @@
 {% extends "private/base_private.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block titulo %}Mis Pagos | Monagua{% endblock %}
 
@@ -26,7 +27,7 @@
                             <td><strong>#MON-{{ pago.id }}</strong></td>
                             <td>{{ pago.tour.nombre }}</td>
                             <td>{{ pago.fecha_reserva|date:"d/m/Y" }}</td>
-                            <td>${{ pago.total_pagado }}</td>
+                            <td>COP ${{ pago.total_pagado|floatformat:0|intcomma }}</td>
                             <td>
                                 <span class="status-badge status-{{ pago.estado|lower }}">
                                     {{ pago.get_estado_display }}

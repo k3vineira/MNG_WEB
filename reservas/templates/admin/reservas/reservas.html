@@ -1,4 +1,5 @@
 {% extends 'admin/base-admin.html' %}
+{% load humanize %}
 
 {% block content %}
 <div class="container py-5">
@@ -68,7 +69,7 @@
                         <td class="ps-5 fw-bold text-dark py-3">{{ reserva.usuario }}</td>
                         <td class="py-3">{{ reserva.paquete.nombre }}</td>
                         <td class="py-3">{{ reserva.fecha }}</td>
-                        <td class="text-success fw-bold py-3">${{ reserva.monto_total }}</td>
+                        <td class="text-success fw-bold py-3">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</td>
                          <td class="py-3">
                         {% if reserva.estado == 'pendiente' %}
                          <span class="badge text-white px-4 py-2 fs-6 rounded-pill" style="background-color: #406d46;">Pendiente</span>

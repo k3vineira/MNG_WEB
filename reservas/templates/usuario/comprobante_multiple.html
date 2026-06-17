@@ -1,5 +1,6 @@
 {% extends "private/base_private.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block titulo %}Comprobante Múltiple{% endblock %}
 
@@ -26,7 +27,7 @@
                 <div class="small text-muted">Fecha: {{ r.fecha|date:'d M Y' }} · Hora: {{ r.paquete.hora_encuentro }}</div>
               </div>
               <div class="text-end">
-                <div class="fw-bold text-success">${{ r.monto_total }}</div>
+                 <div class="fw-bold text-success">COP ${{ r.monto_total|floatformat:0|intcomma }}</div>
               </div>
             </div>
           </div>
@@ -35,7 +36,7 @@
 
       <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
         <div class="small text-muted">Total</div>
-        <div class="fw-bold text-success h5">${{ total }}</div>
+        <div class="fw-bold text-success h5">COP ${{ total|floatformat:0|intcomma }}</div>
       </div>
 
       <div class="mt-4 d-flex justify-content-between">

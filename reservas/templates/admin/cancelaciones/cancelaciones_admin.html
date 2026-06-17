@@ -1,4 +1,5 @@
 {% extends 'admin/base-admin.html' %}
+{% load humanize %}
 
 {% block content %}
 <div class="container py-5">
@@ -65,7 +66,7 @@
                     <td class="ps-4 py-4 fw-bold text-dark">{{ cancelacion.reserva.usuario.username }}</td>
                     <td class="py-4 text-secondary">{{ cancelacion.reserva.paquete.nombre }}</td>
                     <td class="py-4 text-muted fst-italic">"{{ cancelacion.motivo|truncatechars:30 }}"</td>
-                    <td class="py-4 text-center fw-bold text-danger">${{ cancelacion.penalidad }}</td>
+                    <td class="py-4 text-center fw-bold text-danger">COP ${{ cancelacion.penalidad|floatformat:0|intcomma }}</td>
                     
                   <td class="text-center py-4">
     <span class="badge rounded-pill px-4 py-2 fs-6

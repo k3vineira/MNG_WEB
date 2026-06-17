@@ -54,21 +54,21 @@
     <!-- Estadísticas -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-4">
-            <div class="stat-card bg-warning bg-opacity-10 shadow-sm">
+            <div class="stat-card bg-warning bg-opacity-10 shadow-sm border border-warning border-opacity-10">
                 <div class="stat-icon text-warning"><i class="bi bi-hourglass-split"></i></div>
                 <div class="stat-number text-warning">{{ total_pendientes }}</div>
                 <div class="stat-label text-warning">Pendientes</div>
             </div>
         </div>
         <div class="col-6 col-md-4">
-            <div class="stat-card bg-success bg-opacity-10 shadow-sm">
+            <div class="stat-card bg-success bg-opacity-10 shadow-sm border border-success border-opacity-10">
                 <div class="stat-icon text-success"><i class="bi bi-check-circle-fill"></i></div>
-                <div class="stat-number text-success">${{ total_aprobados|floatformat:0|intcomma }}</div>
+                <div class="stat-number text-success">COP ${{ total_aprobados|floatformat:0|intcomma }}</div>
                 <div class="stat-label text-success">Aprobados</div>
             </div>
         </div>
         <div class="col-12 col-md-4">
-            <div class="stat-card bg-danger bg-opacity-10 shadow-sm">
+            <div class="stat-card bg-danger bg-opacity-10 shadow-sm border border-danger border-opacity-10">
                 <div class="stat-icon text-danger"><i class="bi bi-x-circle-fill"></i></div>
                 <div class="stat-number text-danger">{{ total_rechazados }}</div>
                 <div class="stat-label text-danger">Rechazados</div>
@@ -125,7 +125,7 @@
                             <td class="py-3">{{ c.referencia|default:"—" }}</td>
                             <td class="py-3">{{ c.banco_origen|default:"—" }}</td>
                             <td class="py-3 fw-bold text-success">
-                                {% if c.monto %}${{ c.monto|floatformat:0|intcomma }}{% else %}—{% endif %}
+                                {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}{% else %}—{% endif %}
                             </td>
                             <td class="py-3 text-muted">{{ c.fecha_envio|date:"d/m/Y H:i" }}</td>
                             <td class="py-3">

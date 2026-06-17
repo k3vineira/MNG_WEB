@@ -1,4 +1,5 @@
 {% extends 'admin/base-admin.html' %}
+{% load humanize %}
 
 {% block content %}
 <div class="container py-5">
@@ -69,8 +70,8 @@
                          {{ tarifa.temporada.nombre }}
                         </span>
                         </td>
-                        <td class="fw-bold text-success py-3">${{ tarifa.precio_adulto }}</td>
-                        <td class="fw-bold text-success py-3">${{ tarifa.precio_menor }}</td>
+                        <td class="fw-bold text-success py-3">COP ${{ tarifa.precio_adulto|floatformat:0|intcomma }}</td>
+                        <td class="fw-bold text-success py-3">COP ${{ tarifa.precio_menor|floatformat:0|intcomma }}</td>
                            <td class="text-center py-3">
                             <span class="badge rounded-pill px-4 py-2 fs-6 
                              {% if tarifa.estado == 'activa' %}bg-success text-white

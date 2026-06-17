@@ -98,8 +98,35 @@ def index_turista(request):
     if request.user.is_staff:
         return redirect('dashboard')
 
-    return render(request, 'partials/panel_rapido.html', {
-        'titulo': 'Bienvenido a Monagua'
+    from reservas.models import Reserva
+    from pagos.models import ComprobantePago
+    from comunidad.models import Comentario, PQRS
+    from django.db.models import Sum
+
+    # Calculate stats for the dashboard
+    total_invertido = ComprobantePago.objects.filter(usuario=request.user, estado='aprobado').aggregate(Sum('monto'))['monto__sum'] or 0
+    total_reservas = Reserva.objects.filter(usuario=request.user).count()
+    total_comentarios = Comentario.objects.filter(usuario=request.user).count()
+    total_pqrs = PQRS.objects.filter(cliente__usuario=request.user).count()
+
+    reservas_confirmadas = Reserva.objects.filter(usuario=request.user, estado='confirmada').count()
+    reservas_pendientes = Reserva.objects.filter(usuario=request.user, estado='pendiente').count()
+    reservas_canceladas = Reserva.objects.filter(usuario=request.user, estado='cancelada').count()
+
+    tasa_confirmacion = int(reservas_confirmadas / total_reservas * 100) if total_reservas > 0 else 0
+    ultimas_reservas = Reserva.objects.filter(usuario=request.user).select_related('paquete').order_by('-fecha_registro')[:5]
+
+    return render(request, 'private/dashboard_turista.html', {
+        'titulo': 'Bienvenido a Monagua',
+        'total_invertido': total_invertido,
+        'total_reservas': total_reservas,
+        'total_comentarios': total_comentarios,
+        'total_pqrs': total_pqrs,
+        'reservas_confirmadas': reservas_confirmadas,
+        'reservas_pendientes': reservas_pendientes,
+        'reservas_canceladas': reservas_canceladas,
+        'tasa_confirmacion': tasa_confirmacion,
+        'ultimas_reservas': ultimas_reservas,
     })
 
 
@@ -498,6 +525,242 @@ def mis_resenas_view(request):
 # 8. MÓDULO DE MÉTRICAS Y ESTADÍSTICAS
 
 
+def get_estadisticas_context(user, is_admin=False):
+    import datetime
+    from django.db.models import Sum, Count, Avg, Max
+    from django.utils import timezone
+    from reservas.models import Reserva
+    from pagos.models import ComprobantePago
+    from comunidad.models import Comentario, PQRS
+
+    # Base querysets
+    if is_admin:
+        reservas = Reserva.objects.all()
+        pagos = ComprobantePago.objects.all()
+        comentarios = Comentario.objects.all()
+        pqrs_qs = PQRS.objects.all()
+    else:
+        reservas = Reserva.objects.filter(usuario=user)
+        pagos = ComprobantePago.objects.filter(usuario=user)
+        comentarios = Comentario.objects.filter(usuario=user)
+        pqrs_qs = PQRS.objects.filter(cliente__usuario=user)
+
+    # Basic KPI metrics
+    total_invertido = pagos.filter(estado='aprobado').aggregate(Sum('monto'))['monto__sum'] or 0
+    total_reservas = reservas.count()
+    promedio_por_reserva = total_invertido / total_reservas if total_reservas > 0 else 0
+    destinos_total = reservas.filter(estado='confirmada').values('paquete').distinct().count()
+    
+    reservas_confirmadas = reservas.filter(estado='confirmada').count()
+    reservas_pendientes = reservas.filter(estado='pendiente').count()
+    reservas_canceladas = reservas.filter(estado='cancelada').count()
+    reservas_completadas = 0
+    
+    # Calculate completed vs confirmed based on date
+    today = datetime.date.today()
+    reservas_completadas = reservas.filter(estado='confirmada', fecha__lt=today).count()
+    reservas_confirmadas = reservas.filter(estado='confirmada', fecha__gte=today).count()
+
+    tasa_exito = int(reservas_confirmadas / total_reservas * 100) if total_reservas > 0 else 0
+    
+    pqrs_abiertas = pqrs_qs.filter(estado='abierto').count()
+    pqrs_en_gestion = pqrs_qs.filter(estado='en_proceso').count()
+    pqrs_cerradas = pqrs_qs.filter(estado='cerrado').count()
+    pqrs_total = pqrs_abiertas + pqrs_en_gestion + pqrs_cerradas
+    pqrs_tasa_resolucion = int(pqrs_cerradas / pqrs_total * 100) if pqrs_total > 0 else 0
+    
+    total_resenas = comentarios.count()
+    dias_como_miembro = (timezone.now() - user.date_joined).days
+    
+    # Nivel de viajero
+    if total_resenas >= 10:
+        nivel_viajero = 'Expedicionista'
+        progreso_nivel = 100
+    elif total_resenas >= 5:
+        nivel_viajero = 'Aventurero'
+        progreso_nivel = int((total_resenas - 5) / 5 * 100)
+    elif total_resenas >= 1:
+        nivel_viajero = 'Explorador'
+        progreso_nivel = int((total_resenas - 1) / 4 * 100)
+    else:
+        nivel_viajero = 'Viajero Novel'
+        progreso_nivel = 0
+
+    # Monthly data for current year
+    current_year = timezone.now().year
+    meses_nombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+    meses_labels = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+    meses_datos = [0] * 12
+    meses_inversion = [0] * 12
+    
+    # Group reservations and payments by month
+    for r in reservas.filter(fecha__year=current_year):
+        m = r.fecha.month - 1
+        meses_datos[m] += 1
+        
+    for p in pagos.filter(estado='aprobado', fecha_envio__year=current_year):
+        m = p.fecha_envio.month - 1
+        meses_inversion[m] += float(p.monto or 0)
+        
+    reporte_mensual = []
+    for m in range(12):
+        if meses_datos[m] > 0 or meses_inversion[m] > 0:
+            mes_res = reservas.filter(fecha__year=current_year, fecha__month=m+1)
+            total_creadas = mes_res.count()
+            total_conf = mes_res.filter(estado='confirmada').count()
+            total_canc = mes_res.filter(estado='cancelada').count()
+            total_comp = mes_res.filter(estado='confirmada', fecha__lt=today).count()
+            porcentaje_exito = int(total_conf / total_creadas * 100) if total_creadas > 0 else 0
+            
+            reporte_mensual.append({
+                'mes_nombre': meses_nombres[m],
+                'anio': current_year,
+                'total_creadas': total_creadas,
+                'total_confirmadas': total_conf,
+                'total_canceladas': total_canc,
+                'total_completadas': total_comp,
+                'porcentaje_exito': porcentaje_exito,
+                'inversion': meses_inversion[m]
+            })
+
+    # Annual data (last 5 years)
+    reporte_anual = []
+    anios_labels = []
+    anios_datos = []
+    anios_reservas = []
+    anios_canceladas = []
+    
+    start_year = current_year - 4
+    for y in range(start_year, current_year + 1):
+        y_reservas = reservas.filter(fecha__year=y)
+        y_pagos = pagos.filter(estado='aprobado', fecha_envio__year=y)
+        
+        y_total_res = y_reservas.count()
+        y_total_conf = y_reservas.filter(estado='confirmada').count()
+        y_total_canc = y_reservas.filter(estado='cancelada').count()
+        y_total_comp = y_reservas.filter(estado='confirmada', fecha__lt=today).count()
+        y_inversion = float(y_pagos.aggregate(Sum('monto'))['monto__sum'] or 0)
+        y_ticket = y_inversion / y_total_res if y_total_res > 0 else 0
+        y_porcentaje_exito = int(y_total_conf / y_total_res * 100) if y_total_res > 0 else 0
+        
+        anios_labels.append(str(y))
+        anios_datos.append(y_inversion)
+        anios_reservas.append(y_total_res)
+        anios_canceladas.append(y_total_canc)
+        
+        if y_total_res > 0 or y_inversion > 0:
+            reporte_anual.append({
+                'anio': y,
+                'total_reservas': y_total_res,
+                'total_confirmadas': y_total_conf,
+                'total_canceladas': y_total_canc,
+                'total_completadas': y_total_comp,
+                'ticket_promedio': y_ticket,
+                'porcentaje_exito': y_porcentaje_exito,
+                'inversion': y_inversion
+            })
+
+    # Days of the week preference
+    dias_datos = [0] * 7
+    for r in reservas:
+        dias_datos[r.fecha.weekday()] += 1
+
+    # Top destinations
+    destinos_top_labels = []
+    destinos_top_datos = []
+    destinos_frecuentes = []
+    
+    top_packages = reservas.values('paquete', 'paquete__nombre').annotate(
+        total_res=Count('id'),
+        inversion=Sum('monto_total'),
+        latest_date=Max('fecha')
+    ).order_by('-total_res')[:5]
+    
+    for tp in top_packages:
+        destinos_top_labels.append(tp['paquete__nombre'] or "Desconocido")
+        destinos_top_datos.append(tp['total_res'])
+        destinos_frecuentes.append({
+            'nombre': tp['paquete__nombre'] or "Desconocido",
+            'total_reservas': tp['total_res'],
+            'inversion_total': tp['inversion'] or 0,
+            'ultima_visita': tp['latest_date']
+        })
+
+    # Payment history
+    historial_pagos = []
+    for p in pagos.select_related('reserva', 'reserva__paquete').order_by('-fecha_envio')[:10]:
+        historial_pagos.append({
+            'codigo': f"#{p.pk}" if p.pk else "#—",
+            'reserva_nombre': p.reserva.paquete.nombre if (p.reserva and p.reserva.paquete) else "Reserva Múltiple",
+            'metodo': p.banco_origen,
+            'estado': p.estado,
+            'fecha': p.fecha_envio,
+            'monto': p.monto or 0
+        })
+
+    # Reviews
+    mis_resenas = []
+    for c in comentarios.select_related('paquete').order_by('-fecha_creacion')[:10]:
+        mis_resenas.append({
+            'destino': c.paquete.nombre if c.paquete else "General",
+            'calificacion': c.valoracion,
+            'comentario': c.mensaje,
+            'publicada': c.visible,
+            'fecha': c.fecha_creacion
+        })
+
+    # Radar profile data (0-100 scale)
+    radar_datos = [
+        min(total_reservas * 10, 100),
+        min(int(total_invertido / 500000), 100),
+        min(dias_como_miembro // 30 * 5, 100),
+        min(total_resenas * 15, 100),
+        100 if pqrs_total == 0 else min(int(pqrs_cerradas / pqrs_total * 100), 100),
+        min(destinos_total * 20, 100)
+    ]
+    
+    # Environmental impact
+    arboles_conservados = max(1, total_reservas * 2)
+
+    return {
+        'total_invertido': total_invertido,
+        'total_reservas': total_reservas,
+        'promedio_por_reserva': promedio_por_reserva,
+        'destinos_total': destinos_total,
+        'reservas_confirmadas': reservas_confirmadas,
+        'reservas_pendientes': reservas_pendientes,
+        'reservas_canceladas': reservas_canceladas,
+        'reservas_completadas': reservas_completadas,
+        'tasa_exito': tasa_exito,
+        'pqrs_abiertas': pqrs_abiertas,
+        'pqrs_en_gestion': pqrs_en_gestion,
+        'pqrs_cerradas': pqrs_cerradas,
+        'pqrs_total': pqrs_total,
+        'pqrs_tasa_resolucion': pqrs_tasa_resolucion,
+        'total_resenas': total_resenas,
+        'dias_como_miembro': dias_como_miembro,
+        'nivel_viajero': nivel_viajero,
+        'progreso_nivel': progreso_nivel,
+        'meses_labels': meses_labels,
+        'meses_datos': meses_datos,
+        'meses_inversion': meses_inversion,
+        'anios_labels': anios_labels,
+        'anios_datos': anios_datos,
+        'anios_reservas': anios_reservas,
+        'anios_canceladas': anios_canceladas,
+        'dias_datos': dias_datos,
+        'destinos_top_labels': destinos_top_labels,
+        'destinos_top_datos': destinos_top_datos,
+        'destinos_frecuentes': destinos_frecuentes,
+        'historial_pagos': historial_pagos,
+        'mis_resenas': mis_resenas,
+        'radar_datos': radar_datos,
+        'arboles_conservados': arboles_conservados,
+        'reporte_mensual': reporte_mensual,
+        'reporte_anual': reporte_anual,
+    }
+
+
 @user_passes_test(lambda u: u.is_staff)
 def estadisticas_admin(request):
     """
@@ -505,16 +768,14 @@ def estadisticas_admin(request):
     Calcula consolidados de reservas, auditoría de pagos, distribución de
     calificaciones y el feed de actividad reciente del sistema.
     """
-    total_usuarios = Usuario.objects.count()
-    promedio_calificacion = Comentario.objects.aggregate(Avg('valoracion'))[
-        'valoracion__avg']
-
-    return render(request, 'admin/estadisticas_admin.html', {
+    context = get_estadisticas_context(request.user, is_admin=True)
+    context.update({
         'titulo': 'Métricas Globales — Panel de Administración',
         'nivel_viajero': 'Director de Expediciones',
-        'total_usuarios': total_usuarios,
-        'promedio_calificacion': promedio_calificacion or 0
+        'admin_mode': True,
+        'analitica_titulo': 'Consolidado General de Negocio',
     })
+    return render(request, 'admin/estadisticas_admin.html', context)
 
 
 @login_required
@@ -524,19 +785,10 @@ def estadisticas_turista(request):
     Muestra la inversión total del usuario, el estado de sus reservas, sus PQRS
     y calcula dinámicamente su nivel de viajero según sus experiencias completadas.
     """
-    comentarios_count = Comentario.objects.filter(usuario=request.user).count()
-
-    if comentarios_count >= 10:
-        nivel_viajero = 'Expedicionista'
-    elif comentarios_count >= 5:
-        nivel_viajero = 'Aventurero'
-    elif comentarios_count >= 1:
-        nivel_viajero = 'Explorador'
-    else:
-        nivel_viajero = 'Viajero Novel'
-
-    return render(request, 'private/estadisticas.html', {
+    context = get_estadisticas_context(request.user, is_admin=False)
+    context.update({
         'titulo': 'Mis Estadísticas de Viaje — Monagua',
-        'nivel_viajero': nivel_viajero,
-        'comentarios_count': comentarios_count
+        'admin_mode': False,
+        'analitica_titulo': 'Mis Estadísticas de Viaje',
     })
+    return render(request, 'private/estadisticas.html', context)

@@ -30,4 +30,7 @@ urlpatterns = [
          name='mis_cancelaciones_usuario'),
     path('admin/cancelaciones/', views.administrar_cancelaciones,
          name='administrar_cancelaciones'),
+    path('carrito/', views.carrito_view, name='carrito'),
+    path('comprobante/<int:reserva_id>/', views.comprobante_reserva_html, name='comprobante_reserva'),
+    path('comprobante-multiple/', views.comprobante_multiple, name='comprobante_multiple'),
 ]

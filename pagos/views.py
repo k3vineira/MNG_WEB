@@ -27,32 +27,29 @@ def enviar_comprobante(request):
         imagen = request.FILES.get('imagen')
         referencia = request.POST.get('referencia', '').strip()
         banco = request.POST.get('banco_origen', '').strip()
-        monto_str = request.POST.get('monto', '').strip()
         descripcion = request.POST.get('descripcion', '').strip()
         reserva_id = request.POST.get('reserva')
 
-        if not imagen:
+        if not imagen or not referencia or not banco or not reserva_id:
             messages.error(
-                request, 'Debes adjuntar la imagen del comprobante.')
+                request, 'Todos los campos obligatorios (*) deben ser completados.')
             return redirect('enviar_comprobante')
 
-        monto = None
-        if monto_str:
-            try:
-                monto = float(monto_str.replace(',', '.'))
-            except ValueError:
-                messages.error(request, 'El monto ingresado no es válido.')
-                return redirect('enviar_comprobante')
-
         reserva = None
-        if reserva_id:
-            try:
-                reserva = Reserva.objects.get(
-                    id=reserva_id, usuario=request.user)
-            except Reserva.DoesNotExist:
-                messages.error(
-                    request, 'La reserva seleccionada no es válida.')
-                return redirect('enviar_comprobante')
+        try:
+            reserva = Reserva.objects.get(
+                id=reserva_id, usuario=request.user)
+        except Reserva.DoesNotExist:
+            messages.error(
+                request, 'La reserva seleccionada no es válida.')
+            return redirect('enviar_comprobante')
+
+        # Determinar el monto fijo de la reserva o multa
+        if reserva.estado == 'cancelada':
+            cancellation = Cancelacion.objects.filter(reserva=reserva, estado='aceptada').first()
+            monto = cancellation.penalidad if cancellation else 0
+        else:
+            monto = reserva.monto_total
 
         ComprobantePago.objects.create(
             usuario=request.user,
