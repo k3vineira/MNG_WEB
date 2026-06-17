@@ -4,19 +4,20 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login
 from django.contrib import messages
-from django.db.models import Count, Avg, Sum
-from django.utils import timezone
+from django.db.models import Avg
 from .models import Usuario, Cliente, GuiaTuristico
 from comunidad.models import Comentario
 from .forms import RegistroForm, PerfilUsuarioForm
 
 # 1. VISTAS PÚBLICAS / ESTÁTICAS
 
+
 def terminos_view(request):
     """Renderiza la plantilla de términos y condiciones."""
     return render(request, 'public/terminos.html', {
         'titulo': 'Términos y Condiciones — Monagua'
     })
+
 
 def nosotros_view(request):
     """Renderiza la plantilla de información corporativa."""
@@ -25,6 +26,7 @@ def nosotros_view(request):
     })
 
 # 2. VISTAS DE AUTENTICACIÓN
+
 
 def registro_view(request):
     """Renderiza y gestiona la plantilla de registro de usuarios."""
@@ -36,10 +38,12 @@ def registro_view(request):
             user.save()
             Cliente.objects.create(usuario=user)
             login(request, user)
-            messages.success(request, 'Registro exitoso. ¡Bienvenido a Monagua!')
+            messages.success(
+                request, 'Registro exitoso. ¡Bienvenido a Monagua!')
             return redirect('inicio')
         else:
-            messages.error(request, 'Error en el registro. Verifique los datos.')
+            messages.error(
+                request, 'Error en el registro. Verifique los datos.')
     else:
         form = RegistroForm()
 
@@ -47,6 +51,7 @@ def registro_view(request):
         'titulo': 'Crear Cuenta en Monagua',
         'form': form
     })
+
 
 class UsuarioLoginView(LoginView):
     """Vista de inicio de sesión basada en clases para mayor robustez."""
@@ -57,19 +62,22 @@ class UsuarioLoginView(LoginView):
     def form_valid(self, form):
         """Añade un mensaje de éxito al iniciar sesión correctamente."""
         user = form.get_user()
-        messages.success(self.request, f'¡Bienvenido nuevamente, {user.first_name or user.username}!')
+        messages.success(
+            self.request, f'¡Bienvenido nuevamente, {user.first_name or user.username}!')
         return super().form_valid(form)
 
     def get_success_url(self):
         # 1. Si existe un parámetro '?next=', respetarlo (ej: venía de reservar)
-        next_url = self.request.GET.get('next') or self.request.POST.get('next')
+        next_url = self.request.GET.get(
+            'next') or self.request.POST.get('next')
         if next_url:
             return next_url
-        
+
         # 2. Si no, redirigir según el rol del usuario
         if self.request.user.is_staff:
             return reverse_lazy('dashboard')
         return reverse_lazy('index_turista')
+
 
 class UsuarioLogoutView(LogoutView):
     """Gestiona el cierre de sesión y redirige al inicio."""
@@ -77,7 +85,8 @@ class UsuarioLogoutView(LogoutView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            messages.info(request, "Has cerrado sesión correctamente. ¡Vuelve pronto!")
+            messages.info(
+                request, "Has cerrado sesión correctamente. ¡Vuelve pronto!")
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -88,10 +97,11 @@ def index_turista(request):
     """Renderiza el panel rápido exclusivo para clientes/turistas."""
     if request.user.is_staff:
         return redirect('dashboard')
-        
+
     return render(request, 'partials/panel_rapido.html', {
         'titulo': 'Bienvenido a Monagua'
     })
+
 
 @user_passes_test(lambda u: u.is_staff)
 def dashboard_admin(request):
@@ -103,7 +113,7 @@ def dashboard_admin(request):
         total_reservas = 0
 
     total_usuarios = Usuario.objects.count()
-    
+
     return render(request, 'admin/index-admin.html', {
         'titulo': 'Tablero de Rendimiento — Administración',
         'total_usuarios': total_usuarios,
@@ -112,6 +122,7 @@ def dashboard_admin(request):
 
 # 4. GESTIÓN DE PERFILES Y USUARIOS
 
+
 @login_required
 def perfil_detalles(request):
     """Renderiza dinámicamente el perfil correspondiente según el rol (Admin o Turista)."""
@@ -119,10 +130,12 @@ def perfil_detalles(request):
         if 'imagen_perfil' in request.FILES and not request.POST.get('editar_perfil'):
             request.user.imagen_perfil = request.FILES['imagen_perfil']
             request.user.save()
-            messages.success(request, 'Foto de perfil actualizada correctamente.')
+            messages.success(
+                request, 'Foto de perfil actualizada correctamente.')
             return redirect('perfil_detalles')
-            
-        form = PerfilUsuarioForm(request.POST, request.FILES, instance=request.user)
+
+        form = PerfilUsuarioForm(
+            request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Perfil actualizado correctamente.')
@@ -131,11 +144,12 @@ def perfil_detalles(request):
         form = PerfilUsuarioForm(instance=request.user)
 
     template_name = 'admin/perfil_admin.html' if request.user.is_staff else 'private/perfil_turista.html'
-    
+
     return render(request, template_name, {
         'titulo': 'Mi Perfil — Monagua',
         'form': form
     })
+
 
 @user_passes_test(lambda u: u.is_staff)
 def gestion_usuarios(request, id=None):
@@ -160,6 +174,7 @@ def gestion_usuarios(request, id=None):
         'total_clientes': total_clientes,
     })
 
+
 @user_passes_test(lambda u: u.is_staff)
 def usuarios_guardar(request):
     """
@@ -179,12 +194,13 @@ def usuarios_guardar(request):
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
         user.email = request.POST.get('email', user.email)
-        user.tipo_documento = request.POST.get('tipo_documento', user.tipo_documento)
-        user.numero_documento = request.POST.get('numero_documento', user.numero_documento)
+        user.tipo_documento = request.POST.get(
+            'tipo_documento', user.tipo_documento)
+        user.numero_documento = request.POST.get(
+            'numero_documento', user.numero_documento)
         user.telefono = request.POST.get('telefono', user.telefono)
         user.residencia = request.POST.get('residencia', user.residencia)
         user.rol = rol
-        user.es_guia = (rol == Usuario.Roles.GUIA)
         if rol == Usuario.Roles.ADMIN:
             user.is_staff = True
         if 'imagen_perfil' in request.FILES:
@@ -198,7 +214,8 @@ def usuarios_guardar(request):
         username = request.POST.get('username', '').strip()
         email = request.POST.get('email', '').strip()
         if not username or not email:
-            messages.error(request, 'El nombre de usuario y el email son obligatorios.')
+            messages.error(
+                request, 'El nombre de usuario y el email son obligatorios.')
             return redirect('gestion_usuarios')
         if Usuario.objects.filter(username=username).exists():
             messages.error(request, f'El usuario «{username}» ya existe.')
@@ -214,11 +231,11 @@ def usuarios_guardar(request):
             telefono=request.POST.get('telefono', ''),
             residencia=request.POST.get('residencia', ''),
             rol=rol,
-            es_guia=(rol == Usuario.Roles.GUIA),
             is_staff=(rol == Usuario.Roles.ADMIN),
         )
         password = request.POST.get('password', '').strip()
-        user.set_password(password if password else request.POST.get('numero_documento', username))
+        user.set_password(password if password else request.POST.get(
+            'numero_documento', username))
         if 'imagen_perfil' in request.FILES:
             user.imagen_perfil = request.FILES['imagen_perfil']
         user.save()
@@ -231,15 +248,19 @@ def usuarios_guardar(request):
         perfil.save()
     elif rol == Usuario.Roles.GUIA:
         perfil, _ = GuiaTuristico.objects.get_or_create(usuario=user)
-        perfil.licencia_turismo = request.POST.get('licencia_turismo', perfil.licencia_turismo)
+        perfil.licencia_turismo = request.POST.get(
+            'licencia_turismo', perfil.licencia_turismo)
         experiencia = request.POST.get('experiencia_anos', '0')
-        perfil.experiencia_anos = int(experiencia) if experiencia.isdigit() else 0
+        perfil.experiencia_anos = int(
+            experiencia) if experiencia.isdigit() else 0
         perfil.biografia = request.POST.get('biografia', perfil.biografia)
         perfil.save()
 
     accion = 'actualizado' if user_id else 'registrado'
-    messages.success(request, f'Usuario «{user.get_full_name()}» {accion} correctamente.')
+    messages.success(
+        request, f'Usuario «{user.get_full_name()}» {accion} correctamente.')
     return redirect('gestion_usuarios')
+
 
 @user_passes_test(lambda u: u.is_staff)
 def usuarios_toggle_estado(request, user_id):
@@ -252,14 +273,17 @@ def usuarios_toggle_estado(request, user_id):
         messages.info(request, f'Usuario «{user.get_full_name()}» {estado}.')
     return redirect('gestion_usuarios')
 
+
 @user_passes_test(lambda u: u.is_staff)
 def gestion_guias(request, id=None):
     """Renderiza el panel de control y auditoría para la gestión de Guías."""
-    guias = Usuario.objects.filter(rol=Usuario.Roles.GUIA).select_related('guia')
+    guias = Usuario.objects.filter(
+        rol=Usuario.Roles.GUIA).select_related('guia')
     guias_activos = guias.filter(is_active=True).count()
     guia_seleccionado = None
     if id:
-        guia_seleccionado = get_object_or_404(Usuario, id=id, rol=Usuario.Roles.GUIA)
+        guia_seleccionado = get_object_or_404(
+            Usuario, id=id, rol=Usuario.Roles.GUIA)
     return render(request, 'admin/gestion_guias.html', {
         'titulo': 'Gestión de Guías — Monagua',
         'guias': guias,
@@ -268,6 +292,7 @@ def gestion_guias(request, id=None):
         'id': id
     })
 
+
 @user_passes_test(lambda u: u.is_staff)
 def asignar_rol_guia(request, user_id):
     """Acción de backend para alternar el rol de guía (Redirecciona)."""
@@ -275,13 +300,12 @@ def asignar_rol_guia(request, user_id):
         user = get_object_or_404(Usuario, id=user_id)
         if user.rol != Usuario.Roles.GUIA:
             user.rol = Usuario.Roles.GUIA
-            user.es_guia = True
             user.save()
             GuiaTuristico.objects.get_or_create(usuario=user)
-            messages.success(request, f'Rol de guía asignado a {user.username}')
+            messages.success(
+                request, f'Rol de guía asignado a {user.username}')
         else:
             user.rol = Usuario.Roles.CLIENTE
-            user.es_guia = False
             user.save()
             messages.info(request, f'Rol de guía removido de {user.username}')
     return redirect('gestion_guias')
@@ -305,8 +329,10 @@ def guias_guardar(request):
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
         user.email = request.POST.get('email', user.email)
-        user.tipo_documento = request.POST.get('tipo_documento', user.tipo_documento)
-        user.numero_documento = request.POST.get('numero_documento', user.numero_documento)
+        user.tipo_documento = request.POST.get(
+            'tipo_documento', user.tipo_documento)
+        user.numero_documento = request.POST.get(
+            'numero_documento', user.numero_documento)
         user.telefono = request.POST.get('telefono', user.telefono)
         user.residencia = request.POST.get('residencia', user.residencia)
         if 'imagen_perfil' in request.FILES:
@@ -314,13 +340,15 @@ def guias_guardar(request):
         user.save()
 
         perfil, _ = GuiaTuristico.objects.get_or_create(usuario=user)
-        perfil.licencia_turismo = request.POST.get('licencia_turismo', perfil.licencia_turismo)
+        perfil.licencia_turismo = request.POST.get(
+            'licencia_turismo', perfil.licencia_turismo)
         experiencia = request.POST.get('experiencia_anos')
         if experiencia and experiencia.isdigit():
             perfil.experiencia_anos = int(experiencia)
         perfil.biografia = request.POST.get('biografia', perfil.biografia)
         perfil.save()
-        messages.success(request, f'Guía «{user.get_full_name()}» actualizado correctamente.')
+        messages.success(
+            request, f'Guía «{user.get_full_name()}» actualizado correctamente.')
 
     else:
         # --- MODO CREACIÓN ---
@@ -328,11 +356,13 @@ def guias_guardar(request):
         email = request.POST.get('email', '').strip()
 
         if not username or not email:
-            messages.error(request, 'El nombre de usuario y el email son obligatorios.')
+            messages.error(
+                request, 'El nombre de usuario y el email son obligatorios.')
             return redirect('gestion_guias')
 
         if Usuario.objects.filter(username=username).exists():
-            messages.error(request, f'El nombre de usuario «{username}» ya está en uso.')
+            messages.error(
+                request, f'El nombre de usuario «{username}» ya está en uso.')
             return redirect('gestion_guias')
 
         # Crear el usuario base con rol GUIA
@@ -346,7 +376,6 @@ def guias_guardar(request):
             telefono=request.POST.get('telefono', ''),
             residencia=request.POST.get('residencia', ''),
             rol=Usuario.Roles.GUIA,
-            es_guia=True,
         )
         # Contraseña temporal = número de documento (el guía la cambiará después)
         password = request.POST.get('numero_documento', username)
@@ -363,11 +392,13 @@ def guias_guardar(request):
             experiencia_anos=int(experiencia) if experiencia.isdigit() else 0,
             biografia=request.POST.get('biografia', ''),
         )
-        messages.success(request, f'Guía «{user.get_full_name()}» registrado exitosamente.')
+        messages.success(
+            request, f'Guía «{user.get_full_name()}» registrado exitosamente.')
 
     return redirect('gestion_guias')
 
 # 5. MÓDULO DE INTERACCIÓN / COMENTARIOS
+
 
 @login_required
 def enviar_comentario(request):
@@ -378,7 +409,7 @@ def enviar_comentario(request):
         mensaje = request.POST.get('mensaje')
         valoracion = request.POST.get('valoracion', 5)
         paquete_id = request.POST.get('paquete_id')
-        
+
         Comentario.objects.create(
             usuario=request.user,
             tipo=tipo,
@@ -396,14 +427,17 @@ def enviar_comentario(request):
 
 # 6. ADMINISTRACIÓN DE COMENTARIOS
 
+
 @user_passes_test(lambda u: u.is_staff)
 def listar_comentarios(request):
     """Renderiza el módulo de moderación y auditoría de comentarios para el Staff."""
-    comentarios = Comentario.objects.all().select_related('usuario', 'paquete').order_by('-fecha_creacion')
+    comentarios = Comentario.objects.all().select_related(
+        'usuario', 'paquete').order_by('-fecha_creacion')
     return render(request, 'admin/comentarios.html', {
         'titulo': 'Moderación de Comentarios — Administración',
         'comentarios': comentarios
     })
+
 
 @user_passes_test(lambda u: u.is_staff)
 def toggle_visible(request, pk):
@@ -415,6 +449,7 @@ def toggle_visible(request, pk):
         estado = 'visible' if comentario.visible else 'oculto'
         messages.info(request, f'Comentario marcado como {estado}.')
     return redirect('listar_comentarios')
+
 
 @user_passes_test(lambda u: u.is_staff)
 def responder_comentario(request, pk):
@@ -428,6 +463,7 @@ def responder_comentario(request, pk):
 
 # 7. HISTORIAL Y RESEÑAS DE USUARIOS
 
+
 @login_required
 def mis_resenas_view(request):
     """
@@ -440,7 +476,7 @@ def mis_resenas_view(request):
         mensaje = request.POST.get('mensaje')
         valoracion = request.POST.get('valoracion', 5)
         paquete_id = request.POST.get('paquete_id')
-        
+
         Comentario.objects.create(
             usuario=request.user,
             tipo=tipo,
@@ -452,7 +488,8 @@ def mis_resenas_view(request):
         messages.success(request, 'Gracias por tu reseña.')
         return redirect('mis_resenas')
 
-    comentarios = Comentario.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+    comentarios = Comentario.objects.filter(
+        usuario=request.user).order_by('-fecha_creacion')
     return render(request, 'private/resenas.html', {
         'titulo': 'Mis Experiencias y Reseñas — Monagua',
         'comentarios': comentarios
@@ -460,16 +497,18 @@ def mis_resenas_view(request):
 
 # 8. MÓDULO DE MÉTRICAS Y ESTADÍSTICAS
 
+
 @user_passes_test(lambda u: u.is_staff)
 def estadisticas_admin(request):
     """
     Renderiza el panel de control global (Dashboard) para el Administrador.
-    Calcula consolidados de reservas, auditoría de pagos, distribución de 
+    Calcula consolidados de reservas, auditoría de pagos, distribución de
     calificaciones y el feed de actividad reciente del sistema.
     """
     total_usuarios = Usuario.objects.count()
-    promedio_calificacion = Comentario.objects.aggregate(Avg('valoracion'))['valoracion__avg']
-    
+    promedio_calificacion = Comentario.objects.aggregate(Avg('valoracion'))[
+        'valoracion__avg']
+
     return render(request, 'admin/estadisticas_admin.html', {
         'titulo': 'Métricas Globales — Panel de Administración',
         'nivel_viajero': 'Director de Expediciones',
@@ -477,15 +516,16 @@ def estadisticas_admin(request):
         'promedio_calificacion': promedio_calificacion or 0
     })
 
+
 @login_required
 def estadisticas_turista(request):
     """
     Renderiza el historial métrico personalizado del Turista.
-    Muestra la inversión total del usuario, el estado de sus reservas, sus PQRS 
+    Muestra la inversión total del usuario, el estado de sus reservas, sus PQRS
     y calcula dinámicamente su nivel de viajero según sus experiencias completadas.
     """
     comentarios_count = Comentario.objects.filter(usuario=request.user).count()
-    
+
     if comentarios_count >= 10:
         nivel_viajero = 'Expedicionista'
     elif comentarios_count >= 5:
@@ -494,7 +534,7 @@ def estadisticas_turista(request):
         nivel_viajero = 'Explorador'
     else:
         nivel_viajero = 'Viajero Novel'
-        
+
     return render(request, 'private/estadisticas.html', {
         'titulo': 'Mis Estadísticas de Viaje — Monagua',
         'nivel_viajero': nivel_viajero,

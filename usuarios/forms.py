@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import Usuario
 
+
 class RegistroForm(UserCreationForm):
     """
     Formulario personalizado para registrar usuarios en Monagua.
@@ -10,7 +11,7 @@ class RegistroForm(UserCreationForm):
     class Meta:
         model = Usuario
         fields = (
-            'username', 'email', 'first_name', 'last_name', 
+            'username', 'email', 'first_name', 'last_name',
             'tipo_documento', 'numero_documento', 'telefono'
         )
 
@@ -18,8 +19,10 @@ class RegistroForm(UserCreationForm):
         numero_documento = self.cleaned_data.get('numero_documento')
         if numero_documento:
             if Usuario.objects.filter(numero_documento=numero_documento).exists():
-                raise forms.ValidationError("Ya existe un usuario registrado con este número de documento.")
+                raise forms.ValidationError(
+                    "Ya existe un usuario registrado con este número de documento.")
         return numero_documento
+
 
 class PerfilUsuarioForm(forms.ModelForm):
     """
@@ -29,6 +32,6 @@ class PerfilUsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = [
-            'first_name', 'last_name', 'tipo_documento', 
+            'first_name', 'last_name', 'tipo_documento',
             'numero_documento', 'telefono', 'residencia', 'imagen_perfil'
         ]
