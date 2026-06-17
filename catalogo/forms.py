@@ -59,10 +59,11 @@ class TarifaForm(ModelForm):
         model = Tarifa
         fields = '__all__'
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'paquete': forms.Select(attrs={'class': 'form-select'}),
+            'temporada': forms.Select(attrs={'class': 'form-select'}),
+            'precio_adulto': forms.NumberInput(attrs={'class': 'form-control'}),
+            'precio_menor': forms.NumberInput(attrs={'class': 'form-control'}),
+            'estado': forms.Select(attrs={'class': 'form-select'}),
         }
 
 
