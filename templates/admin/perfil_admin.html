@@ -21,7 +21,7 @@
       class="w-100 bg-dark bg-opacity-75"
       style="
         height: 160px;
-        background-image: url('{% static "img/Fondo.jpg" %}');
+        background-image: url('{% static "img/Fondo.webp" %}');
         background-size: cover;
         background-position: center;
       "
@@ -39,7 +39,7 @@
               {% if user.imagen_perfil %}
                 <img src="{{ user.imagen_perfil.url }}" alt="{{ user.username }}" class="rounded-circle object-fit-cover shadow" style="width: 140px; height: 140px" />
               {% else %}
-                <img src="{% static 'img/user-default.png' %}" alt="Avatar" class="rounded-circle object-fit-cover shadow" style="width: 140px; height: 140px" />
+                <img src="{% static 'img/user-img/default.webp' %}" alt="Avatar" class="rounded-circle object-fit-cover shadow" style="width: 140px; height: 140px" />
               {% endif %}
               
               <form method="POST" enctype="multipart/form-data" class="position-absolute bottom-0 end-0 m-1" id="form_imagen_perfil">
