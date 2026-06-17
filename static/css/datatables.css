@@ -1,63 +1,142 @@
-/* * Personalización y extensiones de DataTables para Bootstrap 5 
- * Soporte para Buttons, Responsive y Scroller
+/* * Personalización Premium de DataTables para Monagua 
+ * Estructura: Botones Notorios Centrados / Buscador Compacto y Marcado abajo a la izquierda
  */
 
 :root {
-  --dt-row-selected: 13, 110, 253;
+  --dt-row-selected: 25, 135, 84;
   --dt-row-selected-text: 255, 255, 255;
   --dt-row-selected-link: 228, 228, 228;
   --dt-row-stripe: 0, 0, 0;
   --dt-row-hover: 0, 0, 0;
-  --dt-column-ordering: 0, 0, 0;
   --dt-header-align-items: center;
   --dt-header-vertical-align: middle;
   --dt-html-background: white;
+  
+  /* Paleta de colores Monagua */
+  --primary-color: #0b5931;   
+  --success-color: #198754;   
+  --danger-color: #dc3545;    
+  --info-color: #0dcaf0;      
 }
 
-/* Soporte para modo oscuro si tu proyecto lo usa */
-:root.dark {
-  --dt-html-background: rgb(33, 37, 41);
-}
-
-table.dataTable tbody td.dt-control {
-  text-align: center;
-  cursor: pointer;
-}
-table.dataTable tbody td.dt-control:before {
-  display: inline-block;
-  box-sizing: border-box;
-  content: "";
-  border-top: 5px solid transparent;
-  border-left: 10px solid rgba(0, 0, 0, 0.5);
-  border-bottom: 5px solid transparent;
-  border-right: 0px solid transparent;
-}
-
-/* Integración visual con las filas de Bootstrap 5 */
+/* --- INTEGRACIÓN Y ESTILO DE LA TABLA --- */
 table.table.dataTable {
   clear: both;
-  margin-bottom: 0;
+  margin-top: 20px !important;
+  margin-bottom: 20px !important;
   max-width: none;
   border-spacing: 0;
-}
-table.table.dataTable.table-striped > tbody > tr:nth-of-type(2n+1) > * {
-  box-shadow: none;
-}
-table.table.dataTable > :not(caption) > * > * {
-  background-color: var(--bs-table-bg);
+  border: 1px solid #cbd5e1; /* Borde de tabla más oscuro */
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-/* Diseño y espacio para los botones de Excel, PDF e Imprimir */
+table.dataTable thead th {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  font-weight: 700; 
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  padding: 14px 16px !important;
+  border-bottom: none;
+}
+
+table.dataTable tbody td {
+  padding: 12px 16px !important;
+  vertical-align: middle;
+  color: #1f2937; 
+  border-bottom: 1px solid #e5e7eb;
+}
+
+
+/* --- BOTONES: CENTRADOS, MÁS GRANDES Y NOTORIOS --- */
 div.dt-buttons {
-  margin-bottom: 18px;
-  display: flex;
-  gap: 6px;
+  margin-top: 10px !important;
+  margin-bottom: 25px !important;
+  display: flex !important; 
+  justify-content: center !important; 
+  gap: 14px; 
+  float: none !important; 
+  width: 100% !important;
 }
+
+/* Óvalos con texto grueso y muy visible */
+div.dt-buttons .dt-button,
 div.dt-buttons .btn {
-  border-radius: 4px;
-  font-weight: 500;
-  padding: 0.4rem 0.8rem;
+  display: inline-block !important;
+  flex: none !important; 
+  width: auto !important; 
+  border-radius: 50px !important; 
+  font-weight: 800 !important; /* Texto ULTRA notorio y marcado */
+  font-size: 0.95rem !important; /* Un poco más grande el texto */
+  padding: 10px 30px !important; /* Botón con más cuerpo y presencia */
+  border: none !important;
+  color: white !important;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2); 
+  white-space: nowrap !important;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
 }
-div.dt-buttons .btn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+
+/* Colores de los botones */
+.buttons-excel { background: var(--success-color) !important; }
+.buttons-pdf { background: var(--danger-color) !important; }
+.buttons-print { background: var(--info-color) !important; }
+
+/* Hover */
+div.dt-buttons .dt-button:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.9);
+}
+/* ===== BUSCADOR PREMIUM COMPACTO MONAGUA ===== */
+
+.dataTables_filter {
+    float: left !important;
+    margin-top: 10px !important;
+    margin-bottom: 20px !important;
+}
+
+/* Oculta el texto "Buscar:" de DataTables */
+.dataTables_filter label {
+    font-size: 0 !important; 
+}
+
+/* Caja de búsqueda más compacta y estilizada */
+.dataTables_filter input {
+    width: 200px !important; /* Más corto y discreto */
+    height: 36px !important; /* Más delgado, altura ideal para un input limpio */
+    margin-left: 0 !important;
+    border: 1px solid #cbd5e1 !important; /* Borde sutil para darle estructura */
+    border-radius: 50px !important; /* Mantiene la estética de óvalo de los botones */
+    background: #ffffff !important; /* Fondo blanco limpio */
+    padding: 0 16px !important; /* Espaciado interno cómodo */
+
+    font-size: 0.88rem !important; /* Texto ligeramente más pequeño y elegante */
+    font-weight: 500 !important;
+    color: #334155 !important;
+
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04) !important; /* Sombra muy suave */
+    transition: all 0.25s ease-in-out !important;
+}
+
+/* Hover: El borde se oscurece un poco al pasar el mouse */
+.dataTables_filter input:hover {
+    border-color: #94a3b8 !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Focus: Se ilumina sutilmente con el verde de Monagua sin ser exagerado */
+.dataTables_filter input:focus {
+    outline: none !important;
+    border-color: var(--primary-color) !important; /* Borde verde Monagua */
+    box-shadow: 0 0 0 3px rgba(11, 89, 49, 0.15) !important; /* Destello verde suave */
+    width: 230px !important; /* Efecto dinámico: se expande un poquito al escribir */
+}
+
+/* Color del Placeholder */
+.dataTables_filter input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
 }

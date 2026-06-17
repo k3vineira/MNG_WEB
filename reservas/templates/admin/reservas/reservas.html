@@ -1,5 +1,9 @@
 {% extends 'admin/base-admin.html' %}
 {% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+{% endblock %}
 {% block content %}
 <div class="container py-5">
     
@@ -98,6 +102,9 @@
     </div>
 </div>
 {% endblock %}
-{% block extra_js %}
+{% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="{% static 'js/datatables.js' %}"></script>
 <script src="{% static 'js/tconf/tconf-tablaReservas.js' %}"></script>
 {% endblock %}
