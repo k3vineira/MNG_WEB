@@ -17,7 +17,7 @@ from core.utils import plantilla_reserva_html, plantilla_cancelacion_html, envia
 from django.contrib.messages.views import SuccessMessageMixin
 
 # =========================
-# RESERVAS ADMIN
+# RESERVAS ADMIN 
 # =========================
 
 
@@ -64,7 +64,6 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
 class ReservaUpdateView(UpdateView):
     model = Reserva
     form_class = ReservaForm
-    # fields = ['usuario','paquete','fecha','numero_adultos','numero_menores','estado', ]
     template_name = 'admin/reservas/editar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 
@@ -77,8 +76,6 @@ class ReservaDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def mis_reservas_usuario(request):
-    # Mostrar todas las reservas del usuario, incluyendo aquellas canceladas,
-    # para que el usuario pueda ver su historial y el estado real de cada reserva.
     mis_reservas = Reserva.objects.filter(usuario=request.user)\
         .select_related('paquete')\
         .prefetch_related('comprobantes', 'cancelaciones')\

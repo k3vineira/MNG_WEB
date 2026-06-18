@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from catalogo.models import Paquete
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 class Reserva(models.Model):
@@ -100,24 +101,55 @@ class Reserva(models.Model):
         nombre_usuario = self.usuario.get_full_name() or self.usuario.username
         return f"Reserva {self.id} - {nombre_usuario} ({self.paquete.nombre})"
 
-
 class Cancelacion(models.Model):
-    reserva = models.ForeignKey(
-        Reserva, on_delete=models.CASCADE, related_name='cancelaciones')
-    motivo = models.TextField()
-    penalidad = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
     ESTADOS_CANCELACION = [
         ('revision', 'En Revisión por Admin'),
         ('aceptada', 'Aceptada'),
         ('rechazada', 'Rechazada'),
     ]
+
+    reserva = models.ForeignKey(
+        'Reserva', on_delete=models.CASCADE, related_name='cancelaciones')
+    motivo = models.TextField()
+    penalidad = models.IntegerField(
+        default=0, verbose_name='Penalidad Aplicada', editable=False)
+    reembolso_sugerido = models.IntegerField(
+        default=0, verbose_name='Reembolso Sugerido', editable=False)
+
     estado = models.CharField(
-        max_length=20, choices=ESTADOS_CANCELACION, default='revision')
+        max_length=20, choices=ESTADOS_CANCELACION, default='revision', verbose_name='Estado')
+    fecha_solicitud = models.DateTimeField(
+        auto_now_add=True, verbose_name='Fecha de Solicitud')
 
     class Meta:
         verbose_name = 'Cancelación'
         verbose_name_plural = 'Cancelaciones'
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            fecha_viaje = self.reserva.fecha
+            fecha_actual = timezone.now().date()
+            diferencia = fecha_viaje - fecha_actual
+            dias_antelacion = diferencia.days
+            valor_reserva = self.reserva.monto_total
+            if dias_antelacion > 15:
+                self.reembolso_sugerido = int(valor_reserva * 0.90)
+                self.penalidad = int(valor_reserva * 0.10)
+                
+            elif dias_antelacion >= 2: 
+                self.reembolso_sugerido = int(valor_reserva * 0.50)
+                self.penalidad = int(valor_reserva * 0.50)
+                
+            else:
+                self.reembolso_sugerido = 0
+                self.penalidad = valor_reserva
+
+        
+        if self.estado == 'aceptada':
+            self.reserva.estado = 'cancelada'
+            self.reserva.save()
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"Cancelación de Reserva {self.reserva.id}"
+        return f"Cancelación de Reserva #{self.reserva.id} - {self.get_estado_display()}"
