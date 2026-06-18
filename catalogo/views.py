@@ -5,7 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Paquete, Actividades, Categoria, Tarifa, Temporada
 from django.db.models import Count, Q
 from django import forms
-from .forms import TemporadaForm
+from .forms import TemporadaForm, TarifaForm
 
 
 def destinos(request):
@@ -241,32 +241,16 @@ class TarifaListView(ListView):
 
 class TarifaCreateView(CreateView):
     model = Tarifa
-    fields = ['paquete', 'temporada',
-              'precio_adulto', 'precio_menor', 'estado']
+    form_class = TarifaForm
     template_name = 'admin/tarifas/agregar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
 
 
 class TarifaUpdateView(UpdateView):
     model = Tarifa
-    fields = ['paquete', 'temporada',
-              'precio_adulto', 'precio_menor', 'estado']
+    form_class = TarifaForm
     template_name = 'admin/tarifas/editar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        for field in form.fields.values():
-
-            if isinstance(field.widget, forms.Select):
-                field.widget.attrs.update({'class': 'form-select'})
-
-            elif isinstance(field.widget, forms.CheckboxInput):
-                field.widget.attrs.update({'class': 'form-check-input'})
-
-            else:
-                field.widget.attrs.update({'class': 'form-control'})
-            return form
 
 
 # temporada

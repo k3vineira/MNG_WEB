@@ -3,7 +3,7 @@
   style="width:240px;z-index:1040;overflow-y:auto;transition:transform .3s">
 
   <a href="/" class="d-flex align-items-center gap-2 p-3 text-decoration-none border-bottom border-secondary">
-    <img src="{% static 'img/logo_monagua.png' %}" alt="Logo" class="rounded-circle border border-success flex-shrink-0"
+    <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo" class="rounded-circle border border-success flex-shrink-0"
       width="40" height="40" style="object-fit:cover">
     <div>
       <div class="fw-bold text-white small" style="letter-spacing:1px">MONAGUA</div>
@@ -109,7 +109,7 @@
   <div class="p-3 border-top border-secondary">
     <div class="d-flex align-items-center gap-2 mb-2">
       <img
-        src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
+        src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
         alt="{{ user.first_name|default:'Admin' }}" class="rounded-circle border border-success flex-shrink-0"
         width="34" height="34" style="object-fit:cover">
       <div>

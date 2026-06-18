@@ -34,3 +34,4 @@ urlpatterns = [
     path('comprobante/<int:reserva_id>/', views.comprobante_reserva_html, name='comprobante_reserva'),
     path('comprobante-multiple/', views.comprobante_multiple, name='comprobante_multiple'),
 ]
+
