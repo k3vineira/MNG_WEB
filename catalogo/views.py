@@ -33,10 +33,11 @@ def destinos(request):
         destinos_list = destinos_list.filter(categoria_id=categoria_id)
     categorias_list = Categoria.objects.all()
 
-    return render(request, 'usuario/destinos.html', {
+    context = {
         'destinos': destinos_list,
         'categorias': categorias_list
-    })
+    }
+    return render(request, 'usuario/destinos.html', context)
 
 
 # PAQUETES

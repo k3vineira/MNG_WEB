@@ -2,4 +2,5 @@ from django.shortcuts import render
 
 
 def inicio(request):
-    return render(request, 'index.html', {'titulo': 'Monagua — Agencia de Viajes y Turismo'})
+    context = {'titulo': 'Monagua — Agencia de Viajes y Turismo'}
+    return render(request, 'index.html', context)
