@@ -5,12 +5,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Preconnect a dominios externos para reducir latencia de conexión -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Preload de la imagen hero (LCP) con máxima prioridad -->
+    <link rel="preload" as="image" href="{% static 'img/Fondo.webp' %}" fetchpriority="high">
+
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <link rel="icon" type="image/x-icon" href="{% static 'img/monagua_log.ico' %}">
+    <link rel="icon" type="image/webp" href="{% static 'img/monagua_log.webp' %}">
     <title>{% block titulo %}Monagua{% endblock %}</title>
 </head>
 <body>

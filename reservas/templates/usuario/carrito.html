@@ -1,0 +1,153 @@
+{% extends "private/base_private.html" %}
+{% load static %}
+
+{% block titulo %}Carrito | Monagua{% endblock %}
+
+{% block private_content %}
+<div class="container py-4" style="max-width:1000px;">
+
+  <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
+    <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <h2 class="fw-bold text-success mb-1"><i class="bi bi-cart3 me-2"></i>Tu Carrito</h2>
+        <p class="text-muted mb-0">Revisa tus reservas pendientes y genera el comprobante aquí mismo.</p>
+      </div>
+    </div>
+  </div>
+
+  {% if reservas %}
+    <form method="post" action="{% url 'comprobante_multiple' %}">
+      {% csrf_token %}
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="selectAll">
+          <label class="form-check-label small text-muted" for="selectAll">Seleccionar todos</label>
+        </div>
+        <div class="small text-muted">Seleccionados: <span id="selectedCount">0</span></div>
+      </div>
+
+      <div class="row g-4">
+        {% for reserva in reservas %}
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+              <div class="row g-0 align-items-stretch">
+                <div class="col-md-4 position-relative" style="min-height: 180px;">
+                  {% if reserva.paquete.imagen %}
+                    <img src="{{ reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="{{ reserva.paquete.nombre }}">
+                  {% else %}
+                    <img src="{% static 'img/default.webp' %}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="Imagen por defecto">
+                  {% endif %}
+                </div>
+                <div class="col-md-8 d-flex flex-column">
+                  <div class="card-body p-4 d-flex flex-column h-100">
+                    <div class="form-check mb-2">
+                      <input class="form-check-input" type="checkbox" value="{{ reserva.id }}" id="reservaCheck{{ reserva.id }}" name="reservas">
+                      <label class="form-check-label small text-muted" for="reservaCheck{{ reserva.id }}">Seleccionar para comprobante múltiple</label>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                      <div>
+                        <h5 class="fw-bold text-dark mb-1">{{ reserva.paquete.nombre }}</h5>
+                        <p class="text-muted small mb-0">Reserva #{{ reserva.id }} · {{ reserva.fecha|date:'d M Y' }}</p>
+                      </div>
+                      <div>
+                        <h5 class="fw-bold text-success mb-0">${{ reserva.monto_total }}</h5>
+                      </div>
+                    </div>
+
+                    <div class="mt-auto d-flex gap-2 flex-wrap pt-2 border-top">
+                      <a href="{% url 'comprobante_reserva' reserva.id %}" target="_blank" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                        <i class="bi bi-file-earmark-text me-1"></i> Ver comprobante
+                      </a>
+                      <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-success rounded-pill px-4 py-2">
+                        <i class="bi bi-wallet2 me-1"></i> Enviar pago
+                      </a>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="mt-4 text-end">
+        <button type="submit" id="generateBtn" class="btn btn-primary rounded-pill px-4" disabled>Generar comprobante combinado</button>
+      </div>
+    </form>
+
+    <!-- Bootstrap toast container for feedback -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+      <div id="cartToast" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body">
+            Selecciona al menos una reserva para generar el comprobante.
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = Array.from(document.querySelectorAll('input[name="reservas"]'));
+        const selectedCount = document.getElementById('selectedCount');
+        const generateBtn = document.getElementById('generateBtn');
+        const toastEl = document.getElementById('cartToast');
+        const toast = toastEl ? new bootstrap.Toast(toastEl) : null;
+
+        function updateState() {
+          const selected = checkboxes.filter(cb => cb.checked).length;
+          selectedCount.textContent = selected;
+          generateBtn.disabled = selected === 0;
+          // update selectAll checkbox state
+          if (selected === checkboxes.length) {
+            selectAll.checked = true;
+            selectAll.indeterminate = false;
+          } else if (selected === 0) {
+            selectAll.checked = false;
+            selectAll.indeterminate = false;
+          } else {
+            selectAll.checked = false;
+            selectAll.indeterminate = true;
+          }
+        }
+
+        // bind change events
+        checkboxes.forEach(cb => cb.addEventListener('change', updateState));
+
+        selectAll.addEventListener('change', function() {
+          const checked = this.checked;
+          checkboxes.forEach(cb => cb.checked = checked);
+          updateState();
+        });
+
+        // form validation on submit
+        const form = document.querySelector('form[action="{% url 'comprobante_multiple' %}"]');
+        if (form) {
+          form.addEventListener('submit', function(e) {
+            const anySelected = checkboxes.some(cb => cb.checked);
+            if (!anySelected) {
+              e.preventDefault();
+              if (toast) toast.show();
+            }
+          });
+        }
+
+        updateState();
+      });
+    </script>
+  {% else %}
+    <div class="card border-0 shadow-sm rounded-4 bg-white text-center py-5">
+      <div class="mb-3 text-muted">
+        <i class="bi bi-cart3 display-3 opacity-50"></i>
+      </div>
+      <h3 class="fw-bold text-dark">Tu carrito está vacío</h3>
+      <p class="text-muted">No tienes reservas pendientes. Explora paquetes y añade tu próxima aventura.</p>
+      <a href="{% url 'destinos' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2">Explorar paquetes</a>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
