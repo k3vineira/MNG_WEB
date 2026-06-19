@@ -1,0 +1,49 @@
+{% extends "private/base_private.html" %}
+{% load static %}
+
+{% block titulo %}Comprobante Múltiple{% endblock %}
+
+{% block private_content %}
+<div class="container py-4" style="max-width:900px;">
+  <div class="card rounded-4 shadow-sm border-0">
+    <div class="card-body p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 class="fw-bold text-dark mb-0">Comprobante Combinado</h4>
+          <div class="text-muted small">Generado por: {{ request.user.get_full_name|default:request.user.username }}</div>
+        </div>
+        <div class="text-end">
+          <img src="{% static 'img/Logo.webp' %}" alt="logo" width="72" height="72">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        {% for r in reservas %}
+          <div class="border rounded-3 p-3 mb-2">
+            <div class="d-flex justify-content-between">
+              <div>
+                <div class="fw-semibold">Reserva #{{ r.id }} - {{ r.paquete.nombre }}</div>
+                <div class="small text-muted">Fecha: {{ r.fecha|date:'d M Y' }} · Hora: {{ r.paquete.hora_encuentro }}</div>
+              </div>
+              <div class="text-end">
+                <div class="fw-bold text-success">${{ r.monto_total }}</div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+        <div class="small text-muted">Total</div>
+        <div class="fw-bold text-success h5">${{ total }}</div>
+      </div>
+
+      <div class="mt-4 d-flex justify-content-between">
+        <a href="#" onclick="window.print();return false;" class="btn btn-outline-secondary rounded-pill px-4">Imprimir / Guardar PDF</a>
+        <a href="{% url 'enviar_comprobante' %}" class="btn btn-success rounded-pill px-4">Enviar comprobante</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

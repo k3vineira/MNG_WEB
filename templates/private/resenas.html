@@ -186,7 +186,7 @@
       <div class="resena-item col-12 border-bottom py-4" style="display:none">
         <div class="d-flex gap-3 align-items-center mb-2 flex-wrap">
           <img
-            src="{% if r.usuario.imagen_perfil %}{{ r.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
+            src="{% if r.usuario.imagen_perfil %}{{ r.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
             class="rounded-circle flex-shrink-0" width="40" height="40" style="object-fit:cover;">
           <div class="flex-grow-1 min-width-0">
             <h6 class="mb-0 fw-bold text-truncate">{{ r.usuario.get_full_name|default:r.usuario.username }}</h6>

@@ -1,0 +1,58 @@
+{% extends "private/base_private.html" %}
+{% load static %}
+
+{% block titulo %}Comprobante Reserva #{{ reserva.id }}{% endblock %}
+
+{% block private_content %}
+<div class="container py-4" style="max-width:800px;">
+  <div class="card rounded-4 shadow-sm border-0">
+    <div class="card-body p-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 class="fw-bold text-dark mb-0">Comprobante de Reserva</h4>
+          <div class="text-muted small">Reserva #{{ reserva.id }} · {{ reserva.fecha|date:'d M Y' }}</div>
+        </div>
+        <div class="text-end">
+          <img src="{% static 'img/Logo.webp' %}" alt="logo" width="72" height="72">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-6">
+          <div class="small text-muted">Cliente</div>
+          <div class="fw-semibold">{{ reserva.usuario.get_full_name|default:reserva.usuario.username }}</div>
+          <div class="text-muted small">{{ reserva.usuario.email }}</div>
+        </div>
+        <div class="col-6 text-end">
+          <div class="small text-muted">Paquete</div>
+          <div class="fw-semibold">{{ reserva.paquete.nombre }}</div>
+          <div class="text-muted small">Hora encuentro: {{ reserva.paquete.hora_encuentro }}</div>
+        </div>
+      </div>
+
+      <table class="table table-borderless mb-0">
+        <tbody>
+          <tr>
+            <td class="small text-muted">Adultos</td>
+            <td class="text-end">{{ reserva.numero_adultos }}</td>
+          </tr>
+          <tr>
+            <td class="small text-muted">Menores</td>
+            <td class="text-end">{{ reserva.numero_menores }}</td>
+          </tr>
+          <tr class="border-top">
+            <td class="fw-semibold">Total</td>
+            <td class="text-end fw-bold text-success">${{ reserva.monto_total }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="mt-4 d-flex justify-content-between">
+        <a href="#" onclick="window.print();return false;" class="btn btn-outline-secondary rounded-pill px-4">Imprimir / Guardar PDF</a>
+        <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-success rounded-pill px-4">Enviar comprobante</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

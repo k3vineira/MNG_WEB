@@ -14,16 +14,14 @@ from .forms import RegistroForm, PerfilUsuarioForm
 
 def terminos_view(request):
     """Renderiza la plantilla de términos y condiciones."""
-    return render(request, 'public/terminos.html', {
-        'titulo': 'Términos y Condiciones — Monagua'
-    })
+    context = {'titulo': 'Términos y Condiciones — Monagua'}
+    return render(request, 'public/terminos.html', context)
 
 
 def nosotros_view(request):
     """Renderiza la plantilla de información corporativa."""
-    return render(request, 'public/nosotros.html', {
-        'titulo': 'Sobre Nosotros — Monagua'
-    })
+    context = {'titulo': 'Sobre Nosotros — Monagua'}
+    return render(request, 'public/nosotros.html', context)
 
 # 2. VISTAS DE AUTENTICACIÓN
 
@@ -47,10 +45,11 @@ def registro_view(request):
     else:
         form = RegistroForm()
 
-    return render(request, 'authentication/registro.html', {
+    context = {
         'titulo': 'Crear Cuenta en Monagua',
         'form': form
-    })
+    }
+    return render(request, 'authentication/registro.html', context)
 
 
 class UsuarioLoginView(LoginView):
@@ -98,9 +97,8 @@ def index_turista(request):
     if request.user.is_staff:
         return redirect('dashboard')
 
-    return render(request, 'partials/panel_rapido.html', {
-        'titulo': 'Bienvenido a Monagua'
-    })
+    context = {'titulo': 'Bienvenido a Monagua'}
+    return render(request, 'partials/panel_rapido.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -114,11 +112,12 @@ def dashboard_admin(request):
 
     total_usuarios = Usuario.objects.count()
 
-    return render(request, 'admin/index-admin.html', {
+    context = {
         'titulo': 'Tablero de Rendimiento — Administración',
         'total_usuarios': total_usuarios,
         'total_reservas': total_reservas
-    })
+    }
+    return render(request, 'admin/index-admin.html', context)
 
 # 4. GESTIÓN DE PERFILES Y USUARIOS
 
@@ -145,10 +144,11 @@ def perfil_detalles(request):
 
     template_name = 'admin/perfil_admin.html' if request.user.is_staff else 'private/perfil_turista.html'
 
-    return render(request, template_name, {
+    context = {
         'titulo': 'Mi Perfil — Monagua',
         'form': form
-    })
+    }
+    return render(request, template_name, context)
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -165,14 +165,15 @@ def gestion_usuarios(request, id=None):
     total_guias = Usuario.objects.filter(rol=Usuario.Roles.GUIA).count()
     total_clientes = Usuario.objects.filter(rol=Usuario.Roles.CLIENTE).count()
 
-    return render(request, 'admin/gestion_usuarios.html', {
+    context = {
         'titulo': 'Gestión de Usuarios — Monagua',
         'usuarios': usuarios,
         'filtro_actual': filtro,
         'total_admins': total_admins,
         'total_guias': total_guias,
         'total_clientes': total_clientes,
-    })
+    }
+    return render(request, 'admin/gestion_usuarios.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -284,13 +285,14 @@ def gestion_guias(request, id=None):
     if id:
         guia_seleccionado = get_object_or_404(
             Usuario, id=id, rol=Usuario.Roles.GUIA)
-    return render(request, 'admin/gestion_guias.html', {
+    context = {
         'titulo': 'Gestión de Guías — Monagua',
         'guias': guias,
         'guias_activos': guias_activos,
         'guia_seleccionado': guia_seleccionado,
         'id': id
-    })
+    }
+    return render(request, 'admin/gestion_guias.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -421,9 +423,8 @@ def enviar_comentario(request):
         messages.success(request, 'Comentario enviado exitosamente.')
         return redirect('mis_resenas')
 
-    return render(request, 'private/comentarios.html', {
-        'titulo': 'Comunidad Monagua — Reseñas y Experiencias'
-    })
+    context = {'titulo': 'Comunidad Monagua — Reseñas y Experiencias'}
+    return render(request, 'private/comentarios.html', context)
 
 # 6. ADMINISTRACIÓN DE COMENTARIOS
 
@@ -433,10 +434,11 @@ def listar_comentarios(request):
     """Renderiza el módulo de moderación y auditoría de comentarios para el Staff."""
     comentarios = Comentario.objects.all().select_related(
         'usuario', 'paquete').order_by('-fecha_creacion')
-    return render(request, 'admin/comentarios.html', {
+    context = {
         'titulo': 'Moderación de Comentarios — Administración',
         'comentarios': comentarios
-    })
+    }
+    return render(request, 'admin/comentarios.html', context)
 
 
 @user_passes_test(lambda u: u.is_staff)
@@ -490,10 +492,11 @@ def mis_resenas_view(request):
 
     comentarios = Comentario.objects.filter(
         usuario=request.user).order_by('-fecha_creacion')
-    return render(request, 'private/resenas.html', {
+    context = {
         'titulo': 'Mis Experiencias y Reseñas — Monagua',
         'comentarios': comentarios
-    })
+    }
+    return render(request, 'private/resenas.html', context)
 
 # 8. MÓDULO DE MÉTRICAS Y ESTADÍSTICAS
 
@@ -509,12 +512,13 @@ def estadisticas_admin(request):
     promedio_calificacion = Comentario.objects.aggregate(Avg('valoracion'))[
         'valoracion__avg']
 
-    return render(request, 'admin/estadisticas_admin.html', {
+    context = {
         'titulo': 'Métricas Globales — Panel de Administración',
         'nivel_viajero': 'Director de Expediciones',
         'total_usuarios': total_usuarios,
         'promedio_calificacion': promedio_calificacion or 0
-    })
+    }
+    return render(request, 'admin/estadisticas_admin.html', context)
 
 
 @login_required
@@ -535,8 +539,9 @@ def estadisticas_turista(request):
     else:
         nivel_viajero = 'Viajero Novel'
 
-    return render(request, 'private/estadisticas.html', {
+    context = {
         'titulo': 'Mis Estadísticas de Viaje — Monagua',
         'nivel_viajero': nivel_viajero,
         'comentarios_count': comentarios_count
-    })
+    }
+    return render(request, 'private/estadisticas.html', context)

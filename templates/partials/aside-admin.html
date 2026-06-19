@@ -3,7 +3,7 @@
   style="width:240px;z-index:1040;overflow-y:auto;transition:transform .3s">
 
   <a href="/" class="d-flex align-items-center gap-2 p-3 text-decoration-none border-bottom border-secondary">
-    <img src="{% static 'img/logo_monagua.png' %}" alt="Logo" class="rounded-circle border border-success flex-shrink-0"
+    <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo" class="rounded-circle border border-success flex-shrink-0"
       width="40" height="40" style="object-fit:cover">
     <div>
       <div class="fw-bold text-white small" style="letter-spacing:1px">MONAGUA</div>
@@ -38,75 +38,60 @@
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">
       Gestión</div>
 
-    <a href="{% url 'listar_paquetes' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'listar_paquetes' %}bg-success text-white{% endif %}">
-      <i class="bi bi-box-seam-fill"></i> Paquetes Turísticos
-    </a>
+    <!-- Paquetes: submenú con elementos relacionados -->
+    <div class="px-2">
+      <button class="btn btn-sm btn-toggle w-100 text-start text-white-50 d-flex align-items-center gap-2 px-3 py-2 rounded mx-1 mb-1"
+        data-bs-toggle="collapse" data-bs-target="#menuPaquetes" aria-expanded="false">
+        <i class="bi bi-box-seam-fill"></i> Paquetes
+      </button>
+      <div class="collapse ms-3" id="menuPaquetes">
+        <a href="{% url 'listar_paquetes' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_paquetes' %}bg-success text-white{% endif %}">Listar Paquetes</a>
+        <a href="{% url 'crear_paquete' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'crear_paquete' %}bg-success text-white{% endif %}">Crear Paquete</a>
+        <a href="{% url 'listar_actividades' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_actividades' %}bg-success text-white{% endif %}">Actividades</a>
+        <a href="{% url 'listar_tarifas' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_tarifas' %}bg-success text-white{% endif %}">Tarifas</a>
+        <a href="{% url 'listar_temporadas' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_temporadas' %}bg-success text-white{% endif %}">Temporadas</a>
+        <a href="{% url 'listar_categorias' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_categorias' %}bg-success text-white{% endif %}">Categorías</a>
+      </div>
+    </div>
 
-    <a href="{% url 'listar_temporadas' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'listar_temporadas' %}bg-success text-white{% endif %}">
-      <i class="bi bi-calendar-range-fill"></i> Temporadas
-    </a>
+    <!-- Reservas y Pagos -->
+    <div class="px-2 mt-1">
+      <button class="btn btn-sm btn-toggle w-100 text-start text-white-50 d-flex align-items-center gap-2 px-3 py-2 rounded mx-1 mb-1"
+        data-bs-toggle="collapse" data-bs-target="#menuReservas" aria-expanded="false">
+        <i class="bi bi-calendar-check-fill"></i> Reservas & Pagos
+      </button>
+      <div class="collapse ms-3" id="menuReservas">
+        <a href="{% url 'listar_reservas' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_reservas' %}bg-success text-white{% endif %}">Reservas</a>
+        <a href="{% url 'administrar_cancelaciones' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}bg-success text-white{% endif %}">Cancelaciones</a>
+        <a href="{% url 'admin_comprobantes' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}bg-success text-white{% endif %}">Comprobantes</a>
+        <a href="{% url 'admin_comprobantes' %}?estado=rechazado" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}bg-success text-white{% endif %}">Pagos Rechazados</a>
+      </div>
+    </div>
 
-    <a href="{% url 'listar_tarifas' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'listar_tarifas' %}bg-success text-white{% endif %}">
-      <i class="bi bi-coin"></i> Tarifas
-    </a>
+    <!-- Usuarios y Guías -->
+    <div class="px-2 mt-1">
+      <button class="btn btn-sm btn-toggle w-100 text-start text-white-50 d-flex align-items-center gap-2 px-3 py-2 rounded mx-1 mb-1"
+        data-bs-toggle="collapse" data-bs-target="#menuUsuarios" aria-expanded="false">
+        <i class="bi bi-people-fill"></i> Usuarios & Guías
+      </button>
+      <div class="collapse ms-3" id="menuUsuarios">
+        <a href="{% url 'gestion_usuarios' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'gestion_usuarios' %}bg-success text-white{% endif %}">Gestionar Usuarios</a>
+        <a href="{% url 'gestion_guias' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if 'gestion_guias' in request.resolver_match.url_name %}bg-success text-white{% endif %}">Gestionar Guías</a>
+      </div>
+    </div>
 
-    <a href="{% url 'listar_actividades' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'listar_actividades' %}bg-success text-white{% endif %}">
-      <i class="bi bi-bicycle"></i> Actividades
-    </a>
-
-    <a href="{% url 'listar_reservas' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'listar_reservas' %}bg-success text-white{% endif %}">
-      <i class="bi bi-calendar-check-fill"></i> Reservas
-    </a>
-    <a href="{% url 'administrar_cancelaciones' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}bg-success text-white{% endif %}">
-      <i class="bi bi-calendar-x-fill"></i> Cancelaciones
-    </a>
-    <a href="{% url 'admin_comprobantes' %}"
-      class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}bg-success text-white{% endif %}">
-      <i class="bi bi-wallet2"></i> Comprobantes de Pago
-    </a>
-
-    <a href="{% url 'admin_comprobantes' %}?estado=rechazado"
-      class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}bg-success text-white{% endif %}">
-      <i class="bi bi-x-circle-fill text-danger"></i> Pagos Rechazados
-    </a>
-
-    <a href="{% url 'listar_categorias' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'listar_categorias' %}bg-success text-white{% endif %}">
-      <i class="bi bi-tags-fill"></i> Categorías
-    </a>
-
-    <a href="{% url 'listar_blog' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'listar_blog' %}bg-success text-white{% endif %}">
-      <i class="bi bi-journal-text"></i> Blog
-    </a>
-
-    <a href="{% url 'listar_pqrs' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'listar_pqrs' %}bg-success text-white{% endif %}">
-      <i class="bi bi-envelope-fill"></i> PQRS
-    </a>
-
-    <a href="{% url 'gestion_guias' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if 'gestion_guias' in request.resolver_match.url_name %}bg-success text-white{% endif %}">
-      <i class="bi bi-people-fill"></i> Gestionar Guías
-    </a>
-    
-    <a href="{% url 'gestion_usuarios' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'gestion_usuarios' %}bg-success text-white{% endif %}">
-      <i class="bi bi-people-fill"></i> Gestionar Usuarios
-    </a>
-
-    <a href="{% url 'gestion_promociones' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if 'promociones' in request.resolver_match.url_name %}bg-success text-white{% endif %}">
-      <i class="bi bi-megaphone-fill"></i> Promociones
-    </a>
+    <!-- Contenido y Comunicación -->
+    <div class="px-2 mt-1">
+      <button class="btn btn-sm btn-toggle w-100 text-start text-white-50 d-flex align-items-center gap-2 px-3 py-2 rounded mx-1 mb-1"
+        data-bs-toggle="collapse" data-bs-target="#menuContenido" aria-expanded="false">
+        <i class="bi bi-journal-text"></i> Contenido
+      </button>
+      <div class="collapse ms-3" id="menuContenido">
+        <a href="{% url 'listar_blog' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_blog' %}bg-success text-white{% endif %}">Blog</a>
+        <a href="{% url 'listar_pqrs' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_pqrs' %}bg-success text-white{% endif %}">PQRS</a>
+        <a href="{% url 'gestion_promociones' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if 'promociones' in request.resolver_match.url_name %}bg-success text-white{% endif %}">Promociones</a>
+      </div>
+    </div>
 
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">
       Sistema</div>
@@ -124,7 +109,7 @@
   <div class="p-3 border-top border-secondary">
     <div class="d-flex align-items-center gap-2 mb-2">
       <img
-        src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
+        src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
         alt="{{ user.first_name|default:'Admin' }}" class="rounded-circle border border-success flex-shrink-0"
         width="34" height="34" style="object-fit:cover">
       <div>
@@ -188,6 +173,16 @@
       });
       activeLink.classList.remove("text-white-50");
       activeLink.classList.add("bg-success", "text-white");
+      // Expand parent collapse if link is inside one
+      const parentCollapse = activeLink.closest('.collapse');
+      if (parentCollapse) {
+        try {
+          const bsCollapse = bootstrap.Collapse.getOrCreateInstance(parentCollapse);
+          bsCollapse.show();
+        } catch (e) {
+          // ignore if bootstrap is not available
+        }
+      }
     }
   });
 </script>
