@@ -8,7 +8,7 @@
 {% block content %}
 <div class="container py-5">
     <!-- Encabezado -->
-    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color: var(--verde-oscuro); color: white; max-width: 1100px;">
+    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color:var(--verde-mid); color: white; max-width: 1100px;">
         <div class="card-body py-3 px-4">
             <h3 class="fw-bold mb-0">Administración de PQRS</h3>
         </div>
@@ -71,7 +71,7 @@
                         <span class="badge rounded-pill px-4 py-2 fs-6 
                         {% if pqr.tipo == 'Queja' or pqr.tipo == 'Reclamo' %}bg-danger text-white
                         {% else %}text-white{% endif %}"
-                        {% if pqr.tipo != 'Queja' and pqr.tipo != 'Reclamo' %}style="background-color: #406d46;"{% endif %}>
+                        {% if pqr.tipo != 'Queja' and pqr.tipo != 'Reclamo' %}style="background-color: var(--verde-mid);"{% endif %}>
                         {{ pqr.tipo }}
                         </span>
                     </td>

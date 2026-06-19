@@ -1,5 +1,4 @@
 
-
 :root {
   --dt-row-selected: 25, 135, 84;
   --dt-row-selected-text: 255, 255, 255;
@@ -24,13 +23,13 @@ table.table.dataTable {
   margin-bottom: 20px !important;
   max-width: none;
   border-spacing: 0;
-  border: 1px solid #cbd5e1; /* Borde de tabla más oscuro */
+  border: 1px solid #cbd5e1;
   border-radius: 12px;
   overflow: hidden;
 }
 
 table.dataTable thead th {
-  background-color: var(--primary-color) !important;
+  background-color: var(--verde-mid) !important;
   color: white !important;
   font-weight: 700; 
   text-transform: uppercase;
@@ -46,29 +45,56 @@ table.dataTable tbody td {
   color: #1f2937; 
   border-bottom: 1px solid #e5e7eb;
 }
-
-
-
-div.dt-buttons {
-  margin-top: 10px !important;
-  margin-bottom: 25px !important;
-  display: flex !important; 
-  justify-content: center !important; 
-  gap: 14px; 
-  float: none !important; 
-  width: 100% !important;
+/* --- DISTRIBUCIÓN DE ELEMENTOS (BOTONES A LA IZQUIERDA, BUSCADOR A LA DERECHA) --- */
+/* Forzamos a la fila de Bootstrap a alinear correctamente los dos bloques */
+.card-body .row.mb-3 {
+    position: static !important; /* Quitamos el relative */
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important; /* Botones a la izquierda, buscar a la derecha */
+    align-items: center !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
+/* Columna de los botones: alineada al inicio (izquierda) */
+.card-body .row.mb-3 .col-md-6:first-child {
+    display: flex !important;
+    justify-content: flex-start !important; /* <--- Alineación al inicio */
+    width: auto !important;
+    max-width: 50% !important;
+    flex: 0 0 auto !important;
+}
 
+/* Columna del buscador: regresa al flujo normal pegada a la derecha */
+.card-body .row.mb-3 .col-md-6:last-child {
+    position: static !important; /* <--- Quitamos el absolute para evitar que flote mal */
+    display: flex !important;
+    justify-content: flex-end !important; /* <--- Alineación a la derecha */
+    width: auto !important;
+    max-width: 50% !important;
+    flex: 0 0 auto !important;
+    padding: 0 !important;
+}
+
+/* --- ESTILO DE LOS BOTONES --- */
+div.dt-buttons {
+  margin: 0 !important; 
+  display: flex !important; 
+  justify-content: flex-start !important; /* Botones alineados de forma consecutiva */
+  gap: 14px !important; 
+  width: auto !important;
+}
 div.dt-buttons .dt-button,
 div.dt-buttons .btn {
   display: inline-block !important;
   flex: none !important; 
   width: auto !important; 
   border-radius: 50px !important; 
-  font-weight: 800 !important; /* Texto ULTRA notorio y marcado */
-  font-size: 0.95rem !important; /* Un poco más grande el texto */
-  padding: 10px 30px !important; /* Botón con más cuerpo y presencia */
+  font-weight: 800 !important;
+  font-size: 0.9rem !important; 
+  padding: 10px 30px !important; 
   border: none !important;
   color: white !important;
   text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2); 
@@ -77,63 +103,56 @@ div.dt-buttons .btn {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Colores de los botones */
 .buttons-excel { background: var(--success-color) !important; }
 .buttons-pdf { background: var(--danger-color) !important; }
 .buttons-print { background: var(--info-color) !important; }
 
-/* Hover */
 div.dt-buttons .dt-button:hover:not(.disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
   filter: brightness(0.9);
 }
 
-
-.dataTables_filter {
-    float: left !important;
-    margin-top: 15px !important;
-    margin-bottom: 20px !important;
+/* --- ESTILO DEL BUSCADOR --- */
+.dataTables_filter, .dt-search {
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 .dataTables_filter label {
     font-size: 1rem !important;
     font-weight: 800 !important;
     color: #0b5931 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px;
+    margin: 0 !important;
 }
 
-
-.dataTables_filter input {
-    width: 350px !important;
-    height: 50px !important;
-
+.dataTables_filter input, .dt-search input {
+    width: 240px !important; 
+    height: 40px !important; 
     border: 2px solid #0b5931 !important;
     border-radius: 50px !important;
-
-    padding: 0 20px !important;
-
-    font-size: 1rem !important;
+    padding: 0 15px !important;
+    font-size: 0.95rem !important;
     font-weight: 700 !important;
-
     color: #000 !important;
     background: #fff !important;
-
     box-shadow: 0 4px 10px rgba(11, 89, 49, 0.15) !important;
-
     transition: all .3s ease;
 }
-
 
 .dataTables_filter input:hover {
     box-shadow: 0 6px 16px rgba(11, 89, 49, 0.25) !important;
 }
 
-
 .dataTables_filter input:focus {
     border-color: #198754 !important;
     box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2) !important;
+    outline: none !important;
 }
-
 
 .dataTables_filter input::placeholder {
     font-weight: 700;

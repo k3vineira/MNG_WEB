@@ -7,7 +7,6 @@ from django.db.models import Count, Q
 from django import forms
 from .forms import TemporadaForm
 
-
 def destinos(request):
     destinos_list = Paquete.objects.filter(estado=True)
     busqueda = request.GET.get('q', '').strip()
@@ -22,15 +21,15 @@ def destinos(request):
         destinos_list = destinos_list.filter(
             tarifas__precio_adulto__lte=precio_max).distinct()
 
+    # Filtro estricto bilateral
     if apto_menores == 'si':
-        destinos_list = destinos_list.filter(
-            actividades__apto_para_menores=True).distinct()
+        destinos_list = destinos_list.exclude(actividades__apto_para_menores=False).distinct()
     elif apto_menores == 'no':
-        destinos_list = destinos_list.filter(
-            actividades__apto_para_menores=False).distinct()
+        destinos_list = destinos_list.exclude(actividades__apto_para_menores=True).distinct()
 
     if categoria_id:
         destinos_list = destinos_list.filter(categoria_id=categoria_id)
+        
     categorias_list = Categoria.objects.all()
     
     context = {
@@ -39,7 +38,6 @@ def destinos(request):
     }
     
     return render(request, 'usuario/destinos.html', context)
-
 
 # PAQUETES
 class PaqueteListView(ListView):

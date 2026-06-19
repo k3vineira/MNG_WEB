@@ -740,3 +740,43 @@ body.sidebar-open #sidebar-overlay {
         margin: 0;
     }
 }
+
+
+/* 1. Forzamos al contenedor que envuelve los botones y el buscador a alinearlos en una sola fila */
+.dt-layout-row:has(.dt-buttons), 
+.dt-layout-row:has(.dt-search),
+.dataTables_wrapper > div:first-of-type {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important; /* Botones a la izquierda, buscar a la derecha */
+    align-items: center !important;
+    width: 100% !important;
+    margin-bottom: 15px !important;
+}
+
+/* 2. Aseguramos que las celdas o sub-contenedores internos no fuercen un salto de línea */
+.dt-layout-cell {
+    display: flex !important;
+    align-items: center !important;
+    width: auto !important;
+}
+
+/* 3. Empujamos magnéticamente el bloque de búsqueda hacia la extrema derecha */
+.dt-layout-cell:last-of-type {
+    justify-content: flex-end !important;
+    flex-grow: 1;
+}
+
+/* 4. Mantenemos el diseño limpio y compacto del input de búsqueda */
+.dt-search, .dataTables_filter {
+    margin: 0 !important;
+}
+
+.dt-search input, .dataTables_filter input {
+    width: 200px !important; /* Tamaño ideal y controlado */
+    height: 36px !important;
+    border-radius: 6px !important;
+    border: 1px solid #dee2e6 !important;
+    padding: 5px 10px !important;
+    margin-left: 10px !important;
+}
