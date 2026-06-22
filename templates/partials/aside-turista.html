@@ -1,11 +1,9 @@
 {% load static %}
 
-<!-- SIDEBAR TURISTA -->
 <aside id="mainSidebar"
        class="d-flex flex-column bg-dark text-white position-fixed top-0 start-0 h-100"
        style="width:240px;z-index:1040;overflow-y:auto;transition:transform .3s">
 
-  <!-- Brand -->
   <a href="{% url 'index_turista' %}" class="d-flex align-items-center gap-2 p-3 text-decoration-none border-bottom border-secondary">
     <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo"
          class="rounded-circle border border-success flex-shrink-0"
@@ -16,17 +14,14 @@
     </div>
   </a>
 
-  <!-- Nav -->
   <nav class="flex-grow-1 py-2">
 
-    <!-- Cuenta (Sin Acordeón) -->
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Cuenta</div>
     <a href="{% url 'perfil_detalles' %}"
        class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
       <i class="bi bi-person-gear"></i> Mi Perfil
     </a>
 
-    <!-- Principal (Sin Acordeón) -->
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Principal</div>
     <a href="/"
        class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
@@ -41,10 +36,8 @@
       <i class="bi bi-graph-up-arrow"></i> Mis Estadísticas
     </a>
 
-    <!-- Acordeón para secciones complejas -->
     <div class="accordion accordion-flush mt-2" id="accordionPanelsStayOpenExample" data-bs-theme="dark">
 
-      <!-- Mis Viajes -->
       <div class="accordion-item bg-transparent border-0">
         <h2 class="accordion-header" id="panelsStayOpen-headingOne">
           <button class="accordion-button collapsed bg-transparent text-white shadow-none py-2 px-3 fw-semibold small" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
@@ -73,7 +66,6 @@
         </div>
       </div>
 
-      <!-- Comunidad -->
       <div class="accordion-item bg-transparent border-0">
         <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
           <button class="accordion-button collapsed bg-transparent text-white shadow-none py-2 px-3 fw-semibold small" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
@@ -100,7 +92,6 @@
 
     </div>
 
-    <!-- Sistema (Sin Acordeón) -->
     <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-3" style="font-size:.65rem;letter-spacing:.1em">
       Sistema</div>
     <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
@@ -112,7 +103,6 @@
 
   </nav>
 
-  <!-- Footer -->
   <div class="p-3 border-top border-secondary">
     <div class="d-flex align-items-center gap-2 mb-2">
       <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
@@ -133,6 +123,114 @@
   </div>
 
 </aside>
+
+
+<div class="campanita-panel-superior dropdown">
+  <button class="btn-campanita-negra" type="button" id="dropdownPanelNotif" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-bell-fill"></i>
+    {% if contador_notificaciones > 0 %}
+      <span class="badge-contador-rojo">
+        {{ contador_notificaciones }}
+      </span>
+    {% endif %}
+  </button>
+  
+  <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="dropdownPanelNotif">
+    <li class="dropdown-header border-bottom py-2 fw-bold text-dark">Notificaciones Recientes</li>
+    
+    {% if notificaciones_globales %}
+        {% for noti in notificaciones_globales %}
+            <li>
+                <a class="dropdown-item p-3 border-bottom d-block text-decoration-none" href="{% url 'marcar_leida' noti.id %}">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="badge {% if noti.tipo == 'reserva' %}bg-success{% elif noti.tipo == 'pqrs' %}bg-primary{% else %}bg-warning text-dark{% endif %} text-uppercase px-2" style="font-size: 0.65rem;">
+                            {{ noti.tipo }}
+                        </span>
+                        <small class="text-muted" style="font-size: 0.7rem;">{{ noti.fecha_creacion|timesince }}</small>
+                    </div>
+                    <strong class="text-dark d-block text-truncate" style="font-size: 0.9rem;">{{ noti.titulo }}</strong>
+                    <p class="mb-0 text-secondary small text-wrap text-truncate" style="max-width: 260px;">{{ noti.mensaje }}</p>
+                </a>
+            </li>
+        {% endfor %}
+        <li>
+            <a class="dropdown-item text-center text-success fw-bold py-2 small" href="{% url 'lista_notificaciones' %}">
+                Ver todo el historial
+            </a>
+        </li>
+    {% else %}
+        <li class="p-4 text-center text-muted small">
+            <i class="bi bi-bell-slash d-block mb-2 fs-4 text-secondary"></i>
+            No tienes alertas pendientes.
+        </li>
+    {% endif %}
+  </ul>
+</div>
+
+<style>
+  .campanita-panel-superior {
+      position: fixed;
+      right: 30px;        /* Distancia desde el borde derecho */
+      top: 25px;          /* Distancia desde el borde superior */
+      z-index: 1050;      /* Por encima de todo el contenido */
+  }
+
+  /* Botón Negro Grande y Llamativo */
+  .btn-campanita-negra {
+      width: 58px;        /* Más grande */
+      height: 58px;       /* Más grande */
+      border-radius: 50%;
+      background-color: #1a1a1a; /* Negro oscuro elegante */
+      border: 2px solid #222222;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      position: relative;
+  }
+
+  /* Efecto Hover */
+  .btn-campanita-negra:hover {
+      transform: scale(1.08);
+      background-color: #000000;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Icono Blanco Interno Grande */
+  .btn-campanita-negra i {
+      color: #ffffff;
+      font-size: 1.65rem; /* Icono grande */
+  }
+
+  /* Globo de Alerta Rojo */
+  .badge-contador-rojo {
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      background-color: #dc3545; /* Rojo de Bootstrap */
+      color: #ffffff;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #1a1a1a; /* Borde del mismo color del botón */
+  }
+
+  /* Estilos del Dropdown desplegable */
+  .campanita-panel-superior .dropdown-menu {
+      width: 310px;
+      border: none;
+      border-radius: 14px;
+      margin-top: 10px !important;
+  }
+</style>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {

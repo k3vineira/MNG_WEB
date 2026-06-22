@@ -1,7 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
-from .models import PQRS, Blog
+from .models import PQRS, Blog , Notificacion
 from django.shortcuts import get_object_or_404
 from .forms import PqrsForm, BlogForm
 from django.contrib import messages
@@ -160,3 +160,32 @@ def blog_usuario(request):
         publicado=True).order_by('-fecha_publicacion')
     context = {'blogs': articulos}
     return render(request, 'usuario/blog.html', context)
+def notificaciones_usuario(request):
+    if request.user.is_authenticated:
+        notis = Notificacion.objects.filter(cliente=request.user)
+        notificaciones_no_leidas = notis.filter(leida=False)
+        return {
+            'notificaciones_globales': notis[:5],
+            'contador_notificaciones': notificaciones_no_leidas.count()
+        }
+    return {
+        'notificaciones_globales': [],
+        'contador_notificaciones': 0
+    }
+
+def marcar_notificacion_leida(request, notificacion_id):
+    notificacion = get_object_or_404(Notificacion, id=notificacion_id, cliente=request.user)
+    notificacion.leida = True
+    notificacion.save()
+    
+    if notificacion.tipo == 'reserva':
+        return redirect('mis_reservas_usuario')
+    elif notificacion.tipo == 'pqrs':
+        return redirect('mis_pqrs')
+    return redirect('aside-admin.html')
+
+@login_required
+def lista_notificaciones(request):
+    # Cambiado de 'usuario=' a 'cliente='
+    notificaciones = Notificacion.objects.filter(cliente=request.user)
+    return render(request, 'usuario/lista_notificaciones.html', {'notificaciones': notificaciones})

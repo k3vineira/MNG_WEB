@@ -69,6 +69,31 @@ class ReservaUpdateView(UpdateView):
     template_name = 'admin/reservas/editar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 
+    def form_valid(self, form):
+        # Guardamos los datos actualizados de la reserva
+        response = super().form_valid(form)
+        reserva = self.object
+        nombre_cliente = reserva.usuario.first_name or reserva.usuario.username
+        if reserva.estado in ['confirmada', 'cancelada']:
+            asunto = f"Tu Reserva #{reserva.id} ha sido {reserva.estado.upper()} - Monagua"
+            mensaje_texto = f"Hola {nombre_cliente}, el estado de tu reserva para {reserva.paquete.nombre} ha cambiado a {reserva.estado}."
+            
+            html_contenido = plantilla_reserva_html(
+                nombre_cliente=nombre_cliente,
+                paquete=reserva.paquete.nombre,
+                fecha=str(reserva.fecha),
+                adultos=reserva.numero_adultos,
+                menores=reserva.numero_menores,
+                estado=reserva.estado,
+                reserva_id=reserva.id,
+                monto_total=str(reserva.monto_total)
+            )
+            try:
+                enviar_correo_html_monagua(asunto, mensaje_texto, reserva.usuario.email, html_contenido)
+            except Exception as e:
+                print(f"Error enviando correo de actualización de reserva: {e}")
+                
+        return response
 
 class ReservaDeleteView(DeleteView):
     model = Reserva
@@ -137,33 +162,57 @@ class CancelacionCreateView(CreateView):
     def form_valid(self, form):
         reserva_id = self.request.GET.get('reserva_id')
         if not reserva_id:
-            messages.error(
-                self.request, 'No se encontró la reserva para la cancelación.')
+            messages.error(self.request, 'No se encontró la reserva para la cancelación.')
             return redirect('mis_cancelaciones_usuario')
 
-        reserva = get_object_or_404(
-            Reserva, id=reserva_id, usuario=self.request.user)
+        reserva = get_object_or_404(Reserva, id=reserva_id, usuario=self.request.user)
 
         if reserva.estado == 'cancelada':
             messages.warning(self.request, 'Esta reserva ya está cancelada.')
             return redirect('mis_cancelaciones_usuario')
 
         if Cancelacion.objects.filter(reserva=reserva, estado__in=['revision', 'aceptada']).exists():
-            messages.warning(
-                self.request, 'Ya existe una solicitud de cancelación activa para esta reserva.')
+            messages.warning(self.request, 'Ya existe una solicitud de cancelación activa para esta reserva.')
             return redirect('mis_cancelaciones_usuario')
 
         form.instance.reserva = reserva
         form.instance.usuario = self.request.user
-        return super().form_valid(form)
+        form.instance.estado = 'pendiente'  
+       
+        response = super().form_valid(form)
+        
+    
+        nombre_cliente = self.request.user.first_name or self.request.user.username
+        asunto = f"Solicitud de cancelación Recibida - Reserva #{reserva.id}"
+        mensaje_texto = f"Hola {nombre_cliente}, hemos recibido tu solicitud de cancelación para el paquete {reserva.paquete.nombre}."
+        
+        html_cancelacion = plantilla_cancelacion_html(
+            nombre_cliente=nombre_cliente,
+            paquete=reserva.paquete.nombre,
+            estado='pendiente',  
+            penalidad="0.00"
+        )
+        
+        try:
+            enviar_correo_html_monagua(
+                asunto,
+                mensaje_texto,
+                self.request.user.email,
+                html_cancelacion
+            )
+            messages.success(self.request, 'Tu solicitud de cancelación ha sido enviada y se te ha notificado por correo.')
+        except Exception as e:
+            print(f"Error al enviar el correo inicial de cancelación: {e}")
+            messages.success(self.request, 'Tu solicitud fue radicada pero hubo un inconveniente al enviar la notificación por correo.')
 
-
+        return response
+    
 class CancelacionUpdateView(UpdateView):
     model = Cancelacion
     form_class = CancelacionForm
     template_name = 'admin/cancelaciones/editar_cancelacion.html'
     success_url = reverse_lazy('administrar_cancelaciones')
-
+    
 
 class CancelacionDeleteView(DeleteView):
     model = Cancelacion
@@ -197,21 +246,18 @@ def administrar_cancelaciones(request):
 
         cancelacion.save()
 
-        # --- CORRECCIÓN DE ESTADOS DE LA RESERVA ---
+       
         if cancelacion.estado == 'aceptada':
             cancelacion.reserva.estado = 'cancelada'
         elif cancelacion.estado == 'rechazada':
-            cancelacion.reserva.estado = 'confirmada' # <--- SOLUCIÓN: Ahora sí cambia el estado
+            cancelacion.reserva.estado = 'confirmada'
         
-        cancelacion.reserva.save() # Se guarda una sola vez al final del bloque de estados
+        cancelacion.reserva.save()
 
         nombre_cliente = cancelacion.reserva.usuario.first_name or cancelacion.reserva.usuario.username
-        
-        # 1. CONVERSIÓN EXPLICITA A STRING (Evita que la plantilla falle)
-        monto_str = str(cancelacion.reserva.monto_total)
         penalidad_str = str(cancelacion.penalidad)
 
-        # 2. DEFINIR ASUNTO DEPENDIENDO DEL ESTADO
+      
         if cancelacion.estado == 'aceptada':
             asunto = f"Solicitud ACEPTADA para tu Reserva #{cancelacion.reserva.id} - Monagua"
             mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido aceptada."
@@ -219,16 +265,15 @@ def administrar_cancelaciones(request):
             asunto = f"Solicitud RECHAZADA para tu Reserva #{cancelacion.reserva.id} - Monagua"
             mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido rechazada."
         else:
-            asunto = f"Actualización de tu Reserva #{cancelacion.reserva.id} - Monagua"
-            mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} está en revisión."
+            asunto = f"Actualización de tu Cancelación #{cancelacion.reserva.id} - Monagua"
+            mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} cambió de estado."
 
         try:
-           
             html_cancelacion = plantilla_cancelacion_html(
                 nombre_cliente=nombre_cliente,
                 paquete=cancelacion.reserva.paquete.nombre,
                 estado=cancelacion.estado,
-                penalidad=penalidad_str # Pasado como texto limpio
+                penalidad=penalidad_str
             )
 
             enviar_correo_html_monagua(
@@ -238,7 +283,7 @@ def administrar_cancelaciones(request):
                 html_cancelacion
             )
         except Exception as e:
-            print(f"Error al enviar el correo de cancelación: {e}")
+            print(f"Error al enviar el correo de resolución de cancelación: {e}")
 
         return redirect('administrar_cancelaciones')
     
@@ -252,7 +297,6 @@ def administrar_cancelaciones(request):
 
     stats_list = [
         ('Total', stats['total'], 'text-dark'),
-        ('En Revisión', stats['revisando'], 'text-warning'),
         ('Aceptadas', stats['aceptadas'], 'text-success'),
         ('Rechazadas', stats['rechazadas'], 'text-danger'),
     ]
@@ -270,6 +314,8 @@ def administrar_cancelaciones(request):
         'stats_list': stats_list
     }
     return render(request, 'admin/cancelaciones/cancelaciones_admin.html', context)
+
+ 
 
 # VISTA PÚBLICA
 # =========================
@@ -410,13 +456,17 @@ def guardar_reserva(request, paquete_id):
         mensaje_texto = f"Hola {nombre_cliente}, hemos recibido tu solicitud de reserva para {paquete.nombre}."
 
         html_bonito = plantilla_reserva_html(
-            nombre_cliente=nombre_cliente,
-            paquete=paquete.nombre,
-            estado=reserva.estado,
-            reserva_id=reserva.id,
-            monto_total=reserva.monto_total
-        )
-
+    nombre_cliente=nombre_cliente,
+    paquete=paquete.nombre,
+    fecha=reserva.fecha.strftime('%d/%m/%Y'),  
+    adultos=reserva.numero_adultos,
+    menores=reserva.numero_menores,
+    punto_encuentro="Por definir (Sujeto a confirmación)", 
+    hora_encuentro="08:00",
+    estado=reserva.estado,
+    reserva_id=reserva.id,
+    monto_total=str(reserva.monto_total)
+)
         enviar_correo_html_monagua(
             asunto, mensaje_texto, request.user.email, html_bonito)
 

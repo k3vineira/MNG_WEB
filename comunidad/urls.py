@@ -27,6 +27,9 @@ urlpatterns = [
     path('blog/usuario/', views.blog_usuario, name='blog_usuario'),
 
     # Comentarios
+    
+    path('notificaciones/marcar/<int:notificacion_id>/', views.marcar_notificacion_leida, name='marcar_leida'),
+    path('notificaciones/todas/', views.lista_notificaciones, name='lista_notificaciones'),
 
 
 

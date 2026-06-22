@@ -45,8 +45,7 @@
         <i class="bi bi-box-seam-fill"></i> Paquetes
       </button>
       <div class="collapse ms-3" id="menuPaquetes">
-        <a href="{% url 'listar_paquetes' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_paquetes' %}bg-success text-white{% endif %}">Listar Paquetes</a>
-        <a href="{% url 'crear_paquete' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'crear_paquete' %}bg-success text-white{% endif %}">Crear Paquete</a>
+        <a href="{% url 'listar_paquetes' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_paquetes' %}bg-success text-white{% endif %}">Paquetes</a>
         <a href="{% url 'listar_actividades' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_actividades' %}bg-success text-white{% endif %}">Actividades</a>
         <a href="{% url 'listar_tarifas' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_tarifas' %}bg-success text-white{% endif %}">Tarifas</a>
         <a href="{% url 'listar_temporadas' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_temporadas' %}bg-success text-white{% endif %}">Temporadas</a>

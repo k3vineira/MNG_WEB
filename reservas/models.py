@@ -19,7 +19,7 @@ class Reserva(models.Model):
         verbose_name='Cliente'
     )
     paquete = models.ForeignKey(
-        Paquete,  # Asegúrate de que este modelo esté importado arriba
+        Paquete,  
         on_delete=models.PROTECT,
         related_name='reserva',
         verbose_name='Paquete Reservado'
@@ -32,7 +32,7 @@ class Reserva(models.Model):
     estado = models.CharField(
         max_length=20, choices=ESTADO_CHOICES, default='pendiente', verbose_name='Estado')
 
-    # Monto total (se calculará automáticamente)
+
     monto_total = models.IntegerField(
         verbose_name='Monto Total', editable=False)
 
@@ -42,7 +42,6 @@ class Reserva(models.Model):
     class Meta:
         verbose_name = 'Reserva'
         verbose_name_plural = 'Reservas'
-        # Blindaje absoluto a nivel Base de Datos
         constraints = [
             models.UniqueConstraint(
                 fields=['usuario', 'paquete', 'fecha'],
@@ -52,8 +51,6 @@ class Reserva(models.Model):
 
     def clean(self):
         super().clean()
-
-        # Validación inteligente para los formularios del Front-End y Admin
         if self.usuario and self.paquete and self.fecha:
             query = Reserva.objects.filter(
                 usuario=self.usuario,
@@ -69,9 +66,7 @@ class Reserva(models.Model):
                 )
 
     def save(self, *args, **kwargs):
-        # NOTA: Se removió self.full_clean() de aquí para que el script corra sin problemas.
-        # Tus vistas con CreateView/ModelForm se encargan de validar automáticamente a través de clean().
-
+       
         if self.paquete and self.fecha:
             try:
                 from catalogo.models import Temporada, Tarifa
@@ -94,59 +89,54 @@ class Reserva(models.Model):
         elif not getattr(self, 'monto_total', None):
             self.monto_total = 0
 
-        # Corregida la sangría para que siempre se ejecute el guardado real
         super().save(*args, **kwargs)
 
     def __str__(self):
         nombre_usuario = self.usuario.get_full_name() or self.usuario.username
         return f"Reserva {self.id} - {nombre_usuario} ({self.paquete.nombre})"
+   
+   
 
 class Cancelacion(models.Model):
+     
     ESTADOS_CANCELACION = [
-        ('revision', 'En Revisión por Admin'),
+        ('pendiente', 'Pendiente'),  
         ('aceptada', 'Aceptada'),
         ('rechazada', 'Rechazada'),
     ]
-
-    reserva = models.ForeignKey(
-        'Reserva', on_delete=models.CASCADE, related_name='cancelaciones')
+    reserva = models.ForeignKey('Reserva', on_delete=models.CASCADE, related_name='cancelaciones')
     motivo = models.TextField()
-    penalidad = models.IntegerField(
-        default=0, verbose_name='Penalidad Aplicada', editable=False)
-    reembolso_sugerido = models.IntegerField(
-        default=0, verbose_name='Reembolso Sugerido', editable=False)
-
-    estado = models.CharField(
-        max_length=20, choices=ESTADOS_CANCELACION, default='revision', verbose_name='Estado')
-    fecha_solicitud = models.DateTimeField(
-        auto_now_add=True, verbose_name='Fecha de Solicitud')
+    penalidad = models.IntegerField(default=0, verbose_name='Penalidad Aplicada')
+    estado = models.CharField( max_length=20, choices=ESTADOS_CANCELACION, default='pendiente', verbose_name='Estado')
+    fecha_solicitud = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Solicitud')
 
     class Meta:
         verbose_name = 'Cancelación'
         verbose_name_plural = 'Cancelaciones'
 
     def save(self, *args, **kwargs):
+        
         if not self.pk:
             fecha_viaje = self.reserva.fecha
             fecha_actual = timezone.now().date()
+    
             diferencia = fecha_viaje - fecha_actual
             dias_antelacion = diferencia.days
             valor_reserva = self.reserva.monto_total
+            
             if dias_antelacion > 15:
-                self.reembolso_sugerido = int(valor_reserva * 0.90)
-                self.penalidad = int(valor_reserva * 0.10)
+                self.penalidad = int(valor_reserva * 0.10)  
                 
-            elif dias_antelacion >= 2: 
-                self.reembolso_sugerido = int(valor_reserva * 0.50)
-                self.penalidad = int(valor_reserva * 0.50)
+            elif 5 <= dias_antelacion <= 15:
+                self.penalidad = int(valor_reserva * 0.50)  
                 
             else:
-                self.reembolso_sugerido = 0
-                self.penalidad = valor_reserva
-
-        
+                self.penalidad = valor_reserva              
         if self.estado == 'aceptada':
             self.reserva.estado = 'cancelada'
+            self.reserva.save()
+        elif self.estado == 'rechazada':
+            self.reserva.estado = 'confirmada'
             self.reserva.save()
 
         super().save(*args, **kwargs)

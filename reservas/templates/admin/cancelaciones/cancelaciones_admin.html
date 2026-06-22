@@ -11,6 +11,46 @@
             <h3 class="fw-bold mb-0">Administración de Cancelaciones</h3>
         </div>
     </div>
+   
+        <div class="row g-4 mb-4 mx-auto justify-content-center" style="max-width: 1200px;">
+        {% for label, count, color in stats_list %}
+          <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background: #ffffff;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center p-2">
+                    
+               
+                    <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" 
+                         style="width: 75px; height: 75px; 
+                                {% if color == 'text-success' %} background-color: #e8f5e9; 
+                                {% elif color == 'text-danger' %} background-color: #ffebee; 
+                                {% else %} background-color: #f1f3f5; {% endif %}">
+                        
+                        {% if color == 'text-dark' %}
+                           
+                            <i class="bi bi-luggage-fill text-secondary" style="font-size: 2.2rem;"></i>
+                        {% elif color == 'text-success' %}
+                      
+                            <i class="bi bi-airplane-engines-fill text-success" style="font-size: 2.2rem;"></i>
+                        {% else %}
+                            
+                            <i class="bi bi-ticket-detailed-fill text-danger" style="font-size: 2.2rem;"></i>
+                        {% endif %}
+                    </div>
+
+                    
+                    <span class="text-muted text-uppercase fw-bold mb-2" style="font-size: 0.9rem; letter-spacing: 0.5px;">
+                        {{ label }}
+                    </span>
+                    <h3 class="card-title text-center mb-0" style="font-size: 1.5rem;">
+                        <span class="fw-bold {{ color }}" style="font-size: 2.8rem; font-weight: 800; line-height: 1;">
+                            {{ count }}
+                        </span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
     <div class="card border-0 shadow-sm rounded-3 mx-auto p-3" style="max-width: 100%;">
         
@@ -24,7 +64,6 @@
                         <th class="py-3">Paquete</th>
                         <th class="py-3" style="width: 20%;">Motivo</th>
                         <th class="text-center py-3">Penalidad</th>
-                        <th class="text-center py-3">Reembolso Sugerido</th>
                         <th class="text-center py-3" style="width: 15%;">Fecha Solicitud</th>
                         <th class="text-center py-3">Estado</th>
                         <th class="text-center py-3">Acciones</th>
@@ -47,33 +86,20 @@
                         </td>
 
                         <td class="py-3 text-center fw-bold text-danger">
-                            ${{ cancelacion.penalidad }}
+                            ${% if cancelacion.penalidad %}{{ cancelacion.penalidad }}{% else %}0{% endif %}
                         </td>
-
-                        <td class="py-3 text-center fw-bold text-success">
-                            ${{ cancelacion.reembolso_sugerido }}
-                        </td>
-
                         <td class="py-3 text-center text-muted" style="font-size: 0.9rem;">
                             {{ cancelacion.fecha_solicitud|date:"d M Y H:i" }}
                         </td>
 
-                        <td class="text-center py-3">
-                            <span class="badge rounded-pill px-3 py-2 fs-7
+                        <td class="py-3 text-center">
                             {% if cancelacion.estado == 'pendiente' %}
-                                bg-warning text-dark
-                            {% elif cancelacion.estado == 'revision' %}
-                                text-white
-                            {% elif cancelacion.estado == 'confirmada' or cancelacion.estado == 'aceptada' %}
-                                bg-success text-white
+                                <span class="badge text-white px-4 py-2 fs-6 rounded-pill" style="background-color: #406d46;">Pendiente</span>
+                            {% elif cancelacion.estado == 'aceptada' %}
+                                <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill">Aceptada</span>
                             {% else %}
-                                bg-danger text-white
-                            {% endif %}"
-                            {% if cancelacion.estado == 'revision' %}
-                                style="background-color:#406d46;"
-                            {% endif %}>
-                                {{ cancelacion.estado|capfirst }}
-                            </span>
+                                <span class="badge bg-danger text-white px-4 py-2 fs-6 rounded-pill">Rechazada</span>
+                            {% endif %}
                         </td>
 
                         <td class="text-center py-3">
@@ -87,7 +113,7 @@
 
                     {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center py-5 text-muted">
+                        <td colspan="7" class="text-center py-5 text-muted">
                             No hay solicitudes de cancelación registradas.
                         </td>
                     </tr>
