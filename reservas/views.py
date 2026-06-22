@@ -180,8 +180,6 @@ def mis_cancelaciones_usuario(request):
         'cancelaciones': mis_cancelaciones
     }
     return render(request, 'usuario/cancelaciones/mis_cancelaciones.html', context)
-
-
 def administrar_cancelaciones(request):
     if request.method == 'POST':
         cancelacion_id = request.POST.get('cancelacion_id')
@@ -191,101 +189,57 @@ def administrar_cancelaciones(request):
 
         penalidad_raw = request.POST.get('penalidad', '0').strip()
         try:
-            cancelacion.penalidad = Decimal(
-                penalidad_raw) if penalidad_raw else Decimal('0.00')
+            cancelacion.penalidad = Decimal(penalidad_raw) if penalidad_raw else Decimal('0.00')
         except (InvalidOperation, ValueError):
             cancelacion.penalidad = Decimal('0.00')
 
         cancelacion.save()
 
-        # Mantener el estado real de la reserva sin producir cambios inesperados.
+        # --- CORRECCIÓN DE ESTADOS DE LA RESERVA ---
         if cancelacion.estado == 'aceptada':
             cancelacion.reserva.estado = 'cancelada'
-            cancelacion.reserva.save()
         elif cancelacion.estado == 'rechazada':
-            # No se altera el estado original de la reserva. Si estaba confirmada, sigue confirmada;
-            # si estaba pendiente, continúa pendiente hasta que el administrador defina otro comportamiento.
-            cancelacion.reserva.save()
-        else:
-            # En revisión no se debe cambiar el estado de la reserva.
-            cancelacion.reserva.save()
+            cancelacion.reserva.estado = 'confirmada' # <--- SOLUCIÓN: Ahora sí cambia el estado
+        
+        cancelacion.reserva.save() # Se guarda una sola vez al final del bloque de estados
 
-        nombre_cliente = (
-            cancelacion.reserva.usuario.first_name
-            or cancelacion.reserva.usuario.username
-        )
+        nombre_cliente = cancelacion.reserva.usuario.first_name or cancelacion.reserva.usuario.username
+        
+        # 1. CONVERSIÓN EXPLICITA A STRING (Evita que la plantilla falle)
+        monto_str = str(cancelacion.reserva.monto_total)
+        penalidad_str = str(cancelacion.penalidad)
 
-        asunto_reserva = (
-            f"Actualización de tu Reserva #{cancelacion.reserva.id} - Monagua"
-        )
-
-        if cancelacion.reserva.estado == 'cancelada':
-            mensaje_reserva_texto = (
-                f"Hola {nombre_cliente}, tu reserva para "
-                f"{cancelacion.reserva.paquete.nombre} ha sido CANCELADA "
-                "debido a la aprobación de tu solicitud."
-            )
-        elif cancelacion.reserva.estado == 'confirmada':
-            mensaje_reserva_texto = (
-                f"Hola {nombre_cliente}, tu solicitud de cancelación fue "
-                f"rechazada, por lo tanto tu reserva para "
-                f"{cancelacion.reserva.paquete.nombre} sigue CONFIRMADA."
-            )
-        else:
-            mensaje_reserva_texto = (
-                f"Hola {nombre_cliente}, tu reserva para "
-                f"{cancelacion.reserva.paquete.nombre} está en estado: "
-                f"{cancelacion.reserva.estado}."
-            )
-
-        html_reserva = plantilla_reserva_html(
-            nombre_cliente=nombre_cliente,
-            paquete=cancelacion.reserva.paquete.nombre,
-            estado=cancelacion.reserva.estado,
-            reserva_id=cancelacion.reserva.id,
-            monto_total=cancelacion.reserva.monto_total
-        )
-
-        enviar_correo_html_monagua(
-            asunto_reserva,
-            mensaje_reserva_texto,
-            cancelacion.reserva.usuario.email,
-            html_reserva
-        )
-
-        asunto = "Actualización de cancelación - Monagua"
-
+        # 2. DEFINIR ASUNTO DEPENDIENDO DEL ESTADO
         if cancelacion.estado == 'aceptada':
-            mensaje_texto = (
-                f"Hola {nombre_cliente}, tu solicitud de cancelación para "
-                f"{cancelacion.reserva.paquete.nombre} ha sido aceptada."
-            )
+            asunto = f"Solicitud ACEPTADA para tu Reserva #{cancelacion.reserva.id} - Monagua"
+            mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido aceptada."
         elif cancelacion.estado == 'rechazada':
-            mensaje_texto = (
-                f"Hola {nombre_cliente}, tu solicitud de cancelación para "
-                f"{cancelacion.reserva.paquete.nombre} ha sido rechazada."
-            )
+            asunto = f"Solicitud RECHAZADA para tu Reserva #{cancelacion.reserva.id} - Monagua"
+            mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido rechazada."
         else:
-            mensaje_texto = (
-                f"Hola {nombre_cliente}, tu solicitud de cancelación para "
-                f"{cancelacion.reserva.paquete.nombre} está en revisión."
+            asunto = f"Actualización de tu Reserva #{cancelacion.reserva.id} - Monagua"
+            mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} está en revisión."
+
+        try:
+           
+            html_cancelacion = plantilla_cancelacion_html(
+                nombre_cliente=nombre_cliente,
+                paquete=cancelacion.reserva.paquete.nombre,
+                estado=cancelacion.estado,
+                penalidad=penalidad_str # Pasado como texto limpio
             )
 
-        html_cancelacion = plantilla_cancelacion_html(
-            nombre_cliente=nombre_cliente,
-            paquete=cancelacion.reserva.paquete.nombre,
-            estado=cancelacion.estado,
-            penalidad=cancelacion.penalidad
-        )
-
-        enviar_correo_html_monagua(
-            asunto,
-            mensaje_texto,
-            cancelacion.reserva.usuario.email,
-            html_cancelacion
-        )
+            enviar_correo_html_monagua(
+                asunto,
+                mensaje_texto,
+                cancelacion.reserva.usuario.email,
+                html_cancelacion
+            )
+        except Exception as e:
+            print(f"Error al enviar el correo de cancelación: {e}")
 
         return redirect('administrar_cancelaciones')
+    
 
     stats = Cancelacion.objects.aggregate(
         total=Count('id'),
@@ -310,9 +264,9 @@ def administrar_cancelaciones(request):
             c.penalidad = Decimal('0.00')
             
     context = {
-                'cancelaciones': cancelaciones_raw,
-                'stats_list': stats_list
-            }
+        'cancelaciones': cancelaciones_raw,
+        'stats_list': stats_list
+    }
     return render(request, 'admin/cancelaciones/cancelaciones_admin.html', context)
 
 # VISTA PÚBLICA
