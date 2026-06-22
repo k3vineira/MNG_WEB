@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
             currentFrame = frameIndex;
             // Assuming static path mapping is standard, 
             // the root of your static folder translates to /static/
-            condorImg.src = '/static/img/mascota/condor' + currentFrame + '.png';
+            condorImg.src = '/static/img/mascota/condor' + currentFrame + '.webp';
         }
     });
 });

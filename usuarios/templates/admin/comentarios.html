@@ -68,7 +68,7 @@
           <!-- Usuario info with avatar -->
           <td class="ps-4 py-3">
             <div class="d-flex align-items-center gap-3">
-              <img src="{% if comentario.usuario.imagen_perfil %}{{ comentario.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.png' %}{% endif %}"
+              <img src="{% if comentario.usuario.imagen_perfil %}{{ comentario.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
                    alt="{{ comentario.usuario.get_full_name|default:comentario.usuario.username }}"
                    class="rounded-circle border"
                    width="38" height="38" style="object-fit:cover">

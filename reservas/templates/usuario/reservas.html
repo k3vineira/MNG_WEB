@@ -9,7 +9,7 @@
         {% if paquete and paquete.imagen %}
           <img src="{{ paquete.imagen.url }}" class="img-full" style="object-fit: cover; width: 100%; height: 100%; min-height: 400px;" alt="{{ paquete.nombre }}" />
         {% else %}
-          <img src="{% static 'img/paramo.png' %}" class="img-full" style="object-fit: cover; width: 100%; height: 100%; min-height: 400px;" alt="Paisaje por defecto" />
+          <img src="{% static 'img/carousel/paramo.webp' %}" class="img-full" style="object-fit: cover; width: 100%; height: 100%; min-height: 400px;" alt="Paisaje por defecto" />
         {% endif %}
       </div>
     </div>

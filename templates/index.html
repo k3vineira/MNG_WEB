@@ -25,9 +25,11 @@
   </div>
     
     <img id="flashlight-img" 
-         src="{% static 'img/Fondo.jpg' %}" 
+         src="{% static 'img/Fondo.webp' %}" 
          alt="Paisaje Monagua" 
          class="w-100 h-100" 
+         fetchpriority="high"
+         decoding="async"
          style="object-fit: cover; pointer-events: none; -webkit-mask-image: radial-gradient(circle 0px at 50% 50%, black, transparent); mask-image: radial-gradient(circle 0px at 50% 50%, black, transparent); transition: -webkit-mask-image 0.1s ease-out, mask-image 0.1s ease-out;">
   </div>
 
@@ -54,7 +56,7 @@
       <!-- Laguna Negra -->
       <div class="marquee-item">
         <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
-          <img src="{% static 'img/Fondo3.jpg' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Laguna Negra" loading="lazy">
+          <img src="{% static 'img/Fondo3.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Laguna Negra" loading="lazy">
           <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);">
             <h3 class="card-title fw-bold text-white">Laguna Negra</h3>
             <div>
@@ -71,7 +73,7 @@
       <!-- Legado Ancestral -->
       <div class="marquee-item">
         <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
-          <img src="{% static 'img/img_pictogramas.jpg' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Legado Ancestral" loading="lazy">
+          <img src="{% static 'img/img_pictogramas.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Legado Ancestral" loading="lazy">
           <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);">
             <h3 class="card-title fw-bold text-white">Legado Ancestral</h3>
             <div>
@@ -88,7 +90,7 @@
       <!-- Rutas de Aventura -->
       <div class="marquee-item">
         <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
-          <img src="{% static 'img/img_rio.jpg' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Rutas de Aventura" loading="lazy">
+          <img src="{% static 'img/img_rio.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Rutas de Aventura" loading="lazy">
           <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);">
             <h3 class="card-title fw-bold text-white">Rutas de Aventura</h3>
             <div>
@@ -108,7 +110,7 @@
       <!-- Vivencias -->
       <div class="marquee-item">
         <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
-          <img src="{% static 'img/img_museo.jpg' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Vivencias" loading="lazy">
+          <img src="{% static 'img/img_museo.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Vivencias" loading="lazy">
           <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);">
             <h3 class="card-title fw-bold text-white">Vivencias</h3>
             <div>
@@ -150,7 +152,7 @@
     <div class="row g-4">
       <!-- Tarjeta 1 -->
       <div class="col-lg-6">
-        <div class="card bg-success card-sustainability rounded-3 overflow-hidden position-relative shadow" style="background-image: url('{% static 'img/img_rutas.jpg' %}');">
+        <div class="card bg-success card-sustainability rounded-3 overflow-hidden position-relative shadow" style="background-image: url('{% static 'img/img_rutas.webp' %}');">
           <div class="card-img-overlay overlay-gradient d-flex flex-column justify-content-between p-4 p-md-5">
             <div class="text-white">
               <h3 class="display-5 fw-bold mb-3">Mongua<br>Rutas</h3>
@@ -165,7 +167,7 @@
 
       <!-- Tarjeta 2 -->
       <div class="col-lg-6">
-        <div class="card bg-success card-sustainability rounded-3 overflow-hidden position-relative shadow" style="background-image: url('{% static 'img/img_cruz.jpg' %}');">
+        <div class="card bg-success card-sustainability rounded-3 overflow-hidden position-relative shadow" style="background-image: url('{% static 'img/img_cruz.webp' %}');">
           <div class="card-img-overlay overlay-gradient d-flex flex-column justify-content-between p-4 p-md-5">
             <div class="text-white">
               <h3 class="display-5 fw-bold mb-3">La cruz de la Laguna Negra<br>Laguna Negra</h3>
@@ -193,7 +195,7 @@
 
     <div class="carousel-inner h-100">
       <div class="carousel-item active h-100">
-        <img src="{% static 'img/Fondo.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 1">
+        <img src="{% static 'img/Fondo.webp' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 1">
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); pointer-events: none;"></div>
         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
           <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
@@ -204,7 +206,7 @@
       </div>
 
       <div class="carousel-item h-100">
-        <img src="{% static 'img/Fondo2.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 2">
+        <img src="{% static 'img/Fondo3.webp' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 2">
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); pointer-events: none;"></div>
         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
           <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
@@ -215,7 +217,7 @@
       </div>
 
       <div class="carousel-item h-100">
-        <img src="{% static 'img/Fondo4.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 3">
+        <img src="{% static 'img/fondo4.webp' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 3">
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); pointer-events: none;"></div>
         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
           <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
@@ -226,7 +228,7 @@
       </div>
 
       <div class="carousel-item h-100">
-        <img src="{% static 'img/Fondo3.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 4">
+        <img src="{% static 'img/Fondo3.webp' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 4">
         <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); pointer-events: none;"></div>
         <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
           <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">

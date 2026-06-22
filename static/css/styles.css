@@ -561,6 +561,105 @@ body.sidebar-open #sidebar-overlay {
 }
 
 
+/* Temas de Accesibilidad Global */
+
+.a11y-theme-light {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+.a11y-theme-light a,
+.a11y-theme-light .nav-link,
+.a11y-theme-light .btn,
+.a11y-theme-light .badge,
+.a11y-theme-light .text-muted,
+.a11y-theme-light .text-secondary {
+    color: #000000 !important;
+}
+
+.a11y-theme-light .card,
+.a11y-theme-light .modal-content,
+.a11y-theme-light .offcanvas,
+.a11y-theme-light .dropdown-menu,
+.a11y-theme-light .navbar,
+.a11y-theme-light .footer-monagua,
+.a11y-theme-light .alert,
+.a11y-theme-light .table,
+.a11y-theme-light input,
+.a11y-theme-light textarea,
+.a11y-theme-light select,
+.a11y-theme-light .form-control,
+.a11y-theme-light .form-select {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: #cccccc !important;
+}
+
+.a11y-theme-dark {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
+}
+
+.a11y-theme-dark a,
+.a11y-theme-dark .nav-link,
+.a11y-theme-dark .btn,
+.a11y-theme-dark .badge,
+.a11y-theme-dark .text-muted,
+.a11y-theme-dark .text-secondary {
+    color: #58a6ff !important;
+}
+
+.a11y-theme-dark .card,
+.a11y-theme-dark .modal-content,
+.a11y-theme-dark .offcanvas,
+.a11y-theme-dark .dropdown-menu,
+.a11y-theme-dark .navbar,
+.a11y-theme-dark .footer-monagua,
+.a11y-theme-dark .alert,
+.a11y-theme-dark .table,
+.a11y-theme-dark input,
+.a11y-theme-dark textarea,
+.a11y-theme-dark select,
+.a11y-theme-dark .form-control,
+.a11y-theme-dark .form-select {
+    background-color: #1a1a1a !important;
+    color: #e0e0e0 !important;
+    border-color: #444444 !important;
+}
+
+.a11y-theme-high-contrast {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+.a11y-theme-high-contrast a,
+.a11y-theme-high-contrast .nav-link,
+.a11y-theme-high-contrast .btn,
+.a11y-theme-high-contrast .badge,
+.a11y-theme-high-contrast .text-muted,
+.a11y-theme-high-contrast .text-secondary {
+    color: #ffff00 !important;
+}
+
+.a11y-theme-high-contrast .card,
+.a11y-theme-high-contrast .modal-content,
+.a11y-theme-high-contrast .offcanvas,
+.a11y-theme-high-contrast .dropdown-menu,
+.a11y-theme-high-contrast .navbar,
+.a11y-theme-high-contrast .footer-monagua,
+.a11y-theme-high-contrast .alert,
+.a11y-theme-high-contrast .table,
+.a11y-theme-high-contrast input,
+.a11y-theme-high-contrast textarea,
+.a11y-theme-high-contrast select,
+.a11y-theme-high-contrast .form-control,
+.a11y-theme-high-contrast .form-select {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+}
+
+
 /* Responsividad */
 
 @media (max-width: 576px) {

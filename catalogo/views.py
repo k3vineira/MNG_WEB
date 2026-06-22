@@ -5,7 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Paquete, Actividades, Categoria, Tarifa, Temporada
 from django.db.models import Count, Q
 from django import forms
-from .forms import TemporadaForm
+from .forms import TemporadaForm, TarifaForm
 
 def destinos(request):
     destinos_list = Paquete.objects.filter(estado=True)
@@ -31,12 +31,11 @@ def destinos(request):
         destinos_list = destinos_list.filter(categoria_id=categoria_id)
         
     categorias_list = Categoria.objects.all()
-    
+
     context = {
         'destinos': destinos_list,
         'categorias': categorias_list
     }
-    
     return render(request, 'usuario/destinos.html', context)
 
 # PAQUETES
@@ -241,32 +240,16 @@ class TarifaListView(ListView):
 
 class TarifaCreateView(CreateView):
     model = Tarifa
-    fields = ['paquete', 'temporada',
-              'precio_adulto', 'precio_menor', 'estado']
+    form_class = TarifaForm
     template_name = 'admin/tarifas/agregar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
 
 
 class TarifaUpdateView(UpdateView):
     model = Tarifa
-    fields = ['paquete', 'temporada',
-              'precio_adulto', 'precio_menor', 'estado']
+    form_class = TarifaForm
     template_name = 'admin/tarifas/editar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        for field in form.fields.values():
-
-            if isinstance(field.widget, forms.Select):
-                field.widget.attrs.update({'class': 'form-select'})
-
-            elif isinstance(field.widget, forms.CheckboxInput):
-                field.widget.attrs.update({'class': 'form-check-input'})
-
-            else:
-                field.widget.attrs.update({'class': 'form-control'})
-            return form
 
 
 # temporada
