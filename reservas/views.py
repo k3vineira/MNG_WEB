@@ -17,7 +17,7 @@ from core.utils import plantilla_reserva_html, plantilla_cancelacion_html, envia
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-
+from notificaciones.models import Notificacion
 # =========================
 # RESERVAS ADMIN 
 # =========================
@@ -70,11 +70,18 @@ class ReservaUpdateView(UpdateView):
     success_url = reverse_lazy('listar_reservas')
 
     def form_valid(self, form):
-        # Guardamos los datos actualizados de la reserva
         response = super().form_valid(form)
         reserva = self.object
         nombre_cliente = reserva.usuario.first_name or reserva.usuario.username
+        
         if reserva.estado in ['confirmada', 'cancelada']:
+            Notificacion.objects.create(
+                cliente=reserva.usuario,
+                titulo=f"Reserva {reserva.estado.upper()}",
+                mensaje=f"Tu reserva #{reserva.id} para el paquete '{reserva.paquete.nombre}' ha sido {reserva.estado}.",
+                tipo='reserva'
+            )
+
             asunto = f"Tu Reserva #{reserva.id} ha sido {reserva.estado.upper()} - Monagua"
             mensaje_texto = f"Hola {nombre_cliente}, el estado de tu reserva para {reserva.paquete.nombre} ha cambiado a {reserva.estado}."
             
@@ -246,7 +253,6 @@ def administrar_cancelaciones(request):
 
         cancelacion.save()
 
-       
         if cancelacion.estado == 'aceptada':
             cancelacion.reserva.estado = 'cancelada'
         elif cancelacion.estado == 'rechazada':
@@ -254,10 +260,16 @@ def administrar_cancelaciones(request):
         
         cancelacion.reserva.save()
 
+        Notificacion.objects.create(
+            cliente=cancelacion.reserva.usuario,
+            titulo=f"Cancelación {cancelacion.estado.upper()}",
+            mensaje=f"Tu solicitud de cancelación para la reserva #{cancelacion.reserva.id} ha sido {cancelacion.estado}.",
+            tipo='reserva'
+        )
+
         nombre_cliente = cancelacion.reserva.usuario.first_name or cancelacion.reserva.usuario.username
         penalidad_str = str(cancelacion.penalidad)
 
-      
         if cancelacion.estado == 'aceptada':
             asunto = f"Solicitud ACEPTADA para tu Reserva #{cancelacion.reserva.id} - Monagua"
             mensaje_texto = f"Hola {nombre_cliente}, tu solicitud de cancelación para {cancelacion.reserva.paquete.nombre} ha sido aceptada."
@@ -314,7 +326,6 @@ def administrar_cancelaciones(request):
         'stats_list': stats_list
     }
     return render(request, 'admin/cancelaciones/cancelaciones_admin.html', context)
-
  
 
 # VISTA PÚBLICA

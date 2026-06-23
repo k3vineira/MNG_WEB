@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Calificacion, Blog, PQRS, Comentario
+from .models import Calificacion, Blog, PQRS, Comentario 
 
 # Register your models here.
 admin.site.register(Calificacion)
