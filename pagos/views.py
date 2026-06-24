@@ -206,9 +206,14 @@ def mis_rechazos(request):
     except ImportError:
         cancelaciones_rechazadas = []
 
+    total_pagos_rechazados = len(pagos_rechazados) if isinstance(pagos_rechazados, list) else pagos_rechazados.count()
+    total_cancelaciones_rechazadas = len(cancelaciones_rechazadas) if isinstance(cancelaciones_rechazadas, list) else cancelaciones_rechazadas.count()
+
     context = {
         'pagos_rechazados': pagos_rechazados,
         'cancelaciones_rechazadas': cancelaciones_rechazadas,
+        'total_pagos_rechazados': total_pagos_rechazados,
+        'total_cancelaciones_rechazadas': total_cancelaciones_rechazadas,
     }
 
     return render(request, 'private/rechazos.html', context)

@@ -1,16 +1,17 @@
+import os
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+django.setup()
+
 from comunidad.models import Calificacion, Blog, PQRS
 from reservas.models import Reserva, Cancelacion
 from catalogo.models import Categoria, Actividades, Paquete, Temporada, Tarifa
 from usuarios.models import Usuario, Cliente, GuiaTuristico
-import os
-import django
 import random
 from datetime import timedelta, date
 from django.utils import timezone
 from decimal import Decimal
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-django.setup()
 
 
 def poblar_base_datos():

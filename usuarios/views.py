@@ -133,18 +133,108 @@ def index_turista(request):
 @user_passes_test(lambda u: u.is_staff)
 def dashboard_admin(request):
     """Renderiza el tablero de control principal del administrador."""
-    try:
-        from reservas.models import Reserva
-        total_reservas = Reserva.objects.count()
-    except ImportError:
-        total_reservas = 0
+    import datetime
+    from django.utils import timezone
+    from django.db.models import Sum, Count, Avg
+    from reservas.models import Reserva, Cancelacion
+    from pagos.models import ComprobantePago
+    from catalogo.models import Paquete
+    from comunidad.models import Comentario
 
+    hoy = timezone.now().date()
     total_usuarios = Usuario.objects.count()
+    total_reservas = Reserva.objects.count()
+
+    total_ventas = ComprobantePago.objects.filter(estado='aprobado').aggregate(Sum('monto'))['monto__sum'] or 0
+    total_tours = Paquete.objects.filter(estado=True).count()
+    total_pagos_rechazados = ComprobantePago.objects.filter(estado='rechazado').count()
+    total_promociones = 0  # Banners / promociones no tienen un modelo asignado actualmente
+
+    current_year = timezone.now().year
+    ingresos_mensuales = [0] * 12
+    for p in ComprobantePago.objects.filter(estado='aprobado', fecha_envio__year=current_year):
+        m = p.fecha_envio.month - 1
+        ingresos_mensuales[m] += float(p.monto or 0)
+
+    reservas_confirmadas = Reserva.objects.filter(estado='confirmada').count()
+    reservas_pendientes = Reserva.objects.filter(estado='pendiente').count()
+    reservas_canceladas = Reserva.objects.filter(estado='cancelada').count()
+
+    # Reservas de la semana actual (Lunes a Domingo)
+    start_of_week = hoy - datetime.timedelta(days=hoy.weekday())
+    end_of_week = start_of_week + datetime.timedelta(days=6)
+    reservas_semana = [0] * 7
+    for r in Reserva.objects.filter(fecha__range=[start_of_week, end_of_week]):
+        reservas_semana[r.fecha.weekday()] += 1
+
+    tasa_confirmacion = int(reservas_confirmadas / total_reservas * 100) if total_reservas > 0 else 0
+
+    val_avg = Comentario.objects.aggregate(Avg('valoracion'))['valoracion__avg']
+    valoracion_promedio = round(val_avg, 1) if val_avg is not None else 0.0
+
+    ingreso_por_reserva = total_ventas / total_reservas if total_reservas > 0 else 0
+
+    cancelaciones_hoy = Cancelacion.objects.filter(reserva__fecha=hoy).count()
+    cancelaciones_rechazadas = Cancelacion.objects.filter(estado='rechazada').count()
+    cancelaciones_pendientes = Cancelacion.objects.filter(estado='revision').count()
+
+    packages = Paquete.objects.filter(estado=True).annotate(
+        numero_reservas=Count('reserva')
+    ).order_by('-numero_reservas')[:5]
+    tours_populares = [{
+        'nombre': p.nombre,
+        'precio': p.precio_minimo,
+        'numero_reservas': p.numero_reservas,
+    } for p in packages]
+    max_reservas = max([t['numero_reservas'] for t in tours_populares], default=1)
+    if max_reservas == 0:
+        max_reservas = 1
+
+    # Actividad reciente
+    from django.utils.timesince import timesince
+    actividad_reciente = []
+    for r in Reserva.objects.select_related('usuario', 'paquete').order_by('-fecha_registro')[:5]:
+        nombre_usr = r.usuario.get_full_name() or r.usuario.username
+        actividad_reciente.append({
+            'texto': f"Nueva reserva de {nombre_usr} para {r.paquete.nombre}",
+            'tiempo_dt': r.fecha_registro,
+        })
+    for p in ComprobantePago.objects.select_related('usuario').order_by('-fecha_envio')[:5]:
+        nombre_usr = p.usuario.get_full_name() or p.usuario.username
+        actividad_reciente.append({
+            'texto': f"Pago de COP ${p.monto or 0:,.0f} enviado por {nombre_usr} ({p.get_estado_display()})",
+            'tiempo_dt': p.fecha_envio,
+        })
+    actividad_reciente.sort(key=lambda x: x['tiempo_dt'], reverse=True)
+    actividad_reciente = actividad_reciente[:5]
+    for item in actividad_reciente:
+        try:
+            item['tiempo'] = f"Hace {timesince(item['tiempo_dt'])}"
+        except Exception:
+            item['tiempo'] = item['tiempo_dt'].strftime("%d/%m/%Y %H:%M")
 
     return render(request, 'admin/index-admin.html', {
         'titulo': 'Tablero de Rendimiento — Administración',
         'total_usuarios': total_usuarios,
-        'total_reservas': total_reservas
+        'total_reservas': total_reservas,
+        'total_ventas': total_ventas,
+        'total_tours': total_tours,
+        'total_pagos_rechazados': total_pagos_rechazados,
+        'total_promociones': total_promociones,
+        'ingresos_mensuales': ingresos_mensuales,
+        'reservas_confirmadas': reservas_confirmadas,
+        'reservas_pendientes': reservas_pendientes,
+        'reservas_canceladas': reservas_canceladas,
+        'reservas_semana': reservas_semana,
+        'tasa_confirmacion': tasa_confirmacion,
+        'valoracion_promedio': valoracion_promedio,
+        'ingreso_por_reserva': ingreso_por_reserva,
+        'cancelaciones_hoy': cancelaciones_hoy,
+        'cancelaciones_rechazadas': cancelaciones_rechazadas,
+        'cancelaciones_pendientes': cancelaciones_pendientes,
+        'tours_populares': tours_populares,
+        'max_reservas': max_reservas,
+        'actividad_reciente': actividad_reciente,
     })
 
 # 4. GESTIÓN DE PERFILES Y USUARIOS

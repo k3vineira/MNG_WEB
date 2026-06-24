@@ -4,22 +4,23 @@ Script para agregar datos de prueba a la base de datos
 para verificar que la página de estadísticas funciona correctamente.
 """
 
-from usuarios.models import Cliente, Comentario
-from comunidad.models import PQRS
-from pagos.models import ComprobantePago
-from catalogo.models import Paquete
-from reservas.models import Reserva
-from django.contrib.auth import get_user_model
 import os
 import sys
 import django
-from datetime import timedelta, datetime
-from django.utils import timezone
 
 # Configurar Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 django.setup()
+
+from usuarios.models import Cliente
+from comunidad.models import PQRS, Comentario
+from pagos.models import ComprobantePago
+from catalogo.models import Paquete
+from reservas.models import Reserva
+from django.contrib.auth import get_user_model
+from datetime import timedelta, datetime
+from django.utils import timezone
 
 
 Usuario = get_user_model()
