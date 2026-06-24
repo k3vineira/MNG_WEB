@@ -9,6 +9,7 @@ from usuarios.models import Cliente
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from notificaciones.models import Notificacion
+from notificaciones.utils import crear_notificacion_sistema
 
 
 def blog(request):
@@ -149,6 +150,16 @@ class BlogCreateView(CreateView):
     form_class = BlogForm
     template_name = 'admin/blog/agregar_blog.html'
     success_url = reverse_lazy('listar_blog')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo="✍️ Nueva Publicación Creada",
+            mensaje=f"El artículo de blog '{self.object.titulo}' ha sido publicado con éxito.",
+            tipo='sistema'
+        )
+        return response
 
 
 class BlogUpdateView(UpdateView):
@@ -156,12 +167,35 @@ class BlogUpdateView(UpdateView):
     form_class = BlogForm
     template_name = 'admin/blog/editar_blog.html'
     success_url = reverse_lazy('listar_blog')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo="✏️ Publicación Actualizada",
+            mensaje=f"El artículo '{self.object.titulo}' ha sido modificado correctamente.",
+            tipo='sistema'
+        )
+        return response
 
 
 class BlogDeleteView(DeleteView):
     model = Blog
     template_name = 'admin/blog/eliminar_blog.html'
     success_url = reverse_lazy('listar_blog')
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        titulo_blog = self.object.titulo  # Guardamos el título antes de borrar el registro
+        response = super().delete(request, *args, **kwargs)
+        
+        crear_notificacion_sistema(
+            usuario=request.user,
+            titulo="🗑️ Publicación Eliminada",
+            mensaje=f"Se ha eliminado permanentemente el artículo: '{titulo_blog}'.",
+            tipo='sistema'
+        )
+        return response
 
 
 def blog_usuario(request):

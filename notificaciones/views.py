@@ -18,6 +18,6 @@ def marcar_notificacion_leida(request, noti_id):
 @login_required
 def lista_notificaciones(request):
     notificaciones = Notificacion.objects.filter(cliente=request.user).order_by('-id')
-    return render(request, 'notificaciones.html', {
+    return render(request, 'historial_completo.html', {
         'notificaciones': notificaciones
     })

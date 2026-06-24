@@ -824,8 +824,6 @@ body.sidebar-open #sidebar-overlay {
 }
 
 
-/* ═══════════════ MEDIA QUERIES - RESPONSIVE TABS ═══════════════ */
-
 @media (max-width: 576px) {
     .a11y-tab-btn {
         padding: 0.65rem 0.5rem;
@@ -841,32 +839,32 @@ body.sidebar-open #sidebar-overlay {
 }
 
 
-/* 1. Forzamos al contenedor que envuelve los botones y el buscador a alinearlos en una sola fila */
+
 .dt-layout-row:has(.dt-buttons), 
 .dt-layout-row:has(.dt-search),
 .dataTables_wrapper > div:first-of-type {
     display: flex !important;
     flex-direction: row !important;
-    justify-content: space-between !important; /* Botones a la izquierda, buscar a la derecha */
+    justify-content: space-between !important; 
     align-items: center !important;
     width: 100% !important;
     margin-bottom: 15px !important;
 }
 
-/* 2. Aseguramos que las celdas o sub-contenedores internos no fuercen un salto de línea */
+
 .dt-layout-cell {
     display: flex !important;
     align-items: center !important;
     width: auto !important;
 }
 
-/* 3. Empujamos magnéticamente el bloque de búsqueda hacia la extrema derecha */
+
 .dt-layout-cell:last-of-type {
     justify-content: flex-end !important;
     flex-grow: 1;
 }
 
-/* 4. Mantenemos el diseño limpio y compacto del input de búsqueda */
+
 .dt-search, .dataTables_filter {
     margin: 0 !important;
 }
@@ -878,4 +876,136 @@ body.sidebar-open #sidebar-overlay {
     border: 1px solid #dee2e6 !important;
     padding: 5px 10px !important;
     margin-left: 10px !important;
+}
+
+  .body-bg-nature {
+    background: url('../img/carousel/img1.webp') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+}
+
+    .titulo-premium{
+        color:#fff;
+        font-weight:900;
+        font-size:4.6rem;
+        text-transform:uppercase;
+        letter-spacing:-1px;
+        text-shadow:0 10px 25px rgba(0,0,0,.6);
+    }
+
+    .linea-decorativa{
+        width:220px;
+        height:5px;
+        background:linear-gradient(
+            to right,
+            transparent,
+            var(--verde-medio),
+            var(--verde-claro),
+            transparent
+        );
+    }
+
+    .card-contenedor-principal{
+        background:rgba(255,255,255,.22);
+        backdrop-filter:blur(25px);
+        -webkit-backdrop-filter:blur(25px);
+        border:1px solid rgba(255,255,255,.25);
+        border-radius:30px;
+        box-shadow:0 35px 70px rgba(0,0,0,.45);
+    }
+
+    .seccion-historial-header{
+        background:linear-gradient(
+            135deg,
+            rgba(255,255,255,.75),
+            rgba(255,255,255,.35)
+        );
+    }
+
+    .tarjeta-notificacion{
+        background:rgba(255,255,255,.82);
+        backdrop-filter:blur(5px);
+        border:1px solid rgba(255,255,255,.5);
+        transition:.3s ease;
+    }
+
+    .tarjeta-notificacion:hover{
+        transform:translateY(-5px);
+        border-color:var(--verde-main);
+        box-shadow:0 15px 30px rgba(0,50,15,.2);
+        background:rgba(255,255,255,.92);
+    }
+
+.btn-campanita-negra { 
+    cursor: pointer; 
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-main), var(--verde-mid)); 
+    box-shadow: 0 0 0 8px rgba(0, 82, 21, 0.15), 0 10px 30px var(--verde-bosque), 0 0 25px rgba(90, 186, 115, 0.35); 
+    transition: all .4s ease; 
+    animation: flotar 3s ease-in-out infinite; 
+}
+
+
+.btn-campanita-negra::before { 
+    content: ''; 
+    position: absolute; 
+    inset: -12px; 
+    border-radius: 50%; 
+    border: 2px solid var(--verde-medio); 
+    opacity: 0.35; 
+    animation: radar 2.5s infinite; 
+}
+
+.btn-campanita-negra:hover { 
+    transform: translateY(-6px) scale(1.12); 
+    box-shadow: 0 0 0 10px rgba(0, 82, 21, 0.2), 0 15px 40px var(--verde-deep), 0 0 35px var(--verde-accent); 
+}
+
+
+.btn-campanita-negra i { 
+    text-shadow: 0 0 15px rgba(255, 255, 255, .5); 
+    animation: sonar 2s infinite; 
+}
+
+
+.badge-contador-rojo { 
+    box-shadow: 0 0 15px rgba(220, 53, 69, .8), 0 0 25px rgba(220, 53, 69, .4); 
+    animation: pulso 1.5s infinite; 
+}
+
+
+.header-degradado-monagua { 
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-main)); 
+    letter-spacing: .5px; 
+}
+
+.enlace-historial { 
+    color: var(--verde-main) !important; 
+    transition: background 0.2s; 
+}
+
+.enlace-historial:hover { 
+    background-color: var(--verde-light) !important; 
+}
+
+@keyframes sonar { 
+    0%, 100% { transform: rotate(0deg); } 
+    10% { transform: rotate(15deg); } 
+    20% { transform: rotate(-15deg); } 
+    30% { transform: rotate(10deg); } 
+    40% { transform: rotate(-10deg); } 
+}
+
+@keyframes pulso { 
+    0%, 100% { transform: scale(1) translate(50%, -50%); } 
+    50% { transform: scale(1.15) translate(50%, -50%); } 
+}
+
+@keyframes flotar { 
+    0%, 100% { transform: translateY(0); } 
+    50% { transform: translateY(-6px); } 
+}
+
+@keyframes radar { 
+    0% { transform: scale(1); opacity: .8; } 
+    100% { transform: scale(1.3); opacity: 0; } 
 }
