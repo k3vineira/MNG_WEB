@@ -314,7 +314,8 @@ def administrar_cancelaciones(request):
         except (InvalidOperation, ValueError, TypeError):
             c.penalidad = Decimal('0.00')
 
-    return render(request, 'admin/cancelaciones/cancelaciones_admin.html', {'cancelaciones': cancelaciones_raw, 'stats_list': stats_list})
+    context = {'cancelaciones': cancelaciones_raw, 'stats_list': stats_list}
+    return render(request, 'admin/cancelaciones/cancelaciones_admin.html', context)
 
 # VISTA PÚBLICA
 # =========================

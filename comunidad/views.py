@@ -12,19 +12,21 @@ from django.db.models import Count, Q
 
 def blog(request):
     blogs = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
-    return render(request, 'usuario/blog.html', {'blogs': blogs})
+    context = {'blogs': blogs}
+    return render(request, 'usuario/blog.html', context)
 
 
 def detalle_blog(request, id):
     post = get_object_or_404(Blog, id=id)
-
-    return render(request, 'usuario/detalle_blog.html', {'post': post})
+    context = {'post': post}
+    return render(request, 'usuario/detalle_blog.html', context)
 
 
 def pqrs(request):
     pqrs = PQRS.objects.all()
     form = PqrsForm()
-    return render(request, 'usuario/pqrs.html', {'pqrs': pqrs, 'form': form})
+    context = {'pqrs': pqrs, 'form': form}
+    return render(request, 'usuario/pqrs.html', context)
 
 
 # PQRS
@@ -154,7 +156,7 @@ class BlogDeleteView(DeleteView):
 
 
 def blog_usuario(request):
-
     articulos = Blog.objects.filter(
         publicado=True).order_by('-fecha_publicacion')
-    return render(request, 'usuario/blog.html', {'blogs': articulos})
+    context = {'blogs': articulos}
+    return render(request, 'usuario/blog.html', context)
