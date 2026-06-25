@@ -651,7 +651,7 @@ def get_estadisticas_context(user, is_admin=False):
     reservas_completadas = reservas.filter(estado='confirmada', fecha__lt=today).count()
     reservas_confirmadas = reservas.filter(estado='confirmada', fecha__gte=today).count()
 
-    tasa_exito = int(reservas_confirmadas / total_reservas * 100) if total_reservas > 0 else 0
+    tasa_exito = int((reservas_confirmadas + reservas_completadas) / total_reservas * 100) if total_reservas > 0 else 0
     
     pqrs_abiertas = pqrs_qs.filter(estado='abierto').count()
     pqrs_en_gestion = pqrs_qs.filter(estado='en_proceso').count()
@@ -660,7 +660,36 @@ def get_estadisticas_context(user, is_admin=False):
     pqrs_tasa_resolucion = int(pqrs_cerradas / pqrs_total * 100) if pqrs_total > 0 else 0
     
     total_resenas = comentarios.count()
-    dias_como_miembro = (timezone.now() - user.date_joined).days
+    dias_como_miembro = max(0, (timezone.now() - user.date_joined).days)
+
+    # Actividad reciente
+    actividad_reciente = []
+    # Obtener reservas recientes
+    for r in reservas.select_related('usuario', 'paquete').order_by('-fecha_registro')[:5]:
+        nombre_usr = r.usuario.get_full_name() or r.usuario.username
+        if is_admin:
+            desc = f"Nueva reserva de {nombre_usr} para {r.paquete.nombre}"
+        else:
+            desc = f"Reservaste {r.paquete.nombre}"
+        actividad_reciente.append({
+            'descripcion': desc,
+            'fecha': r.fecha_registro,
+        })
+    # Obtener comprobantes de pago recientes
+    for p in pagos.select_related('usuario', 'reserva', 'reserva__paquete').order_by('-fecha_envio')[:5]:
+        nombre_usr = p.usuario.get_full_name() or p.usuario.username
+        monto_formatted = f"COP ${p.monto or 0:,.0f}"
+        if is_admin:
+            desc = f"Pago de {monto_formatted} enviado por {nombre_usr} ({p.get_estado_display()})"
+        else:
+            desc = f"Pago de {monto_formatted} enviado ({p.get_estado_display()})"
+        actividad_reciente.append({
+            'descripcion': desc,
+            'fecha': p.fecha_envio,
+        })
+    # Ordenar por fecha decreciente
+    actividad_reciente.sort(key=lambda x: x['fecha'], reverse=True)
+    actividad_reciente = actividad_reciente[:6]
     
     # Nivel de viajero
     if total_resenas >= 10:
@@ -848,6 +877,7 @@ def get_estadisticas_context(user, is_admin=False):
         'arboles_conservados': arboles_conservados,
         'reporte_mensual': reporte_mensual,
         'reporte_anual': reporte_anual,
+        'actividad_reciente': actividad_reciente,
     }
 
 

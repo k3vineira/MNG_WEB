@@ -128,8 +128,7 @@
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">{{ dias_como_miembro|default:"0" }}</h2>
-                <div class="text-muted small"><i class="bi bi-calendar3 me-1"></i>Desde {{ user.date_joined|date:"d M Y"
-                    }}</div>
+                <div class="text-muted small"><i class="bi bi-calendar3 me-1"></i>Desde {{ user.date_joined|date:"d M Y" }}</div>
             </div>
         </div>
     </div>
@@ -156,8 +155,7 @@
                         <h6 class="fw-bold text-dark mb-0">{{ nivel_viajero|default:"Iniciando" }}</h6>
                     </div>
                     <div class="col-sm-9 ps-md-4">
-                        <p class="text-muted small mb-3">{{ descripcion_nivel|default:"Continúa recorriendo las rutas
-                            del Páramo de Mongua para desbloquear nuevos beneficios y reconocimientos." }}</p>
+                        <p class="text-muted small mb-3">{{ descripcion_nivel|default:"Continúa recorriendo las rutas del Páramo de Mongua para desbloquear nuevos beneficios y reconocimientos." }}</p>
                         {% if progreso_nivel is not None %}
                         <div class="d-flex justify-content-between text-muted small mb-1">
                             <span>Progreso técnico al siguiente rango</span>
@@ -205,8 +203,7 @@
                 <div class="bg-white bg-opacity-10 rounded-3 p-3 mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <span class="small fw-semibold">Árboles estimados conservados</span>
-                        <span class="small badge bg-white text-success fw-bold">{{ arboles_conservados|default:"—"
-                            }}</span>
+                        <span class="small badge bg-white text-success fw-bold">{{ arboles_conservados|default:"—" }}</span>
                     </div>
                     <div class="progress bg-white bg-opacity-25 rounded-pill">
                         <div class="progress-bar bg-white w-50" role="progressbar"></div>
@@ -533,14 +530,12 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="small text-muted"><i
                                             class="bi bi-envelope-open text-primary me-2"></i>Casos Abiertos:</span>
-                                    <span class="badge bg-primary text-white font-monospace">{{
-                                        pqrs_abiertas|default:"0" }}</span>
+                                    <span class="badge bg-primary text-white font-monospace">{{ pqrs_abiertas|default:"0" }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="small text-muted"><i class="bi bi-gear-fill text-warning me-2"></i>En
                                         Procesamiento:</span>
-                                    <span class="badge bg-warning text-dark font-monospace">{{
-                                        pqrs_en_gestion|default:"0" }}</span>
+                                    <span class="badge bg-warning text-dark font-monospace">{{ pqrs_en_gestion|default:"0" }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="small text-muted"><i
@@ -722,6 +717,42 @@
         Chart.defaults.plugins.legend.labels.usePointStyle = true;
         Chart.defaults.plugins.legend.labels.padding = 16;
 
+        const formatCOP = (v) => {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(v);
+        };
+        const abbreviateCOP = (v) => {
+            if (v >= 1000000) {
+                return "COP $" + (v / 1000000).toFixed(1) + "M";
+            } else if (v >= 1000) {
+                return "COP $" + (v / 1000).toFixed(0) + "K";
+            }
+            return "COP $" + v;
+        };
+
+        Chart.defaults.plugins.tooltip = {
+            callbacks: {
+                label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) {
+                        label += ': ';
+                    }
+                    if (context.parsed.y !== null) {
+                        if (context.dataset.label && context.dataset.label.includes("Inversión")) {
+                            label += formatCOP(context.parsed.y);
+                        } else {
+                            label += context.parsed.y;
+                        }
+                    }
+                    return label;
+                }
+            }
+        };
+
         // ── Variables de datos desde Django ──────────────────────────────────────
         const mesesLabels = {{ meses_labels|safe }};
         const mesesDatos = {{ meses_datos|safe }};
@@ -817,7 +848,7 @@
                     position: "right",
                     grid: { drawOnChartArea: false },
                     ticks: {
-                        callback: v => "COP $" + (v / 1000000).toFixed(1) + "M"
+                        callback: v => abbreviateCOP(v)
                     }
                 },
                 x: { grid: { display: false } }
@@ -866,7 +897,7 @@
                 y: {
                     grid: { color: C.gridLine },
                     beginAtZero: true,
-                    ticks: { callback: v => "COP $" + (v / 1000000).toFixed(1) + "M" }
+                    ticks: { callback: v => abbreviateCOP(v) }
                 },
                 x: { grid: { display: false } }
             }
@@ -1040,7 +1071,7 @@
                 y: {
                     grid: { color: C.gridLine },
                     beginAtZero: true,
-                    ticks: { callback: v => "COP $" + (v / 1000000).toFixed(1) + "M" }
+                    ticks: { callback: v => abbreviateCOP(v) }
                 },
                 x: { grid: { display: false } }
             }
