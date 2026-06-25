@@ -1,5 +1,6 @@
 {% extends "private/base_private.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block titulo %}Mis Cancelaciones | Monagua{% endblock %}
 
@@ -80,7 +81,7 @@
                                         <div class="col-sm-4">
                                             <div class="border rounded-4 p-3 h-100 {% if cancelacion.penalidad > 0 %}bg-danger-subtle{% else %}bg-light{% endif %}">
                                                 <small class="{% if cancelacion.penalidad > 0 %}text-danger-emphasis{% else %}text-muted{% endif %} d-block mb-1 fw-medium">Multa / Penalidad</small>
-                                                <h5 class="fw-bold {% if cancelacion.penalidad > 0 %}text-danger{% else %}text-dark{% endif %} mb-0">${{ cancelacion.penalidad }}</h5>
+                                                <h5 class="fw-bold {% if cancelacion.penalidad > 0 %}text-danger{% else %}text-dark{% endif %} mb-0">COP ${{ cancelacion.penalidad|floatformat:0|intcomma }}</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -105,7 +106,7 @@
                                                         </div>
                                                         <div class="d-flex align-items-center gap-2">
                                                             {% if comp.monto %}
-                                                                <span class="small fw-bold text-success">${{ comp.monto }}</span>
+                                                                <span class="small fw-bold text-success">COP ${{ comp.monto|floatformat:0|intcomma }}</span>
                                                             {% endif %}
                                                             <span class="badge {% if comp.estado == 'aprobado' %}bg-success{% elif comp.estado == 'pendiente' %}bg-warning text-dark{% else %}bg-danger{% endif %}" style="font-size: 0.7rem;">
                                                                 {{ comp.get_estado_display }}

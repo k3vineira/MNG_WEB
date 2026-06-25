@@ -1,5 +1,6 @@
 {% extends 'base-admin.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Admin | Revisar Comprobante #{{ comprobante.pk }}{% endblock %}
 
@@ -94,12 +95,12 @@
                     </div>
                     <div class="details-item d-flex justify-content-between align-items-center">
                         <span class="text-muted small">Costo Total Reserva:</span>
-                        <span class="fw-bold text-dark">${{ comprobante.reserva.monto_total }}</span>
+                        <span class="fw-bold text-dark">COP ${{ comprobante.reserva.monto_total|floatformat:0|intcomma }}</span>
                     </div>
                 {% endif %}
                 <div class="details-item d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Monto Declarado en Pago:</span>
-                    <span class="fw-bold text-success">{% if comprobante.monto %}${{ comprobante.monto }}{% else %}No especificado{% endif %}</span>
+                    <span class="fw-bold text-success">{% if comprobante.monto %}COP ${{ comprobante.monto|floatformat:0|intcomma }}{% else %}No especificado{% endif %}</span>
                 </div>
                 <div class="details-item d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Medio de Pago / Banco:</span>

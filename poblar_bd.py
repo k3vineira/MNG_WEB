@@ -1,19 +1,17 @@
 import os
 import django
-import random
-from datetime import timedelta, date
-from django.utils import timezone
-from decimal import Decimal
 
-# 1. PRIMERO CONFIGURAMOS E INICIALIZAMOS DJANGO
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
-# 2. SEGUNDO IMPORTAMOS LOS MODELOS (Ahora sí funcionará sin errores)
 from comunidad.models import Calificacion, Blog, PQRS
 from reservas.models import Reserva, Cancelacion
 from catalogo.models import Categoria, Actividades, Paquete, Temporada, Tarifa
 from usuarios.models import Usuario, Cliente, GuiaTuristico
+import random
+from datetime import timedelta, date
+from django.utils import timezone
+from decimal import Decimal
 
 
 def poblar_base_datos():
@@ -34,33 +32,50 @@ def poblar_base_datos():
     Usuario.objects.exclude(is_superuser=True).delete()
 
     # Listas de datos falsos
-    nombres = ['Carlos', 'Ana', 'Luis', 'Marta', 'Pedro', 'Sofia', 'Jorge', 'Lucia', 'Diego', 'Elena']
-    apellidos = ['Gomez', 'Perez', 'Rodriguez', 'Lopez', 'Martinez', 'Garcia', 'Sanchez', 'Diaz', 'Torres', 'Ramirez']
-    ciudades = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena', 'Cúcuta', 'Bucaramanga', 'Pereira', 'Santa Marta', 'Manizales']
-    paises = ['Colombia', 'México', 'Argentina', 'Chile', 'Perú', 'España', 'Ecuador', 'Panamá', 'Costa Rica', 'Brasil']
-    categorias_nombres = ['Aventura', 'Ecoturismo', 'Cultural', 'Playa', 'Montaña', 'Gastronómico', 'Histórico', 'Relajación', 'Deportivo', 'Familiar']
-    actividades_nombres = ['Senderismo', 'Buceo', 'Museos', 'Escalada', 'Ciclismo', 'Cata de Vinos', 'Surf', 'Avistamiento de Aves', 'Rappel', 'Canotaje']
+    nombres = ['Carlos', 'Ana', 'Luis', 'Marta', 'Pedro',
+               'Sofia', 'Jorge', 'Lucia', 'Diego', 'Elena']
+    apellidos = ['Gomez', 'Perez', 'Rodriguez', 'Lopez',
+                 'Martinez', 'Garcia', 'Sanchez', 'Diaz', 'Torres', 'Ramirez']
+    ciudades = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena',
+                'Cúcuta', 'Bucaramanga', 'Pereira', 'Santa Marta', 'Manizales']
+    paises = ['Colombia', 'México', 'Argentina', 'Chile', 'Perú',
+              'España', 'Ecuador', 'Panamá', 'Costa Rica', 'Brasil']
+    categorias_nombres = ['Aventura', 'Ecoturismo', 'Cultural', 'Playa', 'Montaña',
+                          'Gastronómico', 'Histórico', 'Relajación', 'Deportivo', 'Familiar']
+    actividades_nombres = ['Senderismo', 'Buceo', 'Museos', 'Escalada', 'Ciclismo',
+                           'Cata de Vinos', 'Surf', 'Avistamiento de Aves', 'Rappel', 'Canotaje']
 
+    # Nombres de temporadas reales y turísticas para Mongua
     nombres_temporadas = [
-        "Vacaciones de Mitad de Año", "Temporada Eco-Verano", "Puentes de Agosto", "Aventura de Septiembre",
-        "Semana de Receso Escolar", "Ecoturismo de Fin de Otoño", "Puentes de Noviembre", "Pre-Navidad Turística",
-        "Inicio de Temporada Decembrina", "Fiestas de Fin de Año"
+        "Vacaciones de Mitad de Año",
+        "Temporada Eco-Verano",
+        "Puentes de Agosto",
+        "Aventura de Septiembre",
+        "Semana de Receso Escolar",
+        "Ecoturismo de Fin de Otoño",
+        "Puentes de Noviembre",
+        "Pre-Navidad Turística",
+        "Inicio de Temporada Decembrina",
+        "Fiestas de Fin de Año"
     ]
 
+    # Fechas consecutivas fijas desde junio hasta diciembre de 2026
     fechas_temporadas = [
-        (date(2026, 6, 4),   date(2026, 7, 15)),
-        (date(2026, 7, 16),  date(2026, 8, 15)),
-        (date(2026, 8, 16),  date(2026, 8, 31)),
-        (date(2026, 9, 1),   date(2026, 9, 30)),
-        (date(2026, 10, 1),  date(2026, 10, 15)),
-        (date(2026, 10, 16), date(2026, 10, 31)),
-        (date(2026, 11, 1),  date(2026, 11, 16)),
-        (date(2026, 11, 17), date(2026, 11, 30)),
+        (date(2026, 6, 4),   date(2026, 7, 15)),   # Vacaciones de Mitad de Año
+        (date(2026, 7, 16),  date(2026, 8, 15)),   # Temporada Eco-Verano
+        (date(2026, 8, 16),  date(2026, 8, 31)),   # Puentes de Agosto
+        (date(2026, 9, 1),   date(2026, 9, 30)),   # Aventura de Septiembre
+        (date(2026, 10, 1),  date(2026, 10, 15)),  # Semana de Receso Escolar
+        (date(2026, 10, 16), date(2026, 10, 31)),  # Ecoturismo de Fin de Otoño
+        (date(2026, 11, 1),  date(2026, 11, 16)),  # Puentes de Noviembre
+        (date(2026, 11, 17), date(2026, 11, 30)),  # Pre-Navidad Turística
+        # Inicio de Temporada Decembrina
         (date(2026, 12, 1),  date(2026, 12, 15)),
-        (date(2026, 12, 16), date(2026, 12, 31)),
+        (date(2026, 12, 16), date(2026, 12, 31)),  # Fiestas de Fin de Año
     ]
 
     print("1. Creando Usuarios, Clientes y Guías...")
+    # Crear usuario administrador solicitado
     try:
         user, created = Usuario.objects.get_or_create(
             username='a@b.com',
@@ -78,6 +93,7 @@ def poblar_base_datos():
             user.save()
             print("Administrador a@b.com creado con éxito.")
         else:
+            # Si ya existe, actualizamos la contraseña por si acaso
             user.set_password('@dmin123')
             user.is_staff = True
             user.is_superuser = True
@@ -104,10 +120,11 @@ def poblar_base_datos():
             numero_documento=f"1000{i}{random.randint(100, 999)}",
             residencia=f"{ciudades[i]}, {paises[i]}"
         )
-        c = Cliente.objects.create(usuario=u, pais=paises[i], ciudad=ciudades[i])
+        c = Cliente.objects.create(
+            usuario=u, pais=paises[i], ciudad=ciudades[i])
         clientes_creados.append(c)
 
-    # CORREGIDO: Crear 10 Guías sin duplicación de bloques de código
+    # Crear 10 Guías
     for i in range(10):
         username = f"guia_{i}_{random.randint(1000, 9999)}"
         u = Usuario.objects.create_user(
@@ -124,6 +141,27 @@ def poblar_base_datos():
         g = GuiaTuristico.objects.create(
             usuario=u,
             licencia_turismo=f"LIC-{random.randint(10000, 99999)}",
+            experiencia_anos=random.randint(1, 15),
+            biografia="Guía profesional con amplia experiencia."
+        )
+        guias_creados.append(g)
+
+        username = f"guia_{i}_{random.randint(1000, 9999)}"
+        u = Usuario.objects.create_user(
+            username=username,
+            password='password123',
+            first_name=nombres[9-i],
+            last_name=apellidos[9-i],
+            email=f"{username}@ejemplo.com",
+            rol=Usuario.Roles.GUIA,
+            tipo_documento=Usuario.TipoDocumento.CC,
+            numero_documento=f"2000{i}{random.randint(100, 999)}",
+            residencia=f"{ciudades[i]}, {paises[i]}"
+        )
+        g = GuiaTuristico.objects.create(
+            usuario=u,
+            licencia_turismo=f"LIC-{random.randint(10000, 99999)}",
+            # Cambiado a experience_anos o experiencia_anos según tu modelo original
             experiencia_anos=random.randint(1, 15),
             biografia="Guía profesional con amplia experiencia."
         )
@@ -210,27 +248,19 @@ def poblar_base_datos():
     combinaciones_unicas = set()
 
     for tarifa_asociada in tarifas_creadas:
+        fecha_reserva = tarifa_asociada.temporada.fecha_inicio + \
+            timedelta(days=2)
         usuario_aleatorio = random.choice(clientes_creados).usuario
         paquete_asociado = tarifa_asociada.paquete
-        estado = random.choice(estados_reserva)
 
-        if estado == 'cancelada':
-            escenario = random.choice(['favorable', 'parcial', 'no_show'])
-            if escenario == 'favorable':
-                fecha_reserva = timezone.now().date() + timedelta(days=18)
-            elif escenario == 'parcial':
-                fecha_reserva = timezone.now().date() + timedelta(days=8)
-            else:
-                fecha_reserva = timezone.now().date() + timedelta(days=1)
-        else:
-            fecha_reserva = tarifa_asociada.temporada.fecha_inicio + timedelta(days=2)
-
-        identificador = (usuario_aleatorio.id, paquete_asociado.id, fecha_reserva)
+        identificador = (usuario_aleatorio.id,
+                         paquete_asociado.id, fecha_reserva)
 
         if identificador in combinaciones_unicas:
             continue
 
         combinaciones_unicas.add(identificador)
+        estado = random.choice(estados_reserva)
 
         r = Reserva.objects.create(
             usuario=usuario_aleatorio,
@@ -245,17 +275,13 @@ def poblar_base_datos():
         if estado == 'cancelada':
             Cancelacion.objects.create(
                 reserva=r,
-                motivo=random.choice([
-                    "Imprevisto médico de última hora",
-                    "Cambio de planes familiares",
-                    "Problemas de transporte para viajar",
-                    "Cuestiones laborales urgentes"
-                ]),
-                estado='revision'
+                motivo="Imprevisto de última hora",
+                penalidad=Decimal(str(random.randint(0, 50000)))
             )
-            
+
     print("5. Creando Comunidad (Calificaciones, Blog y PQRS)...")
 
+    # 5.1 Creación de los 4 Blogs específicos solicitados
     blogs_reales = [
         {
             "titulo": "Laguna Negra",
@@ -287,6 +313,7 @@ def poblar_base_datos():
             publicado=True
         )
 
+    # 5.2 Creación de PQRS de prueba
     for i in range(10):
         PQRS.objects.create(
             cliente=random.choice(clientes_creados),
@@ -296,6 +323,7 @@ def poblar_base_datos():
             estado=random.choice(['abierto', 'en_proceso', 'cerrado'])
         )
 
+    # 5.3 Creación de Calificaciones aleatorias
     combinaciones_calificacion = set()
     while len(combinaciones_calificacion) < 10:
         c = random.choice(clientes_creados)
@@ -309,7 +337,7 @@ def poblar_base_datos():
                 comentario="¡Excelente experiencia, recomendada!"
             )
 
-    print("¡Poblado de base de datos finalizado con éxito! Se han creado al menos 10 registros de cada entidad y tus 4 blogs.")
+    print("¡Poblado de base de datos finalizado con éxito! Se han creado al menos 10 registros de cada entidad y tus 4 blogs cerrados.")
 
 
 if __name__ == '__main__':

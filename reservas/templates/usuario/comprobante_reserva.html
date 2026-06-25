@@ -1,5 +1,6 @@
 {% extends "private/base_private.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block titulo %}Comprobante Reserva #{{ reserva.id }}{% endblock %}
 
@@ -42,7 +43,7 @@
           </tr>
           <tr class="border-top">
             <td class="fw-semibold">Total</td>
-            <td class="text-end fw-bold text-success">${{ reserva.monto_total }}</td>
+            <td class="text-end fw-bold text-success">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</td>
           </tr>
         </tbody>
       </table>

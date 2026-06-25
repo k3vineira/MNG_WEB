@@ -59,7 +59,7 @@
                                                 <p class="text-muted small mb-2">
                                                     Referencia: <span class="text-dark fw-semibold">{{ pago.referencia|default:"—" }}</span> · 
                                                     Medio: <span class="text-dark">{{ pago.banco_origen|default:"—" }}</span> · 
-                                                    Monto: <span class="text-danger fw-bold">${{ pago.monto|floatformat:0|intcomma }}</span>
+                                                    Monto: <span class="text-danger fw-bold">COP ${{ pago.monto|floatformat:0|intcomma }}</span>
                                                 </p>
                                                 {% if pago.nota_admin %}
                                                     <div class="p-3 bg-danger bg-opacity-10 rounded-3 border-start border-danger border-3">

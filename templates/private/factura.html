@@ -1,5 +1,6 @@
 {% extends "private/base_private.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block extra_head %}
 <style>
@@ -66,7 +67,7 @@
                                             <span class="fw-bold d-block">{{ paquete_nombre }}</span>
                                             <small class="text-muted">Reserva confirmada para tour guiado</small>
                                         </td>
-                                        <td class="py-3 text-end fw-bold">${{ subtotal }}</td>
+                                        <td class="py-3 text-end fw-bold">COP ${{ subtotal|floatformat:0|intcomma }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -76,7 +77,7 @@
                             <div class="col-md-5">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="text-muted">Total Pagado:</span>
-                                    <span class="fw-bold text-success fs-4">${{ total }} COP</span>
+                                    <span class="fw-bold text-success fs-4">COP ${{ total|floatformat:0|intcomma }}</span>
                                 </div>
                             </div>
                         </div>

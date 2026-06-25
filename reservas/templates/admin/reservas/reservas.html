@@ -1,13 +1,10 @@
 {% extends 'admin/base-admin.html' %}
-{% load static %}
+{% load humanize %}
 
-{% block extra_head %}
-<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
-{% endblock %}
 {% block content %}
 <div class="container py-5">
     
-    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color: var(--verde-mid); color: white; max-width: 1200px;">
+    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color: var(--verde-oscuro); color: white; max-width: 1200px;">
         <div class="card-body py-4 px-5 d-flex justify-content-between align-items-center">
             <h2 class="fw-bold mb-0">Gestión de Reservas</h2>
             <a href="{% url 'crear_reserva' %}" class="btn btn-light text-success fw-bold px-4 py-2 rounded-3 fs-5">
@@ -55,7 +52,7 @@
 
     <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 1200px;">
         <div class="table-responsive">
-            <table id="tablaReservas" class="table table-hover align-middle mb-0" style="width:100%">
+            <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr class="text-uppercase text-muted" style="font-size: 1rem;">
                         <th class="ps-5 py-4">Cliente</th>
@@ -72,7 +69,7 @@
                         <td class="ps-5 fw-bold text-dark py-3">{{ reserva.usuario }}</td>
                         <td class="py-3">{{ reserva.paquete.nombre }}</td>
                         <td class="py-3">{{ reserva.fecha }}</td>
-                        <td class="text-success fw-bold py-3">${{ reserva.monto_total }}</td>
+                        <td class="text-success fw-bold py-3">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</td>
                          <td class="py-3">
                         {% if reserva.estado == 'pendiente' %}
                          <span class="badge text-white px-4 py-2 fs-6 rounded-pill" style="background-color: #406d46;">Pendiente</span>
@@ -101,10 +98,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-{% block scripts %}
-<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="{% static 'js/datatables.js' %}"></script>
-<script src="{% static 'js/tconf/tconf-tablaReservas.js' %}"></script>
 {% endblock %}

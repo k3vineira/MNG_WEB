@@ -75,7 +75,7 @@
                                         <div class="col-sm-6">
                                             <div class="border rounded-4 p-3 h-100" style="background-color: #e8f5e9;">
                                                 <small class="text-success-emphasis d-block mb-1 fw-medium">Total de Reserva</small>
-                                                <h5 class="fw-bold text-success mb-0">${{ reserva.monto_total }}</h5>
+                                                <h5 class="fw-bold text-success mb-0">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -99,7 +99,7 @@
                                                         </div>
                                                         <div class="d-flex align-items-center gap-2">
                                                             {% if comp.monto %}
-                                                                <span class="small fw-bold text-success">${{ comp.monto }}</span>
+                                                                <span class="small fw-bold text-success">COP ${{ comp.monto|floatformat:0|intcomma }}</span>
                                                             {% endif %}
                                                             <span class="badge {% if comp.estado == 'aprobado' %}bg-success{% elif comp.estado == 'pendiente' %}bg-warning text-dark{% else %}bg-danger{% endif %}" style="font-size: 0.7rem;">
                                                                 {{ comp.get_estado_display }}
