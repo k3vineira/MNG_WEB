@@ -1,12 +1,10 @@
 {% extends 'admin/base-admin.html' %}
-{% load static %}
-{% block extra_head %}
-<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
-{% endblock %}
+{% load humanize %}
+
 {% block content %}
-<div class="container-fluid py-4 px-4">
+<div class="container py-5">
     
-    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color: var(--verde-mid); color: white; max-width: 100%;">
+    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color: var(--verde-oscuro); color: white; max-width: 1100px;">
         <div class="card-body py-3 px-4">
             <h3 class="fw-bold mb-0">Administración de Cancelaciones</h3>
         </div>
@@ -52,85 +50,91 @@
         {% endfor %}
     </div>
 
-    <div class="card border-0 shadow-sm rounded-3 mx-auto p-3" style="max-width: 100%;">
-        
-        <div class="table-responsive" style="overflow-x: hidden;">
-            
-            <table id="tablaCancelaciones" class="table table-hover align-middle mb-0 w-100">
+<div class="row g-3 mb-4 mx-auto justify-content-center" style="max-width: 1100px;">
+    {% for label, count, color in stats_list %}
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background: #ffffff;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center p-1">
                 
-                <thead class="table-light">
-                    <tr class="text-uppercase text-muted" style="font-size: 0.85rem;">
-                        <th class="ps-3 py-3">Cliente</th>
-                        <th class="py-3">Paquete</th>
-                        <th class="py-3" style="width: 20%;">Motivo</th>
-                        <th class="text-center py-3">Penalidad</th>
-                        <th class="text-center py-3" style="width: 15%;">Fecha Solicitud</th>
-                        <th class="text-center py-3">Estado</th>
-                        <th class="text-center py-3">Acciones</th>
-                    </tr>
-                </thead>
+                <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" 
+                     style="width: 65px; height: 65px; 
+                            {% if color == 'text-success' %} background-color: #e8f5e9; 
+                            {% elif color == 'text-danger' %} background-color: #ffebee; 
+                            {% elif color == 'text-warning' %} background-color: #fff3cd; 
+                            {% else %} background-color: #f1f3f5; {% endif %}">
+                    
+                    {% if color == 'text-dark' or color == 'text-primary' %}
+                        <i class="bi bi-luggage-fill text-secondary" style="font-size: 1.8rem;"></i>
+                    {% elif color == 'text-success' %}
+                        <i class="bi bi-airplane-engines-fill text-success" style="font-size: 1.8rem;"></i>
+                    {% elif color == 'text-danger' %}
+                        <i class="bi bi-ticket-detailed-fill text-danger" style="font-size: 1.8rem;"></i>
+                    {% else %}
+                        <i class="bi bi-compass-fill text-warning" style="font-size: 1.8rem;"></i>
+                    {% endif %}
+                </div>
 
-                <tbody class="fs-6">
-                    {% for cancelacion in cancelaciones %}
-                    <tr>
-                        <td class="ps-3 py-3 fw-bold text-dark">
-                            {{ cancelacion.reserva.usuario.username }}
-                        </td>
-
-                        <td class="py-3 text-secondary" style="max-width: 180px; word-break: break-word;">
-                            {{ cancelacion.reserva.paquete.nombre }}
-                        </td>
-
-                        <td class="py-3 text-muted fst-italic" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            "{{ cancelacion.motivo|truncatechars:25 }}"
-                        </td>
-
-                        <td class="py-3 text-center fw-bold text-danger">
-                            ${% if cancelacion.penalidad %}{{ cancelacion.penalidad }}{% else %}0{% endif %}
-                        </td>
-                        <td class="py-3 text-center text-muted" style="font-size: 0.9rem;">
-                            {{ cancelacion.fecha_solicitud|date:"d M Y H:i" }}
-                        </td>
-
-                        <td class="py-3 text-center">
-                            {% if cancelacion.estado == 'pendiente' %}
-                                <span class="badge text-white px-4 py-2 fs-6 rounded-pill" style="background-color: #406d46;">Pendiente</span>
-                            {% elif cancelacion.estado == 'aceptada' %}
-                                <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill">Aceptada</span>
-                            {% else %}
-                                <span class="badge bg-danger text-white px-4 py-2 fs-6 rounded-pill">Rechazada</span>
-                            {% endif %}
-                        </td>
-
-                        <td class="text-center py-3">
-                            <a href="{% url 'editar_cancelacion' cancelacion.id %}"
-                               class="btn btn-success btn-sm px-3 py-1.5 fw-bold text-white"
-                               style="background-color:#406d46; border: none;">
-                                Gestionar
-                            </a>
-                        </td>
-                    </tr>
-
-                    {% empty %}
-                    <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">
-                            No hay solicitudes de cancelación registradas.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-
-            </table>
-
+                <span class="text-muted small text-uppercase fw-semibold mb-2" style="letter-spacing: 0.5px;">
+                    {{ label }}
+                </span>
+                
+                <h2 class="fw-black mb-0 {{ color }}" style="font-size: 2.3rem; font-weight: 800; line-height: 1;">
+                    {{ count|default:0 }}
+                </h2>
+                
+            </div>
         </div>
-
     </div>
+    {% endfor %}
 </div>
-{% endblock %}
 
-{% block scripts %}
-<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="{% static 'js/datatables.js' %}"></script>
-<script src="{% static 'js/tconf/tconf-tablaCancelaciones.js' %}"></script>
+    <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 1100px; overflow: hidden;">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr class="text-uppercase text-muted" style="font-size: 0.9rem;">
+                    <th class="ps-4 py-4">Cliente</th>
+                    <th class="py-4">Paquete</th>
+                    <th class="py-4">Motivo</th>
+                    <th class="text-center py-4">Penalidad</th>
+                    <th class="text-center py-4">Estado</th>
+                    <th class="text-center py-4">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="fs-5">
+                {% for cancelacion in cancelaciones %}
+                <tr>
+                    <td class="ps-4 py-4 fw-bold text-dark">{{ cancelacion.reserva.usuario.username }}</td>
+                    <td class="py-4 text-secondary">{{ cancelacion.reserva.paquete.nombre }}</td>
+                    <td class="py-4 text-muted fst-italic">"{{ cancelacion.motivo|truncatechars:30 }}"</td>
+                    <td class="py-4 text-center fw-bold text-danger">COP ${{ cancelacion.penalidad|floatformat:0|intcomma }}</td>
+                    
+                  <td class="text-center py-4">
+    <span class="badge rounded-pill px-4 py-2 fs-6
+    {% if cancelacion.estado == 'pendiente' %}bg-warning text-dark
+    {% elif cancelacion.estado == 'revision' %}text-white
+    {% elif cancelacion.estado == 'confirmada' or cancelacion.estado == 'aceptada' %}bg-success text-white
+    {% else %}bg-danger text-white{% endif %}"
+    {% if cancelacion.estado == 'revision' %}style="background-color: #406d46;"{% endif %}>
+        {{ cancelacion.estado|capfirst }}
+    </span>
+</td>
+                    
+                    <td class="text-center py-4">
+                        <a href="{% url 'editar_cancelacion' cancelacion.id %}" class="btn btn-outline-primary btn-sm px-3 py-2 fw-bold" style="background-color: var(--verde-oscuro); color: white;">
+                            <i class="bi  me-1"></i> Gestionar
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        No hay solicitudes de cancelación registradas.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
 {% endblock %}

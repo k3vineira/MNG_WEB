@@ -97,7 +97,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-success small text-uppercase fw-bold">Aprobados</span>
-                        <h3 class="fw-extrabold text-success mb-0 mt-1">${{ total_aprobados|floatformat:2|intcomma }}</h3>
+                        <h3 class="fw-extrabold text-success mb-0 mt-1">COP ${{ total_aprobados|floatformat:0|intcomma }}</h3>
                     </div>
                     <div class="bg-success bg-opacity-20 p-2 rounded-3 text-success fs-4"><i class="bi bi-check-circle-fill"></i></div>
                 </div>
@@ -170,7 +170,7 @@
                                     {% endif %}
                                 </td>
                                 <td class="fw-bold text-success">
-                                    {% if c.monto %}${{ c.monto|floatformat:2|intcomma }}{% else %}—{% endif %}
+                                    {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}{% else %}—{% endif %}
                                 </td>
                                 <td>{{ c.banco_origen|default:"—" }}</td>
                                 <td><code>{{ c.referencia|default:"—" }}</code></td>

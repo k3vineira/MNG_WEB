@@ -1,6 +1,7 @@
 <!-- ── dashboard-turista ── -->
 {% extends 'private/base-turista-dashboard.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Mi Dashboard | Monagua{% endblock %}
 
@@ -33,11 +34,11 @@
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
           <span class="bg-success bg-opacity-10 text-success rounded p-2 fs-5">
-            <i class="bi bi-currency-dollar"></i>
+            <i class="bi bi-cash-stack"></i>
           </span>
         </div>
         <div class="text-muted small">Inversión en Viajes</div>
-        <div class="fw-bold fs-5 text-success">$ {{ total_invertido|floatformat:2|default:"0.00" }}</div>
+        <div class="fw-bold fs-5 text-success">COP ${{ total_invertido|floatformat:0|intcomma|default:"0" }}</div>
         <div class="text-muted" style="font-size:.75rem"><i class="bi bi-check-circle text-success"></i> Pagos aprobados</div>
       </div>
     </div>
@@ -217,7 +218,7 @@
                 </span>
               </div>
             </div>
-            <div class="fw-semibold text-success small">${{ r.monto_total|floatformat:2|default:"0" }}</div>
+            <div class="fw-semibold text-success small">COP ${{ r.monto_total|floatformat:0|intcomma|default:"0" }}</div>
           </div>
           {% endfor %}
         {% else %}
@@ -258,6 +259,56 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    /* Fecha */
+    const currentDateEl = document.getElementById('currentDate');
+    if (currentDateEl) {
+        currentDateEl.textContent = new Date().toLocaleDateString('es-CO', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+    }
+
+    const C = { green:'#198754', amber:'#ffc107', rose:'#dc3545', gray:'#f0f0f0' };
+
+    const reservasConf = {{ reservas_confirmadas|default:0 }};
+    const reservasPend = {{ reservas_pendientes|default:0 }};
+    const reservasCan  = {{ reservas_canceladas|default:0 }};
+
+    const tot = reservasConf + reservasPend + reservasCan;
+    const ctx = document.getElementById('chartEstado');
+    if (ctx) {
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Confirmadas','Pendientes','Canceladas'],
+            datasets: [{
+              data: tot > 0 ? [reservasConf, reservasPend, reservasCan] : [1],
+              backgroundColor: tot > 0 ? [C.green, C.amber, C.rose] : ['#e5e7eb'],
+              borderWidth: 0,
+              hoverOffset: tot > 0 ? 8 : 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                enabled: tot > 0,
+                callbacks: {
+                  label: c => ' ' + c.label + ': ' + c.parsed + ' reservas'
+                }
+              }
+            }
+          }
+        });
+    }
+});
+</script>
 {% endblock %}
 
 

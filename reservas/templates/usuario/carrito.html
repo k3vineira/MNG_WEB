@@ -1,5 +1,6 @@
 {% extends "private/base_private.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block titulo %}Carrito | Monagua{% endblock %}
 
@@ -50,7 +51,7 @@
                         <p class="text-muted small mb-0">Reserva #{{ reserva.id }} · {{ reserva.fecha|date:'d M Y' }}</p>
                       </div>
                       <div>
-                        <h5 class="fw-bold text-success mb-0">${{ reserva.monto_total }}</h5>
+                        <h5 class="fw-bold text-success mb-0">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</h5>
                       </div>
                     </div>
 
