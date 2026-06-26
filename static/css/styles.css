@@ -699,14 +699,13 @@ body.sidebar-open #sidebar-overlay {
 }
 
 
-/* Texto y contenido móvil al 80% */
-
+/* Texto y contenido móvil al 100% para evitar espacios laterales en blanco */
 @media (max-width: 768px) {
     .wrapper .content-wrapper main {
-        width: 80vw !important;
-        max-width: 80vw !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
 }
 

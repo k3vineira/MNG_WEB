@@ -14,6 +14,14 @@ class Usuario(AbstractUser):
         CE = 'CE', 'Cédula de Extranjería'
         PASAPORTE = 'PASAPORTE', 'Pasaporte'
 
+    email = models.EmailField(
+        unique=True,
+        error_messages={
+            'unique': 'Ya existe un usuario registrado con este correo electrónico.',
+        },
+        verbose_name='Correo Electrónico'
+    )
+
     rol = models.CharField(
         max_length=20,
         choices=Roles.choices,

@@ -37,7 +37,7 @@ def registro_view(request):
             user.rol = Usuario.Roles.CLIENTE
             user.save()
             Cliente.objects.create(usuario=user)
-            login(request, user)
+            login(request, user, backend='usuarios.backends.EmailOrUsernameModelBackend')
             messages.success(
                 request, 'Registro exitoso. ¡Bienvenido a Monagua!')
             return redirect('inicio')
@@ -308,9 +308,17 @@ def usuarios_guardar(request):
     if user_id:
         # --- MODO EDICIÓN ---
         user = get_object_or_404(Usuario, id=user_id)
+        email = request.POST.get('email', '').strip()
+        if not email:
+            messages.error(request, 'El email es obligatorio.')
+            return redirect('gestion_usuarios')
+        if Usuario.objects.filter(email__iexact=email).exclude(id=user.id).exists():
+            messages.error(request, f'El correo electrónico «{email}» ya está registrado en otra cuenta.')
+            return redirect('gestion_usuarios')
+
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
-        user.email = request.POST.get('email', user.email)
+        user.email = email
         user.tipo_documento = request.POST.get(
             'tipo_documento', user.tipo_documento)
         user.numero_documento = request.POST.get(
@@ -336,6 +344,9 @@ def usuarios_guardar(request):
             return redirect('gestion_usuarios')
         if Usuario.objects.filter(username=username).exists():
             messages.error(request, f'El usuario «{username}» ya existe.')
+            return redirect('gestion_usuarios')
+        if Usuario.objects.filter(email__iexact=email).exists():
+            messages.error(request, f'El correo electrónico «{email}» ya está registrado en otra cuenta.')
             return redirect('gestion_usuarios')
 
         user = Usuario(
@@ -443,9 +454,17 @@ def guias_guardar(request):
     if guia_id:
         # --- MODO EDICIÓN ---
         user = get_object_or_404(Usuario, id=guia_id, rol=Usuario.Roles.GUIA)
+        email = request.POST.get('email', '').strip()
+        if not email:
+            messages.error(request, 'El email es obligatorio.')
+            return redirect('gestion_guias')
+        if Usuario.objects.filter(email__iexact=email).exclude(id=user.id).exists():
+            messages.error(request, f'El correo electrónico «{email}» ya está registrado en otra cuenta.')
+            return redirect('gestion_guias')
+
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
-        user.email = request.POST.get('email', user.email)
+        user.email = email
         user.tipo_documento = request.POST.get(
             'tipo_documento', user.tipo_documento)
         user.numero_documento = request.POST.get(
@@ -480,6 +499,11 @@ def guias_guardar(request):
         if Usuario.objects.filter(username=username).exists():
             messages.error(
                 request, f'El nombre de usuario «{username}» ya está en uso.')
+            return redirect('gestion_guias')
+
+        if Usuario.objects.filter(email__iexact=email).exists():
+            messages.error(
+                request, f'El correo electrónico «{email}» ya está en uso por otra cuenta.')
             return redirect('gestion_guias')
 
         # Crear el usuario base con rol GUIA

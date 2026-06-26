@@ -23,6 +23,15 @@ class RegistroForm(UserCreationForm):
                     "Ya existe un usuario registrado con este número de documento.")
         return numero_documento
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email:
+            email_lower = email.lower()
+            if Usuario.objects.filter(email__iexact=email_lower).exists():
+                raise forms.ValidationError(
+                    "Ya existe un usuario registrado con este correo electrónico.")
+        return email
+
 
 class PerfilUsuarioForm(forms.ModelForm):
     """
