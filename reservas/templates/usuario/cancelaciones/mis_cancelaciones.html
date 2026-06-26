@@ -58,16 +58,16 @@
                                             <h3 class="fw-bold text-dark mb-1">{{ cancelacion.reserva.paquete.nombre }}</h3>
                                             <p class="text-muted small mb-0"><i class="bi bi-info-circle me-1"></i> Cancelación asociada a Reserva #{{ cancelacion.reserva.id }}</p>
                                         </div>
-
                                         <div>
-                                            {% if cancelacion.estado == 'revision' or cancelacion.estado == 'Revision' %}
-                                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="bi bi-clock me-1"></i> En revisión</span>
-                                            {% elif cancelacion.estado == 'aceptada' or cancelacion.estado == 'Aceptada' %}
-                                                <span class="badge bg-success text-white rounded-pill px-3 py-2"><i class="bi bi-check-circle me-1"></i> Aceptada</span>
-                                            {% else %}
-                                                <span class="badge bg-danger text-white rounded-pill px-3 py-2"><i class="bi bi-x-circle me-1"></i> Rechazada</span>
-                                            {% endif %}
+                                        {% if cancelacion.estado == 'pendiente' %}
+                                         <span class="badge" style="background-color: var(--verde-medio); color: var(--verde-bosque); padding: 8px 18px; border-radius: 30px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">Pendiente</span>
+                                        {% elif cancelacion.estado == 'aceptada' %}
+                                         <span class="badge" style="background-color: var(--verde-main); color: #ffffff; padding: 8px 18px; border-radius: 30px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">Aceptada</span>
+                                            {% elif cancelacion.estado == 'rechazada' %}
+                                         <span class="badge" style="background-color: #dc3545; color: #ffffff; padding: 8px 18px; border-radius: 30px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">Rechazada </span>
+                                        {% endif %}
                                         </div>
+                                                                    
                                     </div>
 
                                     <div class="row g-3 mb-4">

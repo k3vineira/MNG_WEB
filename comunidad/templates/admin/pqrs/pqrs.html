@@ -1,49 +1,58 @@
 {% extends 'admin/base-admin.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color: var(--verde-oscuro); color: white; max-width: 1100px;">
+    <!-- Encabezado -->
+    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color:var(--verde-mid); color: white; max-width: 1100px;">
         <div class="card-body py-3 px-4">
             <h3 class="fw-bold mb-0">Administración de PQRS</h3>
         </div>
     </div>
 
-  <div class="row g-3 mb-4 mx-auto justify-content-center" style="max-width: 1100px;">
-    {% for label, count, color in stats_list %}
-    <div class="col-4">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background: #ffffff;">
-            <div class="card-body d-flex flex-column align-items-center justify-content-center p-1">
-                
-                <div class="rounded-circle d-flex align-items-center justify-content-center mb-2" 
-                     style="width: 60px; height: 60px; 
-                            {% if color == 'text-success' %} background-color: #e8f5e9; 
-                            {% elif color == 'text-danger' %} background-color: #ffebee; 
-                            {% else %} background-color: #f1f3f5; {% endif %}">
+    <!-- Estadísticas -->
+    <div class="row g-3 mb-4 mx-auto justify-content-center" style="max-width: 1100px;">
+        {% for label, count, color in stats_list %}
+        <div class="col-4">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background: #ffffff;">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-1">
                     
-                    {% if color == 'text-dark' %}
-                        <i class="bi bi-luggage-fill text-secondary" style="font-size: 1.6rem;"></i>
-                    {% elif color == 'text-success' %}
-                        <i class="bi bi-airplane-engines-fill text-success" style="font-size: 1.6rem;"></i>
-                    {% else %}
-                        <i class="bi bi-ticket-detailed-fill text-danger" style="font-size: 1.6rem;"></i>
-                    {% endif %}
-                </div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center mb-2" 
+                         style="width: 60px; height: 60px; 
+                                {% if color == 'text-success' %} background-color: #e8f5e9; 
+                                {% elif color == 'text-danger' %} background-color: #ffebee; 
+                                {% else %} background-color: #f1f3f5; {% endif %}">
+                        
+                        {% if color == 'text-dark' %}
+                            <i class="bi bi-luggage-fill text-secondary" style="font-size: 1.6rem;"></i>
+                        {% elif color == 'text-success' %}
+                            <i class="bi bi-airplane-engines-fill text-success" style="font-size: 1.6rem;"></i>
+                        {% else %}
+                            <i class="bi bi-ticket-detailed-fill text-danger" style="font-size: 1.6rem;"></i>
+                        {% endif %}
+                    </div>
 
-                <span class="text-muted small text-uppercase fw-semibold mb-1" style="font-size: 0.75rem; letter-spacing: 0.3px;">
-                    {{ label }}
-                </span>
-                
-                <h2 class="fw-black mb-0 {{ color }}" style="font-size: 2.1rem; font-weight: 800; line-height: 1;">
-                    {{ count|default:0 }}
-                </h2>
-                
+                    <span class="text-muted small text-uppercase fw-semibold mb-1" style="font-size: 0.75rem; letter-spacing: 0.3px;">
+                        {{ label }}
+                    </span>
+                    
+                    <h2 class="fw-black mb-0 {{ color }}" style="font-size: 2.1rem; font-weight: 800; line-height: 1;">
+                        {{ count|default:0 }}
+                    </h2>
+                    
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
-    <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 1100px; overflow: hidden;">
-        <table class="table table-hover align-middle mb-0">
+
+    <!-- Tabla de Datos -->
+    <div class="card border-0 shadow-sm rounded-3 mx-auto p-4" style="max-width: 1100px;">
+        <table id="tablaPQRS" class="table table-hover align-middle mb-0" style="width:100%">
             <thead class="table-light">
                 <tr class="text-uppercase text-muted" style="font-size: 0.9rem;">
                     <th class="ps-4 py-4">Solicitante</th>
@@ -58,16 +67,17 @@
                     <td class="ps-4 py-4 fw-bold text-dark">
                         {{ pqr.cliente.usuario.first_name }} {{ pqr.cliente.usuario.last_name }}
                     </td>
-                      <td class="py-4">
+                    <td class="py-4">
                         <span class="badge rounded-pill px-4 py-2 fs-6 
                         {% if pqr.tipo == 'Queja' or pqr.tipo == 'Reclamo' %}bg-danger text-white
                         {% else %}text-white{% endif %}"
-                        {% if pqr.tipo != 'Queja' and pqr.tipo != 'Reclamo' %}style="background-color: #406d46;"{% endif %}>
+                        {% if pqr.tipo != 'Queja' and pqr.tipo != 'Reclamo' %}style="background-color: var(--verde-mid);"{% endif %}>
                         {{ pqr.tipo }}
-                         </span>
-                        </td>
+                        </span>
+                    </td>
                     <td class="py-4 text-muted">{{ pqr.asunto|truncatechars:40 }}</td>
                     <td class="text-center py-4">
+                        <!-- Botón para abrir el modal -->
                         <button type="button" 
                                 class="btn btn-sm {% if pqr.respuesta and pqr.respuesta.strip %}btn-outline-success{% else %}btn-danger{% endif %} px-3" 
                                 data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
@@ -75,8 +85,6 @@
                         </button>
                     </td>
                 </tr>
-
-                {% include 'partials/pqrs_modals.html'%}
                 {% empty %}
                 <tr>
                     <td colspan="4" class="text-center py-5 text-muted">No hay PQRS registradas.</td>
@@ -86,4 +94,15 @@
         </table>
     </div>
 </div>
+
+{% for pqr in todas_las_pqrs %}
+    {% include 'partials/pqrs_modals.html' %}
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="{% static 'js/datatables.js' %}"></script>
+<script src="{% static 'js/tconf/tconf-tablaPQRS.js' %}"></script>
 {% endblock %}

@@ -27,6 +27,8 @@ urlpatterns = [
     path('blog/usuario/', views.blog_usuario, name='blog_usuario'),
 
     # Comentarios
+    
+  
 
 
 

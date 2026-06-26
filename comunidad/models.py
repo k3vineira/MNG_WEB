@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 
+
 # Create your models here.
 
 
@@ -100,3 +101,4 @@ class Comentario(models.Model):
 
     def __str__(self):
         return f"Comentario de {self.usuario.username} - {self.titulo or 'sin título'}"
+

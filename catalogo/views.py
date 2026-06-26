@@ -6,7 +6,7 @@ from .models import Paquete, Actividades, Categoria, Tarifa, Temporada
 from django.db.models import Count, Q
 from django import forms
 from .forms import TemporadaForm, TarifaForm
-
+from notificaciones.utils import crear_notificacion_sistema
 
 def destinos(request):
     destinos_list = Paquete.objects.filter(estado=True)
@@ -22,15 +22,15 @@ def destinos(request):
         destinos_list = destinos_list.filter(
             tarifas__precio_adulto__lte=precio_max).distinct()
 
+    # Filtro estricto bilateral
     if apto_menores == 'si':
-        destinos_list = destinos_list.filter(
-            actividades__apto_para_menores=True).distinct()
+        destinos_list = destinos_list.exclude(actividades__apto_para_menores=False).distinct()
     elif apto_menores == 'no':
-        destinos_list = destinos_list.filter(
-            actividades__apto_para_menores=False).distinct()
+        destinos_list = destinos_list.exclude(actividades__apto_para_menores=True).distinct()
 
     if categoria_id:
         destinos_list = destinos_list.filter(categoria_id=categoria_id)
+        
     categorias_list = Categoria.objects.all()
 
     context = {
@@ -38,7 +38,6 @@ def destinos(request):
         'categorias': categorias_list
     }
     return render(request, 'usuario/destinos.html', context)
-
 
 # PAQUETES
 class PaqueteListView(ListView):
@@ -73,7 +72,17 @@ class PaqueteCreateView(CreateView):
     ]
     template_name = 'admin/paquetes/agregar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
-
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo=" Nuevo Paquete Creado",
+            mensaje=f"Se ha creado con éxito el paquete turístico: '{self.object.nombre}'.",
+            tipo='paquete' # Puedes usar este tipo para tus badges del HTML
+        )
+        return response
+      
 
 class PaqueteUpdateView(UpdateView):
     model = Paquete
@@ -90,12 +99,36 @@ class PaqueteUpdateView(UpdateView):
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.update({'class': 'form-control'})
         return form
+    def form_valid(self, form):
+        response = super().form_valid(form)
+    
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo=" Paquete Actualizado",
+            mensaje=f"El paquete '{self.object.nombre}' ha sido modificado correctamente.",
+            tipo='paquete'
+        )
+        return response
 
 
 class PaqueteDeleteView(DeleteView):
     model = Paquete
     template_name = 'admin/paquetes/eliminar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        nombre_paquete = self.object.nombre 
+        response = super().delete(request, *args, **kwargs)
+        
+    
+        crear_notificacion_sistema(
+            usuario=request.user,
+            titulo=" Paquete Eliminado",
+            mensaje=f"Se ha eliminado del sistema el paquete: '{nombre_paquete}'.",
+            tipo='paquete'
+        )
+        return response
 
 # ACTIVIDADES
 
@@ -128,6 +161,16 @@ class ActividadesCreateView(CreateView):
               'recomendacion_salud', 'estado', 'apto_para_menores']
     template_name = 'admin/actividades/agregar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo=" Nueva Actividad Creada",
+            mensaje=f"Se ha registrado con éxito la actividad: '{self.object.nombre}'.",
+            tipo='sistema'  
+        )
+        return response
 
 
 class ActividadesUpdateView(UpdateView):
@@ -136,6 +179,8 @@ class ActividadesUpdateView(UpdateView):
               'recomendacion_salud', 'estado', 'apto_para_menores']
     template_name = 'admin/actividades/editar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
+    
+    
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -146,12 +191,34 @@ class ActividadesUpdateView(UpdateView):
 
                 field.widget.attrs.update({'class': 'form-control'})
         return form
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo=" Actividad Modificada",
+            mensaje=f"La actividad '{self.object.nombre}' ha sido actualizada correctamente.",
+            tipo='sistema'
+        )
+        return response
 
 
 class ActividadesDeleteView(DeleteView):
     model = Actividades
     template_name = 'admin/actividades/eliminar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        nombre_actividad = self.object.nombre  
+        response = super().delete(request, *args, **kwargs)
+        
+        crear_notificacion_sistema(
+            usuario=request.user,
+            titulo=" Actividad Eliminada",
+            mensaje=f"Se ha quitado del sistema la actividad: '{nombre_actividad}'.",
+            tipo='sistema'
+        )
+        return response
 
 
 class CategoriaListView(ListView):
@@ -162,14 +229,13 @@ class CategoriaListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # 2. Realizamos el cálculo
         stats = Categoria.objects.aggregate(
             total=Count('id'),
             activas=Count('id', filter=Q(estado=True)),
             inactivas=Count('id', filter=Q(estado=False))
         )
 
-        # 3. Agregamos stats_list al contexto
+        
         context['stats_list'] = [
             ('Total Categorías', stats['total'], 'text-dark'),
             ('Activas', stats['activas'], 'text-success'),
@@ -184,6 +250,17 @@ class CategoriaCreateView(CreateView):
     fields = ['nombre', 'descripcion', 'estado']
     template_name = 'admin/categorias/agregar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo="📁 Nueva Categoría Creada",
+            mensaje=f"Se ha registrado con éxito la categoría: '{self.object.nombre}'.",
+            tipo='sistema'
+        )
+        return response
+    
+    
 
 
 class CategoriaUpdateView(UpdateView):
@@ -198,12 +275,34 @@ class CategoriaUpdateView(UpdateView):
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.update({'class': 'form-control'})
         return form
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo=" Categoría Modificada",
+            mensaje=f"La categoría '{self.object.nombre}' ha sido actualizada correctamente.",
+            tipo='sistema'
+        )
+        return response
 
 
 class CategoriaDeleteView(DeleteView):
     model = Categoria
     template_name = 'admin/categorias/eliminar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        nombre_categoria = self.object.nombre  
+        response = super().delete(request, *args, **kwargs)
+        
+        crear_notificacion_sistema(
+            usuario=request.user,
+            titulo=" Categoría Eliminada",
+            mensaje=f"Se ha quitado del sistema la categoría: '{nombre_categoria}'.",
+            tipo='sistema'
+        )
+        return response
 
 
 def reservas(request):
@@ -224,7 +323,6 @@ class TarifaListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Contamos estados de tarifas
         stats = Tarifa.objects.aggregate(
             total=Count('id'),
             activas=Count('id', filter=Q(estado='activa')),
@@ -245,6 +343,18 @@ class TarifaCreateView(CreateView):
     form_class = TarifaForm
     template_name = 'admin/tarifas/agregar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo=" Nueva Tarifa Creada",
+            mensaje=f"Se ha registrado con éxito una nueva tarifa en el sistema.",
+            tipo='sistema'
+        )
+        return response
+    
+    
 
 
 class TarifaUpdateView(UpdateView):
@@ -252,6 +362,16 @@ class TarifaUpdateView(UpdateView):
     form_class = TarifaForm
     template_name = 'admin/tarifas/editar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo="✏️ Tarifa Modificada",
+            mensaje=f"Los datos de la tarifa han sido actualizados correctamente.",
+            tipo='sistema'
+        )
+        return response
 
 
 # temporada
@@ -287,6 +407,16 @@ class TemporadaCreateView(CreateView):
     form_class = TemporadaForm
     template_name = 'admin/temporada/agregar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo=" Nueva Temporada Creada",
+            mensaje=f"Se ha registrado con éxito la temporada: '{self.object.nombre}'.",
+            tipo='sistema'
+        )
+        return response
 
 
 class TemporadaUpdateView(UpdateView):
@@ -294,3 +424,13 @@ class TemporadaUpdateView(UpdateView):
     form_class = TemporadaForm
     template_name = 'admin/temporada/editar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        crear_notificacion_sistema(
+            usuario=self.request.user,
+            titulo=" Temporada Modificada",
+            mensaje=f"La temporada '{self.object.nombre}' ha sido actualizada correctamente.",
+            tipo='sistema'
+        )
+        return response
