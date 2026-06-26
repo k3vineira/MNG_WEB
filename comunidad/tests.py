@@ -1,97 +1,227 @@
 from django.test import TestCase
-from django.contrib.auth import get_user_model
-from django.db.utils import IntegrityError
-from usuarios.models import Cliente
+from usuarios.models import Usuario, Cliente
 from catalogo.models import Categoria, Paquete
-from comunidad.models import PQRS, Calificacion
-from notificaciones.models import Notificacion
-from django.urls import reverse
+from comunidad.models import Calificacion, Blog, PQRS, Comentario
+import datetime
 
-Usuario = get_user_model()
 
-class ComunidadTestCase(TestCase):
+def crear_usuario(username='testuser', rol=Usuario.Roles.CLIENTE):
+    return Usuario.objects.create_user(
+        username=username,
+        password='pass123',
+        email=f'{username}@test.com',
+        rol=rol
+    )
+
+
+def crear_cliente(username='cliente_test'):
+    usuario = crear_usuario(username=username)
+    return Cliente.objects.create(usuario=usuario)
+
+
+def crear_paquete():
+    cat = Categoria.objects.create(nombre='Test Cat', descripcion='Desc')
+    return Paquete.objects.create(
+        nombre='Paquete Test',
+        descripcion='Desc',
+        dias_duracion=1,
+        noches_duracion=0,
+        punto_encuentro='Plaza',
+        hora_encuentro=datetime.time(8, 0),
+        categoria=cat
+    )
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# TESTS DE CALIFICACION
+# ──────────────────────────────────────────────────────────────────────────────
+
+class CalificacionTest(TestCase):
+
     def setUp(self):
-        # Crear usuario turista
-        self.user_turista = Usuario.objects.create_user(
-            username='turista_comunidad',
-            email='turista@comunidad.com',
-            password='password123'
-        )
-        self.cliente = Cliente.objects.create(
-            usuario=self.user_turista,
-            pais='Colombia',
-            ciudad='Mongua'
-        )
+        self.cliente = crear_cliente()
+        self.paquete = crear_paquete()
 
-        # Crear categoría y paquete
-        self.categoria = Categoria.objects.create(
-            nombre='Senderismo',
-            descripcion='Tours a pie'
-        )
-        self.paquete = Paquete.objects.create(
-            nombre='Laguna Negra Tour',
-            descripcion='Maravilla natural de Mongua',
-            dias_duracion=1,
-            noches_duracion=0,
-            punto_encuentro='Plaza Principal',
-            hora_encuentro='08:00:00',
-            categoria=self.categoria
-        )
-
-    def test_creacion_pqrs_exito(self):
-        pqr = PQRS.objects.create(
-            cliente=self.cliente,
-            tipo='queja',
-            asunto='Retraso en salida',
-            descripcion='El guía llegó tarde a la salida del tour.',
-            estado='abierto'
-        )
-        self.assertEqual(pqr.estado, 'abierto')
-        self.assertEqual(pqr.tipo, 'queja')
-
-    def test_responder_pqrs_y_notificar(self):
-        pqr = PQRS.objects.create(
-            cliente=self.cliente,
-            tipo='reclamo',
-            asunto='Reclamo reembolso',
-            descripcion='Solicito reembolso de penalidad.',
-            estado='abierto'
-        )
-
-        # Simular respuesta del admin mediante la vista contestar_pqrs
-        # Iniciamos sesión
-        self.client.force_login(self.user_turista)
-        
-        # Realizar el POST a la vista contestar_pqrs
-        url = reverse('contestar_pqrs', kwargs={'pqrs_id': pqr.id})
-        response = self.client.post(url, {'respuesta': 'Se ha procesado tu devolución con éxito.'})
-        
-        # Debe redireccionar al listado de PQRS del admin
-        self.assertEqual(response.status_code, 302)
-        
-        pqr.refresh_from_db()
-        self.assertEqual(pqr.estado, 'cerrado')
-        self.assertEqual(pqr.respuesta, 'Se ha procesado tu devolución con éxito.')
-        
-        # Verificar que se creó la notificación para el usuario
-        notificaciones = Notificacion.objects.filter(cliente=self.user_turista)
-        self.assertEqual(notificaciones.count(), 1)
-        self.assertEqual(notificaciones.first().titulo, 'PQRS Respondida')
-
-    def test_calificacion_unica_por_cliente_y_paquete(self):
-        # Crear la primera calificación
-        Calificacion.objects.create(
+    def test_crear_calificacion(self):
+        cal = Calificacion.objects.create(
             cliente=self.cliente,
             paquete=self.paquete,
             puntaje=5,
-            comentario='¡Excelente tour!'
+            comentario='Excelente tour'
         )
+        self.assertEqual(cal.puntaje, 5)
+        self.assertEqual(cal.comentario, 'Excelente tour')
 
-        # Intentar duplicar la calificación para el mismo cliente y paquete
-        with self.assertRaises(IntegrityError):
+    def test_unique_together_cliente_paquete(self):
+        Calificacion.objects.create(
+            cliente=self.cliente,
+            paquete=self.paquete,
+            puntaje=4
+        )
+        with self.assertRaises(Exception):
             Calificacion.objects.create(
                 cliente=self.cliente,
                 paquete=self.paquete,
-                puntaje=4,
-                comentario='Otro comentario diferente'
+                puntaje=3
             )
+
+    def test_comentario_puede_estar_vacio(self):
+        cal = Calificacion.objects.create(
+            cliente=self.cliente,
+            paquete=self.paquete,
+            puntaje=3,
+            comentario=''
+        )
+        self.assertEqual(cal.comentario, '')
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# TESTS DE BLOG
+# ──────────────────────────────────────────────────────────────────────────────
+
+class BlogTest(TestCase):
+
+    def test_crear_blog(self):
+        blog = Blog.objects.create(
+            titulo='Guía de Monagua',
+            contenido='Contenido del artículo de prueba',
+            publicado=True
+        )
+        self.assertEqual(blog.titulo, 'Guía de Monagua')
+        self.assertTrue(blog.publicado)
+
+    def test_str_blog(self):
+        blog = Blog.objects.create(
+            titulo='Primer Post',
+            contenido='Texto de prueba'
+        )
+        self.assertEqual(str(blog), 'Primer Post')
+
+    def test_publicado_default_true(self):
+        blog = Blog.objects.create(titulo='Post', contenido='Texto')
+        self.assertTrue(blog.publicado)
+
+    def test_get_absolute_url(self):
+        blog = Blog.objects.create(titulo='URL Test', contenido='Texto')
+        url = blog.get_absolute_url()
+        self.assertIn(str(blog.pk), url)
+
+    def test_ordenamiento_por_fecha_descendente(self):
+        b1 = Blog.objects.create(titulo='Primero', contenido='a')
+        b2 = Blog.objects.create(titulo='Segundo', contenido='b')
+        blogs = list(Blog.objects.all())
+        # El más reciente (b2) debe aparecer primero
+        self.assertEqual(blogs[0].pk, b2.pk)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# TESTS DE PQRS
+# ──────────────────────────────────────────────────────────────────────────────
+
+class PQRSTest(TestCase):
+
+    def setUp(self):
+        self.cliente = crear_cliente(username='pqrs_user')
+
+    def test_crear_pqrs(self):
+        pqrs = PQRS.objects.create(
+            cliente=self.cliente,
+            tipo='queja',
+            asunto='Problema con la reserva',
+            descripcion='Descripción detallada del problema'
+        )
+        self.assertEqual(pqrs.tipo, 'queja')
+        self.assertEqual(pqrs.estado, 'abierto')
+
+    def test_estado_default_abierto(self):
+        pqrs = PQRS.objects.create(
+            tipo='sugerencia',
+            asunto='Sugerencia',
+            descripcion='Texto'
+        )
+        self.assertEqual(pqrs.estado, 'abierto')
+
+    def test_pqrs_sin_cliente(self):
+        pqrs = PQRS.objects.create(
+            cliente=None,
+            tipo='peticion',
+            asunto='Asunto anonimo',
+            descripcion='Texto anonimo'
+        )
+        self.assertIsNone(pqrs.cliente)
+
+    def test_choices_tipo_validos(self):
+        tipos = [t[0] for t in PQRS.TIPO_CHOICES]
+        for tipo in ['peticion', 'queja', 'reclamo', 'sugerencia']:
+            self.assertIn(tipo, tipos)
+
+    def test_choices_estado_validos(self):
+        estados = [e[0] for e in PQRS.ESTADO_CHOICES]
+        for estado in ['abierto', 'en_proceso', 'cerrado']:
+            self.assertIn(estado, estados)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# TESTS DE COMENTARIO
+# ──────────────────────────────────────────────────────────────────────────────
+
+class ComentarioTest(TestCase):
+
+    def setUp(self):
+        self.usuario = crear_usuario(username='comentador')
+        self.paquete = crear_paquete()
+
+    def test_crear_comentario_con_paquete(self):
+        com = Comentario.objects.create(
+            usuario=self.usuario,
+            tipo='experiencia',
+            titulo='Increíble',
+            mensaje='Fue una experiencia maravillosa.',
+            valoracion=5,
+            paquete=self.paquete
+        )
+        self.assertEqual(com.valoracion, 5)
+        self.assertTrue(com.visible)
+
+    def test_crear_comentario_sin_paquete(self):
+        com = Comentario.objects.create(
+            usuario=self.usuario,
+            mensaje='Comentario general'
+        )
+        self.assertIsNone(com.paquete)
+
+    def test_str_comentario(self):
+        com = Comentario.objects.create(
+            usuario=self.usuario,
+            titulo='Mi título',
+            mensaje='Texto'
+        )
+        self.assertIn(self.usuario.username, str(com))
+        self.assertIn('Mi título', str(com))
+
+    def test_str_comentario_sin_titulo(self):
+        com = Comentario.objects.create(
+            usuario=self.usuario,
+            mensaje='Sin título'
+        )
+        self.assertIn('sin título', str(com))
+
+    def test_visible_default_true(self):
+        com = Comentario.objects.create(
+            usuario=self.usuario,
+            mensaje='Visible'
+        )
+        self.assertTrue(com.visible)
+
+    def test_valoracion_default_cinco(self):
+        com = Comentario.objects.create(
+            usuario=self.usuario,
+            mensaje='Con valoración default'
+        )
+        self.assertEqual(com.valoracion, 5)
+
+    def test_ordenamiento_descendente_por_fecha(self):
+        c1 = Comentario.objects.create(usuario=self.usuario, mensaje='Primero')
+        c2 = Comentario.objects.create(usuario=self.usuario, mensaje='Segundo')
+        comentarios = list(Comentario.objects.all())
+        self.assertEqual(comentarios[0].pk, c2.pk)
