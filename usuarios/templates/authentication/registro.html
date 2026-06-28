@@ -8,401 +8,190 @@
     <title>Registro - Monagua</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    <style>
-        :root {
-            --verde-monagua: #406d46;
-            --verde-hover: #2e4f32;
-        }
-
-        body {
-            background: url('{% static "img/Fondo.webp" %}') no-repeat center center fixed;
-            background-size: cover;
-            min-height: 100vh;
-        }
-
-        .auth-nav {
-            border-bottom: 1px solid #dee2e6;
-            margin-bottom: 1rem;
-        }
-
-        .auth-nav-item {
-            color: #adb5bd;
-            text-decoration: none;
-            font-weight: 600;
-            padding-bottom: 4px;
-            border-bottom: 3px solid transparent;
-            font-size: 0.9rem;
-        }
-
-        .auth-nav-item.active {
-            color: #212529;
-            border-bottom-color: #212529; 
-        }
-
-        @media (min-width: 768px) {
-            .divider-vertical {
-                border-right: 2px solid #dee2e6;
-                height: 100%;
-            }
-        }
-
-        .form-control, .form-select {
-            font-size: 0.85rem;
-            padding: 0.5rem 1rem;
-        }
-
-        .card {
-            max-width: 850px;
-            width: 95%;
-        }
-
-        .text-custom-green {
-            color: var(--verde-monagua);
-            transition: color 0.3s ease;
-        }
-
-        @media (max-height: 720px) {
-            .card { padding: 1.5rem !important; }
-            img { max-height: 60px !important; }
-            h4 { font-size: 1.2rem; }
-            .mb-2 { margin-bottom: 0.5rem !important; }
-        }
-        
-        .cursor-pointer {
-            cursor: pointer;
-        }
-        
-        .form-floating > label {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--verde-monagua);
-            box-shadow: 0 0 0 0.25rem rgba(64, 109, 70, 0.25);
-        }
-    </style>
 </head>
 
-<body class="d-flex flex-column justify-content-center align-items-center py-4">
+<body class="d-flex flex-column justify-content-center align-items-center py-4 min-vh-100" style="background-image: url('{% static "img/Fondo.webp" %}'); background-size: cover; background-position: center; background-attachment: fixed;">
 
-    <div class="card p-4 rounded-4 border-0 shadow-lg bg-white">
-        
-        <div class="text-center mb-2">
-            <img src="{% static 'img/Logo.webp' %}" class="img-fluid mb-1" style="max-height: 75px; object-fit: contain;">
-            <h4 class="fw-bold text-dark mb-0">Bienvenido</h4>
-            <p class="text-muted mb-2" style="font-size: 0.8rem;">Ingresa tus datos para acceder a tu experiencia en Monagua.</p>
-        </div>
+    <!-- Wrapper para dar padding lateral en móviles -->
+    <div class="container-fluid px-3 d-flex justify-content-center">
+        <div class="card p-3 p-md-4 rounded-4 border-0 shadow-lg bg-white w-100" style="max-width: 850px;">
+            
+            <!-- Cabecera -->
+            <div class="text-center mb-2">
+                <img src="{% static 'img/Logo.webp' %}" class="img-fluid mb-1" style="max-height: 75px; object-fit: contain;">
+                <h4 class="fw-bold text-dark mb-0 fs-3">Bienvenido</h4>
+                <p class="text-muted mb-2 small">Ingresa tus datos para acceder a tu experiencia en Monagua.</p>
+            </div>
 
-        <div class="d-flex justify-content-center gap-4 auth-nav mb-3">
-            <a href="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% if request.GET.paquete_id %}&paquete_id={{ request.GET.paquete_id }}{% endif %}{% endif %}" class="auth-nav-item">Iniciar Sesión</a>
-            <a href="#" class="auth-nav-item active">Regístrate</a>
-        </div>
+            <!-- Navegación -->
+            <ul class="nav nav-underline justify-content-center mb-4">
+                <li class="nav-item">
+                    <a class="nav-link text-secondary fw-semibold px-3" href="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% if request.GET.paquete_id %}&paquete_id={{ request.GET.paquete_id }}{% endif %}{% endif %}">Iniciar Sesión</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark fw-bold border-dark px-3 active" aria-current="page" href="#">Regístrate</a>
+                </li>
+            </ul>
 
-        <form id="formularioRegistro" method="POST">
-            {% csrf_token %}
-            {# Mantener redirección tras registro si existe #}
-            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            <!-- Formulario -->
+            <form id="formularioRegistro" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
 
-            <div class="row g-4 mt-1">
-                <!-- Columna Izquierda -->
-                <div class="col-md-6 pe-md-4 divider-vertical">
-                    
-                    <div class="form-floating mb-3">
-                        <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" 
-                               class="form-control rounded-4 shadow-sm {% if form.username.errors %}is-invalid{% endif %}" 
-                               placeholder="Nombre de Usuario" required>
-                        <label for="id_username"><i class="bi bi-person text-success me-1"></i>Nombre de Usuario</label>
-                        {% if form.username.errors %}<div class="invalid-feedback ms-2">{{ form.username.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="row g-2 mb-3">
-                        <div class="col-sm-6 form-floating">
-                            <input type="text" name="first_name" id="id_first_name" value="{{ form.first_name.value|default:'' }}" 
-                                   class="form-control rounded-4 shadow-sm {% if form.first_name.errors %}is-invalid{% endif %}" 
-                                   placeholder="Nombres" required>
-                            <label for="id_first_name" class="ms-2">Nombres</label>
-                            {% if form.first_name.errors %}<div class="invalid-feedback ms-2">{{ form.first_name.errors.0 }}</div>{% endif %}
+                <div class="row g-4 mt-1">
+                    <!-- Columna Izquierda -->
+                    <div class="col-md-6 pe-md-4">
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}" 
+                                   class="form-control rounded-4 shadow-sm {% if form.username.errors %}is-invalid{% endif %}" 
+                                   placeholder="Nombre de Usuario" required>
+                            <label for="id_username" class="text-secondary small"><i class="bi bi-person text-success me-1"></i>Nombre de Usuario</label>
+                            {% if form.username.errors %}<div class="invalid-feedback ms-2">{{ form.username.errors.0 }}</div>{% endif %}
                         </div>
-                        <div class="col-sm-6 form-floating">
-                            <input type="text" name="last_name" id="id_last_name" value="{{ form.last_name.value|default:'' }}" 
-                                   class="form-control rounded-4 shadow-sm {% if form.last_name.errors %}is-invalid{% endif %}" 
-                                   placeholder="Apellidos" required>
-                            <label for="id_last_name" class="ms-2">Apellidos</label>
-                            {% if form.last_name.errors %}<div class="invalid-feedback ms-2">{{ form.last_name.errors.0 }}</div>{% endif %}
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-sm-6 form-floating">
+                                <input type="text" name="first_name" id="id_first_name" value="{{ form.first_name.value|default:'' }}" 
+                                       class="form-control rounded-4 shadow-sm {% if form.first_name.errors %}is-invalid{% endif %}" 
+                                       placeholder="Nombres" required>
+                                <label for="id_first_name" class="text-secondary small ms-2">Nombres</label>
+                                {% if form.first_name.errors %}<div class="invalid-feedback ms-2">{{ form.first_name.errors.0 }}</div>{% endif %}
+                            </div>
+                            <div class="col-sm-6 form-floating">
+                                <input type="text" name="last_name" id="id_last_name" value="{{ form.last_name.value|default:'' }}" 
+                                       class="form-control rounded-4 shadow-sm {% if form.last_name.errors %}is-invalid{% endif %}" 
+                                       placeholder="Apellidos" required>
+                                <label for="id_last_name" class="text-secondary small ms-2">Apellidos</label>
+                                {% if form.last_name.errors %}<div class="invalid-feedback ms-2">{{ form.last_name.errors.0 }}</div>{% endif %}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-floating mb-3">
-                        <select name="tipo_documento" id="id_tipo_documento" class="form-select rounded-4 shadow-sm {% if form.tipo_documento.errors %}is-invalid{% endif %}" required>
-                            <option value="" selected disabled>Selecciona una opción</option>
-                            <option value="CC" {% if form.tipo_documento.value == "CC" %}selected{% endif %}>Cédula de Ciudadanía</option>
-                            <option value="CE" {% if form.tipo_documento.value == "CE" %}selected{% endif %}>Cédula de Extranjería</option>
-                            <option value="PAS" {% if form.tipo_documento.value == "PAS" %}selected{% endif %}>Pasaporte</option>
-                        </select>
-                        <label for="id_tipo_documento"><i class="bi bi-card-heading text-success me-1"></i>Tipo de Documento</label>
-                        {% if form.tipo_documento.errors %}<div class="invalid-feedback ms-2">{{ form.tipo_documento.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="text" name="numero_documento" id="id_numero_documento" value="{{ form.numero_documento.value|default:'' }}" 
-                               class="form-control rounded-4 shadow-sm {% if form.numero_documento.errors %}is-invalid{% endif %}" 
-                               placeholder="Número de Documento" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <label for="id_numero_documento"><i class="bi bi-123 text-success me-1"></i>Número de Documento</label>
-                        {% if form.numero_documento.errors %}<div class="invalid-feedback ms-2">{{ form.numero_documento.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="tel" name="telefono" id="id_telefono" value="{{ form.telefono.value|default:'' }}" 
-                               class="form-control rounded-4 shadow-sm {% if form.telefono.errors %}is-invalid{% endif %}" 
-                               placeholder="Número de Teléfono" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                        <label for="id_telefono"><i class="bi bi-telephone text-success me-1"></i>Número de Teléfono</label>
-                        {% if form.telefono.errors %}<div class="invalid-feedback ms-2">{{ form.telefono.errors.0 }}</div>{% endif %}
-                    </div>
-                </div>
-
-                <!-- Columna Derecha -->
-                <div class="col-md-6 ps-md-4">
-                    
-                    <div class="form-floating mb-3">
-                        <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}" 
-                               class="form-control rounded-4 shadow-sm {% if form.email.errors %}is-invalid{% endif %}" 
-                               placeholder="Correo Electrónico" required>
-                        <label for="id_email"><i class="bi bi-envelope text-success me-1"></i>Correo Electrónico</label>
-                        {% if form.email.errors %}<div class="invalid-feedback ms-2">{{ form.email.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="row g-2 mb-3">
-                        <div class="col-sm-6 form-floating">
-                            <select name="pais" id="id_pais" class="form-select rounded-4 shadow-sm" required>
-                                <option value="" selected disabled>Cargando países...</option>
+                        <div class="form-floating mb-3">
+                            <select name="tipo_documento" id="id_tipo_documento" class="form-select rounded-4 shadow-sm text-secondary {% if form.tipo_documento.errors %}is-invalid{% endif %}" required>
+                                <option value="" selected disabled>Selecciona una opción</option>
+                                <option value="CC" {% if form.tipo_documento.value == "CC" %}selected{% endif %}>Cédula de Ciudadanía</option>
+                                <option value="CE" {% if form.tipo_documento.value == "CE" %}selected{% endif %}>Cédula de Extranjería</option>
+                                <option value="PAS" {% if form.tipo_documento.value == "PAS" %}selected{% endif %}>Pasaporte</option>
                             </select>
-                            <label for="id_pais" class="ms-2"><i class="bi bi-globe text-success me-1"></i>País</label>
+                            <label for="id_tipo_documento" class="text-secondary small"><i class="bi bi-card-heading text-success me-1"></i>Tipo de Documento</label>
+                            {% if form.tipo_documento.errors %}<div class="invalid-feedback ms-2">{{ form.tipo_documento.errors.0 }}</div>{% endif %}
                         </div>
-                        <div class="col-sm-6 form-floating">
-                            <select name="ciudad" id="id_ciudad" class="form-select rounded-4 shadow-sm" required disabled>
-                                <option value="" selected disabled>Elige un país primero</option>
-                            </select>
-                            <label for="id_ciudad" class="ms-2"><i class="bi bi-building text-success me-1"></i>Ciudad</label>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" name="numero_documento" id="id_numero_documento" value="{{ form.numero_documento.value|default:'' }}" 
+                                   class="form-control rounded-4 shadow-sm {% if form.numero_documento.errors %}is-invalid{% endif %}" 
+                                   placeholder="Número de Documento" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <label for="id_numero_documento" class="text-secondary small"><i class="bi bi-123 text-success me-1"></i>Número de Documento</label>
+                            {% if form.numero_documento.errors %}<div class="invalid-feedback ms-2">{{ form.numero_documento.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="tel" name="telefono" id="id_telefono" value="{{ form.telefono.value|default:'' }}" 
+                                   class="form-control rounded-4 shadow-sm {% if form.telefono.errors %}is-invalid{% endif %}" 
+                                   placeholder="Número de Teléfono" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <label for="id_telefono" class="text-secondary small"><i class="bi bi-telephone text-success me-1"></i>Número de Teléfono</label>
+                            {% if form.telefono.errors %}<div class="invalid-feedback ms-2">{{ form.telefono.errors.0 }}</div>{% endif %}
                         </div>
                     </div>
 
-                    <div class="form-floating mb-3 position-relative">
-                        <input type="password" id="pass1" name="password1" 
-                               class="form-control rounded-4 shadow-sm {% if form.password1.errors %}is-invalid{% endif %}" 
-                               placeholder="Contraseña" required minlength="6">
-                        <label for="pass1"><i class="bi bi-lock text-success me-1"></i>Contraseña</label>
-                        <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer text-muted toggle-password" data-target="pass1">
-                            <i class="bi bi-eye"></i>
-                        </span>
-                        {% if form.password1.errors %}<div class="invalid-feedback ms-2">{{ form.password1.errors.0 }}</div>{% endif %}
+                    <!-- Columna Derecha -->
+                    <div class="col-md-6 ps-md-4">
+                        
+                        <div class="form-floating mb-3">
+                            <input type="email" name="email" id="id_email" value="{{ form.email.value|default:'' }}" 
+                                   class="form-control rounded-4 shadow-sm {% if form.email.errors %}is-invalid{% endif %}" 
+                                   placeholder="Correo Electrónico" required>
+                            <label for="id_email" class="text-secondary small"><i class="bi bi-envelope text-success me-1"></i>Correo Electrónico</label>
+                            {% if form.email.errors %}<div class="invalid-feedback ms-2">{{ form.email.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-sm-6 form-floating">
+                                <select name="pais" id="id_pais" class="form-select rounded-4 shadow-sm text-secondary" data-prev="{{ request.POST.pais }}" required>
+                                    <option value="" selected disabled>Cargando países...</option>
+                                </select>
+                                <label for="id_pais" class="text-secondary small ms-2"><i class="bi bi-globe text-success me-1"></i>País</label>
+                            </div>
+                            <div class="col-sm-6 form-floating">
+                                <select name="ciudad" id="id_ciudad" class="form-select rounded-4 shadow-sm text-secondary" data-prev="{{ request.POST.ciudad }}" required disabled>
+                                    <option value="" selected disabled>Elige un país primero</option>
+                                </select>
+                                <label for="id_ciudad" class="text-secondary small ms-2"><i class="bi bi-building text-success me-1"></i>Ciudad</label>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3 position-relative">
+                            <input type="password" id="pass1" name="password1" 
+                                   class="form-control rounded-4 shadow-sm {% if form.password1.errors %}is-invalid{% endif %}" 
+                                   placeholder="Contraseña" required minlength="6">
+                            <label for="pass1" class="text-secondary small"><i class="bi bi-lock text-success me-1"></i>Contraseña</label>
+                            <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted toggle-password" data-target="pass1" style="cursor:pointer;">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                            {% if form.password1.errors %}<div class="invalid-feedback ms-2">{{ form.password1.errors.0 }}</div>{% endif %}
+                        </div>
+
+                        <div class="form-floating mb-3 position-relative">
+                            <input type="password" id="pass2" name="password2" 
+                                   class="form-control rounded-4 shadow-sm {% if form.password2.errors %}is-invalid{% endif %}" 
+                                   placeholder="Confirmar Contraseña" required minlength="6">
+                            <label for="pass2" class="text-secondary small"><i class="bi bi-shield-lock text-success me-1"></i>Confirmar Contraseña</label>
+                            <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted toggle-password" data-target="pass2" style="cursor:pointer;">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                            {% if form.password2.errors %}<div class="invalid-feedback ms-2">{{ form.password2.errors.0 }}</div>{% endif %}
+                        </div>
+                        
+                        <div class="form-check mt-4 ms-2">
+                            <input type="checkbox" class="form-check-input border-secondary shadow-sm" id="terminos" required>
+                            <label class="form-check-label text-muted small" for="terminos">
+                                He leído y acepto los <a href="{% url 'terminos' %}" class="text-success fw-bold text-decoration-none">Términos y Condiciones</a>
+                            </label>
+                        </div>
                     </div>
+                </div>
 
-                    <div class="form-floating mb-3 position-relative">
-                        <input type="password" id="pass2" name="password2" 
-                               class="form-control rounded-4 shadow-sm {% if form.password2.errors %}is-invalid{% endif %}" 
-                               placeholder="Confirmar Contraseña" required minlength="6">
-                        <label for="pass2"><i class="bi bi-shield-lock text-success me-1"></i>Confirmar Contraseña</label>
-                        <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer text-muted toggle-password" data-target="pass2">
-                            <i class="bi bi-eye"></i>
-                        </span>
-                        {% if form.password2.errors %}<div class="invalid-feedback ms-2">{{ form.password2.errors.0 }}</div>{% endif %}
+                {# Mostrar errores generales #}
+                {% if form.non_field_errors %}
+                <div class="mt-3">
+                    {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show py-2 mb-2 small" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
+                        <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    
-                    <div class="form-check mt-4 ms-2">
-                        <input type="checkbox" class="form-check-input border-secondary-subtle shadow-sm" id="terminos" required>
-                        <label class="form-check-label text-muted" style="font-size: 0.85rem;" for="terminos">
-                            He leído y acepto los <a href="{% url 'terminos' %}" class="text-custom-green fw-bold text-decoration-none">Términos y Condiciones</a>
-                        </label>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if messages %}
+                <div class="mt-3">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show py-2 mb-2 small" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
+                    {% endfor %}
                 </div>
-            </div>
+                {% endif %}
 
-            {# Mostrar errores que no pertenecen a un campo específico (ej: validaciones de seguridad o duplicados) #}
-            {% if form.non_field_errors %}
-            <div class="mt-3">
-                {% for error in form.non_field_errors %}
-                <div class="alert alert-danger alert-dismissible fade show py-2 mb-2" role="alert" style="font-size: 0.8rem;">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
-                    <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="text-center mt-3">
+                    <div id="mensajeError" class="alert alert-danger alert-dismissible fade show py-2 d-none mb-2 small" role="alert">
+                        Las contraseñas no coinciden.
+                        <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm py-2">
+                        Crear Cuenta
+                    </button>
                 </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            {% if messages %}
-            <div class="mt-3">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show py-2 mb-2" role="alert" style="font-size: 0.8rem;">
-                    {{ message }}
-                    <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            <div class="text-center mt-3">
-                <div id="mensajeError" class="alert alert-danger alert-dismissible fade show py-2 d-none mb-2" role="alert" style="font-size: 0.8rem;">
-                    Las contraseñas no coinciden.
-                    <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm py-2">
-                    Crear Cuenta
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Auto-cerrar alertas después de 5 segundos
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                let alerts = document.querySelectorAll('.alert:not(.alert-danger)'); // No cerramos errores críticos automáticamente si prefieres
-                alerts.forEach(alert => {
-                    let bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                });
-            }, 5000);
-        });
-
-        const formulario = document.getElementById('formularioRegistro');
-        const mensajeError = document.getElementById('mensajeError');
-
-        formulario.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const pass1 = document.getElementById('pass1').value;
-            const pass2 = document.getElementById('pass2').value;
-
-            if (pass1 !== pass2) {
-                mensajeError.classList.remove('d-none');
-            } else {
-                mensajeError.classList.add('d-none');
-                formulario.submit(); 
-            }
-        });
-
-        // Alternar visibilidad de contraseñas
-        document.querySelectorAll('.toggle-password').forEach(icon => {
-            icon.addEventListener('click', function() {
-                const targetId = this.getAttribute('data-target');
-                const input = document.getElementById(targetId);
-                const iconElement = this.querySelector('i');
-                
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    iconElement.classList.remove('bi-eye');
-                    iconElement.classList.add('bi-eye-slash');
-                } else {
-                    input.type = 'password';
-                    iconElement.classList.remove('bi-eye-slash');
-                    iconElement.classList.add('bi-eye');
-                }
-            });
-        });
-
-        // Lógica de la API de Países y Ciudades
-        let countryData = [];
-        const paisSelect = document.getElementById('id_pais');
-        const ciudadSelect = document.getElementById('id_ciudad');
-
-        fetch('https://countriesnow.space/api/v0.1/countries')
-            .then(response => response.json())
-            .then(data => {
-                countryData = data.data;
-                paisSelect.innerHTML = '<option value="" selected disabled>Selecciona un país</option>';
-                
-                // Ordenar alfabéticamente
-                countryData.sort((a, b) => a.country.localeCompare(b.country));
-
-                countryData.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.country;
-                    option.textContent = item.country;
-                    // Preseleccionar si viene de un error de formulario
-                    if("{{ request.POST.pais }}" === item.country) {
-                        option.selected = true;
-                    }
-                    paisSelect.appendChild(option);
-                });
-
-                // Disparar evento change si ya había un país seleccionado
-                if(paisSelect.value) {
-                    paisSelect.dispatchEvent(new Event('change'));
-                }
-            })
-            .catch(error => {
-                console.error("Error cargando países:", error);
-                paisSelect.innerHTML = '<option value="">Error de conexión. Escribe manualmente</option>';
-                // Fallback a inputs de texto si la API falla
-                paisSelect.outerHTML = '<input type="text" name="pais" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu país" required>';
-                ciudadSelect.outerHTML = '<input type="text" name="ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
-            });
-
-        paisSelect.addEventListener('change', function() {
-            const selectedCountry = this.value;
-            
-            // Asegurarnos de que id_ciudad sea un select (por si se cambió a input antes)
-            let ciudadElement = document.getElementById('id_ciudad');
-            if (ciudadElement.tagName === 'INPUT') {
-                const newSelect = document.createElement('select');
-                newSelect.name = 'ciudad';
-                newSelect.id = 'id_ciudad';
-                newSelect.className = 'form-select rounded-4 shadow-sm';
-                newSelect.required = true;
-                ciudadElement.parentNode.replaceChild(newSelect, ciudadElement);
-                ciudadElement = newSelect;
-            }
-
-            ciudadElement.innerHTML = '<option value="" selected disabled>Cargando ciudades...</option>';
-            ciudadElement.disabled = false;
-
-            if (selectedCountry === "Colombia") {
-                // API oficial y completa para Colombia
-                fetch('https://api-colombia.com/api/v1/City')
-                    .then(response => response.json())
-                    .then(data => {
-                        ciudadElement.innerHTML = '<option value="" selected disabled>Selecciona una ciudad</option>';
-                        // Extraer nombres, eliminar duplicados por si acaso y ordenar
-                        let cities = [...new Set(data.map(c => c.name))];
-                        cities.sort((a, b) => a.localeCompare(b));
-                        
-                        cities.forEach(city => {
-                            const option = document.createElement('option');
-                            option.value = city;
-                            option.textContent = city;
-                            if("{{ request.POST.ciudad }}" === city) {
-                                option.selected = true;
-                            }
-                            ciudadElement.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error("Error cargando ciudades de Colombia:", error);
-                        ciudadElement.outerHTML = '<input type="text" name="ciudad" id="id_ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
-                    });
-            } else {
-                // Lógica original para el resto del mundo
-                const countryObj = countryData.find(c => c.country === selectedCountry);
-                if (countryObj && countryObj.cities.length > 0) {
-                    ciudadElement.innerHTML = '<option value="" selected disabled>Selecciona una ciudad</option>';
-                    const cities = countryObj.cities.sort((a, b) => a.localeCompare(b));
-                    cities.forEach(city => {
-                        const option = document.createElement('option');
-                        option.value = city;
-                        option.textContent = city;
-                        if("{{ request.POST.ciudad }}" === city) {
-                            option.selected = true;
-                        }
-                        ciudadElement.appendChild(option);
-                    });
-                } else {
-                    // Si el país no tiene ciudades en la API global, permitir texto libre
-                    ciudadElement.outerHTML = '<input type="text" name="ciudad" id="id_ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
-                }
-            }
-        });
-    </script>
+    <script src="{% static 'js/auth/alertas.js' %}"></script>
+    <script src="{% static 'js/auth/toggle_password.js' %}"></script>
+    <script src="{% static 'js/auth/validar_passwords.js' %}"></script>
+    <script src="{% static 'js/auth/paises_ciudades.js' %}"></script>
 </body>
 </html>

@@ -71,7 +71,8 @@
                 type="text"
                 id="otp_input"
                 name="otp"
-                class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3 text-center fs-4 tracking-widest fw-bold"
+                class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3 text-center fs-4 fw-bold"
+                style="letter-spacing: 0.25em;"
                 placeholder="000000"
                 maxlength="6"
                 pattern="\d{6}"
@@ -122,35 +123,6 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Auto-cerrar alertas tras 5 segundos
-    setTimeout(function () {
-      document.querySelectorAll('.alert').forEach(function (el) {
-        new bootstrap.Alert(el).close();
-      });
-    }, 5000);
-
-    // Feedback visual en el botón al enviar
-    const form = document.querySelector('form');
-    const btn = document.getElementById('btn_verificar');
-    form.addEventListener('submit', function () {
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Verificando...';
-    });
-    
-    // Solo permitir números en el input
-    const otpInput = document.getElementById('otp_input');
-    otpInput.addEventListener('input', function (e) {
-      this.value = this.value.replace(/[^0-9]/g, '');
-    });
-  });
-</script>
-
-<style>
-  .tracking-widest {
-    letter-spacing: 0.25em;
-  }
-</style>
-
+<script src="{% static 'js/auth/alertas.js' %}"></script>
+<script src="{% static 'js/auth/otp.js' %}"></script>
 {% endblock %}

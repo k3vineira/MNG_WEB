@@ -1,12 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<style>
-  /* Ocultar el scrollbar forzado del body para evitar un borde blanco a la derecha */
-  html, body {
-      overflow-y: hidden !important;
-  }
-</style>
+<!-- Estilos personalizados eliminados, confiando puramente en Bootstrap -->
 
 <!-- Spacer para el header -->
 <div class="d-lg-none" style="height: 5rem; width: 100%; background-color: #ffffff;"></div>
@@ -102,15 +97,5 @@
   </div>
 </section>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-      let alerts = document.querySelectorAll('.alert');
-      alerts.forEach(alert => {
-        let bsAlert = new bootstrap.Alert(alert);
-        bsAlert.close();
-      });
-    }, 5000);
-  });
-</script>
+<script src="{% static 'js/auth/alertas.js' %}"></script>
 {% endblock %}

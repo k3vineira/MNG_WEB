@@ -170,47 +170,7 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('form_reset');
-    const btn = document.getElementById('btn_guardar');
-    const mensajeError = document.getElementById('mensajeError');
-    const pass1 = document.getElementById('pass1');
-    const pass2 = document.getElementById('pass2');
-
-    if (form && btn) {
-      form.addEventListener('submit', function (event) {
-        if (pass1.value !== pass2.value) {
-          event.preventDefault();
-          mensajeError.classList.remove('d-none');
-          return;
-        } else {
-          mensajeError.classList.add('d-none');
-          btn.disabled = true;
-          btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Guardando...';
-        }
-      });
-    }
-
-    // Alternar visibilidad de contraseñas
-    document.querySelectorAll('.toggle-password').forEach(icon => {
-      icon.addEventListener('click', function() {
-        const targetId = this.getAttribute('data-target');
-        const input = document.getElementById(targetId);
-        const iconElement = this.querySelector('i');
-        
-        if (input.type === 'password') {
-          input.type = 'text';
-          iconElement.classList.remove('bi-eye');
-          iconElement.classList.add('bi-eye-slash');
-        } else {
-          input.type = 'password';
-          iconElement.classList.remove('bi-eye-slash');
-          iconElement.classList.add('bi-eye');
-        }
-      });
-    });
-  });
-</script>
-
+<script src="{% static 'js/auth/alertas.js' %}"></script>
+<script src="{% static 'js/auth/toggle_password.js' %}"></script>
+<script src="{% static 'js/auth/validar_passwords.js' %}"></script>
 {% endblock %}
