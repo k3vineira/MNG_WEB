@@ -12,9 +12,7 @@
     
     <!-- Columna Izquierda: Imagen de Naturaleza (Oculta en móviles) -->
     <div class="col-12 col-lg-6 d-none d-lg-block position-relative h-100" 
-         style="background-image: url('{% static 'img/Fondo.webp' %}'); background-size: cover; background-position: center;">
-      <!-- Reutilizamos el gradiente del proyecto -->
-      <div class="position-absolute top-0 start-0 w-100 h-100 overlay-gradient opacity-50"></div>
+         style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
     </div>
 
     <!-- Columna Derecha: Formulario Minimalista -->
@@ -57,7 +55,7 @@
           <!-- Input Usuario -->
           <div class="mb-3">
             <label class="form-label small fw-semibold text-secondary ps-3">Correo o Usuario</label>
-            <input type="text" name="username" class="form-control rounded-pill py-3 px-4 bg-light border-0 shadow-none" 
+            <input type="text" name="username" class="form-control rounded-pill py-3 px-4" 
                    placeholder="aventura@monagua.com" required>
           </div>
 
@@ -65,10 +63,15 @@
           <div class="mb-4">
             <div class="d-flex justify-content-between px-3">
               <label class="form-label small fw-semibold text-secondary">Contraseña</label>
-              <a href="{% url 'password_reset' %}" class="small text-muted text-decoration-none">¿La olvidaste?</a>
+              <a href="{% url 'password_reset' %}" class="small link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover">¿La olvidaste?</a>
             </div>
-            <input type="password" name="password" class="form-control rounded-pill py-3 px-4 bg-light border-0 shadow-none" 
-                   placeholder="••••••••" required>
+            <div class="position-relative">
+              <input type="password" name="password" class="form-control rounded-pill py-3 px-4 pe-5" 
+                     placeholder="••••••••" required>
+              <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary" 
+                 style="cursor: pointer;"
+                 onclick="const input = this.previousElementSibling; if(input.type === 'password'){ input.type='text'; this.classList.replace('bi-eye', 'bi-eye-slash'); } else { input.type='password'; this.classList.replace('bi-eye-slash', 'bi-eye'); }"></i>
+            </div>
           </div>
 
           <!-- Botón "Pill" -->
@@ -82,7 +85,7 @@
         <!-- Pie de Formulario -->
         <div class="text-center">
           <p class="small text-muted mb-0">¿Aún no tienes cuenta? 
-            <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next }}{% if request.GET.paquete_id %}&paquete_id={{ request.GET.paquete_id }}{% endif %}{% endif %}" class="text-success fw-bold text-decoration-none ms-1">Únete ahora</a>
+            <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next }}{% if request.GET.paquete_id %}&paquete_id={{ request.GET.paquete_id }}{% endif %}{% endif %}" class="link-success fw-bold link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover ms-1">Únete ahora</a>
           </p>
         </div>
 
