@@ -25,7 +25,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     msgError.classList.add('d-none');
                 }
                 if (btn) {
-                    btn.disabled = true;
+                    setTimeout(function() {
+                        btn.disabled = true;
+                    }, 0);
                     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Procesando...';
                 }
             }

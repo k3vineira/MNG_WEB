@@ -103,11 +103,32 @@ def password_reset_otp_verify_view(request):
             uid = urlsafe_base64_encode(force_bytes(usuario.pk))
             token = default_token_generator.make_token(usuario)
             
+            # Preparar y enviar el correo con el enlace de restablecimiento
+            context = {
+                'user': usuario,
+                'uid': uid,
+                'token': token,
+                'protocol': 'https' if request.is_secure() else 'http',
+                'domain': request.get_host(),
+            }
+            subject = 'Enlace para restablecer tu contraseña - Monagua'
+            html_message = render_to_string('authentication/password_reset_email.html', context)
+            plain_message = strip_tags(html_message)
+            
+            send_mail(
+                subject,
+                plain_message,
+                'noreply@monagua.com',
+                [email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+            
             # Limpiar sesión
             del request.session['reset_email']
             del request.session['reset_otp']
             
-            return redirect('password_reset_confirm', uidb64=uid, token=token)
+            return redirect('password_reset_done')
         else:
             messages.error(request, 'El código ingresado es incorrecto. Intenta de nuevo.')
 
