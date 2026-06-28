@@ -1,7 +1,4 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -126,9 +123,6 @@
                                    class="form-control rounded-4 shadow-sm {% if form.password1.errors %}is-invalid{% endif %}" 
                                    placeholder="Contraseña" required minlength="6">
                             <label for="pass1" class="text-secondary small"><i class="bi bi-lock text-success me-1"></i>Contraseña</label>
-                            <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted toggle-password" data-target="pass1" style="cursor:pointer;">
-                                <i class="bi bi-eye"></i>
-                            </span>
                             {% if form.password1.errors %}<div class="invalid-feedback ms-2">{{ form.password1.errors.0 }}</div>{% endif %}
                         </div>
 
@@ -137,9 +131,6 @@
                                    class="form-control rounded-4 shadow-sm {% if form.password2.errors %}is-invalid{% endif %}" 
                                    placeholder="Confirmar Contraseña" required minlength="6">
                             <label for="pass2" class="text-secondary small"><i class="bi bi-shield-lock text-success me-1"></i>Confirmar Contraseña</label>
-                            <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted toggle-password" data-target="pass2" style="cursor:pointer;">
-                                <i class="bi bi-eye"></i>
-                            </span>
                             {% if form.password2.errors %}<div class="invalid-feedback ms-2">{{ form.password2.errors.0 }}</div>{% endif %}
                         </div>
                         
@@ -190,7 +181,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/auth/alertas.js' %}"></script>
-    <script src="{% static 'js/auth/toggle_password.js' %}"></script>
     <script src="{% static 'js/auth/validar_passwords.js' %}"></script>
     <script src="{% static 'js/auth/paises_ciudades.js' %}"></script>
 </body>

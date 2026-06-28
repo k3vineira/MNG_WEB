@@ -73,9 +73,6 @@
                 <input type="password" id="pass1" name="new_password1" 
                        class="form-control border-start-0 bg-light shadow-none py-3 {% if form.new_password1.errors %}is-invalid{% endif %}" 
                        placeholder="Mínimo 6 caracteres" required minlength="6">
-                <span class="input-group-text bg-light border-start-0 rounded-end-3 cursor-pointer text-muted toggle-password" data-target="pass1" style="cursor:pointer;">
-                  <i class="bi bi-eye"></i>
-                </span>
               </div>
               {% if form.new_password1.errors %}
                 <div class="small text-danger mt-1 ms-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.new_password1.errors.0 }}</div>
@@ -94,9 +91,6 @@
                 <input type="password" id="pass2" name="new_password2" 
                        class="form-control border-start-0 bg-light shadow-none py-3 {% if form.new_password2.errors %}is-invalid{% endif %}" 
                        placeholder="Repite tu contraseña" required minlength="6">
-                <span class="input-group-text bg-light border-start-0 rounded-end-3 cursor-pointer text-muted toggle-password" data-target="pass2" style="cursor:pointer;">
-                  <i class="bi bi-eye"></i>
-                </span>
               </div>
               {% if form.new_password2.errors %}
                 <div class="small text-danger mt-1 ms-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.new_password2.errors.0 }}</div>
@@ -171,6 +165,5 @@
 </div>
 
 <script src="{% static 'js/auth/alertas.js' %}"></script>
-<script src="{% static 'js/auth/toggle_password.js' %}"></script>
 <script src="{% static 'js/auth/validar_passwords.js' %}"></script>
 {% endblock %}

@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
+from django.core.validators import RegexValidator
+import re
 from .models import Usuario
 
 
@@ -83,6 +85,38 @@ class RegistroForm(UserCreationForm):
                 raise forms.ValidationError(
                     "Ya existe un usuario registrado con este correo electrónico.")
         return email
+
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get('telefono')
+        if telefono:
+            if Usuario.objects.filter(telefono=telefono).exists():
+                raise forms.ValidationError(
+                    "Ya existe un usuario registrado con este número de teléfono.")
+        return telefono
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        if first_name:
+            if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$', first_name):
+                raise forms.ValidationError(
+                    "El nombre solo puede contener letras y espacios.")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        if last_name:
+            if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$', last_name):
+                raise forms.ValidationError(
+                    "Los apellidos solo pueden contener letras y espacios.")
+        return last_name
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username:
+            if Usuario.objects.filter(username__iexact=username).exists():
+                raise forms.ValidationError(
+                    "Este nombre de usuario ya está en uso. Por favor, elige otro.")
+        return username
 
 
 class PerfilUsuarioForm(forms.ModelForm):

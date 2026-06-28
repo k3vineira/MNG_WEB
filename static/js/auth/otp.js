@@ -1,7 +1,4 @@
-/**
- * otp.js - Lógica exclusiva para la verificación OTP.
- * Restringe el input a solo números y muestra un spinner al enviar.
- */
+/* otp.js - Lógica exclusiva para la verificación OTP, Restringe el input a solo números y muestra un spinner al enviar.*/
 
 document.addEventListener('DOMContentLoaded', function () {
     var otpInput = document.getElementById('otp_input');
