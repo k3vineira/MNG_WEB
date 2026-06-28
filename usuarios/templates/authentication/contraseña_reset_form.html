@@ -49,8 +49,65 @@
           <form method="post" id="form_reset">
             {% csrf_token %}
 
-            <!-- Campos del formulario con crispy -->
-            {{ form|crispy }}
+            <!-- Errores generales del formulario (como que la contraseña es igual a la anterior) -->
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger border-0 rounded-3 small mb-4 d-flex align-items-start gap-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
+                <div>
+                  {% for error in form.non_field_errors %}
+                    <span>{{ error }}</span><br>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            <!-- Input Nueva Contraseña -->
+            <div class="mb-3 position-relative">
+              <label for="pass1" class="form-label small fw-semibold text-secondary mb-2">
+                Nueva Contraseña
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                  <i class="bi bi-lock text-success"></i>
+                </span>
+                <input type="password" id="pass1" name="new_password1" 
+                       class="form-control border-start-0 bg-light shadow-none py-3 {% if form.new_password1.errors %}is-invalid{% endif %}" 
+                       placeholder="Mínimo 6 caracteres" required minlength="6">
+                <span class="input-group-text bg-light border-start-0 rounded-end-3 cursor-pointer text-muted toggle-password" data-target="pass1" style="cursor:pointer;">
+                  <i class="bi bi-eye"></i>
+                </span>
+              </div>
+              {% if form.new_password1.errors %}
+                <div class="small text-danger mt-1 ms-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.new_password1.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Input Confirmar Contraseña -->
+            <div class="mb-4 position-relative">
+              <label for="pass2" class="form-label small fw-semibold text-secondary mb-2">
+                Confirmar Contraseña
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                  <i class="bi bi-shield-lock text-success"></i>
+                </span>
+                <input type="password" id="pass2" name="new_password2" 
+                       class="form-control border-start-0 bg-light shadow-none py-3 {% if form.new_password2.errors %}is-invalid{% endif %}" 
+                       placeholder="Repite tu contraseña" required minlength="6">
+                <span class="input-group-text bg-light border-start-0 rounded-end-3 cursor-pointer text-muted toggle-password" data-target="pass2" style="cursor:pointer;">
+                  <i class="bi bi-eye"></i>
+                </span>
+              </div>
+              {% if form.new_password2.errors %}
+                <div class="small text-danger mt-1 ms-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.new_password2.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Alerta de coincidencia de frontend -->
+            <div id="mensajeError" class="alert alert-danger border-0 rounded-3 small mb-4 d-none d-flex align-items-center gap-2" role="alert">
+              <i class="bi bi-exclamation-octagon-fill"></i>
+              <span>Las contraseñas no coinciden.</span>
+            </div>
 
             <!-- Botón enviar -->
             <div class="d-grid mt-4">
@@ -64,7 +121,7 @@
           <div class="mt-3 text-center">
             <p class="small text-muted mb-0">
               <i class="bi bi-shield-check me-1 text-success"></i>
-              Usa al menos 8 caracteres con letras y números.
+              Usa al menos 6 caracteres con letras y números.
             </p>
           </div>
 
@@ -117,12 +174,42 @@
   document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('form_reset');
     const btn = document.getElementById('btn_guardar');
+    const mensajeError = document.getElementById('mensajeError');
+    const pass1 = document.getElementById('pass1');
+    const pass2 = document.getElementById('pass2');
+
     if (form && btn) {
-      form.addEventListener('submit', function () {
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Guardando...';
+      form.addEventListener('submit', function (event) {
+        if (pass1.value !== pass2.value) {
+          event.preventDefault();
+          mensajeError.classList.remove('d-none');
+          return;
+        } else {
+          mensajeError.classList.add('d-none');
+          btn.disabled = true;
+          btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Guardando...';
+        }
       });
     }
+
+    // Alternar visibilidad de contraseñas
+    document.querySelectorAll('.toggle-password').forEach(icon => {
+      icon.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        const iconElement = this.querySelector('i');
+        
+        if (input.type === 'password') {
+          input.type = 'text';
+          iconElement.classList.remove('bi-eye');
+          iconElement.classList.add('bi-eye-slash');
+        } else {
+          input.type = 'password';
+          iconElement.classList.remove('bi-eye-slash');
+          iconElement.classList.add('bi-eye');
+        }
+      });
+    });
   });
 </script>
 

@@ -56,6 +56,61 @@
             <span class="badge bg-success rounded-pill px-3 py-2 small">Paso 1 de 1</span>
             <span class="text-muted small">Verifica tu identidad</span>
           </div>
+          
+          <!-- Errores del formulario (validación fallida) -->
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger border-0 rounded-3 small mb-4 d-flex align-items-start gap-2" role="alert">
+              <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
+              <div>
+                {% for error in form.non_field_errors %}
+                  <span>{{ error }}</span><br>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Input Apodo -->
+          <div class="mb-4">
+            <label for="username_input" class="form-label small fw-semibold text-secondary mb-2">
+              Apodo
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                <i class="bi bi-person text-success"></i>
+              </span>
+              <input
+                type="text"
+                id="username_input"
+                name="username"
+                class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3"
+                placeholder="Tu apodo"
+                required
+                autofocus
+                {% if form.username.value %}value="{{ form.username.value }}"{% endif %}
+              >
+            </div>
+          </div>
+
+          <!-- Input Número de Documento -->
+          <div class="mb-4">
+            <label for="documento_input" class="form-label small fw-semibold text-secondary mb-2">
+              Número de documento
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                <i class="bi bi-card-text text-success"></i>
+              </span>
+              <input
+                type="text"
+                id="documento_input"
+                name="numero_documento"
+                class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3"
+                placeholder="Tu número de documento"
+                required
+                {% if form.numero_documento.value %}value="{{ form.numero_documento.value }}"{% endif %}
+              >
+            </div>
+          </div>
 
           <!-- Input Correo con ícono -->
           <div class="mb-4">
@@ -73,7 +128,7 @@
                 class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3"
                 placeholder="ejemplo@sena.edu.co"
                 required
-                autofocus
+                {% if form.email.value %}value="{{ form.email.value }}"{% endif %}
               >
             </div>
             <div class="form-text ps-1">
@@ -93,6 +148,13 @@
           <div class="text-center">
             <a href="{% url 'login' %}" class="btn btn-link text-muted text-decoration-none small fw-semibold">
               <i class="bi bi-arrow-left me-1"></i>Volver al inicio de sesión
+            </a>
+          </div>
+
+          <!-- Enlace a recuperar apodo -->
+          <div class="text-center mt-2">
+            <a href="{% url 'recuperar_apodo' %}" class="btn btn-link text-muted text-decoration-none small">
+              <i class="bi bi-person-circle me-1"></i>¿No recuerdas tu apodo?
             </a>
           </div>
 

@@ -4,12 +4,119 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+import random
 from django.db.models import Avg
 from .models import Usuario, Cliente, GuiaTuristico
 from comunidad.models import Comentario
-from .forms import RegistroForm, PerfilUsuarioForm
+from .forms import RegistroForm, PerfilUsuarioForm, RecuperacionPersonalizadaForm
 
 # 1. VISTAS PÚBLICAS / ESTÁTICAS
+
+
+def recuperar_apodo_view(request):
+    """
+    Permite al usuario recuperar su apodo (username) verificando
+    su correo electrónico y número de documento en la base de datos.
+    """
+    context = {}
+
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        numero_documento = request.POST.get('numero_documento', '').strip()
+
+        if email and numero_documento:
+            try:
+                usuario = Usuario.objects.get(
+                    email__iexact=email,
+                    numero_documento=numero_documento
+                )
+                context['apodo_encontrado'] = usuario.username
+            except Usuario.DoesNotExist:
+                context['error'] = (
+                    'No encontramos ninguna cuenta con ese correo y número de documento. '
+                    'Verifica que los datos sean correctos.'
+                )
+        else:
+            context['error'] = 'Por favor completa todos los campos.'
+
+    return render(request, 'authentication/recuperar_apodo.html', context)
+
+
+def password_reset_request_view(request):
+    """
+    Vista personalizada para iniciar la recuperación de contraseña.
+    Valida Apodo, Documento y Correo, genera un OTP y lo envía.
+    """
+    if request.method == 'POST':
+        form = RecuperacionPersonalizadaForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            # Generar OTP de 6 dígitos
+            otp = str(random.randint(100000, 999999))
+            
+            # Guardar en sesión
+            request.session['reset_email'] = email
+            request.session['reset_otp'] = otp
+            
+            # Enviar correo
+            subject = 'Código de verificación para recuperar contraseña - Monagua'
+            html_message = render_to_string('authentication/password_reset_otp_email.html', {'otp': otp})
+            plain_message = strip_tags(html_message)
+            send_mail(
+                subject,
+                plain_message,
+                'noreply@monagua.com',
+                [email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+            
+            return redirect('password_reset_otp')
+    else:
+        form = RecuperacionPersonalizadaForm()
+
+    return render(request, 'authentication/recuperar.html', {'form': form})
+
+
+def password_reset_otp_verify_view(request):
+    """
+    Verifica el OTP ingresado por el usuario. Si es correcto, genera
+    los tokens de Django y redirige a la vista de confirmación.
+    """
+    if 'reset_email' not in request.session or 'reset_otp' not in request.session:
+        messages.error(request, 'Tu sesión ha expirado o no has iniciado una recuperación.')
+        return redirect('password_reset')
+
+    if request.method == 'POST':
+        otp_ingresado = request.POST.get('otp', '').strip()
+        if otp_ingresado == request.session['reset_otp']:
+            # OTP correcto, generar token y redirigir
+            email = request.session['reset_email']
+            usuario = Usuario.objects.get(email__iexact=email)
+            
+            uid = urlsafe_base64_encode(force_bytes(usuario.pk))
+            token = default_token_generator.make_token(usuario)
+            
+            # Limpiar sesión
+            del request.session['reset_email']
+            del request.session['reset_otp']
+            
+            return redirect('password_reset_confirm', uidb64=uid, token=token)
+        else:
+            messages.error(request, 'El código ingresado es incorrecto. Intenta de nuevo.')
+
+    # Ocultar parcialmente el correo por seguridad (e.g., j***@sena.edu.co)
+    email = request.session['reset_email']
+    partes = email.split('@')
+    email_oculto = f"{partes[0][0]}***@{partes[1]}" if len(partes) == 2 else email
+
+    return render(request, 'authentication/recuperar_otp.html', {'email_oculto': email_oculto})
 
 
 def terminos_view(request):

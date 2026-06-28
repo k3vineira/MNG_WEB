@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from .forms import RecuperacionPersonalizadaForm, CustomSetPasswordForm
 
 
 urlpatterns = [
@@ -12,19 +13,17 @@ urlpatterns = [
     path('registro/', views.registro_view, name='registro'),
     path('terminos/', views.terminos_view, name='terminos'),
     path('nosotros/', views.nosotros_view, name='nosotros'),
+    path('recuperar-apodo/', views.recuperar_apodo_view, name='recuperar_apodo'),
 
     # Recuperación de contraseña
-    path('password-reset/', auth_views.PasswordResetView.as_view(
-        template_name='authentication/recuperar.html',
-        email_template_name='authentication/password_reset_email.html',
-        subject_template_name='authentication/password_reset_subject.txt',
-        success_url='/usuarios/password-reset/done/'
-    ), name='password_reset'),
+    path('password-reset/', views.password_reset_request_view, name='password_reset'),
+    path('password-reset/otp/', views.password_reset_otp_verify_view, name='password_reset_otp'),
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
         template_name='authentication/contraseña_reset_enviado.html'
     ), name='password_reset_done'),
     path('password-reset/confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
         template_name='authentication/contraseña_reset_form.html',
+        form_class=CustomSetPasswordForm,
         success_url='/usuarios/password-reset/complete/'
     ), name='password_reset_confirm'),
     path('password-reset/complete/', auth_views.PasswordResetCompleteView.as_view(
