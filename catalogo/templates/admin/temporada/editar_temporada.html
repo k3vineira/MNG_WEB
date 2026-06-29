@@ -1,6 +1,15 @@
 {% extends "admin/base-admin.html" %}
 {% load static %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    .flatpickr-calendar {
+        font-family: inherit;
+    }
+</style>
+{% endblock extra_head %}
+
 {% block content %}
 <div class="container-fluid py-4">
     
@@ -51,12 +60,18 @@
 
                         <div class="col-md-6">
                             <label class="form-label text-secondary small fw-bold mb-1">Fecha Inicio *</label>
-                            {{ form.fecha_inicio }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-secondary"><i class="bi bi-calendar-date"></i></span>
+                                {{ form.fecha_inicio }}
+                            </div>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label text-secondary small fw-bold mb-1">Fecha Fin *</label>
-                            {{ form.fecha_fin }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-secondary"><i class="bi bi-calendar-date"></i></span>
+                                {{ form.fecha_fin }}
+                            </div>
                         </div>
 
                         <div class="col-12">
@@ -81,3 +96,29 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const config = {
+        locale: 'es',
+        dateFormat: 'Y-m-d',
+        allowInput: true
+    };
+    
+    const inicioInput = document.getElementById('id_fecha_inicio');
+    const finInput = document.getElementById('id_fecha_fin');
+    
+    if (inicioInput) {
+        inicioInput.setAttribute('type', 'text');
+        flatpickr(inicioInput, config);
+    }
+    if (finInput) {
+        finInput.setAttribute('type', 'text');
+        flatpickr(finInput, config);
+    }
+});
+</script>
+{% endblock scripts %}

@@ -193,6 +193,11 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-inline-flex gap-2">
+                                        {% if c.estado == 'aprobado' and c.reserva %}
+                                            <a href="{% url 'ver_factura' c.reserva.id %}" class="btn btn-sm btn-outline-success px-3 rounded-pill fw-semibold" target="_blank">
+                                                <i class="bi bi-file-earmark-text me-1"></i> Factura
+                                            </a>
+                                        {% endif %}
                                         <a href="{% url 'admin_revisar_comprobante' c.pk %}" class="btn btn-sm btn-outline-primary px-3 rounded-pill fw-semibold">
                                             <i class="bi bi-pencil-square me-1"></i> Revisar
                                         </a>
@@ -281,6 +286,11 @@
                         </div>
 
                         <div class="d-flex gap-2 justify-content-end border-top pt-3 mt-3">
+                            {% if c.estado == 'aprobado' and c.reserva %}
+                                <a href="{% url 'ver_factura' c.reserva.id %}" class="btn btn-sm btn-outline-success px-3 rounded-pill fw-semibold" target="_blank">
+                                    <i class="bi bi-file-earmark-text me-1"></i> Factura
+                                </a>
+                            {% endif %}
                             <a href="{% url 'admin_revisar_comprobante' c.pk %}" class="btn btn-sm btn-outline-primary px-3 rounded-pill fw-semibold">
                                 <i class="bi bi-pencil-square me-1"></i> Revisar
                             </a>

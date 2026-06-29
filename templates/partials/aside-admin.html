@@ -65,11 +65,11 @@
             </button>
             <div class="collapse {% if 'listar_paquetes' in request.resolver_match.url_name or 'listar_actividades' in request.resolver_match.url_name or 'listar_tarifas' in request.resolver_match.url_name or 'listar_temporadas' in request.resolver_match.url_name or 'listar_categorias' in request.resolver_match.url_name %}show{% endif %}" id="menuPaquetes" data-bs-parent="#adminAccordion">
               <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
-                <li><a href="{% url 'listar_paquetes' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_paquetes' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-box me-1"></i> Paquetes</a></li>
-                <li><a href="{% url 'listar_actividades' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_actividades' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-activity me-1"></i> Actividades</a></li>
-                <li><a href="{% url 'listar_tarifas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_tarifas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-tag me-1"></i> Tarifas</a></li>
-                <li><a href="{% url 'listar_temporadas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_temporadas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar-range me-1"></i> Temporadas</a></li>
-                <li><a href="{% url 'listar_categorias' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_categorias' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-bookmark me-1"></i> Categorías</a></li>
+                <li><a href="{% url 'listar_categorias' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_categorias' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-bookmark me-1"></i> 1. Categorías</a></li>
+                <li><a href="{% url 'listar_temporadas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_temporadas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar-range me-1"></i> 2. Temporadas</a></li>
+                <li><a href="{% url 'listar_actividades' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_actividades' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-activity me-1"></i> 3. Actividades</a></li>
+                <li><a href="{% url 'listar_paquetes' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_paquetes' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-box me-1"></i> 4. Paquetes</a></li>
+                <li><a href="{% url 'listar_tarifas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_tarifas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-tag me-1"></i> 5. Tarifas</a></li>
               </ul>
             </div>
           </li>
@@ -186,11 +186,11 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-dark shadow">
               <li><h6 class="dropdown-header text-success text-uppercase small">Paquetes</h6></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_paquetes' %}active bg-success{% endif %}" href="{% url 'listar_paquetes' %}"><i class="bi bi-box me-2"></i>Paquetes</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_actividades' %}active bg-success{% endif %}" href="{% url 'listar_actividades' %}"><i class="bi bi-activity me-2"></i>Actividades</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_tarifas' %}active bg-success{% endif %}" href="{% url 'listar_tarifas' %}"><i class="bi bi-tag me-2"></i>Tarifas</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_temporadas' %}active bg-success{% endif %}" href="{% url 'listar_temporadas' %}"><i class="bi bi-calendar-range me-2"></i>Temporadas</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_categorias' %}active bg-success{% endif %}" href="{% url 'listar_categorias' %}"><i class="bi bi-bookmark me-2"></i>Categorías</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_categorias' %}active bg-success{% endif %}" href="{% url 'listar_categorias' %}"><i class="bi bi-bookmark me-2"></i>1. Categorías</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_temporadas' %}active bg-success{% endif %}" href="{% url 'listar_temporadas' %}"><i class="bi bi-calendar-range me-2"></i>2. Temporadas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_actividades' %}active bg-success{% endif %}" href="{% url 'listar_actividades' %}"><i class="bi bi-activity me-2"></i>3. Actividades</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_paquetes' %}active bg-success{% endif %}" href="{% url 'listar_paquetes' %}"><i class="bi bi-box me-2"></i>4. Paquetes</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_tarifas' %}active bg-success{% endif %}" href="{% url 'listar_tarifas' %}"><i class="bi bi-tag me-2"></i>5. Tarifas</a></li>
             </ul>
           </li>
 

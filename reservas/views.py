@@ -178,9 +178,9 @@ class CancelacionCreateView(CreateView):
             messages.warning(self.request, 'Esta reserva ya está cancelada.')
             return redirect('mis_cancelaciones_usuario')
 
-        if Cancelacion.objects.filter(reserva=reserva, estado__in=['revision', 'aceptada']).exists():
+        if Cancelacion.objects.filter(reserva=reserva, estado__in=['pendiente', 'revision', 'aceptada']).exists():
             messages.warning(self.request, 'Ya existe una solicitud de cancelación activa para esta reserva.')
-            return redirect('mis_cancelaciones_usuario')
+            return redirect('mis_reservas_usuario')
 
         form.instance.reserva = reserva
         form.instance.usuario = self.request.user
@@ -542,7 +542,12 @@ def get_qr_base64(url):
 def ver_factura(request, reserva_id):
     """Muestra la factura detallada de una reserva confirmada en la web."""
     from django.urls import reverse
-    reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+    
+    # Permitir si el usuario es staff (admin) o el dueño de la reserva
+    if not request.user.is_staff and reserva.usuario != request.user:
+        messages.error(request, "No tienes permiso para acceder a esta factura.")
+        return redirect('mis_reservas_usuario')
     
     # Solo permitir ver si está confirmada
     if reserva.estado != 'confirmada':
@@ -563,8 +568,8 @@ def ver_factura(request, reserva_id):
     context = {
         'reserva_id': reserva.id,
         'nro_factura': f"FAC-1000{reserva.id}",
-        'cliente_nombre': request.user.nombre_completo,
-        'cliente_email': request.user.email,
+        'cliente_nombre': reserva.usuario.nombre_completo,
+        'cliente_email': reserva.usuario.email,
         'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else reserva.fecha.strftime('%d/%m/%Y'),
         'metodo_pago': metodo_pago,
         'paquete_nombre': reserva.paquete.nombre,
@@ -584,7 +589,12 @@ def descargar_factura(request, reserva_id):
     from django.http import FileResponse
     from django.urls import reverse
 
-    reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+    
+    # Permitir si el usuario es staff (admin) o el dueño de la reserva
+    if not request.user.is_staff and reserva.usuario != request.user:
+        messages.error(request, "No tienes permiso para descargar esta factura.")
+        return redirect('mis_reservas_usuario')
     
     if reserva.estado != 'confirmada':
         messages.error(request, "La factura solo se puede descargar para reservas confirmadas.")
@@ -594,8 +604,8 @@ def descargar_factura(request, reserva_id):
     metodo_pago = comprobante.banco_origen if comprobante else "Transferencia Bancaria"
     
     # Datos de documento del cliente
-    documento_tipo = request.user.tipo_documento or "Documento"
-    documento_num = request.user.numero_documento or "—"
+    documento_tipo = reserva.usuario.tipo_documento or "Documento"
+    documento_num = reserva.usuario.numero_documento or "—"
     
     # Generar URL absoluta para el código QR
     abs_url = request.build_absolute_uri(reverse('ver_factura', args=[reserva.id]))
@@ -606,8 +616,8 @@ def descargar_factura(request, reserva_id):
     
     context = {
         'nro_factura': f"FAC-1000{reserva.id}",
-        'cliente_nombre': request.user.nombre_completo,
-        'cliente_email': request.user.email,
+        'cliente_nombre': reserva.usuario.nombre_completo,
+        'cliente_email': reserva.usuario.email,
         'cliente_documento_tipo': documento_tipo,
         'cliente_documento': documento_num,
         'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else reserva.fecha.strftime('%d/%m/%Y'),

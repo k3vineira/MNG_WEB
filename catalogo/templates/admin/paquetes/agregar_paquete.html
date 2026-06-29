@@ -1,6 +1,16 @@
 {% extends "admin/base-admin.html" %}
 {% load static %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    /* Styling to make flatpickr time picker clean and fit with Bootstrap */
+    .flatpickr-time {
+        font-family: inherit;
+    }
+</style>
+{% endblock extra_head %}
+
 {% block content %}
 <div class="container-fluid py-4">
     
@@ -67,6 +77,12 @@
                             <label class="form-label text-secondary small fw-bold mb-1">Imagen del Paquete</label>
                             {{ form.imagen }}
                             <small class="text-muted d-block mt-1">Sube una fotografía de portada para el paquete turístico.</small>
+                            
+                            <!-- Contenedor de Vista Previa -->
+                            <div class="mt-3 d-none" id="imagePreviewContainer">
+                                <label class="form-label text-secondary small fw-bold d-block">Vista Previa:</label>
+                                <img id="imagePreview" src="#" alt="Vista previa" class="img-fluid rounded-3 border shadow-sm" style="max-height: 200px; object-fit: cover;">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,7 +92,7 @@
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
                     <h5 class="fw-bold text-success mb-3 border-bottom pb-2">
-                        <i class="bi bi-clock-history me-2"></i>Duración y Encuentro
+                        <i class="bi bi-clock-history me-2"></i>Duración and Encuentro
                     </h5>
                     
                     <div class="row g-3">
@@ -91,7 +107,10 @@
                         
                         <div class="col-12">
                             <label class="form-label text-secondary small fw-bold mb-1">Hora de Encuentro *</label>
-                            {{ form.hora_encuentro }}
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-secondary"><i class="bi bi-clock"></i></span>
+                                {{ form.hora_encuentro }}
+                            </div>
                         </div>
                         
                         <div class="col-12">
@@ -139,3 +158,44 @@
     </form>
 </div>
 {% endblock content %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imagenInput = document.querySelector('input[type="file"][name="imagen"]');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewImage = document.getElementById('imagePreview');
+
+    if (imagenInput) {
+        imagenInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.classList.remove('d-none');
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.src = '#';
+                previewContainer.classList.add('d-none');
+            }
+        });
+    }
+
+    // Inicializar Flatpickr en formato reloj de 24 horas para hora_encuentro
+    const horaInput = document.getElementById('id_hora_encuentro');
+    if (horaInput) {
+        // Cambiar a text para evitar el selector de hora nativo del navegador
+        horaInput.setAttribute('type', 'text');
+        flatpickr(horaInput, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            allowInput: true
+        });
+    }
+});
+</script>
+{% endblock scripts %}

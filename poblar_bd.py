@@ -265,7 +265,36 @@ def poblar_base_datos():
         "Jornada de bienestar y meditación en medio de los paisajes naturales más tranquilos.",
         "Plan diseñado para familias con actividades recreativas, educativas y culturales para todos."
     ]
+    import shutil
+    from django.conf import settings
+    destinos_media_dir = os.path.join(settings.MEDIA_ROOT, 'destinos')
+    os.makedirs(destinos_media_dir, exist_ok=True)
+    
+    imagenes_disponibles = [
+        'lagunanegra.webp',
+        'paramo.webp',
+        'museo.webp',
+        'iglesia.webp',
+        'miradorcumbre.webp',
+        'frailejones.webp',
+        'artesanias.webp',
+        'pictografias.webp',
+        'img_rio.webp',
+        'img_cruz.webp'
+    ]
+
     for i in range(10):
+        img_name = imagenes_disponibles[i % len(imagenes_disponibles)]
+        src_path = os.path.join(settings.BASE_DIR, 'static', 'img', img_name)
+        dst_path = os.path.join(destinos_media_dir, img_name)
+        imagen_path = None
+        if os.path.exists(src_path):
+            try:
+                shutil.copy(src_path, dst_path)
+                imagen_path = f"destinos/{img_name}"
+            except Exception as e:
+                print(f"Error al copiar imagen: {e}")
+
         p = Paquete.objects.create(
             nombre=nombres_paquetes[i],
             descripcion=descripciones_paquetes[i],
@@ -273,7 +302,8 @@ def poblar_base_datos():
             noches_duracion=random.randint(1, 6),
             punto_encuentro="Plaza principal de Mongua",
             hora_encuentro=timezone.now().time(),
-            categoria=random.choice(categorias_creadas)
+            categoria=random.choice(categorias_creadas),
+            imagen=imagen_path
         )
         p.actividades.add(*random.sample(actividades_creadas, random.randint(2, 4)))
         paquetes_creados.append(p)

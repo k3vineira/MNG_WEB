@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <main class="container" style="margin-top: 100px;">
   <div class="row g-4 align-items-stretch justify-content-center mb-5">
     <div class="col-md-5">
@@ -50,7 +51,10 @@
 
             <div class="mb-4 mt-2">
               <label class="form-label fw-bold text-dark mb-2"><i class="bi bi-calendar-event text-success me-2"></i>Fecha de tu Aventura</label>
-              <input type="date" name="fecha" id="fecha_input" class="form-control form-control-lg bg-light border-0 shadow-sm px-4" required onchange="updatePrice()" />
+              <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                <span class="input-group-text bg-light text-secondary border-0"><i class="bi bi-calendar-date"></i></span>
+                <input type="date" name="fecha" id="fecha_input" class="form-control form-control-lg bg-light border-0 px-3" required onchange="updatePrice()" />
+              </div>
             </div>
 
             <div class="mb-4">
@@ -124,7 +128,28 @@
               {% endfor %}
             </div>
 
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
             <script src="{% static 'js/reserva.js' %}"></script>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const dateInput = document.getElementById('fecha_input');
+                if (dateInput) {
+                    dateInput.setAttribute('type', 'text');
+                    flatpickr(dateInput, {
+                        locale: 'es',
+                        dateFormat: 'Y-m-d',
+                        allowInput: true,
+                        minDate: 'today',
+                        onChange: function(selectedDates, dateStr, instance) {
+                            if (typeof window.updatePrice === 'function') {
+                                window.updatePrice();
+                            }
+                        }
+                    });
+                }
+            });
+            </script>
           </form> 
         </div>
       </div>
