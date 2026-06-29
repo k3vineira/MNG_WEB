@@ -27,7 +27,18 @@ def nosotros_view(request):
 
 @login_required
 def index_turista(request):
-    """Renderiza el panel rápido exclusivo para clientes/turistas."""
+    """Renderiza el panel rápido exclusivo para clientes/turistas como landing de inicio de sesión."""
+    if request.user.is_staff:
+        return redirect('dashboard')
+    
+    return render(request, 'partials/panel_rapido.html', {
+        'titulo': 'Inicio — Monagua'
+    })
+
+
+@login_required
+def dashboard_turista(request):
+    """Renderiza el tablero de control del turista (Dashboard estadístico)."""
     if request.user.is_staff:
         return redirect('dashboard')
 
@@ -50,7 +61,7 @@ def index_turista(request):
     ultimas_reservas = Reserva.objects.filter(usuario=request.user).select_related('paquete').order_by('-fecha_registro')[:5]
 
     return render(request, 'private/dashboard_turista.html', {
-        'titulo': 'Bienvenido a Monagua',
+        'titulo': 'Mi Dashboard — Monagua',
         'total_invertido': total_invertido,
         'total_reservas': total_reservas,
         'total_comentarios': total_comentarios,
@@ -178,6 +189,10 @@ def dashboard_admin(request):
 @login_required
 def perfil_detalles(request):
     """Renderiza dinámicamente el perfil correspondiente según el rol (Admin o Turista)."""
+    # Garantizar que turistas tengan un perfil Cliente (para acceder a pais/ciudad)
+    if not request.user.is_staff:
+        Cliente.objects.get_or_create(usuario=request.user)
+
     if request.method == 'POST':
         if 'imagen_perfil' in request.FILES and not request.POST.get('editar_perfil'):
             request.user.imagen_perfil = request.FILES['imagen_perfil']

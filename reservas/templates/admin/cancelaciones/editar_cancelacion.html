@@ -1,14 +1,77 @@
 {% extends 'base-admin.html' %}
+{% load crispy_forms_tags %}
+{% load humanize %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-5">
-            <div class="card shadow-sm border-0">
-                
-                <div class="card-header text-white text-center" style="background-color: #004d40;">
-                    <h5 class="mb-0 fs-6 fw-bold text-uppercase">
-                        <i class="bi bi-pencil-square me-2"></i>Editar Cancelación
+<div class="container py-4">
+    
+    <!-- Botón volver & Cabecera -->
+    <div class="mb-4">
+        <a href="{% url 'administrar_cancelaciones' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-3 fw-semibold shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Volver a Cancelaciones
+        </a>
+        <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill mb-2 fw-bold d-block w-fit">RESOLUCIÓN DE SOLICITUD</span>
+        <h2 class="display-6 fw-bold text-dark mb-1">Gestionar Cancelación #{{ cancelacion.id }}</h2>
+        <p class="text-muted">Revisa los argumentos presentados por el cliente y establece las penalidades correspondientes.</p>
+    </div>
+
+    <div class="row g-4">
+        
+        <!-- Columna Detalles de la Solicitud (Izquierda) -->
+        <div class="col-lg-7">
+            <!-- Tarjeta Info Cliente y Viaje -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block" style="letter-spacing: 0.5px;">
+                    <i class="bi bi-info-circle text-primary me-2"></i>Detalles de la Reserva
+                </span>
+
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Cliente / Solicitante:</span>
+                    <span class="fw-bold text-dark">{{ cancelacion.reserva.usuario.get_full_name|default:cancelacion.reserva.usuario.username }}</span>
+                </div>
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Correo Electrónico:</span>
+                    <span class="text-secondary">{{ cancelacion.reserva.usuario.email }}</span>
+                </div>
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Reserva Asociada:</span>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary fw-bold px-3 py-2 rounded-pill">#{{ cancelacion.reserva.id }}</span>
+                </div>
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Aventura / Destino:</span>
+                    <span class="fw-bold text-success">{{ cancelacion.reserva.paquete.nombre }}</span>
+                </div>
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Fecha Planificada de Viaje:</span>
+                    <span class="text-dark">{{ cancelacion.reserva.fecha }}</span>
+                </div>
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Pasajeros Declarados:</span>
+                    <span class="text-secondary fw-medium">{{ cancelacion.reserva.numero_adultos }} Adultos / {{ cancelacion.reserva.numero_menores }} Menores</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Costo Total Abonado:</span>
+                    <span class="fw-bold text-dark fs-5">COP ${{ cancelacion.reserva.monto_total|floatformat:0|intcomma }}</span>
+                </div>
+            </div>
+
+            <!-- Tarjeta Motivo de Cancelación -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <span class="fw-bold text-secondary text-uppercase small mb-3 d-block" style="letter-spacing: 0.5px;">
+                    <i class="bi bi-chat-left-text text-danger me-2"></i>Motivo del Viajero
+                </span>
+                <div class="bg-danger bg-opacity-10 text-danger-emphasis border border-danger border-opacity-25 rounded-4 p-3 fs-6 fw-medium">
+                    "{{ cancelacion.motivo }}"
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Formulario de Decisión (Derecha) -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow rounded-4 overflow-hidden bg-white">
+                <div class="card-header bg-success text-white py-3 border-0">
+                    <h5 class="mb-0 fw-bold text-uppercase text-center" style="letter-spacing: 0.5px;">
+                        <i class="bi bi-shield-check me-2"></i>Resolver Solicitud
                     </h5>
                 </div>
 
@@ -16,16 +79,27 @@
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         
-                        <div class="small text-dark">
-                            {{ form.as_p }}
+                        <div class="mb-4 text-dark">
+                            {{ form|crispy }}
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <a href="{% url 'administrar_cancelaciones' %}" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">Cancelar</a>
-                            <button type="submit" class="btn btn-light btn-sm border px-4 text-white" style="background-color: #004d40;">Guardar cambios</button>
-                        </div> </form> </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <a href="{% url 'administrar_cancelaciones' %}" class="btn btn-outline-secondary rounded-pill w-100 py-2 fw-semibold">
+                                    Cancelar
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-success rounded-pill w-100 py-2 fw-bold shadow-sm">
+                                    Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 {% endblock %}

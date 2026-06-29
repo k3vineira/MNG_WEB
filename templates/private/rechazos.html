@@ -4,29 +4,33 @@
 
 {% block titulo %}Mis Rechazos | Monagua{% endblock %}
 
+{% block private_css %}
+<!-- Rediseño completo en base a Bootstrap 5, sin CSS personalizado -->
+{% endblock %}
+
 {% block private_content %}
-<div class="container py-4" style="max-width:1100px;">
+<div class="container py-4">
 
     <!-- Encabezado -->
-    <div class="mb-5 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-        <div>
-            <h1 class="fw-bold mb-1"><i class="bi bi-x-octagon-fill text-danger me-2"></i>Mis Rechazos</h1>
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-md-8">
+            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill mb-2 fw-bold">ATENCIÓN REQUERIDA</span>
+            <h2 class="display-6 fw-bold text-dark mb-1">
+                <i class="bi bi-x-octagon-fill text-danger me-2"></i>Mis Rechazos
+            </h2>
             <p class="text-muted mb-0">Listado de comprobantes de pago declinados y solicitudes de cancelación rechazadas.</p>
         </div>
-        <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger px-3 py-2 fs-6 fw-normal">
-            <i class="bi bi-info-circle me-1"></i> Requiere tu atención
-        </span>
     </div>
 
     <!-- Pestañas de Navegación -->
     <ul class="nav nav-pills mb-4 gap-2" id="rechazosTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active rounded-pill px-4" id="pagos-tab" data-bs-toggle="pill" data-bs-target="#pagos" type="button" role="tab" aria-controls="pagos" aria-selected="true">
-                <i class="bi bi-wallet2 me-2"></i>Pagos Rechazados ({{ total_pagos_rechazados }})
+            <button class="nav-link active rounded-pill px-4 fw-semibold" id="pagos-tab" data-bs-toggle="pill" data-bs-target="#pagos" type="button" role="tab" aria-controls="pagos" aria-selected="true">
+                <i class="bi bi-wallet2 me-2"></i>Pagos Declinados ({{ total_pagos_rechazados }})
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link rounded-pill px-4" id="cancelaciones-tab" data-bs-toggle="pill" data-bs-target="#cancelaciones" type="button" role="tab" aria-controls="cancelaciones" aria-selected="false">
+            <button class="nav-link rounded-pill px-4 fw-semibold" id="cancelaciones-tab" data-bs-toggle="pill" data-bs-target="#cancelaciones" type="button" role="tab" aria-controls="cancelaciones" aria-selected="false">
                 <i class="bi bi-x-circle me-2"></i>Cancelaciones Rechazadas ({{ total_cancelaciones_rechazadas }})
             </button>
         </li>
@@ -38,62 +42,78 @@
         <!-- PESTAÑA 1: PAGOS RECHAZADOS -->
         <div class="tab-pane fade show active" id="pagos" role="tabpanel" aria-labelledby="pagos-tab">
             {% if pagos_rechazados %}
-                <div class="row g-4">
+                <div class="row g-3">
                     {% for pago in pagos_rechazados %}
                         <div class="col-12">
-                            <div class="card border-0 shadow-sm rounded-4 p-4">
-                                <div class="row align-items-center g-3">
-                                    <div class="col-md-8">
-                                        <div class="d-flex align-items-start gap-3">
-                                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-danger bg-opacity-10 flex-shrink-0" style="width: 48px; height: 48px;">
-                                                <i class="bi bi-cash-stack fs-4 text-danger"></i>
+                            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                                <div class="card-body p-4">
+                                    
+                                    <!-- Cabecera de tarjeta -->
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <div class="bg-danger bg-opacity-10 text-danger rounded-4 p-3 fs-3 d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-cash-stack"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="fw-bold text-dark mb-1">
+                                                {% if pago.reserva %}
+                                                    {{ pago.reserva.paquete.nombre }}
+                                                {% else %}
+                                                    Pago General / Sin reserva asociada
+                                                {% endif %}
+                                            </h5>
+                                            <p class="text-muted small mb-0">Revisado el: {{ pago.fecha_revision|date:"d M Y" }}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Detalles y Comentarios -->
+                                    <div class="border-top pt-3">
+                                        <div class="row g-3">
+                                            <div class="col-sm-6">
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Detalles del Comprobante:</span>
+                                                <ul class="list-unstyled small text-secondary mb-0">
+                                                    <li class="mb-1"><strong>Referencia:</strong> <code class="text-dark">{{ pago.referencia|default:"—" }}</code></li>
+                                                    <li class="mb-1"><strong>Medio / Banco:</strong> {{ pago.banco_origen|default:"—" }}</li>
+                                                    <li class="mb-0"><strong>Monto Declarado:</strong> <span class="fw-bold text-danger">COP ${{ pago.monto|floatformat:0|intcomma }}</span></li>
+                                                </ul>
                                             </div>
-                                            <div>
-                                                <h5 class="fw-bold text-dark mb-1">
-                                                    {% if pago.reserva %}
-                                                        {{ pago.reserva.paquete.nombre }}
-                                                    {% else %}
-                                                        Pago General / Sin reserva asociada
-                                                    {% endif %}
-                                                </h5>
-                                                <p class="text-muted small mb-2">
-                                                    Referencia: <span class="text-dark fw-semibold">{{ pago.referencia|default:"—" }}</span> · 
-                                                    Medio: <span class="text-dark">{{ pago.banco_origen|default:"—" }}</span> · 
-                                                    Monto: <span class="text-danger fw-bold">COP ${{ pago.monto|floatformat:0|intcomma }}</span>
-                                                </p>
+                                            <div class="col-sm-6">
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Motivo del Rechazo:</span>
                                                 {% if pago.nota_admin %}
-                                                    <div class="p-3 bg-danger bg-opacity-10 rounded-3 border-start border-danger border-3">
-                                                        <small class="text-danger fw-semibold d-block mb-1"><i class="bi bi-chat-left-text-fill me-1"></i>Motivo del rechazo:</small>
-                                                        <p class="mb-0 text-dark small" style="line-height: 1.5;">{{ pago.nota_admin }}</p>
+                                                    <div class="bg-danger bg-opacity-10 text-danger-emphasis border border-danger border-opacity-25 rounded-3 p-3 small lh-sm fw-medium">
+                                                        <i class="bi bi-chat-left-text-fill me-1"></i> {{ pago.nota_admin }}
                                                     </div>
                                                 {% else %}
-                                                    <div class="p-2 bg-light rounded-3">
-                                                        <p class="mb-0 text-muted small fst-italic">El administrador no ha dejado comentarios adicionales.</p>
+                                                    <div class="bg-light text-muted rounded-3 p-3 small fst-italic">
+                                                        El administrador no ha dejado comentarios adicionales.
                                                     </div>
                                                 {% endif %}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 text-md-end">
-                                        <p class="text-muted small mb-2"><i class="bi bi-calendar-x me-1"></i>Revisado el: {{ pago.fecha_revision|date:"d M Y" }}</p>
-                                        {% if pago.reserva %}
-                                            <a href="{% url 'enviar_comprobante' %}?reserva_id={{ pago.reserva.id }}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm">
-                                                <i class="bi bi-arrow-repeat me-1"></i> Reenviar Comprobante
-                                            </a>
-                                        {% endif %}
+
+                                    <!-- Reenvío de Pago -->
+                                    {% if pago.reserva %}
+                                    <div class="d-flex justify-content-end mt-3 border-top pt-3">
+                                        <a href="{% url 'enviar_comprobante' %}?reserva_id={{ pago.reserva.id }}" class="btn btn-sm btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">
+                                            <i class="bi bi-arrow-repeat me-1"></i> Reenviar Comprobante
+                                        </a>
                                     </div>
+                                    {% endif %}
+
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <div class="card border-0 shadow-sm rounded-4 text-center py-5">
-                    <div class="mb-3 text-muted">
-                        <i class="bi bi-shield-check display-3 opacity-50 text-success"></i>
+                <div class="card border-0 shadow-sm rounded-4 bg-white text-center py-5">
+                    <div class="card-body py-4">
+                        <div class="mb-3 text-success">
+                            <i class="bi bi-shield-check" style="font-size: 3.5rem;"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mt-2">No tienes pagos rechazados</h5>
+                        <p class="text-muted mx-auto" style="max-width: 400px;">¡Excelente! Todos tus comprobantes han sido procesados correctamente.</p>
                     </div>
-                    <h3 class="fw-bold text-dark">No tienes pagos rechazados</h3>
-                    <p class="text-muted">¡Excelente! Todos tus comprobantes han sido procesados correctamente.</p>
                 </div>
             {% endif %}
         </div>
@@ -101,49 +121,62 @@
         <!-- PESTAÑA 2: CANCELACIONES RECHAZADAS -->
         <div class="tab-pane fade" id="cancelaciones" role="tabpanel" aria-labelledby="cancelaciones-tab">
             {% if cancelaciones_rechazadas %}
-                <div class="row g-4">
+                <div class="row g-3">
                     {% for cancelacion in cancelaciones_rechazadas %}
                         <div class="col-12">
-                            <div class="card border-0 shadow-sm rounded-4 p-4">
-                                <div class="row align-items-center g-3">
-                                    <div class="col-md-8">
-                                        <div class="d-flex align-items-start gap-3">
-                                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-danger bg-opacity-10 flex-shrink-0" style="width: 48px; height: 48px;">
-                                                <i class="bi bi-x-circle-fill fs-4 text-danger"></i>
+                            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                                <div class="card-body p-4">
+
+                                    <!-- Cabecera de tarjeta -->
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <div class="bg-danger bg-opacity-10 text-danger rounded-4 p-3 fs-3 d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="fw-bold text-dark mb-1">Cancelación de {{ cancelacion.reserva.paquete.nombre }}</h5>
+                                            <p class="text-muted small mb-0">Reserva #{{ cancelacion.reserva.id }} · Fecha de Viaje: {{ cancelacion.reserva.fecha }}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Motivo y Resolución -->
+                                    <div class="border-top pt-3">
+                                        <div class="row g-3">
+                                            <div class="col-sm-6">
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Tu Motivo de Cancelación:</span>
+                                                <div class="bg-light text-secondary rounded-3 p-3 small lh-sm fw-medium">
+                                                    "{{ cancelacion.motivo }}"
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h5 class="fw-bold text-dark mb-1">
-                                                    Cancelación de {{ cancelacion.reserva.paquete.nombre }}
-                                                </h5>
-                                                <p class="text-muted small mb-2">
-                                                    Reserva #{{ cancelacion.reserva.id }} · 
-                                                    Fecha de Viaje: {{ cancelacion.reserva.fecha }} · 
-                                                    Motivo de Cancelación: "{{ cancelacion.motivo }}"
-                                                </p>
-                                                <div class="p-3 bg-danger bg-opacity-10 rounded-3 border-start border-danger border-3">
-                                                    <small class="text-danger fw-semibold d-block mb-1"><i class="bi bi-info-circle-fill me-1"></i>Estado de Solicitud:</small>
-                                                    <p class="mb-0 text-dark small" style="line-height: 1.5;">La solicitud de cancelación ha sido **Rechazada**. Tu reserva se mantiene activa en el sistema.</p>
+                                            <div class="col-sm-6">
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Estado de la Solicitud:</span>
+                                                <div class="bg-danger bg-opacity-10 text-danger-emphasis border border-danger border-opacity-25 rounded-3 p-3 small lh-sm fw-medium">
+                                                    <i class="bi bi-info-circle-fill me-1"></i> La solicitud de cancelación ha sido rechazada. Tu reserva se mantiene activa en el sistema.
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 text-md-end">
-                                        <a href="{% url 'pqrs' %}" class="btn btn-outline-danger rounded-pill px-4 py-2">
+
+                                    <!-- Acción de Reclamo -->
+                                    <div class="d-flex justify-content-end mt-3 border-top pt-3">
+                                        <a href="{% url 'mis_pqrs' %}" class="btn btn-sm btn-outline-danger rounded-pill px-4 py-2 fw-semibold">
                                             <i class="bi bi-send-fill me-1"></i> Radicar Reclamo / PQRS
                                         </a>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <div class="card border-0 shadow-sm rounded-4 text-center py-5">
-                    <div class="mb-3 text-muted">
-                        <i class="bi bi-shield-check display-3 opacity-50 text-success"></i>
+                <div class="card border-0 shadow-sm rounded-4 bg-white text-center py-5">
+                    <div class="card-body py-4">
+                        <div class="mb-3 text-success">
+                            <i class="bi bi-shield-check" style="font-size: 3.5rem;"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mt-2">No tienes cancelaciones rechazadas</h5>
+                        <p class="text-muted mx-auto" style="max-width: 400px;">No registras solicitudes de cancelación que hayan sido denegadas.</p>
                     </div>
-                    <h3 class="fw-bold text-dark">No tienes cancelaciones rechazadas</h3>
-                    <p class="text-muted">No registras solicitudes de cancelación que hayan sido denegadas.</p>
                 </div>
             {% endif %}
         </div>

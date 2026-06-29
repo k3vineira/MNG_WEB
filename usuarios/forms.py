@@ -11,6 +11,9 @@ class PerfilUsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = [
-            'first_name', 'last_name', 'tipo_documento',
-            'numero_documento', 'telefono', 'residencia', 'imagen_perfil'
+            'first_name', 'last_name', 'telefono', 'residencia', 'imagen_perfil'
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['residencia'].required = False

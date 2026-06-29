@@ -86,7 +86,7 @@ class Usuario(AbstractUser):
         """Retorna la URL de la imagen o una por defecto si no existe."""
         if self.imagen_perfil and hasattr(self.imagen_perfil, 'url'):
             return self.imagen_perfil.url
-        return f"{settings.STATIC_URL}img/avatar_pred.png"
+        return f"{settings.STATIC_URL}img/avatar_pred.webp"
 
     @property
     def es_guia(self):

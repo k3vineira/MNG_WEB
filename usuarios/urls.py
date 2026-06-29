@@ -12,7 +12,7 @@ urlpatterns = [
 
     # 2. MÓDULO DEL TURISTA (CLIENTE)
     path('panel_inicio/', views.index_turista, name='index_turista'),
-    path('mi-dashboard/', views.index_turista, name='dashboard_turista'),
+    path('mi-dashboard/', views.dashboard_turista, name='dashboard_turista'),
     path('mi-perfil/', views.perfil_detalles, name='perfil_detalles'),
 
     path('mis-estadisticas/', views.estadisticas_turista, name='mis_estadisticas'),

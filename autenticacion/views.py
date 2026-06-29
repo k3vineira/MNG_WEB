@@ -193,15 +193,19 @@ def registro_otp_verify_view(request):
                 user = form.save(commit=False)
                 user.rol = Usuario.Roles.CLIENTE
                 user.save()
-                Cliente.objects.create(usuario=user)
+                registro_data = request.session['registro_data']
+                Cliente.objects.create(
+                    usuario=user,
+                    pais=registro_data.get('pais', ''),
+                    ciudad=registro_data.get('ciudad', '')
+                )
                 login(request, user, backend='autenticacion.backends.EmailOrUsernameModelBackend')
                 messages.success(request, 'Registro exitoso. ¡Bienvenido a Monagua!')
                 
-                # Limpiar sesión
-                del request.session['registro_data']
-                del request.session['registro_otp']
-                if 'registro_email' in request.session:
-                    del request.session['registro_email']
+                # Limpiar sesión de forma segura
+                request.session.pop('registro_data', None)
+                request.session.pop('registro_otp', None)
+                request.session.pop('registro_email', None)
                 
                 return redirect('inicio')
             else:
@@ -247,8 +251,18 @@ class UsuarioLogoutView(LogoutView):
     """Gestiona el cierre de sesión y redirige al inicio."""
     next_page = reverse_lazy('inicio')
 
-    def dispatch(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        """Soporte para cerrar sesión vía GET (evita error 405 en Django 5+)."""
         if request.user.is_authenticated:
-            messages.info(
-                request, "Has cerrado sesión correctamente. ¡Vuelve pronto!")
-        return super().dispatch(request, *args, **kwargs)
+            messages.info(request, "Has cerrado sesión correctamente. ¡Vuelve pronto!")
+        from django.contrib.auth import logout
+        logout(request)
+        return redirect(self.next_page)
+
+    def post(self, request, *args, **kwargs):
+        """Maneja cerrar sesión vía POST de forma habitual."""
+        if request.user.is_authenticated:
+            messages.info(request, "Has cerrado sesión correctamente. ¡Vuelve pronto!")
+        from django.contrib.auth import logout
+        logout(request)
+        return redirect(self.next_page)

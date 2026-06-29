@@ -3,301 +3,225 @@
 {% load humanize %}
 
 {% block private_css %}
-<style>
-    .stat-card {
-        border: none;
-        border-radius: 16px;
-        padding: 1.25rem;
-        text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-    .stat-card .stat-icon { font-size: 1.8rem; margin-bottom: .5rem; }
-    .stat-card .stat-number { font-size: 2rem; font-weight: 800; }
-    .stat-card .stat-label { font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; opacity: .8; }
-
-    .upload-zone {
-        border: 2px dashed #4ade80;
-        border-radius: 16px;
-        padding: 2.5rem;
-        text-align: center;
-        background: rgba(74, 222, 128, 0.04);
-        transition: all 0.3s;
-        cursor: pointer;
-        position: relative;
-    }
-    .upload-zone:hover, .upload-zone.dragover {
-        background: rgba(74, 222, 128, 0.1);
-        border-color: #22c55e;
-        box-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
-    }
-    .upload-zone .upload-icon { font-size: 3rem; color: #22c55e; }
-    .upload-zone input[type="file"] {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        opacity: 0; cursor: pointer;
-    }
-    .upload-zone .file-name {
-        display: none;
-        margin-top: 0.5rem;
-        font-weight: 600;
-        color: #22c55e;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: #22c55e;
-        box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.15);
-    }
-
-    .btn-enviar {
-        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-        border: none;
-        color: #fff;
-        font-weight: 700;
-        padding: 0.85rem 2rem;
-        border-radius: 12px;
-        transition: all 0.3s;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    .btn-enviar:hover {
-        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
-        color: #fff;
-    }
-
-    .historial-card {
-        border: none;
-        border-radius: 16px;
-        overflow: hidden;
-    }
-    .historial-card .table th {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #6b7280;
-        border-bottom: 2px solid #e5e7eb;
-    }
-    .historial-card .table td {
-        vertical-align: middle;
-        font-size: 0.9rem;
-    }
-
-    .badge-estado {
-        padding: 0.45rem 0.85rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.78rem;
-    }
-    .badge-pendiente  { background: #fef3c7; color: #92400e; }
-    .badge-aprobado   { background: #d1fae5; color: #065f46; }
-    .badge-rechazado  { background: #fee2e2; color: #991b1b; }
-</style>
+<!-- Rediseño completo en base a Bootstrap 5, sin CSS personalizado -->
 {% endblock %}
 
 {% block private_content %}
-<div class="container-fluid py-4">
+<div class="container py-4">
 
-    <!-- Título -->
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
-        <div>
-            <h2 class="fw-bold text-dark mb-1">
-                <i class="bi bi-receipt-cutoff text-success me-2"></i>Enviar Comprobante de Pago
+    <!-- Título y cabecera de sección -->
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-md-8">
+            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-2 fw-bold">PROCESO DE PAGO</span>
+            <h2 class="display-6 fw-bold text-dark mb-1">
+                <i class="bi bi-receipt-cutoff text-success me-2"></i>Enviar Comprobante
             </h2>
-            <p class="text-muted mb-0">Adjunta tu comprobante y lo revisaremos en breve</p>
+            <p class="text-muted mb-0">Adjunta el recibo o captura de tu transferencia bancaria para verificar tu reserva.</p>
         </div>
-        <a href="{% url 'mis_comprobantes' %}" class="btn btn-outline-success rounded-pill px-4">
-            <i class="bi bi-clock-history me-1"></i> Ver Historial
-        </a>
-    </div>
-
-    <!-- Estadísticas -->
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-4">
-            <div class="stat-card bg-warning bg-opacity-10 shadow-sm border border-warning border-opacity-10">
-                <div class="stat-icon text-warning"><i class="bi bi-hourglass-split"></i></div>
-                <div class="stat-number text-warning">{{ total_pendientes }}</div>
-                <div class="stat-label text-warning">Pendientes</div>
-            </div>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="stat-card bg-success bg-opacity-10 shadow-sm border border-success border-opacity-10">
-                <div class="stat-icon text-success"><i class="bi bi-check-circle-fill"></i></div>
-                <div class="stat-number text-success">COP ${{ total_aprobados|floatformat:0|intcomma }}</div>
-                <div class="stat-label text-success">Aprobados</div>
-            </div>
-        </div>
-        <div class="col-12 col-md-4">
-            <div class="stat-card bg-danger bg-opacity-10 shadow-sm border border-danger border-opacity-10">
-                <div class="stat-icon text-danger"><i class="bi bi-x-circle-fill"></i></div>
-                <div class="stat-number text-danger">{{ total_rechazados }}</div>
-                <div class="stat-label text-danger">Rechazados</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Formulario -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body p-4 p-lg-5">
-            <form method="POST" enctype="multipart/form-data" id="formComprobante">
-                {% csrf_token %}
-
-                <div class="row g-4">
-                    <!-- Reserva -->
-                    <div class="col-12">
-                        <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-calendar-check me-1"></i> Reserva asociada *
-                        </label>
-                        <select name="reserva" class="form-select rounded-3 py-2" required>
-                            <option value="">— Selecciona una reserva o multa —</option>
-                            {% for r in reservas_usuario %}
-                                <option value="{{ r.id }}"
-                                    data-monto="{% if r.estado == 'cancelada' %}{{ r.multa }}{% else %}{{ r.monto_total }}{% endif %}"
-                                    {% if selected_reserva_id and selected_reserva_id|stringformat:"s" == r.id|stringformat:"s" %}selected{% endif %}>
-                                    {% if r.estado == 'cancelada' %}
-                                        [Multa de Cancelación] {{ r.paquete.nombre }} — Multa: COP ${{ r.multa|floatformat:0|intcomma }}
-                                    {% else %}
-                                        [Pago de Viaje] {{ r.paquete.nombre }} — {{ r.fecha }} — COP ${{ r.monto_total|floatformat:0|intcomma }}
-                                    {% endif %}
-                                </option>
-                            {% endfor %}
-                        </select>
-                        {% if not reservas_usuario %}
-                            <div class="form-text text-muted mt-1">
-                                <i class="bi bi-info-circle me-1"></i> No tienes reservas ni multas pendientes de pago.
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Imagen del comprobante -->
-                    <div class="col-12">
-                        <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-image me-1"></i> Imagen del comprobante *
-                        </label>
-                        <div class="upload-zone" id="uploadZone">
-                            <div class="upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
-                            <p class="fw-semibold text-dark mt-2 mb-1">Arrastra tu comprobante aquí</p>
-                            <p class="text-muted small mb-0">o haz clic para seleccionar un archivo</p>
-                            <div class="file-name" id="fileName"></div>
-                            <input type="file" name="imagen" accept="image/*" id="inputImagen" required>
-                        </div>
-                    </div>
-
-                    <!-- Referencia + Banco -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-hash me-1"></i> Nº de referencia / transacción *
-                        </label>
-                        <input type="text" name="referencia" class="form-control rounded-3 py-2"
-                               placeholder="Ej: 123456789" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-bank me-1"></i> Banco / Medio de pago *
-                        </label>
-                        <input type="text" name="banco_origen" class="form-control rounded-3 py-2"
-                               placeholder="Ej: Nequi, Daviplata, Bancolombia" required>
-                    </div>
-
-                    <!-- Monto -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-cash-stack me-1"></i> Monto a pagar (COP) *
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-secondary border-end-0">COP $</span>
-                            <input type="text" id="inputMontoFormat" class="form-control rounded-end-3 py-2 bg-light fw-bold text-success border-start-0" 
-                                   placeholder="Selecciona una reserva" readonly>
-                        </div>
-                        <input type="hidden" name="monto" id="inputMonto" required>
-                        <div class="form-text text-muted">
-                            <i class="bi bi-info-circle me-1"></i> El precio es fijo y corresponde al total de tu reserva/multa.
-                        </div>
-                    </div>
-
-                    <!-- Descripción -->
-                    <div class="col-12">
-                        <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-chat-left-text me-1"></i> Nota adicional *
-                        </label>
-                        <textarea name="descripcion" rows="3" class="form-control rounded-3"
-                                  placeholder="Cualquier información adicional sobre el pago..." required></textarea>
-                    </div>
-
-                    <!-- Botón -->
-                    <div class="col-12 text-center mt-3">
-                        <button type="submit" class="btn btn-enviar w-100 w-md-auto px-5">
-                            <i class="bi bi-send-fill me-2"></i> Enviar Comprobante
-                        </button>
-                    </div>
-                </div>
-            </form>
+        <div class="col-md-4 text-md-end text-start">
+            <a href="{% url 'mis_comprobantes' %}" class="btn btn-outline-success rounded-pill px-4 py-2 fw-bold shadow-sm">
+                <i class="bi bi-clock-history me-1"></i> Ver Historial
+            </a>
         </div>
     </div>
 
     <!-- Mensajes Django -->
     {% if messages %}
-    {% for msg in messages %}
-    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-3" role="alert">
-        {{ msg }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="row mb-4">
+        <div class="col-12">
+            {% for msg in messages %}
+            <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}{{ msg.tags }}{% endif %} alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+                <i class="bi {% if msg.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
+                {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
     {% endif %}
+
+    <!-- Tarjetas de Estadísticas Rápidas -->
+    <div class="row g-3 mb-4">
+        <!-- Pendientes -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-white">
+                <div class="card-body p-0 d-flex align-items-center justify-content-between">
+                    <div class="text-start">
+                        <span class="text-uppercase text-muted small fw-bold d-block mb-1" style="letter-spacing: 0.5px;">Pendientes</span>
+                        <h3 class="fw-bold text-warning mb-0">{{ total_pendientes }}</h3>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 text-warning rounded-4 p-3 fs-3">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Aprobados -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-white">
+                <div class="card-body p-0 d-flex align-items-center justify-content-between">
+                    <div class="text-start">
+                        <span class="text-uppercase text-muted small fw-bold d-block mb-1" style="letter-spacing: 0.5px;">Monto Aprobado</span>
+                        <h3 class="fw-bold text-success mb-0">COP ${{ total_aprobados|floatformat:0|intcomma }}</h3>
+                    </div>
+                    <div class="bg-success bg-opacity-10 text-success rounded-4 p-3 fs-3">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Rechazados -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-white">
+                <div class="card-body p-0 d-flex align-items-center justify-content-between">
+                    <div class="text-start">
+                        <span class="text-uppercase text-muted small fw-bold d-block mb-1" style="letter-spacing: 0.5px;">Rechazados</span>
+                        <h3 class="fw-bold text-danger mb-0">{{ total_rechazados }}</h3>
+                    </div>
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-4 p-3 fs-3">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor Principal del Formulario -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow rounded-4 bg-white">
+                <div class="card-header bg-success bg-opacity-10 border-0 p-4 rounded-top-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-send-check text-success fs-3 me-3"></i>
+                        <div>
+                            <h5 class="mb-0 fw-bold text-success-emphasis">Registrar Pago</h5>
+                            <p class="text-muted small mb-0">Rellena el formulario con los detalles exactos de tu transacción.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" enctype="multipart/form-data" id="formComprobante">
+                        {% csrf_token %}
+
+                        <div class="row g-4">
+                            <!-- Reserva asociada -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <select name="reserva" id="id_reserva" class="form-select rounded-4 shadow-sm" required>
+                                        <option value="" disabled selected>— Selecciona la reserva o multa a pagar —</option>
+                                        {% for r in reservas_usuario %}
+                                            <option value="{{ r.id }}" {% if selected_reserva_id|stringformat:"s" == r.id|stringformat:"s" %}selected{% endif %}>
+                                                {% if r.estado == 'cancelada' %}
+                                                    [Multa] {{ r.paquete.nombre }} — Valor: COP ${{ r.multa|floatformat:0|intcomma }}
+                                                {% else %}
+                                                    [Reserva] {{ r.paquete.nombre }} — Valor: COP ${{ r.monto_total|floatformat:0|intcomma }} (Fecha: {{ r.fecha }})
+                                                {% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="id_reserva">
+                                        <i class="bi bi-calendar-check text-success me-2"></i>Reserva o Penalidad a Vincular *
+                                    </label>
+                                </div>
+                                {% if not reservas_usuario %}
+                                    <div class="form-text text-muted mt-2 ps-2">
+                                        <i class="bi bi-info-circle me-1"></i> No cuentas con deudas, reservas o multas pendientes de pago actualmente.
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Referencia de Pago -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" name="referencia" id="id_referencia" class="form-control rounded-4 shadow-sm" placeholder="Nº Referencia" required>
+                                    <label for="id_referencia">
+                                        <i class="bi bi-hash text-success me-2"></i>Nº de Referencia / Transacción *
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Banco / Medio de pago -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" name="banco_origen" id="id_banco_origen" class="form-control rounded-4 shadow-sm" placeholder="Ej: Nequi" required>
+                                    <label for="id_banco_origen">
+                                        <i class="bi bi-bank text-success me-2"></i>Banco o Canal de Pago *
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Imagen del Comprobante -->
+                            <div class="col-12">
+                                <div class="border rounded-4 p-4 bg-light shadow-sm text-center">
+                                    <label for="inputImagen" class="form-label fw-bold text-secondary small mb-2 text-uppercase d-block text-start" style="letter-spacing: 0.5px;">
+                                        <i class="bi bi-image text-success me-2"></i>Imagen o Captura del Comprobante *
+                                    </label>
+                                    <input type="file" name="imagen" accept="image/*" class="form-control rounded-3" id="inputImagen" required>
+                                    
+                                    <!-- Contenedor de Vista Previa -->
+                                    <div class="mt-3 d-none" id="previewContainer">
+                                        <p class="small text-muted mb-2">Vista previa de la imagen cargada:</p>
+                                        <img id="previewImagen" class="img-thumbnail rounded-4 shadow-sm" style="max-height: 250px; width: auto; object-fit: contain;" alt="Vista previa">
+                                    </div>
+                                    
+                                    <div class="form-text text-muted mt-2 text-start">
+                                        Sube un archivo de imagen legible (PNG, JPG, JPEG, WebP) que muestre la confirmación del banco o pasarela de pagos.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Nota adicional -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea name="descripcion" id="id_descripcion" class="form-control rounded-4 shadow-sm" style="height: 120px;" placeholder="Detalles de pago" required></textarea>
+                                    <label for="id_descripcion">
+                                        <i class="bi bi-chat-left-text text-success me-2"></i>Notas o Detalles Adicionales *
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Botones de Acción -->
+                            <div class="col-12 mt-5">
+                                <div class="row g-3 justify-content-end">
+                                    <div class="col-sm-6 col-md-4 order-2 order-sm-1">
+                                        <a href="{% url 'index_turista' %}" class="btn btn-outline-secondary w-100 rounded-pill py-3 fw-bold">
+                                            Cancelar
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-6 col-md-5 order-1 order-sm-2">
+                                        <button type="submit" class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow-sm">
+                                            <i class="bi bi-send-fill me-2"></i>Enviar Reporte
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
 <script>
-// Drag & drop + preview en la zona de upload y cálculo de monto automático
-document.addEventListener('DOMContentLoaded', function() {
-    const zone = document.getElementById('uploadZone');
-    const input = document.getElementById('inputImagen');
-    const nameDisplay = document.getElementById('fileName');
-    const selectReserva = document.querySelector('select[name="reserva"]');
-    const inputMonto = document.getElementById('inputMonto');
-    const inputMontoFormat = document.getElementById('inputMontoFormat');
-
-    function actualizarMonto() {
-        const selectedOption = selectReserva.options[selectReserva.selectedIndex];
-        if (selectedOption && selectedOption.value) {
-            const montoRaw = selectedOption.getAttribute('data-monto');
-            if (montoRaw) {
-                const montoNum = parseFloat(montoRaw);
-                inputMonto.value = montoNum.toFixed(2);
-                inputMontoFormat.value = Math.round(montoNum).toLocaleString('es-CO');
-            } else {
-                inputMonto.value = '';
-                inputMontoFormat.value = '';
-            }
-        } else {
-            inputMonto.value = '';
-            inputMontoFormat.value = '';
+document.getElementById('inputImagen').addEventListener('change', function(event) {
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImagen');
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewContainer.classList.remove('d-none');
         }
+        reader.readAsDataURL(file);
+    } else {
+        previewImage.src = '';
+        previewContainer.classList.add('d-none');
     }
-
-    if (selectReserva) {
-        selectReserva.addEventListener('change', actualizarMonto);
-        actualizarMonto();
-    }
-
-    input.addEventListener('change', function() {
-        if (input.files.length) {
-            nameDisplay.textContent = '✓ ' + input.files[0].name;
-            nameDisplay.style.display = 'block';
-            zone.classList.add('dragover');
-        }
-    });
-
-    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
-    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-    zone.addEventListener('drop', e => {
-        e.preventDefault();
-        if (e.dataTransfer.files.length) {
-            input.files = e.dataTransfer.files;
-            nameDisplay.textContent = '✓ ' + e.dataTransfer.files[0].name;
-            nameDisplay.style.display = 'block';
-        }
-    });
 });
 </script>
 {% endblock %}
+

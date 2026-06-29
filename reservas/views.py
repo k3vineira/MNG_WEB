@@ -486,3 +486,149 @@ def guardar_reserva(request, paquete_id):
         return redirect('mis_reservas_usuario')
 
     return redirect('reservas')
+
+
+@login_required(login_url='login')
+def mis_facturas(request):
+    """Muestra el listado de facturas asociadas a las reservas confirmadas del turista."""
+    mis_confirmadas = Reserva.objects.filter(
+        usuario=request.user, 
+        estado='confirmada'
+    ).select_related('paquete').order_by('-id')
+    
+    return render(request, 'usuario/mis_facturas.html', {
+        'reservas': mis_confirmadas
+    })
+
+
+def get_image_base64(relative_path):
+    """Retorna la representación en base64 de una imagen estática local."""
+    import base64
+    import os
+    from django.conf import settings
+    
+    file_path = os.path.join(settings.BASE_DIR, relative_path)
+    if os.path.exists(file_path):
+        with open(file_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+            ext = os.path.splitext(file_path)[1].replace('.', '')
+            mime = 'image/webp' if ext == 'webp' else ('image/png' if ext == 'png' else 'image/jpeg')
+            return f"data:{mime};base64,{encoded_string}"
+    return ""
+
+
+def get_qr_base64(url):
+    """Genera un código QR para la URL dada y lo retorna en formato base64."""
+    import qrcode
+    import io
+    import base64
+
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=2,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffered = io.BytesIO()
+    img.save(buffered, format="PNG")
+    encoded_string = base64.b64encode(buffered.getvalue()).decode('utf-8')
+    return f"data:image/png;base64,{encoded_string}"
+
+
+@login_required(login_url='login')
+def ver_factura(request, reserva_id):
+    """Muestra la factura detallada de una reserva confirmada en la web."""
+    from django.urls import reverse
+    reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
+    
+    # Solo permitir ver si está confirmada
+    if reserva.estado != 'confirmada':
+        messages.error(request, "La factura solo está disponible para reservas confirmadas y pagadas.")
+        return redirect('mis_reservas_usuario')
+        
+    # Obtener el comprobante aprobado para esta reserva para extraer el método de pago
+    comprobante = reserva.comprobantes.filter(estado='aprobado').first()
+    metodo_pago = comprobante.banco_origen if comprobante else "Transferencia Bancaria"
+    
+    # Generar URL absoluta para el código QR
+    abs_url = request.build_absolute_uri(reverse('ver_factura', args=[reserva.id]))
+    qr_base64 = get_qr_base64(abs_url)
+    
+    # Obtener logo en base64
+    logo_base64 = get_image_base64('static/img/logo_monagua.webp')
+    
+    context = {
+        'reserva_id': reserva.id,
+        'nro_factura': f"FAC-1000{reserva.id}",
+        'cliente_nombre': request.user.nombre_completo,
+        'cliente_email': request.user.email,
+        'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else reserva.fecha.strftime('%d/%m/%Y'),
+        'metodo_pago': metodo_pago,
+        'paquete_nombre': reserva.paquete.nombre,
+        'subtotal': reserva.monto_total,
+        'total': reserva.monto_total,
+        'logo_base64': logo_base64,
+        'qr_base64': qr_base64,
+    }
+    return render(request, 'private/factura.html', context)
+
+
+@login_required(login_url='login')
+def descargar_factura(request, reserva_id):
+    """Genera y descarga en PDF la factura de la reserva confirmada usando xhtml2pdf."""
+    import io
+    from xhtml2pdf import pisa
+    from django.http import FileResponse
+    from django.urls import reverse
+
+    reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
+    
+    if reserva.estado != 'confirmada':
+        messages.error(request, "La factura solo se puede descargar para reservas confirmadas.")
+        return redirect('mis_reservas_usuario')
+        
+    comprobante = reserva.comprobantes.filter(estado='aprobado').first()
+    metodo_pago = comprobante.banco_origen if comprobante else "Transferencia Bancaria"
+    
+    # Datos de documento del cliente
+    documento_tipo = request.user.tipo_documento or "Documento"
+    documento_num = request.user.numero_documento or "—"
+    
+    # Generar URL absoluta para el código QR
+    abs_url = request.build_absolute_uri(reverse('ver_factura', args=[reserva.id]))
+    qr_base64 = get_qr_base64(abs_url)
+    
+    # Obtener logo en base64
+    logo_base64 = get_image_base64('static/img/logo_monagua.webp')
+    
+    context = {
+        'nro_factura': f"FAC-1000{reserva.id}",
+        'cliente_nombre': request.user.nombre_completo,
+        'cliente_email': request.user.email,
+        'cliente_documento_tipo': documento_tipo,
+        'cliente_documento': documento_num,
+        'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else reserva.fecha.strftime('%d/%m/%Y'),
+        'metodo_pago': metodo_pago,
+        'paquete_nombre': reserva.paquete.nombre,
+        'pasajeros_adultos': reserva.numero_adultos,
+        'pasajeros_menores': reserva.numero_menores,
+        'total': reserva.monto_total,
+        'logo_base64': logo_base64,
+        'qr_base64': qr_base64,
+    }
+    
+    html_string = render_to_string('private/factura_pdf.html', context)
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html_string.encode("UTF-8")), result)
+    
+    if not pdf.err:
+        result.seek(0)
+        response = FileResponse(result, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="factura_{context["nro_factura"]}.pdf"'
+        return response
+        
+    return HttpResponse("Error al generar el PDF de la factura.", status=500)
+

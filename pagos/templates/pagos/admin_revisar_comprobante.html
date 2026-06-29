@@ -5,56 +5,37 @@
 {% block title %}Admin | Revisar Comprobante #{{ comprobante.pk }}{% endblock %}
 
 {% block extra_head %}
-<style>
-    .comprobante-preview-img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        cursor: pointer;
-        transition: transform 0.3s;
-    }
-    .comprobante-preview-img:hover {
-        transform: scale(1.02);
-    }
-    .details-item {
-        border-bottom: 1px solid #f1f5f9;
-        padding-bottom: 0.75rem;
-        margin-bottom: 0.75rem;
-    }
-    .details-item:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-        margin-bottom: 0;
-    }
-</style>
+<!-- Rediseño completo en base a Bootstrap 5, sin CSS personalizado -->
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
+<div class="container py-4">
     <!-- Back Button & Title -->
     <div class="mb-4">
-        <a href="{% url 'admin_comprobantes' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-3">
+        <a href="{% url 'admin_comprobantes' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-3 fw-semibold shadow-sm">
             <i class="bi bi-arrow-left me-1"></i> Volver a Comprobantes
         </a>
-        <h2 class="fw-bold text-dark mb-0">Revisión de Comprobante #{{ comprobante.pk }}</h2>
+        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-2 fw-bold d-block w-fit">ACCION REQUERIDA</span>
+        <h2 class="display-6 fw-bold text-dark mb-1">Revisión de Comprobante #{{ comprobante.pk }}</h2>
         <p class="text-muted">Verifica los detalles del depósito y actualiza el estado de la reserva.</p>
     </div>
 
     <div class="row g-4">
         <!-- Voucher Image Column -->
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm rounded-4 p-3">
-                <span class="fw-bold text-secondary text-uppercase small mb-3 d-block"><i class="bi bi-image me-1"></i>Imagen del Comprobante</span>
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white text-center">
+                <span class="fw-bold text-secondary text-uppercase small mb-3 d-block text-start" style="letter-spacing: 0.5px;">
+                    <i class="bi bi-image text-primary me-2"></i>Imagen del Comprobante
+                </span>
                 {% if comprobante.imagen %}
-                    <a href="{{ comprobante.imagen.url }}" target="_blank" title="Ver imagen completa">
-                        <img src="{{ comprobante.imagen.url }}" alt="Comprobante de Pago" class="comprobante-preview-img img-fluid">
+                    <a href="{{ comprobante.imagen.url }}" target="_blank" title="Ver imagen completa" class="d-block rounded-4 overflow-hidden shadow-sm">
+                        <img src="{{ comprobante.imagen.url }}" alt="Comprobante de Pago" class="img-fluid rounded-4 transition-all" style="max-height: 550px; object-fit: contain;">
                     </a>
-                    <div class="form-text text-muted text-center mt-2">
-                        <i class="bi bi-zoom-in me-1"></i> Haz clic en la imagen para verla en tamaño completo
+                    <div class="form-text text-muted mt-3">
+                        <i class="bi bi-zoom-in me-1"></i> Haz clic en la imagen para abrirla en tamaño completo en otra pestaña
                     </div>
                 {% else %}
-                    <div class="text-center py-5 bg-light rounded-3 text-muted">
+                    <div class="text-center py-5 bg-light rounded-4 text-muted border border-dashed">
                         <i class="bi bi-file-earmark-image fs-1 d-block mb-2"></i>
                         No se ha cargado ninguna imagen de comprobante
                     </div>
@@ -65,82 +46,88 @@
         <!-- Details & Review Action Form Column -->
         <div class="col-lg-6">
             <!-- User & Booking Info -->
-            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-                <span class="fw-bold text-secondary text-uppercase small mb-3 d-block"><i class="bi bi-info-circle me-1"></i>Detalles de la Transacción</span>
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block" style="letter-spacing: 0.5px;">
+                    <i class="bi bi-info-circle text-primary me-2"></i>Detalles de la Transacción
+                </span>
                 
-                <div class="details-item d-flex justify-content-between align-items-center">
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Usuario:</span>
                     <span class="fw-bold text-dark">{{ comprobante.usuario.get_full_name|default:comprobante.usuario.username }}</span>
                 </div>
-                <div class="details-item d-flex justify-content-between align-items-center">
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Correo Electrónico:</span>
                     <span class="text-dark">{{ comprobante.usuario.email }}</span>
                 </div>
-                <div class="details-item d-flex justify-content-between align-items-center">
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Reserva Asociada:</span>
                     {% if comprobante.reserva %}
-                        <span class="fw-bold text-success">Reserva #{{ comprobante.reserva.id }}</span>
+                        <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill">Reserva #{{ comprobante.reserva.id }}</span>
                     {% else %}
                         <span class="text-muted italic">Ninguna</span>
                     {% endif %}
                 </div>
                 {% if comprobante.reserva %}
-                    <div class="details-item d-flex justify-content-between align-items-center">
+                    <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                         <span class="text-muted small">Paquete:</span>
                         <span class="text-secondary fw-semibold">{{ comprobante.reserva.paquete.nombre }}</span>
                     </div>
-                    <div class="details-item d-flex justify-content-between align-items-center">
+                    <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                         <span class="text-muted small">Fecha Reserva:</span>
                         <span class="text-secondary">{{ comprobante.reserva.fecha }}</span>
                     </div>
-                    <div class="details-item d-flex justify-content-between align-items-center">
+                    <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                         <span class="text-muted small">Costo Total Reserva:</span>
                         <span class="fw-bold text-dark">COP ${{ comprobante.reserva.monto_total|floatformat:0|intcomma }}</span>
                     </div>
                 {% endif %}
-                <div class="details-item d-flex justify-content-between align-items-center">
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Monto Declarado en Pago:</span>
                     <span class="fw-bold text-success">{% if comprobante.monto %}COP ${{ comprobante.monto|floatformat:0|intcomma }}{% else %}No especificado{% endif %}</span>
                 </div>
-                <div class="details-item d-flex justify-content-between align-items-center">
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Medio de Pago / Banco:</span>
-                    <span class="text-dark">{{ comprobante.banco_origen|default:"—" }}</span>
+                    <span class="text-dark fw-semibold">{{ comprobante.banco_origen|default:"—" }}</span>
                 </div>
-                <div class="details-item d-flex justify-content-between align-items-center">
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Nº Referencia / Transacción:</span>
-                    <span class="text-dark"><code>{{ comprobante.referencia|default:"—" }}</code></span>
+                    <span class="text-dark font-monospace">{{ comprobante.referencia|default:"—" }}</span>
                 </div>
-                <div class="details-item d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Fecha Envío Comprobante:</span>
                     <span class="text-dark">{{ comprobante.fecha_envio|date:"d/m/Y H:i" }}</span>
                 </div>
             </div>
 
             <!-- Review Action Card -->
-            <div class="card border-0 shadow-sm rounded-4 p-4">
-                <span class="fw-bold text-secondary text-uppercase small mb-3 d-block"><i class="bi bi-shield-check me-1"></i>Tomar Decisión</span>
+            <div class="card border-0 shadow rounded-4 p-4 bg-white">
+                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block" style="letter-spacing: 0.5px;">
+                    <i class="bi bi-shield-check text-primary me-2"></i>Tomar Decisión
+                </span>
 
                 <form method="POST">
                     {% csrf_token %}
                     
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-dark">Estado del Pago</label>
-                        <select name="estado" class="form-select rounded-3 py-2" required>
+                    <!-- Estado de Pago con Floating Labels -->
+                    <div class="form-floating mb-3">
+                        <select name="estado" id="id_estado" class="form-select rounded-4 shadow-sm" required>
                             <option value="pendiente" {% if comprobante.estado == 'pendiente' %}selected{% endif %}>Pendiente de revisión</option>
                             <option value="aprobado" {% if comprobante.estado == 'aprobado' %}selected{% endif %}>Aprobado (Confirma automáticamente la reserva)</option>
                             <option value="rechazado" {% if comprobante.estado == 'rechazado' %}selected{% endif %}>Rechazado</option>
                         </select>
+                        <label for="id_estado">Estado del Pago *</label>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold text-dark">Nota del Administrador</label>
-                        <textarea name="nota_admin" class="form-control rounded-3" rows="4" placeholder="Escribe aquí el motivo de rechazo o cualquier nota aclaratoria para el usuario...">{{ comprobante.nota_admin }}</textarea>
-                        <div class="form-text text-muted">Esta nota será visible para el usuario en su historial de comprobantes.</div>
+                    <!-- Nota del Administrador con Floating Labels -->
+                    <div class="form-floating mb-4">
+                        <textarea name="nota_admin" id="id_nota_admin" class="form-control rounded-4 shadow-sm" style="height: 120px;" placeholder="Escribe aquí el motivo de rechazo o cualquier nota aclaratoria para el usuario...">{{ comprobante.nota_admin }}</textarea>
+                        <label for="id_nota_admin">Nota del Administrador</label>
+                        <div class="form-text text-muted mt-2 ps-2">Esta nota será visible para el usuario en su historial de comprobantes.</div>
                     </div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success py-2 rounded-3 fw-bold">
-                            <i class="bi bi-save me-2"></i> Guardar y Aplicar Decisión
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success py-3 rounded-pill fw-bold shadow-sm fs-6">
+                            <i class="bi bi-save-fill me-2"></i> Guardar y Aplicar Decisión
                         </button>
                     </div>
                 </form>
@@ -149,3 +136,4 @@
     </div>
 </div>
 {% endblock %}
+

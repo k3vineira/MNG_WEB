@@ -3,6 +3,9 @@
  * Consume APIs externas para poblar los selectores de País y Ciudad
  * en el formulario de registro. Usa el atributo data-prev para
  * restaurar la selección previa en caso de errores de formulario.
+ *
+ * Si los selects están inicialmente deshabilitados (ej: perfil),
+ * opera en modo solo lectura: carga y preselecciona, pero NO habilita.
  */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -10,6 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var ciudadSelect = document.getElementById('id_ciudad');
 
     if (!paisSelect || !ciudadSelect) return;
+
+    // Detectar modo solo lectura: si el select de país viene disabled en el HTML
+    var readOnly = paisSelect.disabled;
 
     var countryData = [];
 
@@ -38,8 +44,15 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(function (error) {
             console.error('Error cargando países:', error);
-            paisSelect.outerHTML = '<input type="text" name="pais" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu país" required>';
-            ciudadSelect.outerHTML = '<input type="text" name="ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
+            if (readOnly) {
+                var prevPais = paisSelect.getAttribute('data-prev') || 'No especificado';
+                paisSelect.outerHTML = '<input type="text" id="id_pais" class="form-control rounded-4 shadow-sm bg-light text-muted" value="' + prevPais + '" disabled readonly>';
+                var prevCiudad = ciudadSelect.getAttribute('data-prev') || 'No especificado';
+                ciudadSelect.outerHTML = '<input type="text" id="id_ciudad" class="form-control rounded-4 shadow-sm bg-light text-muted" value="' + prevCiudad + '" disabled readonly>';
+            } else {
+                paisSelect.outerHTML = '<input type="text" name="pais" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu país" required>';
+                ciudadSelect.outerHTML = '<input type="text" name="ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
+            }
         });
 
     paisSelect.addEventListener('change', function () {
@@ -48,16 +61,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (ciudadElement.tagName === 'INPUT') {
             var newSelect = document.createElement('select');
-            newSelect.name = 'ciudad';
+            if (!readOnly) newSelect.name = 'ciudad';
             newSelect.id = 'id_ciudad';
-            newSelect.className = 'form-select rounded-4 shadow-sm text-secondary';
-            newSelect.required = true;
+            newSelect.className = 'form-select rounded-4 shadow-sm ' + (readOnly ? 'bg-light text-muted' : 'text-secondary');
+            if (!readOnly) newSelect.required = true;
+            if (readOnly) newSelect.disabled = true;
+            // Preservar data-prev
+            var prevCiudad = ciudadElement.getAttribute('data-prev');
+            if (prevCiudad) newSelect.setAttribute('data-prev', prevCiudad);
             ciudadElement.parentNode.replaceChild(newSelect, ciudadElement);
             ciudadElement = newSelect;
         }
 
         ciudadElement.innerHTML = '<option value="" selected disabled>Cargando ciudades...</option>';
-        ciudadElement.disabled = false;
+        if (!readOnly) ciudadElement.disabled = false;
 
         if (selectedCountry === 'Colombia') {
             fetch('https://api-colombia.com/api/v1/City')
@@ -79,7 +96,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(function (error) {
                     console.error('Error cargando ciudades de Colombia:', error);
-                    ciudadElement.outerHTML = '<input type="text" name="ciudad" id="id_ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
+                    if (readOnly) {
+                        var prevCiudad = ciudadElement.getAttribute('data-prev') || 'No especificado';
+                        ciudadElement.outerHTML = '<input type="text" id="id_ciudad" class="form-control rounded-4 shadow-sm bg-light text-muted" value="' + prevCiudad + '" disabled readonly>';
+                    } else {
+                        ciudadElement.outerHTML = '<input type="text" name="ciudad" id="id_ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
+                    }
                 });
         } else {
             var countryObj = countryData.find(function (c) { return c.country === selectedCountry; });
@@ -96,8 +118,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     ciudadElement.appendChild(option);
                 });
             } else {
-                ciudadElement.outerHTML = '<input type="text" name="ciudad" id="id_ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
+                if (readOnly) {
+                    var prevCiudad = ciudadElement.getAttribute('data-prev') || 'No especificado';
+                    ciudadElement.outerHTML = '<input type="text" id="id_ciudad" class="form-control rounded-4 shadow-sm bg-light text-muted" value="' + prevCiudad + '" disabled readonly>';
+                } else {
+                    ciudadElement.outerHTML = '<input type="text" name="ciudad" id="id_ciudad" class="form-control rounded-4 shadow-sm" placeholder="Escribe tu ciudad" required>';
+                }
             }
         }
     });
 });
+
