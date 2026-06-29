@@ -4,7 +4,7 @@ from django.utils import timezone
 
 
 class Temporada(models.Model):
-    # Definimos las opciones
+    
     ESTADOS = [
         ('programada', 'Programada'),
         ('activa', 'Activa'),
@@ -15,7 +15,6 @@ class Temporada(models.Model):
         max_length=50, verbose_name='Nombre de la Temporada')
     fecha_inicio = models.DateField(verbose_name='Fecha de Inicio')
     fecha_fin = models.DateField(verbose_name='Fecha de Fin')
-    # Agregamos el campo estado
     estado = models.CharField(
         max_length=20, choices=ESTADOS, default='programada', verbose_name='Estado')
 
@@ -141,8 +140,6 @@ class Tarifa(models.Model):
 
 
 class PaqueteActividad(models.Model):
-    # Dejamos únicamente estas dos relaciones. Django creará de forma interna
-    # las columnas 'paquete_id' y 'actividad_id' en la base de datos.
     paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE)
     actividad = models.ForeignKey(Actividades, on_delete=models.CASCADE)
 

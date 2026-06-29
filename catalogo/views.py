@@ -5,7 +5,6 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Paquete, Actividades, Categoria, Tarifa, Temporada
 from django.db.models import Count, Q
 from django import forms
-from .forms import TemporadaForm, TarifaForm
 from notificaciones.utils import crear_notificacion_sistema
 
 def destinos(request):
@@ -68,7 +67,7 @@ class PaqueteCreateView(CreateView):
     model = Paquete
     fields = [
         'imagen', 'nombre', 'descripcion', 'hora_encuentro',
-        'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades', 'estado'
+        'dias_duracion', 'noches_duracion', 'punto_encuentro', 'categoria', 'actividades'
     ]
     template_name = 'admin/paquetes/agregar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
@@ -79,7 +78,7 @@ class PaqueteCreateView(CreateView):
             usuario=self.request.user,
             titulo=" Nuevo Paquete Creado",
             mensaje=f"Se ha creado con éxito el paquete turístico: '{self.object.nombre}'.",
-            tipo='paquete' # Puedes usar este tipo para tus badges del HTML
+            tipo='paquete'
         )
         return response
       
@@ -158,7 +157,7 @@ class ActividadesListView(ListView):
 class ActividadesCreateView(CreateView):
     model = Actividades
     fields = ['nombre', 'descripcion', 'nivel_dificultad', 'equipo_requerimiento',
-              'recomendacion_salud', 'estado', 'apto_para_menores']
+              'recomendacion_salud', 'apto_para_menores']
     template_name = 'admin/actividades/agregar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
     
@@ -247,7 +246,7 @@ class CategoriaListView(ListView):
 
 class CategoriaCreateView(CreateView):
     model = Categoria
-    fields = ['nombre', 'descripcion', 'estado']
+    fields = ['nombre', 'descripcion']
     template_name = 'admin/categorias/agregar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
     def form_valid(self, form):
@@ -340,7 +339,7 @@ class TarifaListView(ListView):
 
 class TarifaCreateView(CreateView):
     model = Tarifa
-    form_class = TarifaForm
+    fields = ['paquete', 'temporada', 'precio_adulto', 'precio_menor']
     template_name = 'admin/tarifas/agregar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
     
@@ -359,7 +358,7 @@ class TarifaCreateView(CreateView):
 
 class TarifaUpdateView(UpdateView):
     model = Tarifa
-    form_class = TarifaForm
+    fields = ['paquete', 'temporada', 'precio_adulto', 'precio_menor','estado']
     template_name = 'admin/tarifas/editar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
     
@@ -374,17 +373,15 @@ class TarifaUpdateView(UpdateView):
         return response
 
 
-# temporada
+
 class TemporadaListView(ListView):
     model = Temporada
     template_name = 'admin/temporada/temporada.html'
     context_object_name = 'temporadas'
 
     def get_context_data(self, **kwargs):
-        # Esta línea debe tener 8 espacios de indentación
         context = super().get_context_data(**kwargs)
 
-        # Contamos estados de temporadas
         stats = Temporada.objects.aggregate(
             total=Count('id'),
             programadas=Count('id', filter=Q(estado='programada')),
@@ -404,7 +401,7 @@ class TemporadaListView(ListView):
 
 class TemporadaCreateView(CreateView):
     model = Temporada
-    form_class = TemporadaForm
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin']
     template_name = 'admin/temporada/agregar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
     
@@ -421,7 +418,7 @@ class TemporadaCreateView(CreateView):
 
 class TemporadaUpdateView(UpdateView):
     model = Temporada
-    form_class = TemporadaForm
+    fields = ['nombre', 'fecha_inicio', 'fecha_fin','estado']
     template_name = 'admin/temporada/editar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
     
