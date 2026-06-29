@@ -211,7 +211,7 @@
 /* Fuerza la barra de scroll para evitar saltos de ancho */
 
 #mainSidebar {
-    width: 240px;
+    width: 280px;
     z-index: 1040;
     transition: transform .3s ease;
     transform: translateX(-100%);
@@ -228,7 +228,7 @@
         transform: translateX(0) !important;
     }
     #mainContent {
-        margin-left: 240px !important;
+        margin-left: 280px !important;
     }
     #sidebar-toggle,
     #sidebar-overlay {

@@ -1,144 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth import login
 from django.contrib import messages
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.contrib.auth.tokens import default_token_generator
-import random
 from django.db.models import Avg
 from .models import Usuario, Cliente, GuiaTuristico
 from comunidad.models import Comentario
-from .forms import RegistroForm, PerfilUsuarioForm, RecuperacionPersonalizadaForm
+from .forms import PerfilUsuarioForm
 
 # 1. VISTAS PÚBLICAS / ESTÁTICAS
-
-
-def recuperar_apodo_view(request):
-    """
-    Permite al usuario recuperar su apodo (username) verificando
-    su correo electrónico y número de documento en la base de datos.
-    """
-    context = {}
-
-    if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
-        numero_documento = request.POST.get('numero_documento', '').strip()
-
-        if email and numero_documento:
-            try:
-                usuario = Usuario.objects.get(
-                    email__iexact=email,
-                    numero_documento=numero_documento
-                )
-                context['apodo_encontrado'] = usuario.username
-            except Usuario.DoesNotExist:
-                context['error'] = (
-                    'No encontramos ninguna cuenta con ese correo y número de documento. '
-                    'Verifica que los datos sean correctos.'
-                )
-        else:
-            context['error'] = 'Por favor completa todos los campos.'
-
-    return render(request, 'authentication/recuperar_apodo.html', context)
-
-
-def password_reset_request_view(request):
-    """
-    Vista personalizada para iniciar la recuperación de contraseña.
-    Valida Apodo, Documento y Correo, genera un OTP y lo envía.
-    """
-    if request.method == 'POST':
-        form = RecuperacionPersonalizadaForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            # Generar OTP de 6 dígitos
-            otp = str(random.randint(100000, 999999))
-            
-            # Guardar en sesión
-            request.session['reset_email'] = email
-            request.session['reset_otp'] = otp
-            
-            # Enviar correo
-            subject = 'Código de verificación para recuperar contraseña - Monagua'
-            html_message = render_to_string('authentication/password_reset_otp_email.html', {'otp': otp})
-            plain_message = strip_tags(html_message)
-            send_mail(
-                subject,
-                plain_message,
-                'noreply@monagua.com',
-                [email],
-                html_message=html_message,
-                fail_silently=False,
-            )
-            
-            return redirect('password_reset_otp')
-    else:
-        form = RecuperacionPersonalizadaForm()
-
-    return render(request, 'authentication/recuperar.html', {'form': form})
-
-
-def password_reset_otp_verify_view(request):
-    """
-    Verifica el OTP ingresado por el usuario. Si es correcto, genera
-    los tokens de Django y redirige a la vista de confirmación.
-    """
-    if 'reset_email' not in request.session or 'reset_otp' not in request.session:
-        messages.error(request, 'Tu sesión ha expirado o no has iniciado una recuperación.')
-        return redirect('password_reset')
-
-    if request.method == 'POST':
-        otp_ingresado = request.POST.get('otp', '').strip()
-        if otp_ingresado == request.session['reset_otp']:
-            # OTP correcto, generar token y redirigir
-            email = request.session['reset_email']
-            usuario = Usuario.objects.get(email__iexact=email)
-            
-            uid = urlsafe_base64_encode(force_bytes(usuario.pk))
-            token = default_token_generator.make_token(usuario)
-            
-            # Preparar y enviar el correo con el enlace de restablecimiento
-            context = {
-                'user': usuario,
-                'uid': uid,
-                'token': token,
-                'protocol': 'https' if request.is_secure() else 'http',
-                'domain': request.get_host(),
-            }
-            subject = 'Enlace para restablecer tu contraseña - Monagua'
-            html_message = render_to_string('authentication/password_reset_email.html', context)
-            plain_message = strip_tags(html_message)
-            
-            send_mail(
-                subject,
-                plain_message,
-                'noreply@monagua.com',
-                [email],
-                html_message=html_message,
-                fail_silently=False,
-            )
-            
-            # Limpiar sesión
-            del request.session['reset_email']
-            del request.session['reset_otp']
-            
-            return redirect('password_reset_done')
-        else:
-            messages.error(request, 'El código ingresado es incorrecto. Intenta de nuevo.')
-
-    # Ocultar parcialmente el correo por seguridad (e.g., j***@sena.edu.co)
-    email = request.session['reset_email']
-    partes = email.split('@')
-    email_oculto = f"{partes[0][0]}***@{partes[1]}" if len(partes) == 2 else email
-
-    return render(request, 'authentication/recuperar_otp.html', {'email_oculto': email_oculto})
-
 
 def terminos_view(request):
     """Renderiza la plantilla de términos y condiciones."""
@@ -152,70 +21,6 @@ def nosotros_view(request):
     return render(request, 'public/nosotros.html', {
         'titulo': 'Sobre Nosotros — Monagua'
     })
-
-# 2. VISTAS DE AUTENTICACIÓN
-
-
-def registro_view(request):
-    """Renderiza y gestiona la plantilla de registro de usuarios."""
-    if request.method == 'POST':
-        form = RegistroForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.rol = Usuario.Roles.CLIENTE
-            user.save()
-            Cliente.objects.create(usuario=user)
-            login(request, user, backend='usuarios.backends.EmailOrUsernameModelBackend')
-            messages.success(
-                request, 'Registro exitoso. ¡Bienvenido a Monagua!')
-            return redirect('inicio')
-        else:
-            messages.error(
-                request, 'Error en el registro. Verifique los datos.')
-    else:
-        form = RegistroForm()
-
-    return render(request, 'authentication/registro.html', {
-        'titulo': 'Crear Cuenta en Monagua',
-        'form': form
-    })
-
-
-class UsuarioLoginView(LoginView):
-    """Vista de inicio de sesión basada en clases para mayor robustez."""
-    template_name = 'authentication/login.html'
-    redirect_authenticated_user = True
-    extra_context = {'titulo': 'Iniciar Sesión — Monagua'}
-
-    def form_valid(self, form):
-        """Añade un mensaje de éxito al iniciar sesión correctamente."""
-        user = form.get_user()
-        messages.success(
-            self.request, f'¡Bienvenido nuevamente, {user.first_name or user.username}!')
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        # 1. Si existe un parámetro '?next=', respetarlo (ej: venía de reservar)
-        next_url = self.request.GET.get(
-            'next') or self.request.POST.get('next')
-        if next_url:
-            return next_url
-
-        # 2. Si no, redirigir según el rol del usuario
-        if self.request.user.is_staff:
-            return reverse_lazy('dashboard')
-        return reverse_lazy('index_turista')
-
-
-class UsuarioLogoutView(LogoutView):
-    """Gestiona el cierre de sesión y redirige al inicio."""
-    next_page = reverse_lazy('inicio')
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            messages.info(
-                request, "Has cerrado sesión correctamente. ¡Vuelve pronto!")
-        return super().dispatch(request, *args, **kwargs)
 
 
 # 3. PANELES DE CONTROL (DASHBOARDS)
@@ -276,7 +81,9 @@ def dashboard_admin(request):
     total_ventas = ComprobantePago.objects.filter(estado='aprobado').aggregate(Sum('monto'))['monto__sum'] or 0
     total_tours = Paquete.objects.filter(estado=True).count()
     total_pagos_rechazados = ComprobantePago.objects.filter(estado='rechazado').count()
-    total_promociones = 0  # Banners / promociones no tienen un modelo asignado actualmente
+    
+    from promociones.models import Promocion, Banner
+    total_promociones = Promocion.objects.count() + Banner.objects.count()
 
     current_year = timezone.now().year
     ingresos_mensuales = [0] * 12
@@ -666,105 +473,7 @@ def guias_guardar(request):
 
     return redirect('gestion_guias')
 
-# 5. MÓDULO DE INTERACCIÓN / COMENTARIOS
 
-
-@login_required
-def enviar_comentario(request):
-    """Renderiza el histórico de opiniones y procesa las nuevas reseñas de paquetes."""
-    if request.method == 'POST':
-        tipo = request.POST.get('tipo', 'experiencia')
-        titulo = request.POST.get('titulo')
-        mensaje = request.POST.get('mensaje')
-        valoracion = request.POST.get('valoracion', 5)
-        paquete_id = request.POST.get('paquete_id')
-
-        Comentario.objects.create(
-            usuario=request.user,
-            tipo=tipo,
-            titulo=titulo,
-            mensaje=mensaje,
-            valoracion=valoracion,
-            paquete_id=paquete_id if paquete_id else None
-        )
-        messages.success(request, 'Comentario enviado exitosamente.')
-        return redirect('mis_resenas')
-
-    return render(request, 'private/comentarios.html', {
-        'titulo': 'Comunidad Monagua — Reseñas y Experiencias'
-    })
-
-# 6. ADMINISTRACIÓN DE COMENTARIOS
-
-
-@user_passes_test(lambda u: u.is_staff)
-def listar_comentarios(request):
-    """Renderiza el módulo de moderación y auditoría de comentarios para el Staff."""
-    comentarios = Comentario.objects.all().select_related(
-        'usuario', 'paquete').order_by('-fecha_creacion')
-    return render(request, 'admin/comentarios.html', {
-        'titulo': 'Moderación de Comentarios — Administración',
-        'comentarios': comentarios
-    })
-
-
-@user_passes_test(lambda u: u.is_staff)
-def toggle_visible(request, pk):
-    """Acción de backend para alternar la visibilidad pública de un comentario (Redirecciona)."""
-    if request.method == 'POST':
-        comentario = get_object_or_404(Comentario, pk=pk)
-        comentario.visible = not comentario.visible
-        comentario.save()
-        estado = 'visible' if comentario.visible else 'oculto'
-        messages.info(request, f'Comentario marcado como {estado}.')
-    return redirect('listar_comentarios')
-
-
-@user_passes_test(lambda u: u.is_staff)
-def responder_comentario(request, pk):
-    """Acción de backend para almacenar la respuesta oficial del administrador (Redirecciona)."""
-    if request.method == 'POST':
-        comentario = get_object_or_404(Comentario, pk=pk)
-        comentario.admin_respuesta = request.POST.get('admin_respuesta', '')
-        comentario.save()
-        messages.success(request, 'Respuesta guardada correctamente.')
-    return redirect('listar_comentarios')
-
-# 7. HISTORIAL Y RESEÑAS DE USUARIOS
-
-
-@login_required
-def mis_resenas_view(request):
-    """
-    Renderiza el panel de reseñas del turista.
-    Procesa el envío de nuevas experiencias y distribuye las métricas globales.
-    """
-    if request.method == 'POST':
-        tipo = request.POST.get('tipo', 'experiencia')
-        titulo = request.POST.get('titulo')
-        mensaje = request.POST.get('mensaje')
-        valoracion = request.POST.get('valoracion', 5)
-        paquete_id = request.POST.get('paquete_id')
-
-        Comentario.objects.create(
-            usuario=request.user,
-            tipo=tipo,
-            titulo=titulo,
-            mensaje=mensaje,
-            valoracion=valoracion,
-            paquete_id=paquete_id if paquete_id else None
-        )
-        messages.success(request, 'Gracias por tu reseña.')
-        return redirect('mis_resenas')
-
-    comentarios = Comentario.objects.filter(
-        usuario=request.user).order_by('-fecha_creacion')
-    return render(request, 'private/resenas.html', {
-        'titulo': 'Mis Experiencias y Reseñas — Monagua',
-        'comentarios': comentarios
-    })
-
-# 8. MÓDULO DE MÉTRICAS Y ESTADÍSTICAS
 
 
 def get_estadisticas_context(user, is_admin=False):

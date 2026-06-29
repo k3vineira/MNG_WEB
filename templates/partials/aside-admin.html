@@ -3,7 +3,7 @@
   <!--1. VISTA EXPANDIDA (SIDEBAR ADMIN ANCHO) -->
   <div class="collapse collapse-horizontal show toggle-admin-sidebar" id="sidebarWide">
     
-    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary" style="width: 240px;">
+    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary" style="width: 280px; min-width: 280px; max-width: 280px; flex-shrink: 0;">
       
       <!-- Header / Brand -->
       <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
@@ -64,7 +64,7 @@
               <i class="bi bi-chevron-down small"></i>
             </button>
             <div class="collapse {% if 'listar_paquetes' in request.resolver_match.url_name or 'listar_actividades' in request.resolver_match.url_name or 'listar_tarifas' in request.resolver_match.url_name or 'listar_temporadas' in request.resolver_match.url_name or 'listar_categorias' in request.resolver_match.url_name %}show{% endif %}" id="menuPaquetes" data-bs-parent="#adminAccordion">
-              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'listar_paquetes' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_paquetes' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-box me-1"></i> Paquetes</a></li>
                 <li><a href="{% url 'listar_actividades' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_actividades' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-activity me-1"></i> Actividades</a></li>
                 <li><a href="{% url 'listar_tarifas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_tarifas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-tag me-1"></i> Tarifas</a></li>
@@ -82,7 +82,7 @@
               <i class="bi bi-chevron-down small"></i>
             </button>
             <div class="collapse {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}show{% endif %}" id="menuReservas" data-bs-parent="#adminAccordion">
-              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'listar_reservas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_reservas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar2-check me-1"></i> Reservas</a></li>
                 <li><a href="{% url 'administrar_cancelaciones' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-circle me-1"></i> Cancelaciones</a></li>
                 <li><a href="{% url 'admin_comprobantes' %}" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-receipt me-1"></i> Comprobantes</a></li>
@@ -99,7 +99,7 @@
               <i class="bi bi-chevron-down small"></i>
             </button>
             <div class="collapse {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}show{% endif %}" id="menuUsuarios" data-bs-parent="#adminAccordion">
-              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'gestion_usuarios' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'gestion_usuarios' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-person-fill me-1"></i> Gestionar Usuarios</a></li>
                 <li><a href="{% url 'gestion_guias' %}" class="nav-link small py-1 {% if 'gestion_guias' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-person-badge-fill me-1"></i> Gestionar Guías</a></li>
               </ul>
@@ -114,7 +114,7 @@
               <i class="bi bi-chevron-down small"></i>
             </button>
             <div class="collapse {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}show{% endif %}" id="menuContenido" data-bs-parent="#adminAccordion">
-              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'listar_blog' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_blog' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-journal-richtext me-1"></i> Blog</a></li>
                 <li><a href="{% url 'listar_pqrs' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_pqrs' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-envelope-paper me-1"></i> PQRS</a></li>
                 <li><a href="{% url 'gestion_promociones' %}" class="nav-link small py-1 {% if 'promociones' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-megaphone me-1"></i> Promociones</a></li>

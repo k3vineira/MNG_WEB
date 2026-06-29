@@ -1,11 +1,10 @@
 from django.shortcuts import render
-
-# Create your views here.
-
+from .models import Promocion
 
 def gestion_promociones(request):
+    promociones_activas = Promocion.objects.filter(activa=True)
     context = {
-        'promociones': [],
+        'promociones': promociones_activas,
         'titulo': 'Gestión de Promociones — Monagua'
     }
-    return render(request, 'promociones_gestion.html', context)
+    return render(request, 'promociones/promociones.html', context)

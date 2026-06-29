@@ -2,7 +2,7 @@
 <div id="mainSidebar" class="position-fixed top-0 start-0 h-100 d-flex shadow-lg bg-dark" style="z-index: 1040;">
   <div class="collapse collapse-horizontal show toggle-turista-sidebar" id="sidebarTuristaWide">
     
-    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary" style="width: 240px;">
+    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary" style="width: 280px; min-width: 280px; max-width: 280px; flex-shrink: 0;">
       
       <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
         <a href="{% url 'index_turista' %}" class="d-flex align-items-center gap-2 text-white text-decoration-none">
@@ -57,7 +57,7 @@
               <i class="bi bi-chevron-down small"></i>
             </button>
             <div class="collapse {% if 'mis_reservas_usuario' in request.resolver_match.url_name or 'mis_cancelaciones_usuario' in request.resolver_match.url_name or 'mis_rechazos' in request.resolver_match.url_name or 'mis_comprobantes' in request.resolver_match.url_name %}show{% endif %}" id="menuViajes" data-bs-parent="#turistaAccordion">
-              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'mis_reservas_usuario' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_reservas_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar-check-fill me-1"></i> Mis Reservas</a></li>
                 <li><a href="{% url 'mis_cancelaciones_usuario' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_cancelaciones_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-circle-fill me-1"></i> Mis Cancelaciones</a></li>
                 <li><a href="{% url 'mis_rechazos' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_rechazos' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon-fill text-danger me-1"></i> Mis Rechazos</a></li>
@@ -73,7 +73,7 @@
               <i class="bi bi-chevron-down small"></i>
             </button>
             <div class="collapse {% if 'mis_resenas' in request.resolver_match.url_name or 'blog_usuario' in request.resolver_match.url_name or 'mis_pqrs' in request.resolver_match.url_name %}show{% endif %}" id="menuComunidad" data-bs-parent="#turistaAccordion">
-              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'mis_resenas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_resenas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-star-fill me-1"></i> Mis Reseñas</a></li>
                 <li><a href="{% url 'blog_usuario' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'blog_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-journal-text me-1"></i> Blog</a></li>
                 <li><a href="{% url 'mis_pqrs' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_pqrs' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-envelope-fill me-1"></i> Mis PQRS</a></li>

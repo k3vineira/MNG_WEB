@@ -27,11 +27,8 @@ urlpatterns = [
     path('blog/usuario/', views.blog_usuario, name='blog_usuario'),
 
     # Comentarios
-    
-  
-
-
-
-
-
+    path('comentarios/', views.listar_comentarios, name='listar_comentarios'),
+    path('comentarios/toggle/<int:pk>/', views.toggle_visible, name='toggle_visible'),
+    path('comentarios/responder/<int:pk>/', views.responder_comentario, name='responder_comentario'),
+    path('mis-resenas/', views.mis_resenas_view, name='mis_resenas'),
 ]

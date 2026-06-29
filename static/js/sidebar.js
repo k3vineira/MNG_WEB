@@ -32,11 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
   wideIds.forEach(function (id) {
     var wideElement = document.getElementById(id);
     if (wideElement) {
-      wideElement.addEventListener('hide.bs.collapse', function () {
+      wideElement.addEventListener('hide.bs.collapse', function (e) {
+        if (e.target !== wideElement) return;
         document.body.classList.add('sidebar-slim-active');
         localStorage.setItem('sidebarState', 'slim');
       });
-      wideElement.addEventListener('show.bs.collapse', function () {
+      wideElement.addEventListener('show.bs.collapse', function (e) {
+        if (e.target !== wideElement) return;
         document.body.classList.remove('sidebar-slim-active');
         localStorage.setItem('sidebarState', 'wide');
       });

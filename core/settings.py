@@ -35,13 +35,14 @@ INSTALLED_APPS = [
     'promociones',
     'reservas',
     'guias',
-    'notificaciones'
+    'notificaciones',
+    'autenticacion'
 ]
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
 AUTHENTICATION_BACKENDS = [
-    'usuarios.backends.EmailOrUsernameModelBackend',
+    'autenticacion.backends.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
