@@ -1,188 +1,258 @@
 {% load static %}
-<aside id="mainSidebar" class="d-flex flex-column bg-dark text-white position-fixed top-0 start-0 h-100"
-  style="width:240px;z-index:1040;overflow-y:auto;transition:transform .3s">
-
-  <a href="/" class="d-flex align-items-center gap-2 p-3 text-decoration-none border-bottom border-secondary">
-    <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo" class="rounded-circle border border-success flex-shrink-0"
-      width="40" height="40" style="object-fit:cover">
-    <div>
-      <div class="fw-bold text-white small" style="letter-spacing:1px">MONAGUA</div>
-      <div class="text-success" style="font-size:.65rem;letter-spacing:2px;text-transform:uppercase">Admin Panel</div>
-    </div>
-  </a>
-
-  <nav class="flex-grow-1 py-2">
-
-    <div class="text-uppercase text-secondary fw-semibold px-3 py-1" style="font-size:.65rem;letter-spacing:.1em">
-      Principal</div>
-
-    <a href="/" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-house-door-fill"></i> Página Principal
-    </a>
-
-    <a href="{% url 'dashboard' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'dashboard' %}bg-success text-white{% endif %}">
-      <i class="bi bi-grid-1x2-fill"></i> Dashboard
-    </a>
-
-    <a href="{% url 'estadisticas_admin' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if request.resolver_match.url_name == 'estadisticas_admin' %}bg-success text-white{% endif %}">
-      <i class="bi bi-graph-up-arrow"></i> Estadísticas
-    </a>
-
-    <a href="{% url 'listar_comentarios' %}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1
-              {% if 'listar_comentarios' in request.resolver_match.url_name %}bg-success text-white{% endif %}">
-      <i class="bi bi-chat-left-dots-fill"></i> Comentarios
-    </a>
-
-    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">
-      Gestión</div>
-
-    <!-- Paquetes: submenú con elementos relacionados -->
-    <div class="px-2">
-      <button class="btn btn-sm btn-toggle w-100 text-start text-white-50 d-flex align-items-center gap-2 px-3 py-2 rounded mx-1 mb-1"
-        data-bs-toggle="collapse" data-bs-target="#menuPaquetes" aria-expanded="false">
-        <i class="bi bi-box-seam-fill"></i> Paquetes
-      </button>
-      <div class="collapse ms-3" id="menuPaquetes">
-        <a href="{% url 'listar_paquetes' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_paquetes' %}bg-success text-white{% endif %}">Paquetes</a>
-        <a href="{% url 'listar_actividades' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_actividades' %}bg-success text-white{% endif %}">Actividades</a>
-        <a href="{% url 'listar_tarifas' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_tarifas' %}bg-success text-white{% endif %}">Tarifas</a>
-        <a href="{% url 'listar_temporadas' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_temporadas' %}bg-success text-white{% endif %}">Temporadas</a>
-        <a href="{% url 'listar_categorias' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_categorias' %}bg-success text-white{% endif %}">Categorías</a>
+<div id="mainSidebar" class="position-fixed top-0 start-0 h-100 d-flex shadow-lg bg-dark" style="z-index: 1040;">
+  <!--1. VISTA EXPANDIDA (SIDEBAR ADMIN ANCHO) -->
+  <div class="collapse collapse-horizontal show toggle-admin-sidebar" id="sidebarWide">
+    
+    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary" style="width: 240px;">
+      
+      <!-- Header / Brand -->
+      <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
+        <a href="/" class="d-flex align-items-center gap-2 text-white text-decoration-none">
+          <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="rounded-circle border border-success flex-shrink-0" width="35" height="35" style="object-fit:cover">
+          <div class="d-flex flex-column">
+            <span class="fw-bold small" style="letter-spacing: 1px;">MONAGUA</span>
+            <span class="text-success text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 2px;">Admin Panel</span>
+          </div>
+        </a>
+        <button class="btn btn-sm btn-outline-secondary border-0 text-white flex-shrink-0 toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-admin-sidebar" aria-label="Contraer menú">
+          <i class="bi bi-chevron-left"></i>
+        </button>
       </div>
-    </div>
 
-    <!-- Reservas y Pagos -->
-    <div class="px-2 mt-1">
-      <button class="btn btn-sm btn-toggle w-100 text-start text-white-50 d-flex align-items-center gap-2 px-3 py-2 rounded mx-1 mb-1"
-        data-bs-toggle="collapse" data-bs-target="#menuReservas" aria-expanded="false">
-        <i class="bi bi-calendar-check-fill"></i> Reservas & Pagos
-      </button>
-      <div class="collapse ms-3" id="menuReservas">
-        <a href="{% url 'listar_reservas' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_reservas' %}bg-success text-white{% endif %}">Reservas</a>
-        <a href="{% url 'administrar_cancelaciones' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}bg-success text-white{% endif %}">Cancelaciones</a>
-        <a href="{% url 'admin_comprobantes' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}bg-success text-white{% endif %}">Comprobantes</a>
-        <a href="{% url 'admin_comprobantes' %}?estado=rechazado" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}bg-success text-white{% endif %}">Pagos Rechazados</a>
+      <!-- Menú de Navegación con ACORDEÓN -->
+      <nav class="flex-grow-1 overflow-auto p-3">
+        <ul class="nav nav-pills flex-column mb-auto gap-1" id="adminAccordion">
+          
+          <!-- Sección Principal -->
+          <li class="nav-item mt-1 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Principal</span>
+          </li>
+          <li class="nav-item">
+            <a href="/" class="nav-link text-white opacity-75 d-flex align-items-center gap-2">
+              <i class="bi bi-house-door-fill"></i> Página Principal
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'dashboard' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'dashboard' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-grid-1x2-fill"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'estadisticas_admin' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'estadisticas_admin' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-graph-up-arrow"></i> Estadísticas
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'listar_comentarios' %}" class="nav-link d-flex align-items-center gap-2 {% if 'listar_comentarios' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-chat-left-dots-fill"></i> Comentarios
+            </a>
+          </li>
+
+          <!-- Separador -->
+          <li class="nav-item mt-2"><hr class="border-secondary mx-2 my-1"></li>
+
+          <!-- Sección Gestión -->
+          <li class="nav-item mt-2 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Gestión</span>
+          </li>
+
+          <!-- Paquetes -->
+          <li class="nav-item">
+            <button class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    data-bs-toggle="collapse" data-bs-target="#menuPaquetes" aria-expanded="{% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-box-seam-fill"></i> Paquetes</div>
+              <i class="bi bi-chevron-down small"></i>
+            </button>
+            <div class="collapse {% if 'listar_paquetes' in request.resolver_match.url_name or 'listar_actividades' in request.resolver_match.url_name or 'listar_tarifas' in request.resolver_match.url_name or 'listar_temporadas' in request.resolver_match.url_name or 'listar_categorias' in request.resolver_match.url_name %}show{% endif %}" id="menuPaquetes" data-bs-parent="#adminAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+                <li><a href="{% url 'listar_paquetes' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_paquetes' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-box me-1"></i> Paquetes</a></li>
+                <li><a href="{% url 'listar_actividades' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_actividades' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-activity me-1"></i> Actividades</a></li>
+                <li><a href="{% url 'listar_tarifas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_tarifas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-tag me-1"></i> Tarifas</a></li>
+                <li><a href="{% url 'listar_temporadas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_temporadas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar-range me-1"></i> Temporadas</a></li>
+                <li><a href="{% url 'listar_categorias' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_categorias' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-bookmark me-1"></i> Categorías</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Reservas & Pagos -->
+          <li class="nav-item">
+            <button class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    data-bs-toggle="collapse" data-bs-target="#menuReservas" aria-expanded="{% if request.resolver_match.url_name in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-calendar-check-fill"></i> Reservas &amp; Pagos</div>
+              <i class="bi bi-chevron-down small"></i>
+            </button>
+            <div class="collapse {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}show{% endif %}" id="menuReservas" data-bs-parent="#adminAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+                <li><a href="{% url 'listar_reservas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_reservas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar2-check me-1"></i> Reservas</a></li>
+                <li><a href="{% url 'administrar_cancelaciones' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-circle me-1"></i> Cancelaciones</a></li>
+                <li><a href="{% url 'admin_comprobantes' %}" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-receipt me-1"></i> Comprobantes</a></li>
+                <li><a href="{% url 'admin_comprobantes' %}?estado=rechazado" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon text-danger me-1"></i> Pagos Rechazados</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Usuarios & Guías -->
+          <li class="nav-item">
+            <button class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'gestion_usuarios gestion_guias' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    data-bs-toggle="collapse" data-bs-target="#menuUsuarios" aria-expanded="{% if request.resolver_match.url_name in 'gestion_usuarios gestion_guias' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-people-fill"></i> Usuarios &amp; Guías</div>
+              <i class="bi bi-chevron-down small"></i>
+            </button>
+            <div class="collapse {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}show{% endif %}" id="menuUsuarios" data-bs-parent="#adminAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+                <li><a href="{% url 'gestion_usuarios' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'gestion_usuarios' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-person-fill me-1"></i> Gestionar Usuarios</a></li>
+                <li><a href="{% url 'gestion_guias' %}" class="nav-link small py-1 {% if 'gestion_guias' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-person-badge-fill me-1"></i> Gestionar Guías</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Contenido -->
+          <li class="nav-item">
+            <button class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_blog listar_pqrs gestion_promociones' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    data-bs-toggle="collapse" data-bs-target="#menuContenido" aria-expanded="{% if request.resolver_match.url_name in 'listar_blog listar_pqrs gestion_promociones' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-journal-text"></i> Contenido</div>
+              <i class="bi bi-chevron-down small"></i>
+            </button>
+            <div class="collapse {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}show{% endif %}" id="menuContenido" data-bs-parent="#adminAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1 text-nowrap">
+                <li><a href="{% url 'listar_blog' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_blog' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-journal-richtext me-1"></i> Blog</a></li>
+                <li><a href="{% url 'listar_pqrs' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_pqrs' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-envelope-paper me-1"></i> PQRS</a></li>
+                <li><a href="{% url 'gestion_promociones' %}" class="nav-link small py-1 {% if 'promociones' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-megaphone me-1"></i> Promociones</a></li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- Footer: Perfil + Logout -->
+      <div class="p-3 border-top border-secondary">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success flex-shrink-0" width="40" height="40" style="object-fit:cover">
+          <div class="overflow-hidden">
+            <div class="fw-bold text-white fs-6 text-truncate">{{ user.first_name|default:'Administrador' }}</div>
+            <div class="text-success fw-semibold text-truncate" style="font-size:.7rem">Super Admin</div>
+          </div>
+        </div>
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-power"></i> Cerrar Sesión
+          </button>
+        </form>
       </div>
-    </div>
-
-    <!-- Usuarios y Guías -->
-    <div class="px-2 mt-1">
-      <button class="btn btn-sm btn-toggle w-100 text-start text-white-50 d-flex align-items-center gap-2 px-3 py-2 rounded mx-1 mb-1"
-        data-bs-toggle="collapse" data-bs-target="#menuUsuarios" aria-expanded="false">
-        <i class="bi bi-people-fill"></i> Usuarios & Guías
-      </button>
-      <div class="collapse ms-3" id="menuUsuarios">
-        <a href="{% url 'gestion_usuarios' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'gestion_usuarios' %}bg-success text-white{% endif %}">Gestionar Usuarios</a>
-        <a href="{% url 'gestion_guias' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if 'gestion_guias' in request.resolver_match.url_name %}bg-success text-white{% endif %}">Gestionar Guías</a>
-      </div>
-    </div>
-
-    <!-- Contenido y Comunicación -->
-    <div class="px-2 mt-1">
-      <button class="btn btn-sm btn-toggle w-100 text-start text-white-50 d-flex align-items-center gap-2 px-3 py-2 rounded mx-1 mb-1"
-        data-bs-toggle="collapse" data-bs-target="#menuContenido" aria-expanded="false">
-        <i class="bi bi-journal-text"></i> Contenido
-      </button>
-      <div class="collapse ms-3" id="menuContenido">
-        <a href="{% url 'listar_blog' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_blog' %}bg-success text-white{% endif %}">Blog</a>
-        <a href="{% url 'listar_pqrs' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if request.resolver_match.url_name == 'listar_pqrs' %}bg-success text-white{% endif %}">PQRS</a>
-        <a href="{% url 'gestion_promociones' %}" class="d-block px-3 py-2 text-decoration-none text-white-50 rounded mb-1 {% if 'promociones' in request.resolver_match.url_name %}bg-success text-white{% endif %}">Promociones</a>
-      </div>
-    </div>
-
-    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">
-      Sistema</div>
-
-    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-bell-fill"></i> Notificaciones
-    </a>
-
-    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-gear-fill"></i> Configuración
-    </a>
-
-  </nav>
-
-  <div class="p-3 border-top border-secondary">
-    <div class="d-flex align-items-center gap-2 mb-2">
-      <img
-        src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
-        alt="{{ user.first_name|default:'Admin' }}" class="rounded-circle border border-success flex-shrink-0"
-        width="34" height="34" style="object-fit:cover">
-      <div>
-        <div class="fw-semibold text-white small">{{ user.first_name|default:'Administrador' }}</div>
-        <div class="text-success" style="font-size:.7rem">Super Admin</div>
-      </div>
-    </div>
-    <form action="{% url 'logout' %}" method="post">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-outline-danger btn-sm w-100">
-        <i class="bi bi-power"></i> Cerrar Sesión
-      </button>
-    </form>
+    </aside>
   </div>
 
-</aside>
+
+  <!-- =========================================================================
+       2. VISTA CONTRAÍDA (SIDEBAR MINIMALISTA ADMIN - SOLO ÍCONOS)
+       ========================================================================= -->
+  <div class="collapse collapse-horizontal toggle-admin-sidebar" id="sidebarSlim">
+    
+    <aside class="bg-dark text-white d-flex flex-column align-items-center h-100 border-end border-secondary" style="width: 70px;">
+      
+      <!-- Header / Icono de despliegue -->
+      <div class="d-flex align-items-center justify-content-center p-3 w-100 border-bottom border-secondary" style="height: 72px;">
+        <button class="btn btn-sm btn-outline-secondary border-0 text-white toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-admin-sidebar" aria-label="Expandir menú">
+          <i class="bi bi-list fs-4"></i>
+        </button>
+      </div>
+
+      <!-- Navegación Minimalista (Dropend) -->
+      <nav class="flex-grow-1 overflow-visible w-100 py-3">
+        <ul class="nav flex-column align-items-center w-100 gap-2">
+          
+          <li class="nav-item w-100 text-center">
+            <a href="/" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" title="Página Principal"><i class="bi bi-house-door-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'dashboard' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'dashboard' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Dashboard"><i class="bi bi-grid-1x2-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'estadisticas_admin' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'estadisticas_admin' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Estadísticas"><i class="bi bi-graph-up-arrow fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'listar_comentarios' %}" class="btn w-100 py-2 border-0 rounded-0 {% if 'listar_comentarios' in request.resolver_match.url_name %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Comentarios"><i class="bi bi-chat-left-dots-fill fs-5"></i></a>
+          </li>
+
+          <!-- Separador -->
+          <li class="nav-item w-100 text-center mt-2"><hr class="border-secondary mx-2 my-1"></li>
+
+          <!-- Paquetes (Dropend) -->
+          <li class="nav-item w-100 text-center dropend mt-2">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_paquetes' in request.resolver_match.url_name or 'listar_actividades' in request.resolver_match.url_name or 'listar_tarifas' in request.resolver_match.url_name or 'listar_temporadas' in request.resolver_match.url_name or 'listar_categorias' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Paquetes">
+              <i class="bi bi-box-seam-fill fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Paquetes</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_paquetes' %}active bg-success{% endif %}" href="{% url 'listar_paquetes' %}"><i class="bi bi-box me-2"></i>Paquetes</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_actividades' %}active bg-success{% endif %}" href="{% url 'listar_actividades' %}"><i class="bi bi-activity me-2"></i>Actividades</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_tarifas' %}active bg-success{% endif %}" href="{% url 'listar_tarifas' %}"><i class="bi bi-tag me-2"></i>Tarifas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_temporadas' %}active bg-success{% endif %}" href="{% url 'listar_temporadas' %}"><i class="bi bi-calendar-range me-2"></i>Temporadas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_categorias' %}active bg-success{% endif %}" href="{% url 'listar_categorias' %}"><i class="bi bi-bookmark me-2"></i>Categorías</a></li>
+            </ul>
+          </li>
+
+          <!-- Reservas & Pagos (Dropend) -->
+          <li class="nav-item w-100 text-center dropend">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Reservas &amp; Pagos">
+              <i class="bi bi-calendar-check-fill fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Reservas &amp; Pagos</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_reservas' %}active bg-success{% endif %}" href="{% url 'listar_reservas' %}"><i class="bi bi-calendar2-check me-2"></i>Reservas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}active bg-success{% endif %}" href="{% url 'administrar_cancelaciones' %}"><i class="bi bi-x-circle me-2"></i>Cancelaciones</a></li>
+              <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success{% endif %}" href="{% url 'admin_comprobantes' %}"><i class="bi bi-receipt me-2"></i>Comprobantes</a></li>
+              <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger{% endif %}" href="{% url 'admin_comprobantes' %}?estado=rechazado"><i class="bi bi-x-octagon text-danger me-2"></i>Pagos Rechazados</a></li>
+            </ul>
+          </li>
+
+          <!-- Usuarios & Guías (Dropend) -->
+          <li class="nav-item w-100 text-center dropend">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Usuarios &amp; Guías">
+              <i class="bi bi-people-fill fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Usuarios &amp; Guías</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'gestion_usuarios' %}active bg-success{% endif %}" href="{% url 'gestion_usuarios' %}"><i class="bi bi-person-fill me-2"></i>Gestionar Usuarios</a></li>
+              <li><a class="dropdown-item {% if 'gestion_guias' in request.resolver_match.url_name %}active bg-success{% endif %}" href="{% url 'gestion_guias' %}"><i class="bi bi-person-badge-fill me-2"></i>Gestionar Guías</a></li>
+            </ul>
+          </li>
+
+          <!-- Contenido (Dropend) -->
+          <li class="nav-item w-100 text-center dropend">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Contenido">
+              <i class="bi bi-journal-text fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Contenido</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_blog' %}active bg-success{% endif %}" href="{% url 'listar_blog' %}"><i class="bi bi-journal-richtext me-2"></i>Blog</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_pqrs' %}active bg-success{% endif %}" href="{% url 'listar_pqrs' %}"><i class="bi bi-envelope-paper me-2"></i>PQRS</a></li>
+              <li><a class="dropdown-item {% if 'promociones' in request.resolver_match.url_name %}active bg-success{% endif %}" href="{% url 'gestion_promociones' %}"><i class="bi bi-megaphone me-2"></i>Promociones</a></li>
+            </ul>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- Footer Slim -->
+      <div class="p-2 w-100 text-center border-top border-secondary d-flex flex-column align-items-center gap-3">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success" width="34" height="34" style="object-fit:cover" title="{{ user.first_name|default:'Administrador' }}">
+        <form action="{% url 'logout' %}" method="post" class="w-100">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger border-0 w-100" title="Cerrar Sesión">
+            <i class="bi bi-power fs-5"></i>
+          </button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+
+</div>
+
+<link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+<script src="{% static 'js/sidebar.js' %}"></script>
+
 {% include 'notificaciones.html' %}
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const currentPath = window.location.pathname;
-    const sidebarLinks = document.querySelectorAll("#mainSidebar nav a");
-
-    let activeLink = null;
-    let maxMatchLength = 0;
-
-    sidebarLinks.forEach(link => {
-      const href = link.getAttribute("href");
-      if (!href || href === "#" || href === "") return;
-
-      // Split path and query parameters
-      const hrefPath = href.split('?')[0];
-      const hasRechazadoQuery = href.includes("estado=rechazado");
-      const currentHasRechazadoQuery = window.location.search.includes("estado=rechazado");
-
-      // If we are looking for a rejected query and it doesn't match the current page's query status, skip
-      if (hasRechazadoQuery !== currentHasRechazadoQuery) return;
-
-      // Normalize paths
-      const normalizedHref = hrefPath.replace(/\/$/, "");
-      const normalizedPath = currentPath.replace(/\/$/, "");
-
-      // Match condition
-      if (normalizedPath === normalizedHref || normalizedPath.startsWith(normalizedHref + '/')) {
-        if (normalizedHref.length > maxMatchLength) {
-          maxMatchLength = normalizedHref.length;
-          activeLink = link;
-        }
-      }
-
-      // Special case for cancelaciones -> Reservas
-      if (normalizedPath.includes('/cancelaciones') && normalizedHref.includes('/reservas')) {
-        activeLink = link;
-      }
-
-    });
-
-    if (activeLink) {
-      sidebarLinks.forEach(link => {
-        link.classList.remove("bg-success", "text-white");
-        link.classList.add("text-white-50");
-      });
-      activeLink.classList.remove("text-white-50");
-      activeLink.classList.add("bg-success", "text-white");
-      // Expand parent collapse if link is inside one
-      const parentCollapse = activeLink.closest('.collapse');
-      if (parentCollapse) {
-        try {
-          const bsCollapse = bootstrap.Collapse.getOrCreateInstance(parentCollapse);
-          bsCollapse.show();
-        } catch (e) {
-          // ignore if bootstrap is not available
-        }
-      }
-    }
-  });
-</script>
