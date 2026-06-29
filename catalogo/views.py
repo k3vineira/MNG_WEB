@@ -72,6 +72,18 @@ class PaqueteCreateView(CreateView):
     ]
     template_name = 'admin/paquetes/agregar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        for name, field in form.fields.items():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.update({'class': 'form-check-input'})
+            elif isinstance(field.widget, forms.Select) or isinstance(field.widget, forms.SelectMultiple):
+                field.widget.attrs.update({'class': 'form-select'})
+            else:
+                field.widget.attrs.update({'class': 'form-control'})
+        return form
+
     def form_valid(self, form):
         response = super().form_valid(form)
         
@@ -95,8 +107,12 @@ class PaqueteUpdateView(UpdateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        for field in form.fields.values():
-            if not isinstance(field.widget, forms.CheckboxInput):
+        for name, field in form.fields.items():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.update({'class': 'form-check-input'})
+            elif isinstance(field.widget, forms.Select) or isinstance(field.widget, forms.SelectMultiple):
+                field.widget.attrs.update({'class': 'form-select'})
+            else:
                 field.widget.attrs.update({'class': 'form-control'})
         return form
     def form_valid(self, form):
@@ -161,6 +177,17 @@ class ActividadesCreateView(CreateView):
               'recomendacion_salud', 'estado', 'apto_para_menores']
     template_name = 'admin/actividades/agregar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        for name, field in form.fields.items():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.update({'class': 'form-check-input'})
+            elif isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'class': 'form-select'})
+            else:
+                field.widget.attrs.update({'class': 'form-control'})
+        return form
     
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -179,16 +206,15 @@ class ActividadesUpdateView(UpdateView):
               'recomendacion_salud', 'estado', 'apto_para_menores']
     template_name = 'admin/actividades/editar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
-    
-    
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        for field in form.fields.values():
+        for name, field in form.fields.items():
             if isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs.update({'class': 'form-check-input'})
+            elif isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'class': 'form-select'})
             else:
-
                 field.widget.attrs.update({'class': 'form-control'})
         return form
     def form_valid(self, form):
@@ -250,6 +276,18 @@ class CategoriaCreateView(CreateView):
     fields = ['nombre', 'descripcion', 'estado']
     template_name = 'admin/categorias/agregar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        for name, field in form.fields.items():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.update({'class': 'form-check-input'})
+            elif isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'class': 'form-select'})
+            else:
+                field.widget.attrs.update({'class': 'form-control'})
+        return form
+
     def form_valid(self, form):
         response = super().form_valid(form)
         crear_notificacion_sistema(
@@ -262,7 +300,6 @@ class CategoriaCreateView(CreateView):
     
     
 
-
 class CategoriaUpdateView(UpdateView):
     model = Categoria
     fields = ['nombre', 'descripcion', 'estado']
@@ -271,8 +308,12 @@ class CategoriaUpdateView(UpdateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        for field in form.fields.values():
-            if not isinstance(field.widget, forms.CheckboxInput):
+        for name, field in form.fields.items():
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.update({'class': 'form-check-input'})
+            elif isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'class': 'form-select'})
+            else:
                 field.widget.attrs.update({'class': 'form-control'})
         return form
     def form_valid(self, form):

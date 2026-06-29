@@ -122,19 +122,22 @@ def dashboard_admin(request):
 
     cancelaciones_hoy = Cancelacion.objects.filter(reserva__fecha=hoy).count()
     cancelaciones_rechazadas = Cancelacion.objects.filter(estado='rechazada').count()
-    cancelaciones_pendientes = Cancelacion.objects.filter(estado='revision').count()
+    cancelaciones_pendientes = Cancelacion.objects.filter(estado__in=['pendiente', 'revision']).count()
 
     packages = Paquete.objects.filter(estado=True).annotate(
         numero_reservas=Count('reserva')
     ).order_by('-numero_reservas')[:5]
+    
+    max_reservas = max([p.numero_reservas for p in packages], default=1)
+    if max_reservas == 0:
+        max_reservas = 1
+
     tours_populares = [{
         'nombre': p.nombre,
         'precio': p.precio_minimo,
         'numero_reservas': p.numero_reservas,
+        'porcentaje': int((p.numero_reservas / max_reservas) * 100)
     } for p in packages]
-    max_reservas = max([t['numero_reservas'] for t in tours_populares], default=1)
-    if max_reservas == 0:
-        max_reservas = 1
 
     # Actividad reciente
     from django.utils.timesince import timesince
@@ -221,11 +224,22 @@ def perfil_detalles(request):
 @user_passes_test(lambda u: u.is_staff)
 def gestion_usuarios(request, id=None):
     """Renderiza el panel de control integral para la gestión de todos los Usuarios."""
-    # Filtro por rol (viene del query string ?filtro=ADMIN|GUIA|CLIENTE)
     filtro = request.GET.get('filtro', '')
-    usuarios = Usuario.objects.all().select_related('cliente', 'guia')
+    busqueda = request.GET.get('q', '').strip()
+    
+    usuarios = Usuario.objects.exclude(rol=Usuario.Roles.GUIA).select_related('cliente', 'guia')
+    
     if filtro in [r.value for r in Usuario.Roles]:
         usuarios = usuarios.filter(rol=filtro)
+        
+    if busqueda:
+        from django.db.models import Q
+        usuarios = usuarios.filter(
+            Q(username__icontains=busqueda) | 
+            Q(email__icontains=busqueda) | 
+            Q(first_name__icontains=busqueda) | 
+            Q(last_name__icontains=busqueda)
+        )
 
     # Conteos rápidos para los badges del encabezado
     total_admins = Usuario.objects.filter(rol=Usuario.Roles.ADMIN).count()

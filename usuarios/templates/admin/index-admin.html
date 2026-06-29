@@ -153,7 +153,7 @@
         <span class="badge bg-success">{{ "now"|date:"Y" }}</span>
       </div>
       <div class="card-body p-3">
-        <div class="chart-container"><canvas id="chartIngresos"></canvas></div>
+        <div class="chart-container" style="position: relative; height: 250px; width: 100%;"><canvas id="chartIngresos"></canvas></div>
       </div>
     </div>
   </div>
@@ -165,7 +165,7 @@
         <div class="text-muted small">Distribución actual</div>
       </div>
       <div class="card-body d-flex flex-column align-items-center p-3">
-        <div class="chart-container"><canvas id="chartEstado"></canvas></div>
+        <div class="chart-container" style="position: relative; height: 200px; width: 100%;"><canvas id="chartEstado"></canvas></div>
         <div class="d-flex justify-content-center gap-3 mt-3" style="font-size:.72rem;color:#666">
           <span class="d-flex align-items-center gap-1">
             <span class="rounded-1 bg-success d-inline-block" style="width:10px;height:10px"></span> Confirmadas
@@ -309,15 +309,12 @@
           <td style="min-width:130px">
             <div class="d-flex align-items-center gap-2">
               <div class="progress flex-grow-1" style="height:5px">
-                {% if tour.numero_reservas > 0 %}
-                  {% widthratio tour.numero_reservas max_reservas|default:tour.numero_reservas 100 as percentage %}
-                {% endif %}
                 <div class="progress-bar bg-success"
-                     style="width: {{ percentage|default:0 }}%; border-radius:99px"
+                     style="width: {{ tour.porcentaje }}%; border-radius:99px"
                      role="progressbar">
                 </div>
               </div>
-              <small class="text-muted">{{ percentage|default:0 }}%</small>
+              <small class="text-muted">{{ tour.porcentaje }}%</small>
             </div>
           </td>
           <td>
@@ -341,7 +338,7 @@
 
 {% endblock %}
 
-{% block extra_js %}
+{% block scripts %}
 <script>
 /* Fecha */
 document.getElementById('currentDate').textContent =

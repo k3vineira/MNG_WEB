@@ -2,100 +2,179 @@
 {% load humanize %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container py-4">
     
-    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color: var(--verde-oscuro); color: white; max-width: 1200px;">
-        <div class="card-body py-4 px-5 d-flex justify-content-between align-items-center">
-            <h2 class="fw-bold mb-0">Gestión de Reservas</h2>
-            <a href="{% url 'crear_reserva' %}" class="btn btn-light text-success fw-bold px-4 py-2 rounded-3 fs-5">
-                <i class="bi bi-plus-circle me-2"></i> Nueva Reserva
+    <!-- Cabecera -->
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-md-8">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-2 fw-bold">PANEL DE CONTROL</span>
+            <h2 class="display-6 fw-bold text-dark mb-1">Gestión de Reservas</h2>
+            <p class="text-muted mb-0">Administra las reservas activas y gestiona los estados de los viajes solicitados.</p>
+        </div>
+        <div class="col-md-4 text-md-end text-start">
+            <a href="{% url 'crear_reserva' %}" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Nueva Reserva
             </a>
         </div>
     </div>
-<div class="row g-4 mb-4 mx-auto justify-content-center" style="max-width: 1200px;">
-    {% for label, count, color in stats_list %}
-    <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background: #ffffff;">
-            <div class="card-body d-flex flex-column align-items-center justify-content-center p-2">
-                
-                <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" 
-                     style="width: 65px; height: 65px; 
-                            {% if color == 'text-success' %} background-color: #e8f5e9; 
-                            {% elif color == 'text-danger' %} background-color: #ffebee; 
-                            {% elif color == 'text-warning' %} background-color: #fff3cd; 
-                            {% else %} background-color: #f1f3f5; {% endif %}">
-                    
-                    {% if color == 'text-dark' or color == 'text-primary' %}
-                        <i class="bi bi-luggage-fill text-secondary" style="font-size: 1.8rem;"></i>
-                    {% elif color == 'text-success' %}
-                        <i class="bi bi-airplane-engines-fill text-success" style="font-size: 1.8rem;"></i>
-                    {% elif color == 'text-danger' %}
-                        <i class="bi bi-ticket-detailed-fill text-danger" style="font-size: 1.8rem;"></i>
-                    {% else %}
-                        <i class="bi bi-compass-fill text-warning" style="font-size: 1.8rem;"></i>
-                    {% endif %}
-                </div>
 
-                <span class="text-muted text-uppercase fw-bold mb-2" style="font-size: 0.8rem; letter-spacing: 0.5px;">
-                    {{ label }}
-                </span>
-                
-                <h2 class="fw-black mb-0 {{ color }}" style="font-size: 2.4rem; font-weight: 800; line-height: 1;">
-                    {{ count }}
-                </h2>
-                
+    <!-- Panel de Estadísticas -->
+    <div class="row g-3 mb-4">
+        {% for label, count, color in stats_list %}
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 h-100 bg-white">
+                <div class="card-body p-0 d-flex align-items-center justify-content-between">
+                    <div class="text-start">
+                        <span class="text-uppercase text-muted small fw-bold d-block mb-1" style="letter-spacing: 0.5px;">{{ label }}</span>
+                        <h3 class="fw-bold mb-0 {% if color == 'text-success' %}text-success{% elif color == 'text-danger' %}text-danger{% elif color == 'text-warning' %}text-warning{% else %}text-dark{% endif %}">{{ count|default:0 }}</h3>
+                    </div>
+                    <div class="p-3 rounded-4 fs-3 {% if color == 'text-success' %}bg-success bg-opacity-10 text-success{% elif color == 'text-danger' %}bg-danger bg-opacity-10 text-danger{% elif color == 'text-warning' %}bg-warning bg-opacity-10 text-warning{% else %}bg-light text-secondary{% endif %}">
+                        {% if color == 'text-success' %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% elif color == 'text-danger' %}
+                            <i class="bi bi-x-circle-fill"></i>
+                        {% elif color == 'text-warning' %}
+                            <i class="bi bi-hourglass-split"></i>
+                        {% else %}
+                            <i class="bi bi-files"></i>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 
-    <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 1200px;">
-        <div class="table-responsive">
+    <!-- Tabla y Contenido -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        
+        <!-- Tabla para Escritorio -->
+        <div class="table-responsive d-none d-md-block">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr class="text-uppercase text-muted" style="font-size: 1rem;">
-                        <th class="ps-5 py-4">Cliente</th>
-                        <th class="py-4">Paquete</th>
-                        <th class="py-4">Fecha</th>
-                        <th class="py-4">Total</th>
-                        <th class="py-4">Estado</th>
-                        <th class="text-center py-4">Acciones</th>
+                    <tr class="text-secondary small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                        <th class="ps-4 py-3">Cliente</th>
+                        <th class="py-3">Aventura / Paquete</th>
+                        <th class="py-3">Fecha de Viaje</th>
+                        <th class="py-3">Monto Abonado</th>
+                        <th class="text-center py-3">Estado</th>
+                        <th class="text-end pe-4 py-3">Acciones</th>
                     </tr>
                 </thead>
-                <tbody style="font-size: 1.1rem;">
+                <tbody>
                     {% for reserva in reservas %}
                     <tr>
-                        <td class="ps-5 fw-bold text-dark py-3">{{ reserva.usuario }}</td>
-                        <td class="py-3">{{ reserva.paquete.nombre }}</td>
-                        <td class="py-3">{{ reserva.fecha }}</td>
-                        <td class="text-success fw-bold py-3">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</td>
-                         <td class="py-3">
-                        {% if reserva.estado == 'pendiente' %}
-                         <span class="badge text-white px-4 py-2 fs-6 rounded-pill" style="background-color: #406d46;">Pendiente</span>
-                         {% elif reserva.estado == 'confirmada' %}
-                        <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill">Confirmada</span>
-                         {% else %}
-                        <span class="badge bg-danger text-white px-4 py-2 fs-6 rounded-pill">Cancelada</span>
-                         {% endif %}
+                        <td class="ps-4 py-3 fw-bold text-dark">
+                            {{ reserva.usuario.get_full_name|default:reserva.usuario.username }}
+                            <small class="text-muted d-block fw-normal">{{ reserva.usuario.email }}</small>
                         </td>
-                         <td class="align-middle">
-                        <div class="d-flex align-items-center gap-3"> 
-                        {% if reserva.estado == 'confirmada' %}
-                        <span class="text-muted fs-6 fw-bold"><i class="bi bi-lock-fill"></i> Bloqueada</span>
-                         {% else %}
-                        <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-link text-primary fw-bold text-decoration-none fs-6 p-0">EDITAR</a>
-                         <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-link text-danger fw-bold text-decoration-none fs-6 p-0">ELIMINAR</a>
-                        {% endif %}
-                         </div>
+                        <td class="py-3 fw-semibold text-secondary">
+                            {{ reserva.paquete.nombre }}
+                            <small class="text-muted d-block fw-normal">Reserva #{{ reserva.id }}</small>
+                        </td>
+                        <td class="py-3 text-dark">
+                            {{ reserva.fecha }}
+                        </td>
+                        <td class="py-3 text-success fw-bold">
+                            COP ${{ reserva.monto_total|floatformat:0|intcomma }}
+                        </td>
+                        <td class="text-center py-3">
+                            {% if reserva.estado == 'pendiente' %}
+                                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
+                                    <i class="bi bi-hourglass-split me-1"></i>Pendiente
+                                </span>
+                            {% elif reserva.estado == 'confirmada' %}
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Confirmada
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
+                                    <i class="bi bi-x-circle-fill me-1"></i>Cancelada
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4 py-3">
+                            {% if reserva.estado == 'confirmada' %}
+                                <span class="text-muted small fw-semibold"><i class="bi bi-lock-fill me-1"></i>Bloqueada</span>
+                            {% else %}
+                                <div class="d-inline-flex gap-2">
+                                    <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-outline-primary px-3 rounded-pill fw-semibold shadow-sm">
+                                        <i class="bi bi-pencil-square me-1"></i> Editar
+                                    </a>
+                                    <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-sm btn-outline-danger px-3 rounded-pill fw-semibold shadow-sm">
+                                        <i class="bi bi-trash me-1"></i> Eliminar
+                                    </a>
+                                </div>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="6" class="text-center py-5 fs-4 text-muted">No hay reservas registradas.</td></tr>
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-folder-x fs-1 d-block mb-3 text-secondary"></i>
+                            No hay reservas registradas en el sistema.
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        <!-- Tarjetas para Móviles -->
+        <div class="d-md-none p-3">
+            {% for reserva in reservas %}
+            <div class="card border border-light shadow-sm rounded-4 mb-3 bg-white overflow-hidden">
+                <div class="card-header bg-light border-0 py-2 px-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-bold">Reserva #{{ reserva.id }}</span>
+                    {% if reserva.estado == 'pendiente' %}
+                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-2 py-1 small fw-bold">Pendiente</span>
+                    {% elif reserva.estado == 'confirmada' %}
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1 small fw-bold">Confirmada</span>
+                    {% else %}
+                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2 py-1 small fw-bold">Cancelada</span>
+                    {% endif %}
+                </div>
+                <div class="card-body p-3">
+                    <div class="mb-3">
+                        <h6 class="fw-bold text-dark mb-1">{{ reserva.usuario.get_full_name|default:reserva.usuario.username }}</h6>
+                        <small class="text-secondary fw-semibold d-block">{{ reserva.paquete.nombre }}</small>
+                        <small class="text-muted d-block">Fecha: {{ reserva.fecha }}</small>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center border-top pt-2 small mb-3">
+                        <span class="text-secondary fw-semibold">Monto Total:</span>
+                        <span class="fw-bold text-success">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</span>
+                    </div>
+
+                    <div class="border-top pt-2">
+                        {% if reserva.estado == 'confirmada' %}
+                            <div class="text-center text-muted small py-1 fw-semibold">
+                                <i class="bi bi-lock-fill me-1"></i> Reserva bloqueada para edición
+                            </div>
+                        {% else %}
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-outline-primary w-100 py-2 rounded-pill fw-semibold">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-sm btn-outline-danger w-100 py-2 rounded-pill fw-semibold">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 text-muted">
+                No hay reservas registradas.
+            </div>
+            {% endfor %}
+        </div>
+
     </div>
 </div>
 {% endblock %}

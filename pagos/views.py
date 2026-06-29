@@ -102,6 +102,9 @@ def admin_comprobantes(request):
 
     if estado_filtro:
         comprobantes = comprobantes.filter(estado=estado_filtro)
+    else:
+        # Excluir rechazados de la vista general
+        comprobantes = comprobantes.exclude(estado='rechazado')
 
     total = ComprobantePago.objects.count()
     total_pendientes = ComprobantePago.objects.filter(

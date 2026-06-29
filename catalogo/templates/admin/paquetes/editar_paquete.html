@@ -1,39 +1,146 @@
 {% extends "admin/base-admin.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container-fluid py-5" style="background-color: #f8f9fa; min-height: 80vh; display: flex; align-items: center;">
-    <div class="row justify-content-center w-100">
-        <div class="col-md-8 col-lg-5">
-            <div class="card shadow-sm border-0 mb-4">
-                
-                <div class="card-header text-white py-3" style="background-color: var(--verde-oscuro);">
-                    <h5 class="mb-0 fw-bold text-center"><i class="bi bi-pencil-square me-2"></i>Editar Paquete Turístico</h5>
-                    {% if object %}
-                        <div class="text-center"><small class="text-white-50">Paquete: {{ object.nombre }}</small></div>
-                    {% endif %}
-                </div>
-                
-                <div class="card-body p-4">
-                    <form method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        {{ form|crispy }}
-                        
-                        <hr class="my-4 text-secondary opacity-25">
-
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{% url 'listar_paquetes' %}" class="btn btn-outline-secondary">Cancelar</a>
-                            <button type="submit" class="btn btn-success px-5 fw-bold" style="background-color: var(--verde-oscuro); color: white;">
-                                Guardar cambios
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
+<div class="container-fluid py-4">
+    
+    <!-- 1. Encabezado -->
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
+                    <i class="bi bi-pencil-square me-3"></i>Editar Paquete
+                </h1>
+                <p class="text-muted mb-0">Modifica los detalles del paquete turístico: <strong>{{ object.nombre }}</strong></p>
             </div>
+            <a href="{% url 'listar_paquetes' %}" class="btn btn-outline-success fw-bold rounded-pill shadow-sm px-4">
+                <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+            </a>
         </div>
     </div>
+
+    <!-- 2. Formulario -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="alert alert-danger shadow-sm rounded-4 mb-4">
+                <h6 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Por favor corrige los siguientes errores:</h6>
+                <ul class="mb-0 small">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="row g-4">
+            <!-- Columna Izquierda: Información del Paquete -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                    <h5 class="fw-bold text-success mb-3 border-bottom pb-2">
+                        <i class="bi bi-info-circle-fill me-2"></i>Información Principal
+                    </h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label text-secondary small fw-bold mb-1">Nombre del Paquete *</label>
+                            {{ form.nombre }}
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label text-secondary small fw-bold mb-1">Categoría *</label>
+                            {{ form.categoria }}
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label text-secondary small fw-bold mb-1">Descripción General *</label>
+                            {{ form.descripcion }}
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label text-secondary small fw-bold mb-1">Imagen del Paquete</label>
+                            {% if object.imagen %}
+                                <div class="mb-2">
+                                    <img src="{{ object.imagen.url }}" alt="{{ object.nombre }}" class="img-thumbnail rounded" style="max-height: 120px;">
+                                </div>
+                            {% endif %}
+                            {{ form.imagen }}
+                            <small class="text-muted d-block mt-1">Sube una nueva fotografía para actualizar la portada.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Duración, Encuentro y Actividades -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <h5 class="fw-bold text-success mb-3 border-bottom pb-2">
+                        <i class="bi bi-clock-history me-2"></i>Duración y Encuentro
+                    </h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-bold mb-1">Días de Duración *</label>
+                            {{ form.dias_duracion }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-bold mb-1">Noches de Duración *</label>
+                            {{ form.noches_duracion }}
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label text-secondary small fw-bold mb-1">Hora de Encuentro *</label>
+                            {{ form.hora_encuentro }}
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label text-secondary small fw-bold mb-1">Punto de Encuentro *</label>
+                            {{ form.punto_encuentro }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 p-4">
+                    <h5 class="fw-bold text-success mb-3 border-bottom pb-2">
+                        <i class="bi bi-activity me-2"></i>Actividades y Estado
+                    </h5>
+                    
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small fw-bold mb-1">Actividades Incluidas *</label>
+                        {{ form.actividades }}
+                        <small class="text-muted d-block mt-1">Mantén presionado Ctrl (o Cmd) para seleccionar múltiples actividades.</small>
+                    </div>
+
+                    <div class="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
+                        <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 m-0">
+                            <div>
+                                <label class="form-check-label fw-bold text-success" for="{{ form.estado.id_for_label }}">¿Paquete Activo?</label>
+                                <small class="text-muted d-block">Los paquetes inactivos no se muestran al público.</small>
+                            </div>
+                            <div class="form-check form-switch fs-5 p-0 m-0">
+                                {{ form.estado }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+            <a href="{% url 'listar_paquetes' %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill fw-bold">
+                Cancelar
+            </a>
+            <button type="submit" class="btn btn-success px-5 py-2 rounded-pill fw-bold shadow-sm">
+                <i class="bi bi-save me-2"></i>Guardar Cambios
+            </button>
+        </div>
+    </form>
 </div>
 {% endblock content %}

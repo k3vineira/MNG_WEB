@@ -1,110 +1,161 @@
 {% extends 'admin/base-admin.html' %}
-{% load static %}
-{% block extra_head %}
-<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
-{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    
-    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color: var(--verde-mid); color: white; max-width: 1200px;">
-        <div class="card-body py-4 px-5 d-flex justify-content-between align-items-center">
-            <h2 class="fw-bold mb-0">Administración de Paquetes</h2>
-            <a href="{% url 'crear_paquete' %}" class="btn btn-light text-success fw-bold px-4 py-2 rounded-3 fs-5">
-                <i class="bi bi-plus-circle me-2"></i> Nuevo Paquete
+<div class="container-fluid py-4">
+    <!-- 1. Encabezado -->
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
+                    <i class="bi bi-luggage-fill me-3"></i>Administración de Paquetes
+                </h1>
+                <p class="text-muted mb-0">Gestiona los paquetes turísticos ofrecidos en Monagua.</p>
+            </div>
+            <a href="{% url 'crear_paquete' %}" class="btn btn-success fw-bold rounded-pill shadow-sm px-4 py-2">
+                <i class="bi bi-plus-circle me-2"></i>Nuevo Paquete
             </a>
         </div>
     </div>
 
-    <div class="row g-4 mb-4 mx-auto justify-content-center" style="max-width: 1200px;">
-    {% for label, count, color in stats_list %}
-    <div class="col-12 col-sm-6 col-md-4">
-      
-        <div class="card border-0 shadow-sm rounded-4 text-center p-4 h-100" style="background: #ffffff;">
-            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                
-           
-                <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" 
-                     style="width: 75px; height: 75px; 
-                            {% if color == 'text-success' %} background-color: #e8f5e9; 
-                            {% elif color == 'text-danger' %} background-color: #ffebee; 
-                            {% else %} background-color: #f1f3f5; {% endif %}">
-                    
-                    {% if color == 'text-dark' %}
-                       
-                        <i class="bi bi-luggage-fill text-secondary" style="font-size: 2.2rem;"></i>
-                    {% elif color == 'text-success' %}
-                  
-                        <i class="bi bi-airplane-engines-fill text-success" style="font-size: 2.2rem;"></i>
-                    {% else %}
-                        
-                        <i class="bi bi-ticket-detailed-fill text-danger" style="font-size: 2.2rem;"></i>
-                    {% endif %}
+    <!-- 2. Tarjetas de Estadísticas -->
+    <div class="row g-4 mb-4">
+        {% for label, count, color in stats_list %}
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm
+                        {% if color == 'text-success' %} bg-success bg-opacity-10 text-success
+                        {% elif color == 'text-danger' %} bg-danger bg-opacity-10 text-danger
+                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %}" 
+                        style="width: 60px; height: 60px; font-size: 1.5rem;">
+                        {% if color == 'text-dark' %}
+                            <i class="bi bi-luggage-fill"></i>
+                        {% elif color == 'text-success' %}
+                            <i class="bi bi-airplane-engines-fill"></i>
+                        {% else %}
+                            <i class="bi bi-ticket-detailed-fill"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1" style="font-size: 0.8rem; letter-spacing: 0.5px;">{{ label }}</h6>
+                        <h3 class="fw-black mb-0 {{ color }}">{{ count }}</h3>
+                    </div>
                 </div>
-
-                
-                <span class="text-muted text-uppercase fw-bold mb-2" style="font-size: 0.9rem; letter-spacing: 0.5px;">
-                    {{ label }}
-                </span>
-                
-                
-                <h2 class="fw-black mb-0 {{ color }}" style="font-size: 2.8rem; font-weight: 800; line-height: 1;">
-                    {{ count }}
-                </h2>
-                
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 
-    <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 1200px;">
-        <div class="table-responsive">
-            <table id="tablaPaquetes" class="table table-hover align-middle mb-0" style="width:100%">
-                <thead class="table-light">
-                    <tr class="text-uppercase text-muted" style="font-size: 1rem;">
-                        <th class="ps-5 py-4">Nombre del Paquete</th>
-                        <th class="py-4">Imagen</th>
-                        <th class="text-center py-4">Estado</th>
-                        <th class="text-center py-4">Acciones</th>
+    <!-- 3. Lista de Paquetes -->
+    <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
+        <!-- Tabla Desktop -->
+        <div class="table-responsive d-none d-lg-block">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th scope="col" class="fw-bold">Paquete</th>
+                        <th scope="col" class="fw-bold text-center">Duración</th>
+                        <th scope="col" class="fw-bold text-center">Estado</th>
+                        <th scope="col" class="fw-bold text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody style="font-size: 1.1rem;">
+                <tbody>
                     {% for paquete in paquetes %}
                     <tr>
-                        <td class="ps-5 fw-bold text-dark py-3">{{ paquete.nombre }}</td>
-                        <td class="py-3">
-                        {% if paquete.imagen %}
-                            <img src="{{ paquete.imagen.url }}" alt="{{ paquete.nombre }}" class="img-thumbnail shadow-sm" style="width: 250px; height: 150px; object-fit: cover; border-radius: 8px;">
-                        {% else %}
-                            <span class="text-muted small">Sin imagen</span>
-                        {% endif %}
-                        </td>
-                             <td class="py-3">
-                                {% if paquete.estado %}
-                                 <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill">Activo</span>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                {% if paquete.imagen %}
+                                    <img src="{{ paquete.imagen.url }}" alt="{{ paquete.nombre }}" class="rounded shadow-sm" style="width: 100px; height: 60px; object-fit: cover;">
                                 {% else %}
-                                <span class="badge bg-danger text-white px-4 py-2 fs-6 rounded-pill">Inactivo</span>
+                                    <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center text-muted" style="width: 100px; height: 60px;">
+                                        <i class="bi bi-image fs-4"></i>
+                                    </div>
                                 {% endif %}
-                                </td>
-                        <td class="text-center py-3">
-                            <a href="{% url 'editar_paquete' paquete.pk %}" class="text-primary text-decoration-none me-3 small fw-bold">EDITAR</a>
-                            <a href="{% url 'eliminar_paquete' paquete.pk %}" class="text-danger text-decoration-none small fw-bold">ELIMINAR</a>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-0">{{ paquete.nombre }}</h6>
+                                    <small class="text-muted"><i class="bi bi-tag-fill text-success me-1"></i>{{ paquete.categoria.nombre|default:"Sin categoría" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border shadow-sm px-3 py-2 rounded-pill">
+                                <i class="bi bi-moon-stars me-1 text-secondary"></i> {{ paquete.noches_duracion }} Noches / {{ paquete.dias_duracion }} Días
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            {% if paquete.estado %}
+                                <span class="badge bg-success bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-check-circle-fill me-1"></i> Activo</span>
+                            {% else %}
+                                <span class="badge bg-danger bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-x-circle-fill me-1"></i> Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group shadow-sm">
+                                <a href="{% url 'editar_paquete' paquete.pk %}" class="btn btn-sm btn-outline-secondary" title="Editar Paquete">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'eliminar_paquete' paquete.pk %}" class="btn btn-sm btn-outline-danger" title="Eliminar Paquete">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="4" class="text-center py-5 fs-4 text-muted">Aún no hay paquetes creados.</td></tr>
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">Aún no hay paquetes creados.</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        <!-- Vista Móvil -->
+        <div class="d-lg-none">
+            <div class="row g-3">
+                {% for paquete in paquetes %}
+                <div class="col-12">
+                    <div class="card border border-light shadow-sm rounded-4">
+                        {% if paquete.imagen %}
+                            <img src="{{ paquete.imagen.url }}" alt="{{ paquete.nombre }}" class="card-img-top object-fit-cover" style="height: 150px; border-top-left-radius: var(--bs-border-radius-xl); border-top-right-radius: var(--bs-border-radius-xl);">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 150px; border-top-left-radius: var(--bs-border-radius-xl); border-top-right-radius: var(--bs-border-radius-xl);">
+                                <i class="bi bi-image fs-1"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="fw-bold text-dark mb-0">{{ paquete.nombre }}</h5>
+                                {% if paquete.estado %}
+                                    <span class="badge bg-success bg-opacity-75 rounded-pill shadow-sm">Activo</span>
+                                {% else %}
+                                    <span class="badge bg-danger bg-opacity-75 rounded-pill shadow-sm">Inactivo</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-muted small mb-3"><i class="bi bi-tag-fill text-success me-1"></i>{{ paquete.categoria.nombre|default:"Sin categoría" }}</p>
+                            
+                            <div class="d-flex align-items-center gap-2 mb-3 bg-light rounded-pill px-3 py-2 w-100 justify-content-center border">
+                                <i class="bi bi-moon-stars text-secondary"></i>
+                                <span class="small fw-semibold text-dark">{{ paquete.noches_duracion }} Noches / {{ paquete.dias_duracion }} Días</span>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'editar_paquete' paquete.pk %}" class="btn btn-outline-secondary flex-fill fw-bold rounded-pill">
+                                    <i class="bi bi-pencil me-1"></i> Editar
+                                </a>
+                                <a href="{% url 'eliminar_paquete' paquete.pk %}" class="btn btn-outline-danger flex-fill fw-bold rounded-pill">
+                                    <i class="bi bi-trash me-1"></i> Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center p-4 text-muted border rounded shadow-sm bg-light">
+                    Aún no hay paquetes creados.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="{% static 'js/datatables.js' %}"></script>
-<script src="{% static 'js/tconf/tconf-tablaPaquetes.js' %}"></script>
 {% endblock %}
