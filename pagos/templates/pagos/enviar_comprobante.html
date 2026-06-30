@@ -1,5 +1,6 @@
 {% extends "private/base_private.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block private_css %}
 <style>
@@ -113,21 +114,21 @@
     <!-- Estadísticas -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-4">
-            <div class="stat-card bg-warning bg-opacity-10 shadow-sm">
+            <div class="stat-card bg-warning bg-opacity-10 shadow-sm border border-warning border-opacity-10">
                 <div class="stat-icon text-warning"><i class="bi bi-hourglass-split"></i></div>
                 <div class="stat-number text-warning">{{ total_pendientes }}</div>
                 <div class="stat-label text-warning">Pendientes</div>
             </div>
         </div>
         <div class="col-6 col-md-4">
-            <div class="stat-card bg-success bg-opacity-10 shadow-sm">
+            <div class="stat-card bg-success bg-opacity-10 shadow-sm border border-success border-opacity-10">
                 <div class="stat-icon text-success"><i class="bi bi-check-circle-fill"></i></div>
-                <div class="stat-number text-success">{{ total_aprobados }}</div>
+                <div class="stat-number text-success">COP ${{ total_aprobados|floatformat:0|intcomma }}</div>
                 <div class="stat-label text-success">Aprobados</div>
             </div>
         </div>
         <div class="col-12 col-md-4">
-            <div class="stat-card bg-danger bg-opacity-10 shadow-sm">
+            <div class="stat-card bg-danger bg-opacity-10 shadow-sm border border-danger border-opacity-10">
                 <div class="stat-icon text-danger"><i class="bi bi-x-circle-fill"></i></div>
                 <div class="stat-number text-danger">{{ total_rechazados }}</div>
                 <div class="stat-label text-danger">Rechazados</div>
@@ -145,17 +146,18 @@
                     <!-- Reserva -->
                     <div class="col-12">
                         <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-calendar-check me-1"></i> Reserva asociada
+                            <i class="bi bi-calendar-check me-1"></i> Reserva asociada *
                         </label>
-                        <select name="reserva" class="form-select rounded-3 py-2">
+                        <select name="reserva" class="form-select rounded-3 py-2" required>
                             <option value="">— Selecciona una reserva o multa —</option>
                             {% for r in reservas_usuario %}
                                 <option value="{{ r.id }}"
+                                    data-monto="{% if r.estado == 'cancelada' %}{{ r.multa }}{% else %}{{ r.monto_total }}{% endif %}"
                                     {% if selected_reserva_id and selected_reserva_id|stringformat:"s" == r.id|stringformat:"s" %}selected{% endif %}>
                                     {% if r.estado == 'cancelada' %}
-                                        [Multa de Cancelación] {{ r.paquete.nombre }} — Multa: ${{ r.multa }}
+                                        [Multa de Cancelación] {{ r.paquete.nombre }} — Multa: COP ${{ r.multa|floatformat:0|intcomma }}
                                     {% else %}
-                                        [Pago de Viaje] {{ r.paquete.nombre }} — {{ r.fecha }} — ${{ r.monto_total }}
+                                        [Pago de Viaje] {{ r.paquete.nombre }} — {{ r.fecha }} — COP ${{ r.monto_total|floatformat:0|intcomma }}
                                     {% endif %}
                                 </option>
                             {% endfor %}
@@ -184,35 +186,42 @@
                     <!-- Referencia + Banco -->
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-hash me-1"></i> Nº de referencia / transacción
+                            <i class="bi bi-hash me-1"></i> Nº de referencia / transacción *
                         </label>
                         <input type="text" name="referencia" class="form-control rounded-3 py-2"
-                               placeholder="Ej: 123456789">
+                               placeholder="Ej: 123456789" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-bank me-1"></i> Banco / Medio de pago
+                            <i class="bi bi-bank me-1"></i> Banco / Medio de pago *
                         </label>
                         <input type="text" name="banco_origen" class="form-control rounded-3 py-2"
-                               placeholder="Ej: Nequi, Daviplata, Bancolombia">
+                               placeholder="Ej: Nequi, Daviplata, Bancolombia" required>
                     </div>
 
                     <!-- Monto -->
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-currency-dollar me-1"></i> Monto pagado
+                            <i class="bi bi-cash-stack me-1"></i> Monto a pagar (COP) *
                         </label>
-                        <input type="number" name="monto" step="0.01" class="form-control rounded-3 py-2"
-                               placeholder="Ej: 150000">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-secondary border-end-0">COP $</span>
+                            <input type="text" id="inputMontoFormat" class="form-control rounded-end-3 py-2 bg-light fw-bold text-success border-start-0" 
+                                   placeholder="Selecciona una reserva" readonly>
+                        </div>
+                        <input type="hidden" name="monto" id="inputMonto" required>
+                        <div class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i> El precio es fijo y corresponde al total de tu reserva/multa.
+                        </div>
                     </div>
 
                     <!-- Descripción -->
                     <div class="col-12">
                         <label class="form-label fw-bold text-secondary small text-uppercase">
-                            <i class="bi bi-chat-left-text me-1"></i> Nota adicional (opcional)
+                            <i class="bi bi-chat-left-text me-1"></i> Nota adicional *
                         </label>
                         <textarea name="descripcion" rows="3" class="form-control rounded-3"
-                                  placeholder="Cualquier información adicional sobre el pago..."></textarea>
+                                  placeholder="Cualquier información adicional sobre el pago..." required></textarea>
                     </div>
 
                     <!-- Botón -->
@@ -239,11 +248,37 @@
 </div>
 
 <script>
-// Drag & drop + preview en la zona de upload
+// Drag & drop + preview en la zona de upload y cálculo de monto automático
 document.addEventListener('DOMContentLoaded', function() {
     const zone = document.getElementById('uploadZone');
     const input = document.getElementById('inputImagen');
     const nameDisplay = document.getElementById('fileName');
+    const selectReserva = document.querySelector('select[name="reserva"]');
+    const inputMonto = document.getElementById('inputMonto');
+    const inputMontoFormat = document.getElementById('inputMontoFormat');
+
+    function actualizarMonto() {
+        const selectedOption = selectReserva.options[selectReserva.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            const montoRaw = selectedOption.getAttribute('data-monto');
+            if (montoRaw) {
+                const montoNum = parseFloat(montoRaw);
+                inputMonto.value = montoNum.toFixed(2);
+                inputMontoFormat.value = Math.round(montoNum).toLocaleString('es-CO');
+            } else {
+                inputMonto.value = '';
+                inputMontoFormat.value = '';
+            }
+        } else {
+            inputMonto.value = '';
+            inputMontoFormat.value = '';
+        }
+    }
+
+    if (selectReserva) {
+        selectReserva.addEventListener('change', actualizarMonto);
+        actualizarMonto();
+    }
 
     input.addEventListener('change', function() {
         if (input.files.length) {

@@ -50,7 +50,7 @@
           </span>
         </div>
         <div class="text-muted small">Ingresos Totales</div>
-        <div class="fw-bold fs-5 text-success">$ {{ total_ventas|floatformat:2|intcomma|default:"0.00" }}</div>
+        <div class="fw-bold fs-5 text-success">COP ${{ total_ventas|floatformat:0|intcomma|default:"0" }}</div>
         <div class="text-muted" style="font-size:.75rem"><i class="bi bi-arrow-up-right text-success"></i> Reservas confirmadas</div>
       </div>
     </div>
@@ -233,7 +233,7 @@
       </div>
       <div class="col-6">
         <div class="card border-0 shadow-sm text-center py-3">
-          <div class="fw-bold fs-5 text-warning">${{ ingreso_por_reserva|floatformat:0|intcomma|default:"0" }}</div>
+          <div class="fw-bold fs-5 text-warning">COP ${{ ingreso_por_reserva|floatformat:0|intcomma|default:"0" }}</div>
           <div class="text-muted small">Ingreso por reserva</div>
         </div>
       </div>
@@ -300,7 +300,7 @@
             </span>
           </td>
           <td class="fw-semibold">{{ tour.nombre }}</td>
-          <td class="fw-semibold text-success">${{ tour.precio|floatformat:2|intcomma }}</td>
+          <td class="fw-semibold text-success">COP ${{ tour.precio|floatformat:0|intcomma }}</td>
           <td>
             <span class="badge rounded-pill bg-success bg-opacity-25 text-success">
               {{ tour.numero_reservas }} <i class="bi bi-ticket-detailed ms-1"></i>
@@ -356,7 +356,7 @@ const reservasCan  = {{ reservas_canceladas|default:0 }};
 const dataSemana   = {{ reservas_semana|default:"[0,0,0,0,0,0,0]"|safe }};
 
 /* Formateador COP */
-const formatCOP = v => '$' + Math.round(v).toLocaleString('es-CO');
+const formatCOP = v => 'COP $' + Math.round(v).toLocaleString('es-CO');
 
 /* Calcula un paso de escala limpio basado en el máximo real */
 function calcStepSize(data) {
@@ -376,7 +376,7 @@ new Chart(document.getElementById('chartIngresos'), {
   data: {
     labels: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
     datasets: [{
-      label: 'Ingresos ($)',
+      label: 'Ingresos (COP $)',
       data: ingresosData,
       borderColor: C.green,
       backgroundColor: C.greenLight,

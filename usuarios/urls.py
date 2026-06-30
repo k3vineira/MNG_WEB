@@ -43,6 +43,7 @@ urlpatterns = [
     path('admin-dashboard/', views.dashboard_admin, name='dashboard'),
     path('perfil-administrador/', views.perfil_detalles,
          name='perfil_administrador'),
+    path('estadisticas-admin/', views.estadisticas_admin, name='estadisticas_admin'),
     path('comentarios/', views.listar_comentarios, name='listar_comentarios'),
     path('comentarios/toggle/<int:pk>/',
          views.toggle_visible, name='toggle_visible'),
