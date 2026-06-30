@@ -23,7 +23,7 @@
             <!-- Navegación -->
             <ul class="nav nav-underline justify-content-center mb-4">
                 <li class="nav-item">
-                    <a class="nav-link text-secondary fw-semibold px-3" href="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% if request.GET.paquete_id %}&paquete_id={{ request.GET.paquete_id }}{% endif %}{% endif %}">Iniciar Sesión</a>
+                    <a class="nav-link text-secondary fw-semibold px-3" href="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Iniciar Sesión</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark fw-bold border-dark px-3 active" aria-current="page" href="#">Regístrate</a>
