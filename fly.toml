@@ -1,0 +1,28 @@
+app = "mng-web"
+primary_region = "bog"  # O la región que prefieras (ej. mia, iad)
+
+[build]
+
+[deploy]
+  release_command = "python manage.py migrate --noinput"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 8000
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.http_checks]]
+    interval = "10s"
+    grace_period = "5s"
+    method = "get"
+    path = "/health"  # O cambia a "/" si no tienes una ruta de salud específica
+    protocol = "http"
+    timeout = "2s"
