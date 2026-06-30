@@ -250,6 +250,7 @@ class UsuarioLoginView(LoginView):
 class UsuarioLogoutView(LogoutView):
     """Gestiona el cierre de sesión y redirige al inicio."""
     next_page = reverse_lazy('inicio')
+    http_method_names = ['get', 'post', 'options']
 
     def get(self, request, *args, **kwargs):
         """Soporte para cerrar sesión vía GET (evita error 405 en Django 5+)."""

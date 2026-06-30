@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import authenticate
 from usuarios.models import Usuario
-from usuarios.forms import RegistroForm
+from autenticacion.forms import RegistroForm
 
 class AuthenticationAndEmailUniquenessTests(TestCase):
     def setUp(self):
@@ -87,13 +87,23 @@ class AuthenticationAndEmailUniquenessTests(TestCase):
         response = self.client.post(reverse('registro'), data=form_data)
         # La vista de registro debe procesar la solicitud con éxito y redirigir
         self.assertEqual(response.status_code, 302)
-        
+        self.assertIn('registro/otp', response.url)
+
+        # Obtener el OTP de la sesión
+        session = self.client.session
+        otp = session.get('registro_otp')
+        self.assertIsNotNone(otp)
+
+        # Confirmar el OTP
+        response_otp = self.client.post(reverse('registro_otp'), data={'otp': otp})
+        self.assertEqual(response_otp.status_code, 302)
+
         # Verificar que el usuario fue creado en la base de datos
         self.assertTrue(Usuario.objects.filter(username='viewuser').exists())
 
     def test_custom_set_password_form_same_password(self):
         """Probar que el formulario CustomSetPasswordForm falla si se ingresa la contraseña actual."""
-        from usuarios.forms import CustomSetPasswordForm
+        from autenticacion.forms import CustomSetPasswordForm
         form_data = {
             'new_password1': 'securepassword123',
             'new_password2': 'securepassword123',
@@ -108,7 +118,7 @@ class AuthenticationAndEmailUniquenessTests(TestCase):
 
     def test_custom_set_password_form_success(self):
         """Probar que el formulario guarda y cambia la contraseña correctamente en la base de datos."""
-        from usuarios.forms import CustomSetPasswordForm
+        from autenticacion.forms import CustomSetPasswordForm
         form_data = {
             'new_password1': 'newsecurepassword123',
             'new_password2': 'newsecurepassword123',
@@ -166,7 +176,7 @@ class AuthenticationAndEmailUniquenessTests(TestCase):
         self.assertIn('Enlace para restablecer tu contraseña', email_enlace.subject)
         
         import re
-        match = re.search(r'(http[s]?://[^/]+(/usuarios/password-reset/confirm/[A-Za-z0-9_\-]+/[A-Za-z0-9_\-]+/))', email_enlace.body)
+        match = re.search(r'(http[s]?://[^/]+(/autenticacion/password-reset/confirm/[A-Za-z0-9_\-]+/[A-Za-z0-9_\-]+/))', email_enlace.body)
         self.assertIsNotNone(match, "No se encontró el enlace de confirmación en el correo")
         
         confirm_url = match.group(2) # Obtener solo la ruta relativa
