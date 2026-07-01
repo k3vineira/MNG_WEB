@@ -5,7 +5,7 @@ from .models import Reserva, Cancelacion
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from catalogo.models import Paquete
-from .forms import ReservaForm, CancelacionForm
+from .forms import CancelacionForm
 from decimal import Decimal, InvalidOperation
 from django.core.mail import send_mail
 from datetime import datetime
@@ -60,7 +60,7 @@ class ReservaListView(ListView):
 
 class ReservaCreateView(SuccessMessageMixin, CreateView):
     model = Reserva
-    form_class = ReservaForm
+    fields = ['usuario', 'paquete', 'fecha', 'numero_adultos', 'numero_menores']
     template_name = 'admin/reservas/agregar_reserva.html'
     success_url = ('listar_reservas')
 
@@ -73,7 +73,7 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
 
 class ReservaUpdateView(UpdateView):
     model = Reserva
-    form_class = ReservaForm
+    fields = ['usuario', 'paquete', 'fecha', 'numero_adultos', 'numero_menores', 'estado']
     template_name = 'admin/reservas/editar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 

@@ -5,13 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Preconnect a dominios externos para reducir latencia de conexión -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Preload de la imagen hero (LCP) con máxima prioridad -->
     <link rel="preload" as="image" href="{% static 'img/Fondo.webp' %}" fetchpriority="high">
 
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
@@ -19,10 +17,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <link rel="icon" type="image/webp" href="{% static 'img/monagua_log.webp' %}">
+    
+    <link class="rounded-pill" rel="icon" type="image/webp" href="{% static 'img/monagua_log.webp' %}">
+    
     <title>{% block titulo %}Monagua{% endblock %}</title>
 </head>
 <body>
+
     {% block navbar %}
         {% include 'partials/header.html' %}
     {% endblock %}
@@ -30,14 +31,12 @@
     {% include 'partials/accesibilidad.html' %}
     {% include 'partials/mascota.html' %}
 
-    <div class="wrapper"> 
+    <main class="wrapper min-vh-100"> 
         <div class="content-wrapper">
-            <main class="overflow-auto">
-                {% block content %}
-                {% endblock %}
-            </main>
+            {% block content %}
+            {% endblock %}
         </div>
-    </div>
+    </main>
 
     {% block footer %}
         {% include 'partials/footer.html' %}
@@ -47,5 +46,5 @@
 
     {% include 'partials/toast_messages.html' %}
 
-  </body>
+</body>
 </html>

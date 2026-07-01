@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="body-bg-nature py-5">
+<div class="body-bg-nature py-5 backdrop-oscuro">
 
-    <div class="container">
+    <div class="container position-relative" style="z-index: 2;">
         <div class="text-center mb-5 pt-3">
             <h1 class="titulo-premium mb-3">Notificaciones</h1>
         </div>
 
         <div class="row justify-content-center">
-              <div class="col-lg-9">
+            <div class="col-lg-7 col-md-9">
                 <div class="card border-0 card-contenedor-principal p-4 p-md-5">
                     <div class="card-body p-0">
                         {% if notificaciones %}
@@ -19,43 +19,38 @@
                                         <i class="bi bi-clock-history fs-3 text-dark"></i>
                                     </div>
                                     <div>
-                                        <h2 class="fw-bold mb-1"style="color:var(--verde-oscuro);font-size:1.9rem;">
+                                        <h2 class="fw-bold mb-1" style="color:var(--verde-oscuro);font-size:1.9rem;">
                                             Historial reciente
                                         </h2>
-                                        <p class="mb-0 text-dark fw-semibold"style="font-size:1.15rem;"> Todas tus notificaciones registradas en la plataforma</p>
+                                        <p class="mb-0 text-dark fw-semibold" style="font-size:1.15rem;"> Todas tus notificaciones registradas en la plataforma</p>
                                     </div>
                                 </div>
-                                <span class="badge rounded-pill px-4 py-2 fw-bold" style="background:var(--verde-oscuro);font-size:.95rem;">  Panel Activo</span>
+                                <span class="badge rounded-pill px-4 py-2 fw-bold" style="background:var(--verde-oscuro);font-size:.95rem;"> Panel Activo</span>
                             </div>
                         </div>
                         <div class="d-flex flex-column gap-3">
                             {% for noti in notificaciones %}
                             <div class="card border-0 rounded-4 shadow-sm tarjeta-notificacion">
                                 <div class="card-body p-4">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-1 text-center mb-3 mb-md-0">
-                                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm" style="width:60px;height:60px;background:var(--verde-menta);">
-                                                <i class="bi bi-chat-left-text fs-4" style="color:var(--verde-oscuro);">
-                                                </i>
-                                            </div>
+                                    <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-3">
+                                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm flex-shrink-0" style="width:50px;height:50px;background:var(--verde-menta);">
+                                            <i class="bi bi-chat-left-text fs-5" style="color:var(--verde-oscuro);"></i>
                                         </div>
-                                        <div class="col-md-8 ps-md-4">
-                                            <h4 class="fw-bold mb-2" style="color:var(--verde-oscuro);font-size:1.45rem;">
+                                        <div class="flex-grow-1">
+                                            <h4 class="fw-bold mb-1" style="color:var(--verde-oscuro);font-size:1.3rem;">
                                                 {{ noti.titulo }}
                                             </h4>
-                                            <p class="text-dark fw-semibold mb-3"style=" font-size:1.12rem;line-height:1.6;">
+                                            <p class="text-dark fw-semibold mb-2" style="font-size:1.05rem; line-height:1.5;">
                                                 {{ noti.mensaje }}
                                             </p>
-
-                                            <span class="badge rounded-pill px-3 py-2 fw-bold"style="background:var(--verde-light);color:var(--verde-oscuro);font-size:.85rem;">
+                                            <span class="badge rounded-pill px-3 py-2 fw-bold" style="background:var(--verde-light);color:var(--verde-oscuro);font-size:.8rem;">
                                                 <i class="bi bi-calendar3 me-1"></i>
                                                 {{ noti.fecha_creacion|date:"d M Y • g:i a" }}
                                             </span>
                                         </div>
-                                        <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                                            <a href="{% url 'marcar_leida' noti.id %}"class="btn rounded-pill px-4 py-2 text-white fw-bold shadow-sm"style="background:var(--verde-main);border:none;">
-                                                Ver detalles
-                                                <i class="bi bi-arrow-right ms-1"></i>
+                                        <div class="align-self-stretch align-self-sm-center text-end">
+                                            <a href="{% url 'marcar_leida' noti.id %}" class="btn rounded-pill px-3 py-2 text-white fw-bold shadow-sm w-100 w-sm-auto" style="background:var(--verde-main);border:none;font-size:0.9rem;">
+                                                Ver detalles <i class="bi bi-arrow-right ms-1"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -66,7 +61,7 @@
                         {% else %}
                         <div class="text-center py-5">
                             <i class="bi bi-bell-slash text-dark display-1 mb-3"></i>
-                            <h3 class="fw-bold mb-3"style="color:var(--verde-oscuro);">
+                            <h3 class="fw-bold mb-3" style="color:var(--verde-oscuro);">
                                 No tienes notificaciones
                             </h3>
                             <p class="text-dark fw-semibold fs-5 mb-0">
