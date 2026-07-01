@@ -2,27 +2,22 @@ from django import forms
 from django.forms import ModelForm
 from .models import Categoria, Actividades, Paquete, Tarifa, Temporada
 
-# FORMULARIO DE CATEGORÍA
-
 
 class CategoriaForm(ModelForm):
     class Meta:
         model = Categoria
-        fields = '__all__'
+        exclude = ['estado']
         widgets = {
-            # Aplicas estilos CSS de Bootstrap para que se vea bien
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-# FORMULARIO DE ACTIVIDADES
-
 
 class ActividadesForm(ModelForm):
     class Meta:
         model = Actividades
-        fields = '__all__'
+        exclude = ['estado']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
@@ -33,13 +28,11 @@ class ActividadesForm(ModelForm):
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-# FORMULARIO DE PAQUETE
-
 
 class PaqueteForm(ModelForm):
     class Meta:
         model = Paquete
-        fields = '__all__'
+        exclude = ['estado']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'imagen': forms.ClearableFileInput(attrs={'class': 'form-control'}),
@@ -57,7 +50,7 @@ class PaqueteForm(ModelForm):
 class TarifaForm(ModelForm):
     class Meta:
         model = Tarifa
-        fields = '__all__'
+        exclude = ['estado']
         widgets = {
             'paquete': forms.Select(attrs={'class': 'form-select'}),
             'temporada': forms.Select(attrs={'class': 'form-select'}),
@@ -70,7 +63,7 @@ class TarifaForm(ModelForm):
 class TemporadaForm(ModelForm):
     class Meta:
         model = Temporada
-        fields = ['nombre', 'fecha_inicio', 'fecha_fin', 'estado']
+        fields = ['nombre', 'fecha_inicio', 'fecha_fin']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'fecha_inicio': forms.DateInput(
@@ -81,6 +74,4 @@ class TemporadaForm(ModelForm):
                 format='%Y-%m-%d',
                 attrs={'class': 'form-control', 'type': 'date'}
             ),
-            'estado': forms.Select(choices=Temporada.ESTADOS, attrs={'class': 'form-select'}
-                                   ),
         }
