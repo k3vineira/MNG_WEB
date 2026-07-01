@@ -33,5 +33,8 @@ urlpatterns = [
     path('carrito/', views.carrito_view, name='carrito'),
     path('comprobante/<int:reserva_id>/', views.comprobante_reserva_html, name='comprobante_reserva'),
     path('comprobante-multiple/', views.comprobante_multiple, name='comprobante_multiple'),
+    path('mis-facturas/', views.mis_facturas, name='mis_facturas'),
+    path('factura/<int:reserva_id>/', views.ver_factura, name='ver_factura'),
+    path('factura/<int:reserva_id>/descargar/', views.descargar_factura, name='descargar_factura'),
 ]
 

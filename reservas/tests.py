@@ -1,88 +1,169 @@
 from django.test import TestCase
-from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
 from django.utils import timezone
-from datetime import date
-from catalogo.models import Paquete, Temporada, Tarifa, Categoria
-from .models import Reserva, Cancelacion
+from django.core.exceptions import ValidationError
+from datetime import date, timedelta
+from django.contrib.auth import get_user_model
+from catalogo.models import Categoria, Paquete, Temporada, Tarifa
+from reservas.models import Reserva, Cancelacion
 
 Usuario = get_user_model()
 
-class MonaguaReservasTest(TestCase):
-
+class ReservasYCancelacionesTestCase(TestCase):
     def setUp(self):
+        # Crear usuario de prueba
         self.user = Usuario.objects.create_user(
-            username="turista1",
-            email="turista@gmail.com",
-            password="password123"
+            username='cliente_test',
+            email='cliente@test.com',
+            password='password123'
         )
+
+        # Crear categoría y paquete de prueba
         self.categoria = Categoria.objects.create(
-            nombre="EcoTurismo",
-            descripcion="Planes ecológicos"
+            nombre='Aventura',
+            descripcion='Tours de aventura y adrenalina'
         )
         self.paquete = Paquete.objects.create(
-            nombre="Páramo Ocetá",
-            descripcion="Tour completo",
-            punto_encuentro="Plaza",
-            hora_encuentro=timezone.datetime.strptime("07:00", "%H:%M").time(),
+            nombre='Parapente en Mongua',
+            descripcion='Vuela sobre el hermoso valle',
+            dias_duracion=1,
+            noches_duracion=0,
+            punto_encuentro='Plaza Principal',
+            hora_encuentro=timezone.now().time(),
             categoria=self.categoria
         )
+
+        # Crear temporada activa
+        self.hoy = timezone.now().date()
         self.temporada = Temporada.objects.create(
-            nombre="Temporada General",
-            fecha_inicio=date(2026, 1, 1),
-            fecha_fin=date(2026, 12, 31),
-            estado="activa"
+            nombre='Temporada Alta 2026',
+            fecha_inicio=self.hoy - timedelta(days=10),
+            fecha_fin=self.hoy + timedelta(days=30),
+            estado='activa'
         )
+
+        # Crear tarifa para el paquete en la temporada
         self.tarifa = Tarifa.objects.create(
             paquete=self.paquete,
             temporada=self.temporada,
             precio_adulto=100000,
             precio_menor=50000,
-            estado="activa"
+            estado='activa'
         )
-        self.reserva = Reserva.objects.create(
+
+    def test_creacion_reserva_calculo_tarifa(self):
+        # Crear reserva para 2 adultos y 1 menor
+        reserva = Reserva.objects.create(
             usuario=self.user,
             paquete=self.paquete,
-            fecha=date(2026, 7, 20),
+            fecha=self.hoy,
             numero_adultos=2,
             numero_menores=1,
-            estado="pendiente"
+            estado='pendiente'
+        )
+        # Esperado: (100000 * 2) + (50000 * 1) = 250000
+        self.assertEqual(reserva.monto_total, 250000)
+
+    def test_reserva_duplicada_validation(self):
+        # Crear la primera reserva
+        Reserva.objects.create(
+            usuario=self.user,
+            paquete=self.paquete,
+            fecha=self.hoy,
+            numero_adultos=1,
+            numero_menores=0
         )
 
-    def test_modelo_reserva_str(self):
-        self.assertEqual(str(self.reserva), f"Reserva {self.reserva.id} - turista1 (Páramo Ocetá)")
-
-    def test_calculo_monto_total_automatico(self):
-        self.assertEqual(self.reserva.monto_total, 250000)
-
-    def test_evitar_reserva_duplicada_mismo_dia(self):
+        # Intentar crear una segunda para el mismo usuario, paquete y fecha
         reserva_duplicada = Reserva(
             usuario=self.user,
             paquete=self.paquete,
-            fecha=date(2026, 7, 20)
+            fecha=self.hoy,
+            numero_adultos=1,
+            numero_menores=0
         )
+        
+        # Debe lanzar una ValidationError en el clean()
         with self.assertRaises(ValidationError):
-            reserva_duplicada.clean()
+            reserva_duplicada.full_clean()
 
-    def test_calculo_penalidad_alta_antelacion(self):
-        cancelacion = Cancelacion.objects.create(
-            reserva=self.reserva,
-            motivo="Cambio de planes"
+    def test_cancelacion_penalidad_mas_de_15_dias(self):
+        # Reserva viaja en 20 días
+        fecha_reserva = self.hoy + timedelta(days=20)
+        reserva = Reserva.objects.create(
+            usuario=self.user,
+            paquete=self.paquete,
+            fecha=fecha_reserva,
+            numero_adultos=1,
+            numero_menores=0
         )
-        self.assertEqual(cancelacion.penalidad, 25000)
+        # Monto = 100000
+        self.assertEqual(reserva.monto_total, 100000)
 
-    def test_cambio_estado_reserva_al_aceptar_cancelacion(self):
+        # Crear solicitud de cancelación (hoy)
         cancelacion = Cancelacion.objects.create(
-            reserva=self.reserva,
-            motivo="Salud",
-            estado="aceptada"
+            reserva=reserva,
+            motivo='Cambio de planes',
+            estado='pendiente'
         )
-        self.reserva.refresh_from_db()
-        self.assertEqual(self.reserva.estado, "cancelada")
+        # >15 días: penalidad 10% del total = 10000
+        self.assertEqual(cancelacion.penalidad, 10000)
 
-    def test_modelo_cancelacion_str(self):
-        cancelacion = Cancelacion.objects.create(
-            reserva=self.reserva,
-            motivo="Prueba"
+    def test_cancelacion_penalidad_entre_5_y_15_dias(self):
+        # Reserva viaja en 10 días
+        fecha_reserva = self.hoy + timedelta(days=10)
+        reserva = Reserva.objects.create(
+            usuario=self.user,
+            paquete=self.paquete,
+            fecha=fecha_reserva,
+            numero_adultos=1,
+            numero_menores=0
         )
-        self.assertEqual(str(cancelacion), f"Cancelación de Reserva #{self.reserva.id} - Pendiente")
+        
+        cancelacion = Cancelacion.objects.create(
+            reserva=reserva,
+            motivo='Fuerza mayor',
+            estado='pendiente'
+        )
+        # Entre 5 y 15 días: penalidad 50% = 50000
+        self.assertEqual(cancelacion.penalidad, 50000)
+
+    def test_cancelacion_penalidad_menos_de_5_dias(self):
+        # Reserva viaja en 2 días
+        fecha_reserva = self.hoy + timedelta(days=2)
+        reserva = Reserva.objects.create(
+            usuario=self.user,
+            paquete=self.paquete,
+            fecha=fecha_reserva,
+            numero_adultos=1,
+            numero_menores=0
+        )
+        
+        cancelacion = Cancelacion.objects.create(
+            reserva=reserva,
+            motivo='Cancelación de último minuto',
+            estado='pendiente'
+        )
+        # < 5 días: penalidad 100% = 100000
+        self.assertEqual(cancelacion.penalidad, 100000)
+
+    def test_flujo_estados_cancelacion(self):
+        reserva = Reserva.objects.create(
+            usuario=self.user,
+            paquete=self.paquete,
+            fecha=self.hoy + timedelta(days=20),
+            numero_adultos=1,
+            numero_menores=0,
+            estado='pendiente'
+        )
+        
+        cancelacion = Cancelacion.objects.create(
+            reserva=reserva,
+            motivo='Prueba estado',
+            estado='pendiente'
+        )
+        
+        # Al aceptar la cancelación, la reserva debe cambiar a 'cancelada'
+        cancelacion.estado = 'aceptada'
+        cancelacion.save()
+        reserva.refresh_from_db()
+        self.assertEqual(reserva.estado, 'cancelada')

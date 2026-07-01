@@ -1,6 +1,12 @@
 {% load static %}
 <!-- ── Mascot: Cóndy El Cóndor ── -->
 <div id="condor-mascot-container" class="position-fixed" style="bottom: 1.5rem; left: 1.5rem; z-index: 9999; cursor: pointer;">
+    <!-- Toggle Button (para colapsar/desplegar) -->
+    <button id="condor-toggle-btn" class="btn btn-success d-flex align-items-center justify-content-center shadow-sm border border-light" 
+            style="position: absolute; top: 10px; right: -25px; width: 28px; height: 28px; border-radius: 50%; padding: 0; z-index: 10002; background-color: #2c6e3c;">
+        <i id="condor-toggle-icon" class="bi bi-chevron-left" style="font-size: 0.85rem; transition: transform 0.3s ease;"></i>
+    </button>
+
     <!-- Speech bubble -->
     <div id="condor-speech-bubble" class="bg-dark text-white rounded-4 p-3 shadow-lg border border-success position-absolute d-none" style="bottom: 80px; left: 10px; width: 240px; font-size: 0.85rem; z-index: 10000;">
         <div class="fw-bold text-success mb-1">¡Cóndy dice! 🦅</div>
@@ -34,6 +40,23 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
 }
+
+#condor-mascot-container {
+    transition: left 0.4s ease, opacity 0.4s ease !important;
+}
+
+#condor-mascot-container.collapsed {
+    left: -80px !important;
+    opacity: 0.6;
+}
+
+#condor-mascot-container.collapsed #condor-toggle-icon {
+    transform: rotate(180deg);
+}
+
+#condor-mascot-container.collapsed #condor-speech-bubble {
+    display: none !important;
+}
 </style>
 
 <script>
@@ -42,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const bubble = document.getElementById('condor-speech-bubble');
     const text = document.getElementById('condor-speech-text');
     const img = document.getElementById('condor-img');
+    const toggleBtn = document.getElementById('condor-toggle-btn');
     
     const tips = [
         "¡Hola! Soy Cóndy, tu guía en Monagua. ¡Exploremos el Páramo de Mongua juntos!",
@@ -58,8 +82,28 @@ document.addEventListener("DOMContentLoaded", function() {
     // Activate bouncing animation
     img.classList.add('condor-bounce');
     
+    // Start collapsed on mobile devices
+    if (window.innerWidth <= 768) {
+        mascot.classList.add('collapsed');
+    }
+
+    // Toggle button handler
+    toggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        mascot.classList.toggle('collapsed');
+        bubble.classList.add('d-none');
+        img.classList.add('condor-bounce');
+    });
+    
     mascot.addEventListener('click', function(e) {
         e.stopPropagation();
+        
+        // If collapsed, clicking the mascot expands it instead of showing speech bubble
+        if (mascot.classList.contains('collapsed')) {
+            mascot.classList.remove('collapsed');
+            return;
+        }
+
         if (bubble.classList.contains('d-none')) {
             // Pick a random tip
             const randomTip = tips[Math.floor(Math.random() * tips.length)];

@@ -91,6 +91,10 @@ class Reserva(models.Model):
 
         super().save(*args, **kwargs)
 
+    @property
+    def tiene_cancelacion_activa(self):
+        return self.cancelaciones.filter(estado__in=['pendiente', 'revision']).exists()
+
     def __str__(self):
         nombre_usuario = self.usuario.get_full_name() or self.usuario.username
         return f"Reserva {self.id} - {nombre_usuario} ({self.paquete.nombre})"

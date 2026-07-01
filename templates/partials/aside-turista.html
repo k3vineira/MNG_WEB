@@ -1,194 +1,203 @@
 {% load static %}
+<div id="mainSidebar" class="position-fixed top-0 start-0 h-100 d-flex shadow-lg bg-dark" style="z-index: 1040;">
+  <div class="collapse collapse-horizontal show toggle-turista-sidebar" id="sidebarTuristaWide">
+    
+    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary" style="width: 280px; min-width: 280px; max-width: 280px; flex-shrink: 0;">
+      
+      <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
+        <a href="{% url 'index_turista' %}" class="d-flex align-items-center gap-2 text-white text-decoration-none">
+          <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="rounded-circle border border-success flex-shrink-0" width="35" height="35" style="object-fit:cover">
+          <div class="d-flex flex-column">
+            <span class="fw-bold small" style="letter-spacing: 1px;">MONAGUA</span>
+            <span class="text-success text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 2px;">Panel Viajero</span>
+          </div>
+        </a>
+        <button class="btn btn-sm btn-outline-secondary border-0 text-white flex-shrink-0 toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-turista-sidebar" aria-label="Contraer menú">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
 
-<aside id="mainSidebar"
-       class="d-flex flex-column bg-dark text-white position-fixed top-0 start-0 h-100"
-       style="width:240px;z-index:1040;overflow-y:auto;transition:transform .3s">
-
-  <a href="{% url 'index_turista' %}" class="d-flex align-items-center gap-2 p-3 text-decoration-none border-bottom border-secondary">
-    <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo"
-         class="rounded-circle border border-success flex-shrink-0"
-         width="40" height="40" style="object-fit:cover">
-    <div>
-      <div class="fw-bold text-white small" style="letter-spacing:1px">MONAGUA</div>
-      <div class="text-success" style="font-size:.65rem;letter-spacing:2px;text-transform:uppercase">Panel Viajero</div>
-    </div>
-  </a>
-
-  <nav class="flex-grow-1 py-2">
-
-    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Cuenta</div>
-    <a href="{% url 'perfil_detalles' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-person-gear"></i> Mi Perfil
-    </a>
-
-    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-2" style="font-size:.65rem;letter-spacing:.1em">Principal</div>
-    <a href="/"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-house-door-fill"></i> Página Principal
-    </a>
-    <a href="{% url 'dashboard_turista' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-grid-1x2-fill"></i> Dashboard
-    </a>
-    <a href="{% url 'mis_estadisticas' %}"
-       class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-graph-up-arrow"></i> Mis Estadísticas
-    </a>
-
-    <div class="accordion accordion-flush mt-2" id="accordionPanelsStayOpenExample" data-bs-theme="dark">
-
-      <div class="accordion-item bg-transparent border-0">
-        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-          <button class="accordion-button collapsed bg-transparent text-white shadow-none py-2 px-3 fw-semibold small" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
-            <i class="bi bi-compass me-2 text-success"></i> Mis Viajes
-          </button>
-        </h2>
-        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
-          <div class="accordion-body p-0 pt-1 pb-2">
-            <a href="{% url 'mis_reservas_usuario' %}"
-               class="d-flex align-items-center gap-2 px-4 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-              <i class="bi bi-calendar-check-fill"></i> Mis Reservas
+      <nav class="flex-grow-1 overflow-auto p-3">
+        <ul class="nav nav-pills flex-column mb-auto gap-1" id="turistaAccordion">
+          
+          <li class="nav-item mt-1 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Cuenta</span>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'perfil_detalles' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'perfil_detalles' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-person-gear"></i> Mi Perfil
             </a>
-            <a href="{% url 'mis_cancelaciones_usuario' %}"
-               class="d-flex align-items-center gap-2 px-4 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-              <i class="bi bi-x-circle-fill"></i> Mis Cancelaciones
+          </li>
+
+          <li class="nav-item mt-3 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Principal</span>
+          </li>
+          <li class="nav-item">
+            <a href="/" class="nav-link text-white opacity-75 d-flex align-items-center gap-2">
+              <i class="bi bi-house-door-fill"></i> Página Principal
             </a>
-            <a href="{% url 'mis_rechazos' %}"
-               class="d-flex align-items-center gap-2 px-4 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-              <i class="bi bi-x-octagon-fill text-danger"></i> Mis Rechazos
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'dashboard_turista' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'dashboard_turista' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-grid-1x2-fill"></i> Dashboard
             </a>
-            <a href="{% url 'mis_comprobantes' %}"
-               class="d-flex align-items-center gap-2 px-4 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-              <i class="bi bi-wallet2"></i> Mis Comprobantes
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'mis_estadisticas' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'mis_estadisticas' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-graph-up-arrow"></i> Mis Estadísticas
             </a>
+          </li>
+
+          <li class="nav-item mt-2"><hr class="border-secondary mx-2 my-1"></li>
+
+          <li class="nav-item">
+            <button class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'mis_reservas_usuario mis_cancelaciones_usuario mis_rechazos mis_comprobantes mis_facturas' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    data-bs-toggle="collapse" data-bs-target="#menuViajes" aria-expanded="{% if 'mis_reservas_usuario' in request.resolver_match.url_name or 'mis_cancelaciones_usuario' in request.resolver_match.url_name or 'mis_rechazos' in request.resolver_match.url_name or 'mis_comprobantes' in request.resolver_match.url_name or 'mis_facturas' in request.resolver_match.url_name %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-compass"></i> Mis Viajes</div>
+              <i class="bi bi-chevron-down small"></i>
+            </button>
+            <div class="collapse {% if 'mis_reservas_usuario' in request.resolver_match.url_name or 'mis_cancelaciones_usuario' in request.resolver_match.url_name or 'mis_rechazos' in request.resolver_match.url_name or 'mis_comprobantes' in request.resolver_match.url_name or 'mis_facturas' in request.resolver_match.url_name %}show{% endif %}" id="menuViajes" data-bs-parent="#turistaAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
+                <li><a href="{% url 'mis_reservas_usuario' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_reservas_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar-check-fill me-1"></i> Mis Reservas</a></li>
+                <li><a href="{% url 'mis_cancelaciones_usuario' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_cancelaciones_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-circle-fill me-1"></i> Mis Cancelaciones</a></li>
+                <li><a href="{% url 'mis_rechazos' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_rechazos' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon-fill text-danger me-1"></i> Mis Rechazos</a></li>
+                <li><a href="{% url 'mis_comprobantes' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_comprobantes' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-wallet2 me-1"></i> Mis Comprobantes</a></li>
+                <li><a href="{% url 'mis_facturas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_facturas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-file-earmark-ruled me-1"></i> Mis Facturas</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <button class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'mis_resenas blog_usuario mis_pqrs' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    data-bs-toggle="collapse" data-bs-target="#menuComunidad" aria-expanded="{% if 'mis_resenas' in request.resolver_match.url_name or 'blog_usuario' in request.resolver_match.url_name or 'mis_pqrs' in request.resolver_match.url_name %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-chat-left-heart"></i> Comunidad</div>
+              <i class="bi bi-chevron-down small"></i>
+            </button>
+            <div class="collapse {% if 'mis_resenas' in request.resolver_match.url_name or 'blog_usuario' in request.resolver_match.url_name or 'mis_pqrs' in request.resolver_match.url_name %}show{% endif %}" id="menuComunidad" data-bs-parent="#turistaAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
+                <li><a href="{% url 'mis_resenas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_resenas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-star-fill me-1"></i> Mis Reseñas</a></li>
+                <li><a href="{% url 'blog_usuario' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'blog_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-journal-text me-1"></i> Blog</a></li>
+                <li><a href="{% url 'mis_pqrs' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_pqrs' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-envelope-fill me-1"></i> Mis PQRS</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item mt-3 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Sistema</span>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link text-white opacity-75 d-flex align-items-center gap-2">
+              <i class="bi bi-bell-fill"></i> Notificaciones
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link text-white opacity-75 d-flex align-items-center gap-2">
+              <i class="bi bi-gear-fill"></i> Configuración
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <div class="p-3 border-top border-secondary">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Viajero" class="rounded-circle border border-success flex-shrink-0" width="40" height="40" style="object-fit:cover">
+          <div class="overflow-hidden">
+            <div class="fw-bold text-white fs-6 text-truncate">{{ user.first_name|default:'Viajero' }}</div>
+            <div class="text-success fw-semibold text-truncate" style="font-size:.7rem">Turista</div>
           </div>
         </div>
-      </div>
-
-      <div class="accordion-item bg-transparent border-0">
-        <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-          <button class="accordion-button collapsed bg-transparent text-white shadow-none py-2 px-3 fw-semibold small" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-            <i class="bi bi-chat-left-heart me-2 text-success"></i> Comunidad
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-power"></i> Cerrar Sesión
           </button>
-        </h2>
-        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
-          <div class="accordion-body p-0 pt-1 pb-2">
-            <a href="{% url 'mis_resenas' %}"
-               class="d-flex align-items-center gap-2 px-4 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-              <i class="bi bi-star-fill"></i> Mis Reseñas
-            </a>
-            <a href="{% url 'blog_usuario' %}"
-               class="d-flex align-items-center gap-2 px-4 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-              <i class="bi bi-journal-text"></i> Blog
-            </a>
-            <a href="{% url 'mis_pqrs' %}"
-               class="d-flex align-items-center gap-2 px-4 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-              <i class="bi bi-envelope-fill"></i> Mis PQRS
-            </a>
-          </div>
-        </div>
+        </form>
       </div>
-
-    </div>
-
-    <div class="text-uppercase text-secondary fw-semibold px-3 py-1 mt-3" style="font-size:.65rem;letter-spacing:.1em">
-      Sistema</div>
-    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-bell-fill"></i> Notificaciones
-    </a>
-    <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none text-white-50 rounded mx-2 mb-1">
-      <i class="bi bi-gear-fill"></i> Configuración
-    </a>
-
-  </nav>
-
-  <div class="p-3 border-top border-secondary">
-    <div class="d-flex align-items-center gap-2 mb-2">
-      <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
-           alt="{{ user.first_name|default:'Viajero' }}"
-           class="rounded-circle border border-success flex-shrink-0"
-           width="34" height="34" style="object-fit:cover">
-      <div>
-        <div class="fw-semibold text-white small">{{ user.first_name|default:'Viajero' }}</div>
-        <div class="text-success" style="font-size:.7rem">Turista</div>
-      </div>
-    </div>
-    <form action="{% url 'logout' %}" method="post">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-outline-danger btn-sm w-100">
-        <i class="bi bi-power"></i> Cerrar Sesión
-      </button>
-    </form>
+    </aside>
   </div>
 
-</aside>
+  <div class="collapse collapse-horizontal toggle-turista-sidebar" id="sidebarTuristaSlim">
+    
+    <aside class="bg-dark text-white d-flex flex-column align-items-center h-100 border-end border-secondary" style="width: 70px;">
+      
+      <div class="d-flex align-items-center justify-content-center p-3 w-100 border-bottom border-secondary" style="height: 72px;">
+        <button class="btn btn-sm btn-outline-secondary border-0 text-white toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-turista-sidebar" aria-label="Expandir menú">
+          <i class="bi bi-list fs-4"></i>
+        </button>
+      </div>
+
+      <nav class="flex-grow-1 overflow-visible w-100 py-3">
+        <ul class="nav flex-column align-items-center w-100 gap-2">
+          
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'perfil_detalles' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'perfil_detalles' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Mi Perfil"><i class="bi bi-person-gear fs-5"></i></a>
+          </li>
+          
+          <li class="nav-item w-100 text-center"><hr class="border-secondary mx-2 my-1"></li>
+
+          <li class="nav-item w-100 text-center">
+            <a href="/" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" title="Página Principal"><i class="bi bi-house-door-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'dashboard_turista' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'dashboard_turista' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Dashboard"><i class="bi bi-grid-1x2-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'mis_estadisticas' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'mis_estadisticas' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Mis Estadísticas"><i class="bi bi-graph-up-arrow fs-5"></i></a>
+          </li>
+
+          <li class="nav-item w-100 text-center dropend mt-2">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'mis_reservas_usuario' in request.resolver_match.url_name or 'mis_cancelaciones_usuario' in request.resolver_match.url_name or 'mis_rechazos' in request.resolver_match.url_name or 'mis_comprobantes' in request.resolver_match.url_name or 'mis_facturas' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Mis Viajes">
+              <i class="bi bi-compass fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Mis Viajes</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_reservas_usuario' %}active bg-success{% endif %}" href="{% url 'mis_reservas_usuario' %}"><i class="bi bi-calendar-check-fill me-2"></i>Mis Reservas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_cancelaciones_usuario' %}active bg-success{% endif %}" href="{% url 'mis_cancelaciones_usuario' %}"><i class="bi bi-x-circle-fill me-2"></i>Mis Cancelaciones</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_rechazos' %}active bg-danger{% endif %}" href="{% url 'mis_rechazos' %}"><i class="bi bi-x-octagon-fill text-danger me-2"></i>Mis Rechazos</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_comprobantes' %}active bg-success{% endif %}" href="{% url 'mis_comprobantes' %}"><i class="bi bi-wallet2 me-2"></i>Mis Comprobantes</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_facturas' %}active bg-success{% endif %}" href="{% url 'mis_facturas' %}"><i class="bi bi-file-earmark-ruled me-2"></i>Mis Facturas</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item w-100 text-center dropend">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'mis_resenas' in request.resolver_match.url_name or 'blog_usuario' in request.resolver_match.url_name or 'mis_pqrs' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Comunidad">
+              <i class="bi bi-chat-left-heart fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Comunidad</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_resenas' %}active bg-success{% endif %}" href="{% url 'mis_resenas' %}"><i class="bi bi-star-fill me-2"></i>Mis Reseñas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'blog_usuario' %}active bg-success{% endif %}" href="{% url 'blog_usuario' %}"><i class="bi bi-journal-text me-2"></i>Blog</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_pqrs' %}active bg-success{% endif %}" href="{% url 'mis_pqrs' %}"><i class="bi bi-envelope-fill me-2"></i>Mis PQRS</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item w-100 text-center mt-2"><hr class="border-secondary mx-2 my-1"></li>
+
+          <li class="nav-item w-100 text-center">
+            <a href="#" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" title="Notificaciones"><i class="bi bi-bell-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="#" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" title="Configuración"><i class="bi bi-gear-fill fs-5"></i></a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="p-2 w-100 text-center border-top border-secondary d-flex flex-column align-items-center gap-3">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Viajero" class="rounded-circle border border-success" width="34" height="34" style="object-fit:cover" title="{{ user.first_name|default:'Viajero' }}">
+        <form action="{% url 'logout' %}" method="post" class="w-100">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger border-0 w-100" title="Cerrar Sesión">
+            <i class="bi bi-power fs-5"></i>
+          </button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+</div>
+
+<link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+<script src="{% static 'js/sidebar.js' %}"></script>
 
 {% include 'notificaciones.html' %}
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const currentPath = window.location.pathname;
-    const sidebarLinks = document.querySelectorAll("#mainSidebar nav a");
-
-    let activeLink = null;
-    let maxMatchLength = 0;
-
-    sidebarLinks.forEach(link => {
-      const href = link.getAttribute("href");
-      if (!href || href === "#" || href === "") return;
-
-      const hrefPath = href.split('?')[0];
-      const normalizedHref = hrefPath.replace(/\/$/, "");
-      const normalizedPath = currentPath.replace(/\/$/, "");
-
-      if (normalizedPath === normalizedHref || normalizedPath.startsWith(normalizedHref + '/')) {
-        if (normalizedHref.length > maxMatchLength) {
-          maxMatchLength = normalizedHref.length;
-          activeLink = link;
-        }
-      }
-    });
-
-    // Reset accordion collapse state first
-    const accordionCollapses = document.querySelectorAll("#mainSidebar .accordion-collapse");
-    const accordionButtons = document.querySelectorAll("#mainSidebar .accordion-button");
-    
-    accordionCollapses.forEach(collapse => {
-      collapse.classList.remove("show");
-    });
-    accordionButtons.forEach(button => {
-      button.classList.add("collapsed");
-      button.setAttribute("aria-expanded", "false");
-    });
-
-    if (activeLink) {
-      sidebarLinks.forEach(link => {
-        link.classList.remove("bg-success", "text-white");
-        link.classList.add("text-white-50");
-      });
-      activeLink.classList.remove("text-white-50");
-      activeLink.classList.add("bg-success", "text-white");
-
-      // Find the parent collapse and show it
-      const parentCollapse = activeLink.closest('.accordion-collapse');
-      if (parentCollapse) {
-        parentCollapse.classList.add('show');
-        const collapseId = parentCollapse.getAttribute('id');
-        const triggerButton = document.querySelector(`[data-bs-target="#${collapseId}"]`);
-        if (triggerButton) {
-          triggerButton.classList.remove('collapsed');
-          triggerButton.setAttribute('aria-expanded', 'true');
-        }
-      }
-    } else {
-      // Default fallback: open the first accordion item (Mis Viajes) if none are active
-      const firstCollapse = document.getElementById("panelsStayOpen-collapseOne");
-      const firstButton = document.querySelector('[data-bs-target="#panelsStayOpen-collapseOne"]');
-      if (firstCollapse && firstButton) {
-        firstCollapse.classList.add("show");
-        firstButton.classList.remove("collapsed");
-        firstButton.setAttribute("aria-expanded", "true");
-      }
-    }
-  });
-</script>

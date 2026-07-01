@@ -1,0 +1,226 @@
+{% load static %}
+<!-- CONTENEDOR FIJO PRINCIPAL -->
+<div id="mainSidebar" class="position-fixed top-0 start-0 h-100 d-flex shadow-lg bg-dark" style="z-index: 1040;">
+  <!-- =========================================================================
+       1. VISTA EXPANDIDA (SIDEBAR GUÍA ANCHO)
+       ========================================================================= -->
+  <div class="collapse collapse-horizontal show toggle-guia-sidebar" id="sidebarGuiaWide">
+    
+    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary" style="width: 280px; min-width: 280px; max-width: 280px; flex-shrink: 0;">
+      
+      <!-- Header / Brand -->
+      <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
+        <a href="/" class="d-flex align-items-center gap-2 text-white text-decoration-none">
+          <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="rounded-circle border border-success flex-shrink-0" width="35" height="35" style="object-fit:cover">
+          <div class="d-flex flex-column">
+            <span class="fw-bold small" style="letter-spacing: 1px;">MONAGUA</span>
+            <span class="text-success text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 2px;">Panel Guía</span>
+          </div>
+        </a>
+        <button class="btn btn-sm btn-outline-secondary border-0 text-white flex-shrink-0 toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-guia-sidebar" aria-label="Contraer menú">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+
+      <!-- Menú de Navegación con ACORDEÓN -->
+      <nav class="flex-grow-1 overflow-auto p-3">
+        <ul class="nav nav-pills flex-column mb-auto gap-1" id="guiaAccordion">
+          
+          <!-- Sección Cuenta -->
+          <li class="nav-item mt-1 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Cuenta</span>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'perfil_detalles' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'perfil_detalles' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-person-badge"></i> Mi Perfil
+            </a>
+          </li>
+
+          <!-- Sección Principal -->
+          <li class="nav-item mt-3 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Principal</span>
+          </li>
+          <li class="nav-item">
+            <a href="/" class="nav-link text-white opacity-75 d-flex align-items-center gap-2">
+              <i class="bi bi-house-door-fill"></i> Página Principal
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'dashboard_guia' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'dashboard_guia' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-grid-1x2-fill"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'estadisticas_guia' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'estadisticas_guia' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-graph-up-arrow"></i> Mis Estadísticas
+            </a>
+          </li>
+
+          <!-- Separador -->
+          <li class="nav-item mt-2"><hr class="border-secondary mx-2 my-1"></li>
+
+          <!-- Sección Operativa -->
+          <li class="nav-item mt-2 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Operaciones</span>
+          </li>
+
+          <!-- Mis Tours / Asignaciones -->
+          <li class="nav-item">
+            <button class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'mis_asignaciones calendario_guia historial_tours' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    data-bs-toggle="collapse" data-bs-target="#menuTours" aria-expanded="{% if 'mis_asignaciones' in request.resolver_match.url_name %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-map-fill"></i> Mis Tours</div>
+              <i class="bi bi-chevron-down small"></i>
+            </button>
+            <div class="collapse {% if 'mis_asignaciones' in request.resolver_match.url_name or 'calendario_guia' in request.resolver_match.url_name or 'historial_tours' in request.resolver_match.url_name %}show{% endif %}" id="menuTours" data-bs-parent="#guiaAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
+                <li><a href="{% url 'mis_asignaciones' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_asignaciones' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-pin-map-fill me-1"></i> Asignaciones</a></li>
+                <li><a href="{% url 'calendario_guia' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'calendario_guia' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar-range me-1"></i> Calendario</a></li>
+                <li><a href="{% url 'historial_tours' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'historial_tours' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-clock-history me-1"></i> Historial</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Comunidad e Interacción -->
+          <li class="nav-item">
+            <button class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'resenas_guia blog_usuario' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    data-bs-toggle="collapse" data-bs-target="#menuComunidadGuia" aria-expanded="{% if 'resenas_guia' in request.resolver_match.url_name %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-chat-left-heart"></i> Comunidad</div>
+              <i class="bi bi-chevron-down small"></i>
+            </button>
+            <div class="collapse {% if 'resenas_guia' in request.resolver_match.url_name or 'blog_usuario' in request.resolver_match.url_name %}show{% endif %}" id="menuComunidadGuia" data-bs-parent="#guiaAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
+                <li><a href="{% url 'resenas_guia' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'resenas_guia' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-star-fill me-1"></i> Mis Reseñas</a></li>
+                <li><a href="{% url 'blog_usuario' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'blog_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-journal-text me-1"></i> Blog</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Sección Sistema -->
+          <li class="nav-item mt-3 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Sistema</span>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link text-white opacity-75 d-flex align-items-center gap-2">
+              <i class="bi bi-bell-fill"></i> Notificaciones
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link text-white opacity-75 d-flex align-items-center gap-2">
+              <i class="bi bi-gear-fill"></i> Configuración
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- Footer: Perfil + Logout -->
+      <div class="p-3 border-top border-secondary">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Guía" class="rounded-circle border border-success flex-shrink-0" width="40" height="40" style="object-fit:cover">
+          <div class="overflow-hidden">
+            <div class="fw-bold text-white fs-6 text-truncate">{{ user.first_name|default:'Usuario' }}</div>
+            <div class="text-success fw-semibold text-truncate" style="font-size:.7rem">Guía Turístico</div>
+          </div>
+        </div>
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-power"></i> Cerrar Sesión
+          </button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+
+  <!-- =========================================================================
+       2. VISTA CONTRAÍDA (SIDEBAR MINIMALISTA GUÍA - SOLO ÍCONOS)
+       ========================================================================= -->
+  <div class="collapse collapse-horizontal toggle-guia-sidebar" id="sidebarGuiaSlim">
+    
+    <aside class="bg-dark text-white d-flex flex-column align-items-center h-100 border-end border-secondary" style="width: 70px;">
+      
+      <!-- Header / Icono de despliegue -->
+      <div class="d-flex align-items-center justify-content-center p-3 w-100 border-bottom border-secondary" style="height: 72px;">
+        <button class="btn btn-sm btn-outline-secondary border-0 text-white toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-guia-sidebar" aria-label="Expandir menú">
+          <i class="bi bi-list fs-4"></i>
+        </button>
+      </div>
+
+      <!-- Navegación Minimalista (Dropend) -->
+      <nav class="flex-grow-1 overflow-visible w-100 py-3">
+        <ul class="nav flex-column align-items-center w-100 gap-2">
+          
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'perfil_detalles' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'perfil_detalles' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Mi Perfil"><i class="bi bi-person-badge fs-5"></i></a>
+          </li>
+
+          <!-- Separador -->
+          <li class="nav-item w-100 text-center"><hr class="border-secondary mx-2 my-1"></li>
+
+          <li class="nav-item w-100 text-center">
+            <a href="/" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" title="Página Principal"><i class="bi bi-house-door-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'dashboard_guia' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'dashboard_guia' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Dashboard"><i class="bi bi-grid-1x2-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'estadisticas_guia' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'estadisticas_guia' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Estadísticas"><i class="bi bi-graph-up-arrow fs-5"></i></a>
+          </li>
+
+          <!-- Mis Tours (Dropend) -->
+          <li class="nav-item w-100 text-center dropend mt-2">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'mis_asignaciones' in request.resolver_match.url_name or 'calendario_guia' in request.resolver_match.url_name or 'historial_tours' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Mis Tours">
+              <i class="bi bi-map-fill fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Mis Tours</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_asignaciones' %}active bg-success{% endif %}" href="{% url 'mis_asignaciones' %}"><i class="bi bi-pin-map-fill me-2"></i>Asignaciones</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'calendario_guia' %}active bg-success{% endif %}" href="{% url 'calendario_guia' %}"><i class="bi bi-calendar-range me-2"></i>Calendario</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'historial_tours' %}active bg-success{% endif %}" href="{% url 'historial_tours' %}"><i class="bi bi-clock-history me-2"></i>Historial</a></li>
+            </ul>
+          </li>
+
+          <!-- Comunidad (Dropend) -->
+          <li class="nav-item w-100 text-center dropend">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'resenas_guia' in request.resolver_match.url_name or 'blog_usuario' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Comunidad">
+              <i class="bi bi-chat-left-heart fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Comunidad</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'resenas_guia' %}active bg-success{% endif %}" href="{% url 'resenas_guia' %}"><i class="bi bi-star-fill me-2"></i>Mis Reseñas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'blog_usuario' %}active bg-success{% endif %}" href="{% url 'blog_usuario' %}"><i class="bi bi-journal-text me-2"></i>Blog</a></li>
+            </ul>
+          </li>
+
+          <!-- Separador -->
+          <li class="nav-item w-100 text-center mt-2"><hr class="border-secondary mx-2 my-1"></li>
+
+          <li class="nav-item w-100 text-center">
+            <a href="#" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" title="Notificaciones"><i class="bi bi-bell-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="#" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" title="Configuración"><i class="bi bi-gear-fill fs-5"></i></a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Footer Slim -->
+      <div class="p-2 w-100 text-center border-top border-secondary d-flex flex-column align-items-center gap-3">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Guía" class="rounded-circle border border-success" width="34" height="34" style="object-fit:cover" title="{{ user.first_name|default:'Guía' }}">
+        <form action="{% url 'logout' %}" method="post" class="w-100">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger border-0 w-100" title="Cerrar Sesión">
+            <i class="bi bi-power fs-5"></i>
+          </button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+</div>
+
+<link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+<script src="{% static 'js/sidebar.js' %}"></script>
+
+{% include 'notificaciones.html' %}

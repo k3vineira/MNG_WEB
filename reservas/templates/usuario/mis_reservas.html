@@ -1,5 +1,5 @@
 {% extends "private/base_private.html" %}
-{% load static %}
+{% load static humanize %}
 
 {% block titulo %}Mis Reservas | Monagua{% endblock %}
 
@@ -17,14 +17,7 @@
         </div>
     </div>
 
-    {% if messages %}
-    {% for msg in messages %}
-    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-3" role="alert">
-        {{ msg }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
+
 
     {% if reservas %}
         <div class="row g-4">
@@ -37,7 +30,7 @@
                                 {% if reserva.paquete.imagen %}
                                     <img src="{{ reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="{{ reserva.paquete.nombre }}">
                                 {% else %}
-                                    <img src="{% static 'img/default.webp' %}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="Imagen por defecto">
+                                    <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="Imagen por defecto">
                                 {% endif %}
                             </div>
 
@@ -117,10 +110,21 @@
                                                 <i class="bi bi-wallet2 me-1"></i> Enviar pago
                                             </a>
                                         {% endif %}
-                                        {% if reserva.estado != 'cancelada' and reserva.estado != 'Cancelada' %}
-                                            <a href="{% url 'crear_cancelacion' %}?reserva_id={{ reserva.id }}" class="btn btn-outline-danger rounded-pill px-4 py-2">
-                                                <i class="bi bi-trash3 me-1"></i> Cancelar Reserva
+                                        {% if reserva.estado == 'confirmada' or reserva.estado == 'Confirmada' %}
+                                            <a href="{% url 'ver_factura' reserva.id %}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
+                                                <i class="bi bi-file-earmark-ruled me-1"></i> Ver Factura
                                             </a>
+                                        {% endif %}
+                                        {% if reserva.estado != 'cancelada' and reserva.estado != 'Cancelada' %}
+                                            {% if reserva.tiene_cancelacion_activa %}
+                                                <button class="btn btn-outline-warning rounded-pill px-4 py-2" disabled>
+                                                    <i class="bi bi-hourglass-split me-1"></i> Cancelación Solicitada
+                                                </button>
+                                            {% else %}
+                                                <a href="{% url 'crear_cancelacion' %}?reserva_id={{ reserva.id }}" class="btn btn-outline-danger rounded-pill px-4 py-2">
+                                                    <i class="bi bi-trash3 me-1"></i> Cancelar Reserva
+                                                </a>
+                                            {% endif %}
                                         {% endif %}
                                     </div>
 

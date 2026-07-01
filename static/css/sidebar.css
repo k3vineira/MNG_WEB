@@ -1,0 +1,23 @@
+/* ══════════════ SIDEBAR DUAL (WIDE / SLIM) ══════════════ */
+/* Sincronizar Sidebar Dual con mainContent */
+
+#mainSidebar {
+  transition: width 0.3s ease, transform 0.3s ease !important;
+}
+
+body.sidebar-slim-active #mainSidebar {
+  width: 70px !important;
+}
+
+@media (min-width: 992px) {
+  body.sidebar-slim-active #mainContent {
+    margin-left: 70px !important;
+  }
+}
+
+/* Ocultar botón toggle interno en móviles para no interferir con el canvas móvil */
+@media (max-width: 991px) {
+  .toggle-sidebar-btn {
+    display: none !important;
+  }
+}

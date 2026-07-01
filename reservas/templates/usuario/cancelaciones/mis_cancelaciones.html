@@ -4,33 +4,30 @@
 
 {% block titulo %}Mis Cancelaciones | Monagua{% endblock %}
 
-{% block private_content %}
-<div class="container py-4" style="max-width:1100px;">
+{% block private_css %}
+<!-- Rediseño completo en base a Bootstrap 5, sin CSS personalizado -->
+{% endblock %}
 
-    <!-- Título -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
-        <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <div>
-                <h2 class="fw-bold text-danger mb-1">
-                    <i class="bi bi-x-circle text-danger me-2"></i>Mis Solicitudes de Cancelación
-                </h2>
-                <p class="text-muted mb-0">Consulta el estado de tus cancelaciones, multas y reportes</p>
-            </div>
-            <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-outline-secondary rounded-pill px-4">
+{% block private_content %}
+<div class="container py-4">
+
+    <!-- Cabecera de Sección -->
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-md-8">
+            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill mb-2 fw-bold">MIS VIAJES</span>
+            <h2 class="display-6 fw-bold text-dark mb-1">
+                <i class="bi bi-x-circle text-danger me-2"></i>Mis Cancelaciones
+            </h2>
+            <p class="text-muted mb-0">Consulta el estado de tus solicitudes de cancelación, multas y reembolsos.</p>
+        </div>
+        <div class="col-md-4 text-md-end text-start">
+            <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold shadow-sm">
                 <i class="bi bi-archive me-1"></i> Ver Mis Reservas
             </a>
         </div>
     </div>
 
-    <!-- Mensajes Django -->
-    {% if messages %}
-    {% for msg in messages %}
-    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show rounded-3" role="alert">
-        {{ msg }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
+
 
     <!-- Listado de Cancelaciones -->
     {% if cancelaciones %}
@@ -40,49 +37,63 @@
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
                         <div class="row g-0 align-items-stretch">
                             
-                            <!-- Imagen -->
-                            <div class="col-md-4 position-relative" style="min-height: 220px;">
+                            <!-- Imagen en Escritorio -->
+                            <div class="col-md-4 position-relative d-none d-md-block" style="min-height: 240px;">
                                 {% if cancelacion.reserva.paquete.imagen %}
                                     <img src="{{ cancelacion.reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="{{ cancelacion.reserva.paquete.nombre }}">
                                 {% else %}
-                                    <img src="{% static 'img/default.webp' %}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="Imagen por defecto">
+                                    <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="Imagen por defecto">
                                 {% endif %}
                             </div>
 
-                            <!-- Información -->
-                            <div class="col-md-8 d-flex flex-column">
+                            <!-- Información General -->
+                            <div class="col-12 col-md-8 d-flex flex-column">
                                 <div class="card-body p-4 d-flex flex-column h-100">
                                     
+                                    <!-- Nombre Paquete e Indicador de Estado -->
                                     <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
                                         <div>
-                                            <h3 class="fw-bold text-dark mb-1">{{ cancelacion.reserva.paquete.nombre }}</h3>
-                                            <p class="text-muted small mb-0"><i class="bi bi-info-circle me-1"></i> Cancelación asociada a Reserva #{{ cancelacion.reserva.id }}</p>
+                                            <h4 class="fw-bold text-dark mb-1">{{ cancelacion.reserva.paquete.nombre }}</h4>
+                                            <p class="text-muted small mb-0"><i class="bi bi-info-circle me-1"></i> Solicitud de Cancelación de Reserva #{{ cancelacion.reserva.id }}</p>
                                         </div>
                                         <div>
-                                        {% if cancelacion.estado == 'pendiente' %}
-                                         <span class="badge" style="background-color: var(--verde-medio); color: var(--verde-bosque); padding: 8px 18px; border-radius: 30px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">Pendiente</span>
-                                        {% elif cancelacion.estado == 'aceptada' %}
-                                         <span class="badge" style="background-color: var(--verde-main); color: #ffffff; padding: 8px 18px; border-radius: 30px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">Aceptada</span>
+                                            {% if cancelacion.estado == 'pendiente' %}
+                                                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-bold">
+                                                    <i class="bi bi-hourglass-split me-1"></i>Pendiente
+                                                </span>
+                                            {% elif cancelacion.estado == 'aceptada' %}
+                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 fw-bold">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>Aceptada
+                                                </span>
                                             {% elif cancelacion.estado == 'rechazada' %}
-                                         <span class="badge" style="background-color: #dc3545; color: #ffffff; padding: 8px 18px; border-radius: 30px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">Rechazada </span>
-                                        {% endif %}
+                                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-bold">
+                                                    <i class="bi bi-x-circle-fill me-1"></i>Rechazada
+                                                </span>
+                                            {% endif %}
                                         </div>
-                                                                    
                                     </div>
 
+                                    <!-- Motivo y Penalidad -->
                                     <div class="row g-3 mb-4">
                                         <div class="col-sm-8">
                                             <div class="border rounded-4 p-3 bg-light h-100">
-                                                <small class="text-muted d-block mb-1">Motivo informado</small>
-                                                <p class="mb-0 text-dark small">{{ cancelacion.motivo }}</p>
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Motivo Informado:</span>
+                                                <p class="mb-0 text-dark small fw-medium">{{ cancelacion.motivo }}</p>
                                             </div>
                                         </div>
 
                                         <div class="col-sm-4">
-                                            <div class="border rounded-4 p-3 h-100 {% if cancelacion.penalidad > 0 %}bg-danger-subtle{% else %}bg-light{% endif %}">
-                                                <small class="{% if cancelacion.penalidad > 0 %}text-danger-emphasis{% else %}text-muted{% endif %} d-block mb-1 fw-medium">Multa / Penalidad</small>
-                                                <h5 class="fw-bold {% if cancelacion.penalidad > 0 %}text-danger{% else %}text-dark{% endif %} mb-0">COP ${{ cancelacion.penalidad|floatformat:0|intcomma }}</h5>
-                                            </div>
+                                            {% if cancelacion.penalidad > 0 %}
+                                                <div class="border rounded-4 p-3 h-100 bg-danger bg-opacity-10 text-danger border-danger border-opacity-25">
+                                                    <span class="text-uppercase text-danger-emphasis small fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Multa / Penalidad:</span>
+                                                    <h5 class="fw-bold text-danger mb-0">COP ${{ cancelacion.penalidad|floatformat:0|intcomma }}</h5>
+                                                </div>
+                                            {% else %}
+                                                <div class="border rounded-4 p-3 h-100 bg-light text-secondary">
+                                                    <span class="text-uppercase text-muted small fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Multa / Penalidad:</span>
+                                                    <h5 class="fw-bold text-dark mb-0">Sin multa</h5>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     </div>
 
@@ -119,23 +130,23 @@
                                     {% endif %}
 
                                     <!-- Acciones -->
-                                    <div class="mt-auto d-flex gap-2 flex-wrap">
-                                        {% if cancelacion.estado == 'aceptada' or cancelacion.estado == 'Aceptada' %}
+                                    <div class="mt-auto d-flex gap-2 flex-wrap pt-2 border-top">
+                                        {% if cancelacion.estado == 'aceptada' %}
                                             {% if cancelacion.penalidad > 0 %}
-                                                <a href="{% url 'enviar_comprobante' %}?reserva_id={{ cancelacion.reserva.id }}" class="btn btn-sm btn-danger rounded-pill px-4 py-2 shadow-sm fw-semibold">
+                                                <a href="{% url 'enviar_comprobante' %}?reserva_id={{ cancelacion.reserva.id }}" class="btn btn-danger rounded-pill px-4 py-2 shadow-sm fw-semibold">
                                                     <i class="bi bi-credit-card me-1"></i> Pagar Penalidad
                                                 </a>
                                             {% else %}
-                                                <button class="btn btn-sm btn-outline-success rounded-pill px-4 py-2" disabled>
+                                                <button class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold" disabled>
                                                     <i class="bi bi-check-circle me-1"></i> Aceptada sin multa
                                                 </button>
                                             {% endif %}
-                                        {% elif cancelacion.estado == 'rechazada' or cancelacion.estado == 'Rechazada' %}
-                                            <a href="{% url 'pqrs' %}" class="btn btn-sm btn-outline-danger rounded-pill px-4 py-2">
+                                        {% elif cancelacion.estado == 'rechazada' %}
+                                            <a href="{% url 'mis_pqrs' %}" class="btn btn-outline-danger rounded-pill px-4 py-2 fw-semibold">
                                                 <i class="bi bi-send me-1"></i> Enviar PQRS / Reclamo
                                             </a>
                                         {% else %}
-                                            <button class="btn btn-sm btn-secondary rounded-pill px-4 py-2" disabled>
+                                            <button class="btn btn-secondary rounded-pill px-4 py-2 fw-semibold" disabled>
                                                 <i class="bi bi-hourglass-split me-1"></i> Pendiente de revisión
                                             </button>
                                         {% endif %}
@@ -150,13 +161,14 @@
             {% endfor %}
         </div>
     {% else %}
-        <div class="card border-0 shadow-sm rounded-4 bg-white text-center py-5">
-            <div class="mb-3 text-muted">
-                <i class="bi bi-check-circle display-3 opacity-50"></i>
+        <!-- Sin Cancelaciones -->
+        <div class="card border-0 shadow-sm rounded-4 bg-white py-5">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-check-circle text-muted" style="font-size: 3.5rem;"></i>
+                <h5 class="fw-bold text-dark mt-3">No tienes cancelaciones</h5>
+                <p class="text-muted mx-auto" style="max-width: 400px;">Aquí aparecerá el histórico de tus solicitudes de cancelación tramitadas.</p>
+                <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2 shadow-sm fw-semibold">Ver mis reservas</a>
             </div>
-            <h3 class="fw-bold text-dark">No tienes cancelaciones</h3>
-            <p class="text-muted">Aquí aparecerá el histórico de tus solicitudes de cancelación tramitadas.</p>
-            <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2">Ver mis reservas</a>
         </div>
     {% endif %}
 

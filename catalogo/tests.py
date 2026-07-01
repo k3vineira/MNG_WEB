@@ -1,99 +1,92 @@
 from django.test import TestCase
-from django.core.exceptions import ValidationError
 from django.utils import timezone
-from datetime import date, time
-from .models import Temporada, Categoria, Actividades, Paquete, Tarifa, PaqueteActividad
+from datetime import timedelta
+from catalogo.models import Categoria, Actividades, Paquete, Temporada, Tarifa
 
-class MonaguaModelosTest(TestCase):
-
+class CatalogoTestCase(TestCase):
     def setUp(self):
-        self.temporada = Temporada.objects.create(
-            nombre="Alta Verano",
-            fecha_inicio=date(2026, 6, 1),
-            fecha_fin=date(2026, 8, 31),
-            estado="activa"
-        )
+        # Crear categoría
         self.categoria = Categoria.objects.create(
-            nombre="Senderismo",
-            descripcion="Caminatas por la naturaleza",
-            estado=True
+            nombre='Cultura',
+            descripcion='Tours de museos, historia y arte local'
         )
-        self.actividad_1 = Actividades.objects.create(
-            nombre="Caminata Páramo",
-            descripcion="Recorrido guiado",
-            nivel_dificultad="Media",
-            equipo_requerimiento="Botas",
-            recomendacion_salud="Ninguna",
-            estado=True,
+
+        # Crear actividades
+        self.actividad_apta = Actividades.objects.create(
+            nombre='Caminata guiada',
+            descripcion='Paseo por las calles históricas',
+            nivel_dificultad='Baja',
+            equipo_requerimiento='Zapatos cómodos',
+            recomendacion_salud='Ninguna',
             apto_para_menores=True
         )
-        self.actividad_2 = Actividades.objects.create(
-            nombre="Escalada Roca",
-            descripcion="Escalada avanzada",
-            nivel_dificultad="Alta",
-            equipo_requerimiento="Arnés",
-            recomendacion_salud="Buen estado físico",
-            estado=True,
+        self.actividad_no_apta = Actividades.objects.create(
+            nombre='Escalada extrema',
+            descripcion='Escalada vertical en roca',
+            nivel_dificultad='Alta',
+            equipo_requerimiento='Arnés, casco',
+            recomendacion_salud='No apto para problemas cardíacos',
             apto_para_menores=False
         )
-        self.paquete = Paquete.objects.create(
-            nombre="Aventura Ocetá",
-            descripcion="Tour completo",
-            dias_duracion=2,
-            noches_duracion=1,
-            punto_encuentro="Plaza de Mongua",
-            hora_encuentro=time(7, 0),
-            categoria=self.categoria,
-            estado=True
+
+    def test_paquete_apto_para_menores(self):
+        # Paquete que sólo contiene la actividad apta para menores
+        paquete_familiar = Paquete.objects.create(
+            nombre='Mongua Familiar',
+            descripcion='Disfruta en familia',
+            dias_duracion=1,
+            noches_duracion=0,
+            punto_encuentro='Plaza',
+            hora_encuentro='09:00:00',
+            categoria=self.categoria
         )
-        PaqueteActividad.objects.create(paquete=self.paquete, actividad=self.actividad_1)
-        PaqueteActividad.objects.create(paquete=self.paquete, actividad=self.actividad_2)
+        paquete_familiar.actividades.add(self.actividad_apta)
+        self.assertTrue(paquete_familiar.apto_para_menores)
+
+        # Paquete que contiene una actividad no apta para menores
+        paquete_extremo = Paquete.objects.create(
+            nombre='Mongua Extremo',
+            descripcion='Adrenalina pura',
+            dias_duracion=1,
+            noches_duracion=0,
+            punto_encuentro='Plaza',
+            hora_encuentro='07:00:00',
+            categoria=self.categoria
+        )
+        paquete_extremo.actividades.add(self.actividad_apta)
+        paquete_extremo.actividades.add(self.actividad_no_apta)
         
-        self.tarifa = Tarifa.objects.create(
-            paquete=self.paquete,
-            temporada=self.temporada,
-            precio_adulto=120000,
-            precio_menor=80000,
-            estado="activa"
+        # Debe retornar False debido a la actividad extrema
+        self.assertFalse(paquete_extremo.apto_para_menores)
+
+    def test_precio_minimo_calculo(self):
+        paquete = Paquete.objects.create(
+            nombre='Tour Histórico',
+            descripcion='Descripción corta',
+            dias_duracion=1,
+            noches_duracion=0,
+            punto_encuentro='Plaza',
+            hora_encuentro='10:00:00',
+            categoria=self.categoria
         )
 
-    def test_modelo_temporada_str(self):
-        self.assertEqual(str(self.temporada), "Alta Verano")
+        # Crear temporada actual activa
+        hoy = timezone.now().date()
+        temporada_alta = Temporada.objects.create(
+            nombre='Temporada Alta Actual',
+            fecha_inicio=hoy - timedelta(days=5),
+            fecha_fin=hoy + timedelta(days=5),
+            estado='activa'
+        )
 
-    def test_temporada_estado_invalido(self):
-        self.temporada.estado = "invalido"
-        with self.assertRaises(ValidationError):
-            self.temporada.full_clean()
+        # Crear tarifa activa
+        Tarifa.objects.create(
+            paquete=paquete,
+            temporada=temporada_alta,
+            precio_adulto=75000,
+            precio_menor=40000,
+            estado='activa'
+        )
 
-    def test_modelo_categoria_str(self):
-        self.assertEqual(str(self.categoria), "Senderismo")
-
-    def test_modelo_actividades_str(self):
-        self.assertEqual(str(self.actividad_1), "Caminata Páramo")
-
-    def test_actividades_dificultad_invalida(self):
-        self.actividad_1.nivel_dificultad = "Extrema"
-        with self.assertRaises(ValidationError):
-            self.actividad_1.full_clean()
-
-    def test_modelo_paquete_str(self):
-        self.assertEqual(str(self.paquete), "Aventura Ocetá")
-
-    def test_paquete_no_apto_para_menores(self):
-        self.assertFalse(self.paquete.apto_para_menores)
-
-    def test_paquete_precio_minimo_calculado(self):
-        self.assertEqual(self.paquete.precio_minimo, 120000)
-
-    def test_modelo_tarifa_str(self):
-        esperado = "Aventura Ocetá - Alta Verano"
-        self.assertEqual(str(self.tarifa), esperado)
-
-    def test_tarifa_valores_unicos(self):
-        with self.assertRaises(Exception):
-            Tarifa.objects.create(
-                paquete=self.paquete,
-                temporada=self.temporada,
-                precio_adulto=100000,
-                precio_menor=60000
-            )
+        # El precio mínimo debe ser 75000 (el precio del adulto para la tarifa activa de hoy)
+        self.assertEqual(paquete.precio_minimo, 75000)

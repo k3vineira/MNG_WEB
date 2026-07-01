@@ -203,3 +203,97 @@ def blog_usuario(request):
         publicado=True).order_by('-fecha_publicacion')
     context = {'blogs': articulos}
     return render(request, 'usuario/blog.html', context)
+
+# --- VIEWS EXTRAÍDAS DE USUARIOS ---
+
+from django.contrib.auth.decorators import user_passes_test
+from .models import Comentario
+
+@login_required
+def enviar_comentario(request):
+    """Renderiza el histórico de opiniones y procesa las nuevas reseñas de paquetes."""
+    if request.method == 'POST':
+        tipo = request.POST.get('tipo', 'experiencia')
+        titulo = request.POST.get('titulo')
+        mensaje = request.POST.get('mensaje')
+        valoracion = request.POST.get('valoracion', 5)
+        paquete_id = request.POST.get('paquete_id')
+
+        Comentario.objects.create(
+            usuario=request.user,
+            tipo=tipo,
+            titulo=titulo,
+            mensaje=mensaje,
+            valoracion=valoracion,
+            paquete_id=paquete_id if paquete_id else None
+        )
+        messages.success(request, 'Comentario enviado exitosamente.')
+        return redirect('mis_resenas')
+
+    return render(request, 'comunidad/private_comentarios.html', {
+        'titulo': 'Comunidad Monagua — Reseñas y Experiencias'
+    })
+
+@user_passes_test(lambda u: u.is_staff)
+def listar_comentarios(request):
+    """Renderiza el módulo de moderación y auditoría de comentarios para el Staff."""
+    comentarios = Comentario.objects.all().select_related(
+        'usuario', 'paquete').order_by('-fecha_creacion')
+    return render(request, 'comunidad/admin_comentarios.html', {
+        'titulo': 'Moderación de Comentarios — Administración',
+        'comentarios': comentarios
+    })
+
+@user_passes_test(lambda u: u.is_staff)
+def toggle_visible(request, pk):
+    """Acción de backend para alternar la visibilidad pública de un comentario (Redirecciona)."""
+    if request.method == 'POST':
+        comentario = get_object_or_404(Comentario, pk=pk)
+        comentario.visible = not comentario.visible
+        comentario.save()
+        estado = 'visible' if comentario.visible else 'oculto'
+        messages.info(request, f'Comentario marcado como {estado}.')
+    return redirect('listar_comentarios')
+
+
+@user_passes_test(lambda u: u.is_staff)
+def responder_comentario(request, pk):
+    """Acción de backend para almacenar la respuesta oficial del administrador (Redirecciona)."""
+    if request.method == 'POST':
+        comentario = get_object_or_404(Comentario, pk=pk)
+        comentario.admin_respuesta = request.POST.get('admin_respuesta', '')
+        comentario.save()
+        messages.success(request, 'Respuesta guardada correctamente.')
+    return redirect('listar_comentarios')
+
+
+@login_required
+def mis_resenas_view(request):
+    """
+    Renderiza el panel de reseñas del turista.
+    Procesa el envío de nuevas experiencias y distribuye las métricas globales.
+    """
+    if request.method == 'POST':
+        tipo = request.POST.get('tipo', 'experiencia')
+        titulo = request.POST.get('titulo')
+        mensaje = request.POST.get('mensaje')
+        valoracion = request.POST.get('valoracion', 5)
+        paquete_id = request.POST.get('paquete_id')
+
+        Comentario.objects.create(
+            usuario=request.user,
+            tipo=tipo,
+            titulo=titulo,
+            mensaje=mensaje,
+            valoracion=valoracion,
+            paquete_id=paquete_id if paquete_id else None
+        )
+        messages.success(request, 'Gracias por tu reseña.')
+        return redirect('mis_resenas')
+
+    comentarios = Comentario.objects.filter(
+        usuario=request.user).order_by('-fecha_creacion')
+    return render(request, 'comunidad/private_resenas.html', {
+        'titulo': 'Mis Experiencias y Reseñas — Monagua',
+        'comentarios': comentarios
+    })

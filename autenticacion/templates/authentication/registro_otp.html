@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Spacer para el header -->
+<div style="height: 5rem;"></div>
+
+<!-- Fondo completo -->
+<div class="min-vh-100 bg-light d-flex align-items-center justify-content-center px-3 pb-5">
+  <div class="w-100" style="max-width: 480px;">
+
+    <!-- Ícono decorativo superior -->
+    <div class="text-center mb-4">
+      <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 border border-success border-opacity-25 shadow-sm"
+           style="width: 80px; height: 80px;">
+        <i class="bi bi-shield-check text-success" style="font-size: 2.2rem;"></i>
+      </div>
+    </div>
+
+    <!-- Tarjeta principal -->
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+      <!-- Barra de acento superior -->
+      <div class="bg-success" style="height: 5px;"></div>
+
+      <div class="card-body p-4 p-md-5">
+
+        <!-- Encabezado -->
+        <div class="text-center mb-4">
+          <h1 class="h3 fw-bold text-dark mb-2">Verifica tu correo electrónico</h1>
+          <p class="text-muted small mb-0">
+            Hemos enviado un código de 6 dígitos a <br>
+            <strong>{{ email_oculto }}</strong>
+          </p>
+        </div>
+
+        <!-- Separador -->
+        <hr class="text-muted opacity-25 my-4">
+
+
+
+        <!-- Formulario -->
+        <form method="POST" action="">
+          {% csrf_token %}
+
+          <!-- Badge de paso -->
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="badge bg-success rounded-pill px-3 py-2 small">Paso 2</span>
+            <span class="text-muted small">Ingresa el código OTP para crear tu cuenta</span>
+          </div>
+
+          <!-- Input OTP -->
+          <div class="mb-4">
+            <label for="otp_input" class="form-label small fw-semibold text-secondary mb-2">
+              Código de seguridad
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                <i class="bi bi-123 text-success"></i>
+              </span>
+              <input
+                type="text"
+                id="otp_input"
+                name="otp"
+                class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3 text-center fs-4 fw-bold"
+                style="letter-spacing: 0.25em;"
+                placeholder="000000"
+                maxlength="6"
+                pattern="\d{6}"
+                title="Debe contener exactamente 6 números"
+                required
+                autofocus
+                autocomplete="one-time-code"
+              >
+            </div>
+            <div class="form-text ps-1">
+              <i class="bi bi-info-circle me-1"></i>
+              Revisa tu bandeja de entrada o tu carpeta de spam.
+            </div>
+          </div>
+
+          <!-- Botón principal -->
+          <div class="d-grid mb-3">
+            <button type="submit" id="btn_verificar" class="btn btn-success fw-bold py-3 rounded-3 shadow-sm">
+              <i class="bi bi-check-circle me-2"></i>Crear Cuenta
+            </button>
+          </div>
+
+          <!-- Volver a intentar -->
+          <div class="text-center">
+            <a href="{% url 'registro' %}" class="btn btn-link text-muted text-decoration-none small fw-semibold">
+              <i class="bi bi-arrow-left me-1"></i>Volver al formulario de registro
+            </a>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+    <!-- Nota de seguridad -->
+    <div class="text-center mt-4">
+      <p class="small text-muted mb-0">
+        <i class="bi bi-lock-fill me-1 text-success"></i>
+        Conexión segura — tus datos están protegidos.
+      </p>
+    </div>
+
+    <!-- Logo Monagua -->
+    <div class="text-center mt-3">
+      <img src="{% static 'img/Logo.webp' %}" alt="Logo Monagua" width="36" class="opacity-50">
+    </div>
+
+  </div>
+</div>
+
+<script src="{% static 'js/auth/alertas.js' %}"></script>
+<script src="{% static 'js/auth/otp.js' %}"></script>
+{% endblock %}

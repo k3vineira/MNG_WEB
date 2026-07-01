@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- ============================================================ -->
+<!-- VERSIÓN MÓVIL: Imagen de fondo + formulario con transparencia -->
+<!-- ============================================================ -->
+<div class="d-lg-none position-relative vh-100"
+     style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
+
+  <!-- Spacer para el header (transparente para ver la imagen) -->
+  <div style="height: 5rem;"></div>
+
+  <!-- Contenedor centrado del formulario -->
+  <div class="d-flex align-items-center justify-content-center px-3 py-4" style="min-height: calc(100vh - 5rem);">
+    <div class="w-100 rounded-4 shadow-lg p-4 p-sm-5"
+         style="max-width: 420px; background-color: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px) saturate(180%); -webkit-backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.3);">
+
+      <!-- Cabecera Editorial -->
+      <div class="mb-5">
+        <h1 class="display-4 fw-bold text-dark mb-1">¡Hola!</h1>
+        <p class="text-muted mb-4 small fw-medium">Bienvenido de vuelta a las montañas de Mongua.</p>
+        <h2 class="h4 fw-bold text-dark">Inicia sesión</h2>
+      </div>
+
+      {% if not request.COOKIES.ha_registrado %}
+      <div class="alert alert-success alert-dismissible fade show border-0 bg-light rounded-4 shadow p-4 mb-4" role="alert">
+        <div class="d-flex align-items-center gap-3 pe-4">
+          <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
+            <i class="bi bi-compass fs-3 d-block"></i>
+          </div>
+          <div>
+            <h5 class="mb-1 fw-bold text-dark">¿Quieres realizar una reserva pero no tienes una cuenta?</h5>
+            <p class="mb-0 text-muted">
+              <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold text-decoration-none">Regístrate</a> y entra a la familia Monagua.
+            </p>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+
+      <!-- Formulario -->
+      <form method="POST" action="" class="mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+        {% if form.errors %}
+        <div class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">
+          <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña incorrectos.
+          <button type="button" class="btn-close small" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+
+
+        <!-- Input Usuario -->
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-secondary ps-3">Correo o Usuario</label>
+          <input type="text" name="username" class="form-control rounded-pill py-3 px-4"
+                 placeholder="aventura@monagua.com" required>
+        </div>
+
+        <!-- Input Password -->
+        <div class="mb-4">
+          <div class="d-flex justify-content-between px-3">
+            <label class="form-label small fw-semibold text-secondary">Contraseña</label>
+            <a href="{% url 'password_reset' %}" class="small link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover">¿La olvidaste?</a>
+          </div>
+          <div class="position-relative">
+            <input type="password" name="password" class="form-control rounded-pill py-3 px-4 pe-5"
+                   placeholder="••••••••" required>
+            <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary"
+               style="cursor: pointer;"
+               onclick="const input = this.previousElementSibling; if(input.type === 'password'){ input.type='text'; this.classList.replace('bi-eye', 'bi-eye-slash'); } else { input.type='password'; this.classList.replace('bi-eye-slash', 'bi-eye'); }"></i>
+          </div>
+        </div>
+
+        <!-- Botón -->
+        <div class="d-grid pt-2">
+          <button type="submit" class="btn btn-success rounded-pill py-3 fw-bold shadow-sm">
+            Iniciar Aventura
+          </button>
+        </div>
+      </form>
+
+      <!-- Pie de Formulario -->
+      <div class="text-center">
+        <p class="small text-muted mb-0">¿Aún no tienes cuenta?
+          <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover ms-1">Únete ahora</a>
+        </p>
+      </div>
+
+      <!-- Branding Sutil -->
+      <div class="text-center mt-4">
+        <img src="{% static 'img/Logo.webp' %}" alt="Logo Monagua" width="40">
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VERSIÓN DESKTOP: Layout original de dos columnas              -->
+<!-- ============================================================ -->
+<div class="d-none d-lg-block">
+  <!-- Spacer para el header -->
+  <div style="height: 5rem; width: 100%; background-color: transparent;"></div>
+
+  <section class="container-fluid p-0 overflow-hidden" style="height: calc(100vh - 5rem);">
+    <div class="row g-0 h-100 w-100 m-0">
+
+      <!-- Columna Izquierda: Imagen de Naturaleza -->
+      <div class="col-lg-6 position-relative h-100"
+           style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
+      </div>
+
+      <!-- Columna Derecha: Formulario Minimalista -->
+      <div class="col-lg-6 bg-white d-flex align-items-center justify-content-center p-5 h-100 overflow-auto">
+        <div class="w-100" style="max-width: 420px;">
+
+          <!-- Cabecera Editorial -->
+          <div class="mb-5">
+            <h1 class="display-4 fw-bold text-dark mb-1">¡Hola!</h1>
+            <p class="text-muted mb-4 small fw-medium">Bienvenido de vuelta a las montañas de Mongua.</p>
+            <h2 class="h4 fw-bold text-dark">Inicia sesión</h2>
+          </div>
+
+          {% if not request.COOKIES.ha_registrado %}
+          <div class="alert alert-success alert-dismissible fade show border-0 bg-light rounded-4 shadow p-4 mb-4" role="alert">
+            <div class="d-flex align-items-center gap-3 pe-4">
+              <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
+                <i class="bi bi-compass fs-3 d-block"></i>
+              </div>
+              <div>
+                <h5 class="mb-1 fw-bold text-dark">¿Quieres realizar una reserva pero no tienes una cuenta?</h5>
+                <p class="mb-0 text-muted">
+                  <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold text-decoration-none">Regístrate</a> y entra a la familia Monagua.
+                </p>
+              </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endif %}
+
+          <!-- Formulario -->
+          <form method="POST" action="" class="mb-4">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+            {% if form.errors %}
+            <div class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">
+              <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña incorrectos.
+              <button type="button" class="btn-close small" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+
+
+            <!-- Input Usuario -->
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-secondary ps-3">Correo o Usuario</label>
+              <input type="text" name="username" class="form-control rounded-pill py-3 px-4"
+                     placeholder="aventura@monagua.com" required>
+            </div>
+
+            <!-- Input Password -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between px-3">
+                <label class="form-label small fw-semibold text-secondary">Contraseña</label>
+                <a href="{% url 'password_reset' %}" class="small link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover">¿La olvidaste?</a>
+              </div>
+              <div class="position-relative">
+                <input type="password" name="password" class="form-control rounded-pill py-3 px-4 pe-5"
+                       placeholder="••••••••" required>
+                <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary"
+                   style="cursor: pointer;"
+                   onclick="const input = this.previousElementSibling; if(input.type === 'password'){ input.type='text'; this.classList.replace('bi-eye', 'bi-eye-slash'); } else { input.type='password'; this.classList.replace('bi-eye-slash', 'bi-eye'); }"></i>
+              </div>
+            </div>
+
+            <!-- Botón -->
+            <div class="d-grid pt-2">
+              <button type="submit" class="btn btn-success rounded-pill py-3 fw-bold shadow-sm">
+                Iniciar Aventura
+              </button>
+            </div>
+          </form>
+
+          <!-- Pie de Formulario -->
+          <div class="text-center">
+            <p class="small text-muted mb-0">¿Aún no tienes cuenta?
+              <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover ms-1">Únete ahora</a>
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<script src="{% static 'js/auth/alertas.js' %}"></script>
+{% endblock %}

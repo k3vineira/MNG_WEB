@@ -102,6 +102,9 @@ def admin_comprobantes(request):
 
     if estado_filtro:
         comprobantes = comprobantes.filter(estado=estado_filtro)
+    else:
+        # Excluir rechazados de la vista general
+        comprobantes = comprobantes.exclude(estado='rechazado')
 
     total = ComprobantePago.objects.count()
     total_pendientes = ComprobantePago.objects.filter(
@@ -143,10 +146,19 @@ def admin_revisar_comprobante(request, pk):
                 if comprobante.reserva.estado != 'cancelada':
                     comprobante.reserva.estado = 'confirmada'
                     comprobante.reserva.save()
+                    
+                    # Enviar correo de éxito con la factura en PDF adjunta (encriptada) y nuevo diseño tipo OTP
+                    from core.utils import enviar_correo_confirmacion_con_factura
+                    try:
+                        enviar_correo_confirmacion_con_factura(comprobante.reserva, request=request)
+                    except Exception as e:
+                        print(f"Error enviando correo de pago exitoso con factura: {e}")
+
                     messages.success(
                         request,
-                        f'Comprobante #{pk} APROBADO y Reserva #{comprobante.reserva.id} marcada como CONFIRMADA.'
+                        f'Comprobante #{pk} APROBADO. La Reserva #{comprobante.reserva.id} ha sido confirmada y se ha notificado al cliente por correo.'
                     )
+                    return redirect('admin_comprobantes')
                 else:
                     messages.success(
                         request,

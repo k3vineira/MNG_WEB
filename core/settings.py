@@ -11,7 +11,7 @@ SECRET_KEY = 'django-insecure-p!+*=!t4f^dbv14nx*gk375-ieyq##$kmmd(^0&$gkyiuy=jdd
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.20.182', '192.168.1.149',
-                 '192.168.1.112', '192.168.1.125', '*']
+                 '192.168.1.112', '192.168.1.125', '192.168.1.128', '*']
 
 
 # Application definition
@@ -35,10 +35,16 @@ INSTALLED_APPS = [
     'promociones',
     'reservas',
     'guias',
-    'notificaciones'
+    'notificaciones',
+    'autenticacion'
 ]
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+AUTHENTICATION_BACKENDS = [
+    'autenticacion.backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -127,7 +133,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # --- OTRAS CONFIGURACIONES ---
-LOGIN_URL = '/usuarios/login/'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'inicio'
+LOGOUT_REDIRECT_URL = 'inicio'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

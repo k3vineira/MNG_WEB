@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Spacer para el header -->
+<div style="height: 5rem;"></div>
+
+<!-- Fondo completo -->
+<div class="min-vh-100 bg-light d-flex align-items-center justify-content-center px-3 pb-5">
+  <div class="w-100" style="max-width: 480px;">
+
+    <!-- Ícono decorativo superior -->
+    <div class="text-center mb-4">
+      <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 border border-success border-opacity-25 shadow-sm"
+           style="width: 80px; height: 80px;">
+        <i class="bi bi-shield-lock text-success" style="font-size: 2.2rem;"></i>
+      </div>
+    </div>
+
+    <!-- Tarjeta principal -->
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+      <!-- Barra de acento superior -->
+      <div class="bg-success" style="height: 5px;"></div>
+
+      <div class="card-body p-4 p-md-5">
+
+        <!-- Encabezado -->
+        <div class="text-center mb-4">
+          <h1 class="h3 fw-bold text-dark mb-2">Recuperar contraseña</h1>
+          <p class="text-muted small mb-0">
+            Ingresa tu correo y recibirás un enlace para restablecer tu contraseña.
+          </p>
+        </div>
+
+        <!-- Separador -->
+        <hr class="text-muted opacity-25 my-4">
+
+
+
+        <!-- Formulario -->
+        <form method="POST" action="">
+          {% csrf_token %}
+
+          <!-- Paso 1 badge -->
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="badge bg-success rounded-pill px-3 py-2 small">Paso 1 de 1</span>
+            <span class="text-muted small">Verifica tu identidad</span>
+          </div>
+          
+          <!-- Errores del formulario (validación fallida) -->
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger border-0 rounded-3 small mb-4 d-flex align-items-start gap-2" role="alert">
+              <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
+              <div>
+                {% for error in form.non_field_errors %}
+                  <span>{{ error }}</span><br>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Input Apodo -->
+          <div class="mb-4">
+            <label for="username_input" class="form-label small fw-semibold text-secondary mb-2">
+              Apodo
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                <i class="bi bi-person text-success"></i>
+              </span>
+              <input
+                type="text"
+                id="username_input"
+                name="username"
+                class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3"
+                placeholder="Tu apodo"
+                required
+                autofocus
+                {% if form.username.value %}value="{{ form.username.value }}"{% endif %}
+              >
+            </div>
+          </div>
+
+          <!-- Input Número de Documento -->
+          <div class="mb-4">
+            <label for="documento_input" class="form-label small fw-semibold text-secondary mb-2">
+              Número de documento
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                <i class="bi bi-card-text text-success"></i>
+              </span>
+              <input
+                type="text"
+                id="documento_input"
+                name="numero_documento"
+                class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3"
+                placeholder="Tu número de documento"
+                required
+                {% if form.numero_documento.value %}value="{{ form.numero_documento.value }}"{% endif %}
+              >
+            </div>
+          </div>
+
+          <!-- Input Correo con ícono -->
+          <div class="mb-4">
+            <label for="email_input" class="form-label small fw-semibold text-secondary mb-2">
+              Correo electrónico
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                <i class="bi bi-envelope text-success"></i>
+              </span>
+              <input
+                type="email"
+                id="email_input"
+                name="email"
+                class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3"
+                placeholder="ejemplo@sena.edu.co"
+                required
+                {% if form.email.value %}value="{{ form.email.value }}"{% endif %}
+              >
+            </div>
+            <div class="form-text ps-1">
+              <i class="bi bi-info-circle me-1"></i>
+              Usa el correo con el que te registraste.
+            </div>
+          </div>
+
+          <!-- Botón principal -->
+          <div class="d-grid mb-3">
+            <button type="submit" id="btn_enviar" class="btn btn-success fw-bold py-3 rounded-3 shadow-sm">
+              <i class="bi bi-send-check me-2"></i>Enviar enlace de recuperación
+            </button>
+          </div>
+
+          <!-- Volver al login -->
+          <div class="text-center">
+            <a href="{% url 'login' %}" class="btn btn-link text-muted text-decoration-none small fw-semibold">
+              <i class="bi bi-arrow-left me-1"></i>Volver al inicio de sesión
+            </a>
+          </div>
+
+          <!-- Enlace a recuperar apodo -->
+          <div class="text-center mt-2">
+            <a href="{% url 'recuperar_apodo' %}" class="btn btn-link text-muted text-decoration-none small">
+              <i class="bi bi-person-circle me-1"></i>¿No recuerdas tu apodo?
+            </a>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+    <!-- Nota de seguridad debajo de la tarjeta -->
+    <div class="text-center mt-4">
+      <p class="small text-muted mb-0">
+        <i class="bi bi-lock-fill me-1 text-success"></i>
+        Conexión segura — tus datos están protegidos.
+      </p>
+    </div>
+
+    <!-- Logo Monagua -->
+    <div class="text-center mt-3">
+      <img src="{% static 'img/Logo.webp' %}" alt="Logo Monagua" width="36" class="opacity-50">
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Auto-cerrar alertas tras 5 segundos
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      document.querySelectorAll('.alert').forEach(function (el) {
+        new bootstrap.Alert(el).close();
+      });
+    }, 5000);
+
+    // Feedback visual en el botón al enviar
+    const form = document.querySelector('form');
+    const btn = document.getElementById('btn_enviar');
+    form.addEventListener('submit', function () {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Enviando...';
+    });
+  });
+</script>
+
+{% endblock %}

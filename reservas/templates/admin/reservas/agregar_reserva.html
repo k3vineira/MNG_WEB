@@ -3,29 +3,42 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container-fluid py-5" style="background-color: #f8f9fa; min-height: 80vh; display: flex; align-items: center;">
-    <div class="row justify-content-center w-100">
-        <div class="col-md-8 col-lg-5">
-            <div class="card shadow-sm border-0 mb-4">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            
+            <!-- Botón Volver -->
+            <a href="{% url 'listar_reservas' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-4 fw-semibold shadow-sm">
+                <i class="bi bi-arrow-left me-1"></i> Volver a Reservas
+            </a>
+
+            <div class="card border-0 shadow rounded-4 overflow-hidden bg-white">
                 
-                <div class="card-header bg-success text-white py-3" style="background-color: var(--verde-oscuro);">
-                    <h5 class="mb-0 fw-bold text-center">Registro de Nueva Reserva</h5>
+                <div class="card-header bg-success text-white py-3 border-0 text-center">
+                    <h5 class="mb-0 fw-bold text-uppercase" style="letter-spacing: 0.5px;">
+                        <i class="bi bi-plus-circle me-2"></i>Nueva Reserva
+                    </h5>
                 </div>
                 
                 <div class="card-body p-4">
                     <form method="POST">
                         {% csrf_token %}
                         
-                        {# Campos de ReservaForm #}
-                        {{ form|crispy }}
+                        <div class="mb-4 text-dark">
+                            {{ form|crispy }}
+                        </div>
                         
-                        <hr class="my-4 text-secondary opacity-25">
-
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{% url 'listar_reservas' %}" class="btn btn-outline-secondary">Cancelar</a>
-                            <button type="submit" class="btn btn-success px-5 fw-bold" style="background-color: var(--verde-oscuro); color: white;">
-                                Confirmar Reserva
-                            </button>
+                        <div class="row g-2 pt-2 border-top">
+                            <div class="col-6">
+                                <a href="{% url 'listar_reservas' %}" class="btn btn-outline-secondary rounded-pill w-100 py-2 fw-semibold">
+                                    Cancelar
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-success rounded-pill w-100 py-2 fw-bold shadow-sm">
+                                    Confirmar Reserva
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>

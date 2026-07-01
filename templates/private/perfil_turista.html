@@ -4,279 +4,276 @@
 {% block content %}
 <div class="container-fluid py-2">
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden bg-white mb-5">
-    <div
-      class="w-100 bg-success bg-opacity-25"
-      style="
-        height: 160px;
-        background-image: url('{% static "img/Fondo.webp" %}');
-        background-size: cover;
-        background-position: center;
-      "
-    ></div>
+    <div class="w-100 bg-success bg-opacity-25">
+      <img src="{% static 'img/Fondo.webp' %}" class="w-100 object-fit-cover" height="160" alt="Fondo" />
+    </div>
 
-    <div class="card-body p-4 p-md-5 pt-0">
+    <div class="card-body p-4 p-md-5 pt-4">
       <div class="row">
-        <div
-          class="col-lg-4 text-center text-lg-start mb-5 mb-lg-0 border-end-lg"
-          style="margin-top: -80px"
-        >
-          <div
-            class="d-flex justify-content-center justify-content-lg-start mb-4"
-          >
-            <div
-              class="position-relative d-inline-block bg-white p-2 rounded-circle shadow-sm"
-            >
-              <img
-                src="{{ user.avatar_url }}"
-                alt="{{ user.username }}"
-                class="rounded-circle object-fit-cover shadow"
-                style="width: 140px; height: 140px"
-              />
-              <form
-                method="POST"
-                enctype="multipart/form-data"
-                class="position-absolute bottom-0 end-0 m-1"
-                id="form_imagen_perfil"
-              >
-                {% csrf_token %}
-                <label
-                  for="id_imagen_perfil"
-                  class="btn btn-success btn-sm rounded-circle shadow border border-2 border-white d-flex align-items-center justify-content-center p-0"
-                  style="width: 38px; height: 38px; cursor: pointer"
-                  title="Cambiar foto de perfil"
-                >
-                  <i class="bi bi-camera-fill fs-6"></i>
-                </label>
-                <input
-                  type="file"
-                  name="imagen_perfil"
-                  id="id_imagen_perfil"
-                  class="d-none"
-                  accept="image/*"
-                />
-              </form>
-            </div>
+        <!-- Columna Izquierda: Detalles rápidos -->
+        <div class="col-lg-4 text-center text-lg-start mb-5 mb-lg-0 border-end">
+          <div class="d-flex justify-content-center justify-content-lg-start mb-4">
+            <img
+              src="{{ user.avatar_url }}"
+              alt="{{ user.username }}"
+              class="rounded-circle object-fit-cover shadow border border-3 border-light"
+              width="140"
+              height="140"
+            />
           </div>
 
           <div class="ps-2">
             <h3 class="fw-bold text-dark mb-1">
               {{ user.first_name|default:user.username }} {{ user.last_name }}
             </h3>
-            <span
-              class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold mb-3"
-              >Viajero de Monagua</span
-            >
+            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold mb-3">
+              Viajero de Monagua
+            </span>
             <p class="text-muted small mb-4">
               <i class="bi bi-calendar3 me-1"></i>Miembro desde: {{ user.date_joined|date:"d F, Y" }}
             </p>
           </div>
 
-          <div
-            class="list-group list-group-flush rounded-3 overflow-hidden border border-light shadow-sm"
-          >
+          <div class="list-group list-group-flush rounded-3 overflow-hidden border border-light shadow-sm">
             <a
               href="{% url 'index_turista' %}"
-              class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3 transition-all"
+              class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3"
             >
               <i class="bi bi-house-door-fill text-success fs-5"></i>
               <span class="fw-semibold text-secondary">Inicio Viajero</span>
             </a>
             <a
               href="{% url 'mis_reservas_usuario' %}"
-              class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3 transition-all"
+              class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3"
             >
               <i class="bi bi-calendar2-check-fill text-success fs-5"></i>
               <span class="fw-semibold text-secondary">Mis Reservas</span>
             </a>
             <a
               href="{% url 'mis_resenas' %}"
-              class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3 transition-all"
+              class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3"
             >
               <i class="bi bi-star-fill text-success fs-5"></i>
               <span class="fw-semibold text-secondary">Mis Reseñas</span>
             </a>
             <a
               href="{% url 'mis_pqrs' %}"
-              class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3 transition-all"
+              class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3"
             >
               <i class="bi bi-chat-left-text-fill text-success fs-5"></i>
-              <span class="fw-semibold text-secondary"
-                >Mis Solicitudes PQRS</span
-              >
+              <span class="fw-semibold text-secondary">Mis Solicitudes PQRS</span>
             </a>
           </div>
         </div>
 
+        <!-- Columna Derecha: Formulario -->
         <div class="col-lg-8 ps-lg-5 pt-3">
           <div class="d-flex align-items-center gap-2 mb-4">
             <i class="bi bi-person-gear text-success fs-3"></i>
             <h4 class="fw-bold text-dark mb-0">Configuración del Perfil</h4>
           </div>
 
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger rounded-4 shadow-sm py-2 mb-4">
+            {{ form.non_field_errors.0 }}
+          </div>
+          {% endif %}
+
+
           <form method="POST" enctype="multipart/form-data" id="form_perfil_principal">
             {% csrf_token %}
             <input type="hidden" name="editar_perfil" value="1" />
 
             <div class="row g-4">
+              <!-- Nombre de Usuario (NO EDITABLE) -->
               <div class="col-md-6">
                 <div class="form-floating mb-1">
                   <input
                     type="text"
-                    class="form-control rounded-4 shadow-sm bg-light border-0 text-muted"
+                    class="form-control rounded-4 shadow-sm bg-light text-muted"
                     id="username"
                     value="{{ user.username }}"
                     readonly
                     disabled
                   />
-                  <label for="username"
-                    ><i class="bi bi-person-badge text-success me-2"></i>Nombre
-                    de Usuario</label
-                  >
+                  <label for="username">
+                    <i class="bi bi-person-badge text-success me-2"></i>Nombre de Usuario
+                  </label>
                 </div>
-                <span class="text-muted small ps-2" style="font-size: 0.75rem"
-                  >El nombre de usuario no es modificable.</span
-                >
+                <span class="text-muted small ps-2">El nombre de usuario no es modificable.</span>
               </div>
 
+              <!-- Correo (NO EDITABLE) -->
               <div class="col-md-6">
                 <div class="form-floating mb-1">
                   <input
                     type="email"
-                    class="form-control rounded-4 shadow-sm bg-light border-0 text-muted"
+                    class="form-control rounded-4 shadow-sm bg-light text-muted"
                     id="email"
                     value="{{ user.email }}"
                     readonly
                     disabled
                   />
-                  <label for="email"
-                    ><i class="bi bi-envelope text-success me-2"></i>Correo
-                    Electrónico</label
-                  >
+                  <label for="email">
+                    <i class="bi bi-envelope text-success me-2"></i>Correo Electrónico
+                  </label>
                 </div>
-                <span class="text-muted small ps-2" style="font-size: 0.75rem"
-                  >Para cambiar tu correo contacta a soporte.</span
-                >
+                <span class="text-muted small ps-2">Para cambiar tu correo contacta a soporte.</span>
               </div>
 
+              <!-- Nombres (EDITABLE) -->
               <div class="col-md-6">
                 <div class="form-floating">
                   <input
                     type="text"
                     name="first_name"
-                    class="form-control rounded-4 shadow-sm border-secondary-subtle"
+                    class="form-control rounded-4 shadow-sm {% if form.first_name.errors %}is-invalid{% endif %}"
                     id="first_name"
-                    value="{{ user.first_name }}"
+                    value="{{ form.first_name.value|default:user.first_name }}"
                     placeholder="Nombres"
                     required
                   />
                   <label for="first_name">Nombres</label>
+                  {% if form.first_name.errors %}
+                  <div class="invalid-feedback ms-2">
+                    {{ form.first_name.errors.0 }}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
 
+              <!-- Apellidos (EDITABLE) -->
               <div class="col-md-6">
                 <div class="form-floating">
                   <input
                     type="text"
                     name="last_name"
-                    class="form-control rounded-4 shadow-sm border-secondary-subtle"
+                    class="form-control rounded-4 shadow-sm {% if form.last_name.errors %}is-invalid{% endif %}"
                     id="last_name"
-                    value="{{ user.last_name }}"
+                    value="{{ form.last_name.value|default:user.last_name }}"
                     placeholder="Apellidos"
                     required
                   />
                   <label for="last_name">Apellidos</label>
+                  {% if form.last_name.errors %}
+                  <div class="invalid-feedback ms-2">
+                    {{ form.last_name.errors.0 }}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
 
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <select
-                    name="tipo_documento"
-                    class="form-select rounded-4 shadow-sm border-secondary-subtle"
-                    id="tipo_documento"
-                    required
-                  >
-                    <option value="" disabled>Selecciona una opción</option>
-                    <option
-                      value="CC"
-                      {% if user.tipo_documento == "CC" %}selected{% endif %}
-                    >
-                      Cédula de Ciudadanía
-                    </option>
-                    <option
-                      value="CE"
-                      {% if user.tipo_documento == "CE" %}selected{% endif %}
-                    >
-                      Cédula de Extranjería
-                    </option>
-                    <option
-                      value="PAS"
-                      {% if user.tipo_documento == "PAS" %}selected{% endif %}
-                    >
-                      Pasaporte
-                    </option>
-                  </select>
-                  <label for="tipo_documento"
-                    ><i class="bi bi-card-heading text-success me-2"></i>Tipo de
-                    Documento</label
-                  >
-                </div>
-              </div>
-
+              <!-- Tipo Documento (NO EDITABLE) -->
               <div class="col-md-6">
                 <div class="form-floating">
                   <input
                     type="text"
-                    name="numero_documento"
-                    class="form-control rounded-4 shadow-sm border-secondary-subtle"
-                    id="numero_documento"
-                    value="{{ user.numero_documento|default:'' }}"
-                    placeholder="Número de Documento"
-                    required
-                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                    class="form-control rounded-4 shadow-sm bg-light text-muted"
+                    id="tipo_documento_disabled"
+                    value="{{ user.get_tipo_documento_display|default:'No especificado' }}"
+                    disabled
+                    readonly
                   />
-                  <label for="numero_documento"
-                    ><i class="bi bi-123 text-success me-2"></i>Número de
-                    Documento</label
-                  >
+                  <label for="tipo_documento_disabled">
+                    <i class="bi bi-card-heading text-success me-2"></i>Tipo de Documento
+                  </label>
                 </div>
               </div>
 
+              <!-- Número de Documento (NO EDITABLE) -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control rounded-4 shadow-sm bg-light text-muted"
+                    id="numero_documento_disabled"
+                    value="{{ user.numero_documento|default:'No especificado' }}"
+                    disabled
+                    readonly
+                  />
+                  <label for="numero_documento_disabled">
+                    <i class="bi bi-123 text-success me-2"></i>Número de Documento
+                  </label>
+                </div>
+              </div>
+
+              <!-- Teléfono (EDITABLE) -->
               <div class="col-md-6">
                 <div class="form-floating">
                   <input
                     type="tel"
                     name="telefono"
-                    class="form-control rounded-4 shadow-sm border-secondary-subtle"
+                    class="form-control rounded-4 shadow-sm {% if form.telefono.errors %}is-invalid{% endif %}"
                     id="telefono"
-                    value="{{ user.telefono }}"
+                    value="{{ form.telefono.value|default:user.telefono }}"
                     placeholder="Número de Teléfono"
                     required
                     maxlength="10"
                     oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                   />
-                  <label for="telefono"
-                    ><i class="bi bi-telephone text-success me-2"></i>Número de
-                    Teléfono</label
-                  >
+                  <label for="telefono">
+                    <i class="bi bi-telephone text-success me-2"></i>Número de Teléfono
+                  </label>
+                  {% if form.telefono.errors %}
+                  <div class="invalid-feedback ms-2">
+                    {{ form.telefono.errors.0 }}
+                  </div>
+                  {% endif %}
                 </div>
               </div>
 
+              <!-- Imagen de Perfil (EDITABLE) -->
               <div class="col-md-6">
                 <div class="form-floating">
                   <input
-                    type="text"
-                    name="residencia"
-                    class="form-control rounded-4 shadow-sm border-secondary-subtle"
-                    id="residencia"
-                    value="{{ user.residencia }}"
-                    placeholder="Ciudad y País de Residencia"
-                    required
+                    type="file"
+                    name="imagen_perfil"
+                    class="form-control rounded-4 shadow-sm {% if form.imagen_perfil.errors %}is-invalid{% endif %}"
+                    id="imagen_perfil"
+                    accept="image/*"
                   />
-                  <label for="residencia"
-                    ><i class="bi bi-geo-alt text-success me-2"></i>Ciudad y
-                    País de Residencia</label
+                  <label for="imagen_perfil">
+                    <i class="bi bi-camera text-success me-2"></i>Foto de Perfil (Opcional)
+                  </label>
+                  {% if form.imagen_perfil.errors %}
+                  <div class="invalid-feedback ms-2">
+                    {{ form.imagen_perfil.errors.0 }}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- País (NO EDITABLE - usa APIs de registro) -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select
+                    id="id_pais"
+                    class="form-select rounded-4 shadow-sm bg-light text-muted"
+                    data-prev="{{ user.cliente.pais }}"
+                    disabled
                   >
+                    <option value="" selected disabled>Cargando países...</option>
+                  </select>
+                  <label for="id_pais">
+                    <i class="bi bi-globe text-success me-2"></i>País
+                  </label>
+                </div>
+              </div>
+
+              <!-- Ciudad (NO EDITABLE - usa APIs de registro) -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select
+                    id="id_ciudad"
+                    class="form-select rounded-4 shadow-sm bg-light text-muted"
+                    data-prev="{{ user.cliente.ciudad }}"
+                    disabled
+                  >
+                    <option value="" selected disabled>Elige un país primero</option>
+                  </select>
+                  <label for="id_ciudad">
+                    <i class="bi bi-building text-success me-2"></i>Ciudad
+                  </label>
                 </div>
               </div>
             </div>
@@ -289,10 +286,12 @@
                 Cancelar
               </a>
               <button
-                type="submit"
-                class="btn btn-success rounded-pill px-5 fw-bold shadow-sm transition-all hover-shadow-lg"
+                type="button"
+                class="btn btn-success rounded-pill px-5 fw-bold shadow-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#confirmarGuardarModal"
               >
-                <i class="bi bi-check-circle me-2"></i>Guardar Cambios
+                Guardar Cambios
               </button>
             </div>
           </form>
@@ -301,72 +300,29 @@
     </div>
   </div>
 </div>
-</div>
 
-<!-- Modal Confirmación General -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmarGuardarModal" tabindex="-1" aria-labelledby="confirmarGuardarLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-4 shadow-lg border-0">
-      <div class="modal-header border-bottom-0 pb-0">
-        <h5 class="modal-title fw-bold" id="confirmModalLabel"><i class="bi bi-question-circle text-success me-2"></i>Confirmar Cambios</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="confirmarGuardarLabel">
+          <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Confirmar Cambios
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body py-4">
-        <p class="mb-0 text-muted" id="confirmModalMessage">¿Estás seguro de que deseas guardar estos cambios?</p>
+        <p class="text-muted mb-0">¿Estás seguro de que deseas guardar los cambios realizados en tu perfil? Esta acción actualizará tu información personal.</p>
       </div>
-      <div class="modal-footer border-top-0 pt-0">
-        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal" id="btnCancelConfirm">Cancelar</button>
-        <button type="button" class="btn btn-success rounded-pill px-4 fw-bold" id="btnAcceptConfirm">Sí, estoy seguro</button>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" form="form_perfil_principal" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
+          <i class="bi bi-check-circle me-1"></i>Sí, Guardar
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const confirmModalEl = document.getElementById('confirmModal');
-  if(!confirmModalEl) return;
-  const confirmModal = new bootstrap.Modal(confirmModalEl);
-  const btnAccept = document.getElementById('btnAcceptConfirm');
-  const modalMessage = document.getElementById('confirmModalMessage');
-  
-  let currentFormToSubmit = null;
-
-  const imgInput = document.getElementById('id_imagen_perfil');
-  const imgForm = document.getElementById('form_imagen_perfil');
-  
-  if(imgInput && imgForm) {
-    imgInput.addEventListener('change', function(e) {
-      if (this.files && this.files.length > 0) {
-        currentFormToSubmit = imgForm;
-        modalMessage.textContent = "¿Estás seguro de que deseas actualizar tu foto de perfil?";
-        confirmModal.show();
-      }
-    });
-  }
-
-  const profileForm = document.getElementById('form_perfil_principal');
-  if(profileForm) {
-    profileForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      currentFormToSubmit = profileForm;
-      modalMessage.textContent = "¿Estás seguro de que deseas guardar los cambios en tu perfil?";
-      confirmModal.show();
-    });
-  }
-
-  btnAccept.addEventListener('click', function() {
-    if (currentFormToSubmit) {
-      currentFormToSubmit.submit();
-    }
-  });
-
-  confirmModalEl.addEventListener('hidden.bs.modal', function () {
-    if (currentFormToSubmit === imgForm) {
-      imgInput.value = ""; 
-    }
-    currentFormToSubmit = null;
-  });
-});
-</script>
+<script src="{% static 'js/auth/paises_ciudades.js' %}"></script>
 {% endblock %}

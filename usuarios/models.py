@@ -14,6 +14,14 @@ class Usuario(AbstractUser):
         CE = 'CE', 'Cédula de Extranjería'
         PASAPORTE = 'PASAPORTE', 'Pasaporte'
 
+    email = models.EmailField(
+        unique=True,
+        error_messages={
+            'unique': 'Ya existe un usuario registrado con este correo electrónico.',
+        },
+        verbose_name='Correo Electrónico'
+    )
+
     rol = models.CharField(
         max_length=20,
         choices=Roles.choices,
@@ -78,7 +86,7 @@ class Usuario(AbstractUser):
         """Retorna la URL de la imagen o una por defecto si no existe."""
         if self.imagen_perfil and hasattr(self.imagen_perfil, 'url'):
             return self.imagen_perfil.url
-        return f"{settings.STATIC_URL}img/avatar_pred.png"
+        return f"{settings.STATIC_URL}img/avatar_pred.webp"
 
     @property
     def es_guia(self):

@@ -13,7 +13,15 @@ from catalogo.models import Tarifa
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Count, Q
-from core.utils import plantilla_reserva_html, plantilla_cancelacion_html, enviar_correo_html_monagua
+from core.utils import (
+    plantilla_reserva_html,
+    plantilla_cancelacion_html,
+    enviar_correo_html_monagua,
+    get_image_base64,
+    get_qr_base64,
+    generar_factura_pdf_bytes,
+    enviar_correo_confirmacion_con_factura
+)
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -82,23 +90,29 @@ class ReservaUpdateView(UpdateView):
                 tipo='reserva'
             )
 
-            asunto = f"Tu Reserva #{reserva.id} ha sido {reserva.estado.upper()} - Monagua"
-            mensaje_texto = f"Hola {nombre_cliente}, el estado de tu reserva para {reserva.paquete.nombre} ha cambiado a {reserva.estado}."
-            
-            html_contenido = plantilla_reserva_html(
-                nombre_cliente=nombre_cliente,
-                paquete=reserva.paquete.nombre,
-                fecha=str(reserva.fecha),
-                adultos=reserva.numero_adultos,
-                menores=reserva.numero_menores,
-                estado=reserva.estado,
-                reserva_id=reserva.id,
-                monto_total=str(reserva.monto_total)
-            )
-            try:
-                enviar_correo_html_monagua(asunto, mensaje_texto, reserva.usuario.email, html_contenido)
-            except Exception as e:
-                print(f"Error enviando correo de actualización de reserva: {e}")
+            if reserva.estado == 'confirmada':
+                try:
+                    enviar_correo_confirmacion_con_factura(reserva, request=self.request)
+                except Exception as e:
+                    print(f"Error enviando correo de confirmación de reserva (admin): {e}")
+            else:
+                asunto = f"Tu Reserva #{reserva.id} ha sido {reserva.estado.upper()} - Monagua"
+                mensaje_texto = f"Hola {nombre_cliente}, el estado de tu reserva para {reserva.paquete.nombre} ha cambiado a {reserva.estado}."
+                
+                html_contenido = plantilla_reserva_html(
+                    nombre_cliente=nombre_cliente,
+                    paquete=reserva.paquete.nombre,
+                    fecha=str(reserva.fecha),
+                    adultos=reserva.numero_adultos,
+                    menores=reserva.numero_menores,
+                    estado=reserva.estado,
+                    reserva_id=reserva.id,
+                    monto_total=str(reserva.monto_total)
+                )
+                try:
+                    enviar_correo_html_monagua(asunto, mensaje_texto, reserva.usuario.email, html_contenido)
+                except Exception as e:
+                    print(f"Error enviando correo de actualización de reserva: {e}")
                 
         return response
 
@@ -178,9 +192,9 @@ class CancelacionCreateView(CreateView):
             messages.warning(self.request, 'Esta reserva ya está cancelada.')
             return redirect('mis_cancelaciones_usuario')
 
-        if Cancelacion.objects.filter(reserva=reserva, estado__in=['revision', 'aceptada']).exists():
+        if Cancelacion.objects.filter(reserva=reserva, estado__in=['pendiente', 'revision', 'aceptada']).exists():
             messages.warning(self.request, 'Ya existe una solicitud de cancelación activa para esta reserva.')
-            return redirect('mis_cancelaciones_usuario')
+            return redirect('mis_reservas_usuario')
 
         form.instance.reserva = reserva
         form.instance.usuario = self.request.user
@@ -486,3 +500,91 @@ def guardar_reserva(request, paquete_id):
         return redirect('mis_reservas_usuario')
 
     return redirect('reservas')
+
+
+@login_required(login_url='login')
+def mis_facturas(request):
+    """Muestra el listado de facturas asociadas a las reservas confirmadas del turista."""
+    mis_confirmadas = Reserva.objects.filter(
+        usuario=request.user, 
+        estado='confirmada'
+    ).select_related('paquete').order_by('-id')
+    
+    return render(request, 'usuario/mis_facturas.html', {
+        'reservas': mis_confirmadas
+    })
+
+
+# get_image_base64 y get_qr_base64 se trasladaron a core.utils
+
+
+@login_required(login_url='login')
+def ver_factura(request, reserva_id):
+    """Muestra la factura detallada de una reserva confirmada en la web."""
+    from django.urls import reverse
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+    
+    # Permitir si el usuario es staff (admin) o el dueño de la reserva
+    if not request.user.is_staff and reserva.usuario != request.user:
+        messages.error(request, "No tienes permiso para acceder a esta factura.")
+        return redirect('mis_reservas_usuario')
+    
+    # Solo permitir ver si está confirmada
+    if reserva.estado != 'confirmada':
+        messages.error(request, "La factura solo está disponible para reservas confirmadas y pagadas.")
+        return redirect('mis_reservas_usuario')
+        
+    # Obtener el comprobante aprobado para esta reserva para extraer el método de pago
+    comprobante = reserva.comprobantes.filter(estado='aprobado').first()
+    metodo_pago = comprobante.banco_origen if comprobante else "Transferencia Bancaria"
+    
+    # Generar URL absoluta para el código QR
+    abs_url = request.build_absolute_uri(reverse('ver_factura', args=[reserva.id]))
+    qr_base64 = get_qr_base64(abs_url)
+    
+    # Obtener logo en base64
+    logo_base64 = get_image_base64('static/img/logo_monagua.webp')
+    
+    context = {
+        'reserva_id': reserva.id,
+        'nro_factura': f"FAC-1000{reserva.id}",
+        'cliente_nombre': reserva.usuario.nombre_completo,
+        'cliente_email': reserva.usuario.email,
+        'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else reserva.fecha.strftime('%d/%m/%Y'),
+        'metodo_pago': metodo_pago,
+        'paquete_nombre': reserva.paquete.nombre,
+        'subtotal': reserva.monto_total,
+        'total': reserva.monto_total,
+        'logo_base64': logo_base64,
+        'qr_base64': qr_base64,
+    }
+    return render(request, 'private/factura.html', context)
+
+
+@login_required(login_url='login')
+def descargar_factura(request, reserva_id):
+    """Genera y descarga en PDF la factura de la reserva confirmada usando xhtml2pdf."""
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+    
+    # Permitir si el usuario es staff (admin) o el dueño de la reserva
+    if not request.user.is_staff and reserva.usuario != request.user:
+        messages.error(request, "No tienes permiso para descargar esta factura.")
+        return redirect('mis_reservas_usuario')
+    
+    if reserva.estado != 'confirmada':
+        messages.error(request, "La factura solo se puede descargar para reservas confirmadas.")
+        return redirect('mis_reservas_usuario')
+        
+    password = reserva.usuario.numero_documento
+    if password:
+        password = str(password).strip()
+        
+    try:
+        pdf_bytes = generar_factura_pdf_bytes(reserva, request=request, password=password)
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="factura_FAC-1000{reserva.id}.pdf"'
+        return response
+    except Exception as e:
+        print(f"Error al descargar la factura PDF: {e}")
+        return HttpResponse("Error al generar el PDF de la factura.", status=500)
+

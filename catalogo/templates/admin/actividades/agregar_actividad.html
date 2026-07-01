@@ -1,40 +1,138 @@
 {% extends "admin/base-admin.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container-fluid py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0 mb-4">
-                
-                <div class="card-header  text-white py-2 text-center" style="background-color: var(--verde-oscuro);">
-                    <h5 class="mb-0 fw-bold">Crear Nueva Actividad</h5>
-                </div>
-                
-                <div class="card-body p-4">
-                    <form method="POST">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            {{ form|crispy }}
-                        </div>
-                        
-                        <hr class="my-4 text-secondary opacity-25">
-
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{% url 'listar_actividades' %}" class="btn btn-outline-secondary px-4">
-                                Cancelar
-                            </a>
-                            <button type="submit" class="btn  px-4" style="background-color: var(--verde-oscuro); color: white;">
-                                Guardar Actividad
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
+    
+    <!-- 1. Encabezado -->
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
+                    <i class="bi bi-plus-circle-fill me-3"></i>Crear Nueva Actividad
+                </h1>
+                <p class="text-muted mb-0">Completa el formulario para registrar una nueva actividad turística en el catálogo.</p>
             </div>
+            <a href="{% url 'listar_actividades' %}" class="btn btn-outline-success fw-bold rounded-pill shadow-sm px-4">
+                <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+            </a>
         </div>
     </div>
+
+    <!-- 2. Formulario -->
+    <form method="POST">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="alert alert-danger shadow-sm rounded-4 mb-4">
+                <h6 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Por favor corrige los siguientes errores:</h6>
+                <ul class="mb-0 small">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="row g-4">
+            <!-- Columna Izquierda: Información de Actividad -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                    <h5 class="fw-bold text-success mb-3 border-bottom pb-2">
+                        <i class="bi bi-info-circle-fill me-2"></i>Detalles de la Actividad
+                    </h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label text-secondary small fw-bold mb-1">Nombre de la Actividad *</label>
+                            {{ form.nombre }}
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label text-secondary small fw-bold mb-1">Nivel de Dificultad *</label>
+                            {{ form.nivel_dificultad }}
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label text-secondary small fw-bold mb-1">Descripción *</label>
+                            {{ form.descripcion }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Requerimientos, Salud y Estado -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <h5 class="fw-bold text-success mb-3 border-bottom pb-2">
+                        <i class="bi bi-shield-fill-check me-2"></i>Requisitos y Salud
+                    </h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label text-secondary small fw-bold mb-1">Equipo Requerido *</label>
+                            {{ form.equipo_requerimiento }}
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label text-secondary small fw-bold mb-1">Recomendaciones de Salud *</label>
+                            {{ form.recomendacion_salud }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 p-4">
+                    <h5 class="fw-bold text-success mb-3 border-bottom pb-2">
+                        <i class="bi bi-toggle-on me-2"></i>Configuración y Estado
+                    </h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="p-3 bg-light rounded-3 border mb-2">
+                                <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 m-0">
+                                    <div>
+                                        <label class="form-check-label fw-bold text-secondary" for="{{ form.apto_para_menores.id_for_label }}">¿Apto para Menores?</label>
+                                        <small class="text-muted d-block">Indica si los niños pueden participar.</small>
+                                    </div>
+                                    <div class="form-check form-switch fs-5 p-0 m-0">
+                                        {{ form.apto_para_menores }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
+                                <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 m-0">
+                                    <div>
+                                        <label class="form-check-label fw-bold text-success" for="{{ form.estado.id_for_label }}">¿Actividad Activa?</label>
+                                        <small class="text-muted d-block">Las actividades inactivas no podrán seleccionarse.</small>
+                                    </div>
+                                    <div class="form-check form-switch fs-5 p-0 m-0">
+                                        {{ form.estado }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+            <a href="{% url 'listar_actividades' %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill fw-bold">
+                Cancelar
+            </a>
+            <button type="submit" class="btn btn-success px-5 py-2 rounded-pill fw-bold shadow-sm">
+                <i class="bi bi-save me-2"></i>Guardar Actividad
+            </button>
+        </div>
+    </form>
 </div>
 {% endblock content %}
