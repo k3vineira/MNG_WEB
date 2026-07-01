@@ -147,31 +147,12 @@ def admin_revisar_comprobante(request, pk):
                     comprobante.reserva.estado = 'confirmada'
                     comprobante.reserva.save()
                     
-                    # Enviar correo de éxito con la plantilla de reserva confirmada
-                    from core.utils import plantilla_reserva_html, enviar_correo_html_monagua
-                    nombre_cliente = comprobante.usuario.get_full_name() or comprobante.usuario.username
-                    asunto = f"¡Tu Pago fue Aprobado y tu Reserva #{comprobante.reserva.id} está Confirmada! - Monagua"
-                    mensaje_texto = f"Hola {nombre_cliente}, ¡excelentes noticias! Tu comprobante de pago ha sido aprobado con éxito y tu aventura está 100% asegurada. Puedes ver tu factura ingresando al sistema."
-                    
-                    html_contenido = plantilla_reserva_html(
-                        nombre_cliente=nombre_cliente,
-                        paquete=comprobante.reserva.paquete.nombre,
-                        fecha=str(comprobante.reserva.fecha),
-                        adultos=comprobante.reserva.numero_adultos,
-                        menores=comprobante.reserva.numero_menores,
-                        estado='confirmada',
-                        reserva_id=comprobante.reserva.id,
-                        monto_total=str(comprobante.reserva.monto_total)
-                    )
+                    # Enviar correo de éxito con la factura en PDF adjunta (encriptada) y nuevo diseño tipo OTP
+                    from core.utils import enviar_correo_confirmacion_con_factura
                     try:
-                        enviar_correo_html_monagua(
-                            asunto,
-                            mensaje_texto,
-                            comprobante.usuario.email,
-                            html_contenido
-                        )
+                        enviar_correo_confirmacion_con_factura(comprobante.reserva, request=request)
                     except Exception as e:
-                        print(f"Error enviando correo de pago exitoso: {e}")
+                        print(f"Error enviando correo de pago exitoso con factura: {e}")
 
                     messages.success(
                         request,

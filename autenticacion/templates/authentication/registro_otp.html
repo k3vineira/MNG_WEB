@@ -37,16 +37,7 @@
         <!-- Separador -->
         <hr class="text-muted opacity-25 my-4">
 
-        <!-- Mensajes del sistema -->
-        {% if messages %}
-          {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} border-0 rounded-3 small mb-4 alert-dismissible fade show d-flex align-items-start gap-2" role="alert">
-              <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} flex-shrink-0 mt-1"></i>
-              <span>{{ message }}</span>
-              <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        {% endif %}
+
 
         <!-- Formulario -->
         <form method="POST" action="">
