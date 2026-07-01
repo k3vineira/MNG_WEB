@@ -10,7 +10,6 @@ urlpatterns = [
     path('logout/', views.UsuarioLogoutView.as_view(), name='logout'),
     path('registro/', views.registro_view, name='registro'),
     path('registro/otp/', views.registro_otp_verify_view, name='registro_otp'),
-    path('verificar-disponibilidad/', views.verificar_disponibilidad, name='verificar_disponibilidad'),
     path('recuperar-apodo/', views.recuperar_apodo_view, name='recuperar_apodo'),
 
     # Recuperación de contraseña

@@ -44,7 +44,7 @@
                                    class="form-control rounded-4 shadow-sm {% if form.username.errors %}is-invalid{% endif %}" 
                                    placeholder="Nombre de Usuario" required>
                             <label for="id_username" class="text-secondary small"><i class="bi bi-person text-success me-1"></i>Nombre de Usuario</label>
-                            <div class="invalid-feedback ms-2" id="feedback_username">{% if form.username.errors %}{{ form.username.errors.0 }}{% endif %}</div>
+                            {% if form.username.errors %}<div class="invalid-feedback ms-2">{{ form.username.errors.0 }}</div>{% endif %}
                         </div>
 
                         <div class="row g-2 mb-3">
@@ -80,7 +80,7 @@
                                    class="form-control rounded-4 shadow-sm {% if form.numero_documento.errors %}is-invalid{% endif %}" 
                                    placeholder="Número de Documento" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             <label for="id_numero_documento" class="text-secondary small"><i class="bi bi-123 text-success me-1"></i>Número de Documento</label>
-                            <div class="invalid-feedback ms-2" id="feedback_numero_documento">{% if form.numero_documento.errors %}{{ form.numero_documento.errors.0 }}{% endif %}</div>
+                            {% if form.numero_documento.errors %}<div class="invalid-feedback ms-2">{{ form.numero_documento.errors.0 }}</div>{% endif %}
                         </div>
 
                         <div class="form-floating mb-3">
@@ -88,7 +88,7 @@
                                    class="form-control rounded-4 shadow-sm {% if form.telefono.errors %}is-invalid{% endif %}" 
                                    placeholder="Número de Teléfono" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             <label for="id_telefono" class="text-secondary small"><i class="bi bi-telephone text-success me-1"></i>Número de Teléfono</label>
-                            <div class="invalid-feedback ms-2" id="feedback_telefono">{% if form.telefono.errors %}{{ form.telefono.errors.0 }}{% endif %}</div>
+                            {% if form.telefono.errors %}<div class="invalid-feedback ms-2">{{ form.telefono.errors.0 }}</div>{% endif %}
                         </div>
                     </div>
 
@@ -100,7 +100,7 @@
                                    class="form-control rounded-4 shadow-sm {% if form.email.errors %}is-invalid{% endif %}" 
                                    placeholder="Correo Electrónico" required>
                             <label for="id_email" class="text-secondary small"><i class="bi bi-envelope text-success me-1"></i>Correo Electrónico</label>
-                            <div class="invalid-feedback ms-2" id="feedback_email">{% if form.email.errors %}{{ form.email.errors.0 }}{% endif %}</div>
+                            {% if form.email.errors %}<div class="invalid-feedback ms-2">{{ form.email.errors.0 }}</div>{% endif %}
                         </div>
 
                         <div class="row g-2 mb-3">
@@ -124,13 +124,6 @@
                                    placeholder="Contraseña" required minlength="6">
                             <label for="pass1" class="text-secondary small"><i class="bi bi-lock text-success me-1"></i>Contraseña</label>
                             {% if form.password1.errors %}<div class="invalid-feedback ms-2">{{ form.password1.errors.0 }}</div>{% endif %}
-                            
-                            <div class="mt-2 px-2">
-                                <div class="progress" style="height: 6px;">
-                                    <div id="password-strength-bar" class="progress-bar bg-secondary" role="progressbar" style="width: 0%;"></div>
-                                </div>
-                                <span id="password-strength-text" class="text-muted d-block mt-1 small">Contraseña no ingresada</span>
-                            </div>
                         </div>
 
                         <div class="form-floating mb-3 position-relative">
