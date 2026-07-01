@@ -276,28 +276,28 @@ body.sidebar-open #sidebar-overlay {
 }
 
 .card-hover {
-    transition: transform .3s, box-shadow .3s;
-}
-
-.card-hover:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 44px rgba(44, 74, 48, .13) !important;
+    transition: transform .4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color .4s ease !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    position: relative;
+    transform: translate3d(0,0,0);
 }
 
 .card-hover .card-img {
-    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.6s ease !important;
+    transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.8s ease !important;
 }
 
 .card-hover:hover .card-img {
-    transform: scale(1.1);
-    opacity: 0.6;
+    transform: scale(1.06);
+    opacity: 0.8;
 }
 
 .marquee-wrapper {
     display: flex;
     width: max-content;
-    /* Animación continua hacia la derecha */
-    animation: scroll-right 150s linear infinite;
+    /* Animación continua hacia la derecha acelerada por GPU */
+    animation: scroll-right 120s linear infinite;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
 }
 
 .marquee-wrapper:hover {
@@ -306,8 +306,62 @@ body.sidebar-open #sidebar-overlay {
 
 .marquee-item {
     width: 340px;
-    padding: 0 10px;
+    padding: 0 12px;
     flex-shrink: 0;
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.4s ease;
+    will-change: transform, opacity;
+}
+
+/* Efecto de Enfoque Apple Style Optimizado (solo opacidad y escala) */
+.marquee-wrapper:hover .marquee-item {
+    opacity: 0.55;
+    transform: scale(0.97);
+}
+
+/* Destacar el item actual que se está apuntando */
+.marquee-wrapper:hover .marquee-item:hover {
+    opacity: 1;
+    transform: scale(1.03);
+    z-index: 10;
+}
+
+.marquee-wrapper:hover .marquee-item:hover .card-hover {
+    border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Modern Badge Tag (Optimized - No backdrop-filter to prevent mobile lag) */
+.badge-tag {
+    background: rgba(26, 38, 31, 0.88); /* Fondo de marca sólido y semi-transparente */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0.45rem 0.9rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    color: #ffffff !important;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), background-color 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.badge-tag i {
+    font-size: 1rem;
+    color: #96DCAA; /* Tono de verde claro del sistema */
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.badge-tag:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+}
+
+.badge-tag:hover i {
+    transform: scale(1.15);
 }
 
 @keyframes scroll-right {
@@ -319,12 +373,15 @@ body.sidebar-open #sidebar-overlay {
     }
 }
 
-
 /* Ajuste responsivo para que las cartas no sean demasiado grandes en móviles */
-
 @media (max-width: 576px) {
     .marquee-item {
         width: 280px;
+        padding: 0 8px;
+    }
+    .badge-tag {
+        padding: 0.35rem 0.75rem;
+        font-size: 0.75rem;
     }
 }
 
