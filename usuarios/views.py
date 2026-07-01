@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from core.decoradores import requiere_autenticacion, requiere_administrador
 from django.db.models import Avg
 from .models import Usuario, Cliente, GuiaTuristico
 from comunidad.models import Comentario
@@ -25,7 +25,7 @@ def nosotros_view(request):
 
 # 3. PANELES DE CONTROL (DASHBOARDS)
 
-@login_required
+@requiere_autenticacion
 def index_turista(request):
     """Renderiza el panel rápido exclusivo para clientes/turistas como landing de inicio de sesión."""
     if request.user.is_staff:
@@ -36,7 +36,7 @@ def index_turista(request):
     })
 
 
-@login_required
+@requiere_autenticacion
 def dashboard_turista(request):
     """Renderiza el tablero de control del turista (Dashboard estadístico)."""
     if request.user.is_staff:
@@ -74,7 +74,7 @@ def dashboard_turista(request):
     })
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def dashboard_admin(request):
     """Renderiza el tablero de control principal del administrador."""
     import datetime
@@ -189,7 +189,7 @@ def dashboard_admin(request):
 # 4. GESTIÓN DE PERFILES Y USUARIOS
 
 
-@login_required
+@requiere_autenticacion
 def perfil_detalles(request):
     """Renderiza dinámicamente el perfil correspondiente según el rol (Admin o Turista)."""
     # Garantizar que turistas tengan un perfil Cliente (para acceder a pais/ciudad)
@@ -221,7 +221,7 @@ def perfil_detalles(request):
     })
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def gestion_usuarios(request, id=None):
     """Renderiza el panel de control integral para la gestión de todos los Usuarios."""
     filtro = request.GET.get('filtro', '')
@@ -256,7 +256,7 @@ def gestion_usuarios(request, id=None):
     })
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def usuarios_guardar(request):
     """
     Acción unificada para crear o actualizar un Usuario de cualquier rol.
@@ -354,7 +354,7 @@ def usuarios_guardar(request):
     return redirect('gestion_usuarios')
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def usuarios_toggle_estado(request, user_id):
     """Acción de backend para alternar el estado activo/inactivo de un usuario (Redirecciona)."""
     if request.method == 'POST':
@@ -366,7 +366,7 @@ def usuarios_toggle_estado(request, user_id):
     return redirect('gestion_usuarios')
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def gestion_guias(request, id=None):
     """Renderiza el panel de control y auditoría para la gestión de Guías."""
     guias = Usuario.objects.filter(
@@ -385,7 +385,7 @@ def gestion_guias(request, id=None):
     })
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def asignar_rol_guia(request, user_id):
     """Acción de backend para alternar el rol de guía (Redirecciona)."""
     if request.method == 'POST':
@@ -403,7 +403,7 @@ def asignar_rol_guia(request, user_id):
     return redirect('gestion_guias')
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def guias_guardar(request):
     """
     Acción de backend unificada para crear o actualizar un Guía Turístico.
@@ -771,7 +771,7 @@ def get_estadisticas_context(user, is_admin=False):
     }
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def estadisticas_admin(request):
     """
     Renderiza el panel de control global (Dashboard) para el Administrador.
@@ -788,7 +788,7 @@ def estadisticas_admin(request):
     return render(request, 'admin/estadisticas_admin.html', context)
 
 
-@login_required
+@requiere_autenticacion
 def estadisticas_turista(request):
     """
     Renderiza el historial métrico personalizado del Turista.

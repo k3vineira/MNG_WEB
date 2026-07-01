@@ -1,13 +1,13 @@
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from .models import ComprobantePago
 from reservas.models import Reserva, Cancelacion
 from django.db.models import Q, OuterRef, Subquery
+from core.decoradores import requiere_autenticacion, requiere_administrador
 
 
-@login_required
+@requiere_autenticacion
 def enviar_comprobante(request):
     """Usuario sube un comprobante de pago vinculado a una reserva o multa."""
     penalidad_subquery = Cancelacion.objects.filter(
@@ -79,7 +79,7 @@ def enviar_comprobante(request):
     return render(request, 'pagos/enviar_comprobante.html', context)
 
 
-@login_required
+@requiere_autenticacion
 def mis_comprobantes(request):
     """Usuario ve el historial de sus comprobantes."""
     comprobantes = ComprobantePago.objects.filter(usuario=request.user)
@@ -93,7 +93,7 @@ def mis_comprobantes(request):
     return render(request, 'pagos/mis_comprobantes.html', context)
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def admin_comprobantes(request):
     """Admin ve todos los comprobantes con filtros por estado."""
     estado_filtro = request.GET.get('estado', '')
@@ -126,7 +126,7 @@ def admin_comprobantes(request):
     return render(request, 'pagos/admin_comprobantes.html', context)
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def admin_revisar_comprobante(request, pk):
     """Admin aprueba, rechaza o deja pendiente un comprobante."""
     comprobante = get_object_or_404(ComprobantePago, pk=pk)
@@ -183,7 +183,7 @@ def admin_revisar_comprobante(request, pk):
     return render(request, 'pagos/admin_revisar_comprobante.html', context)
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def admin_eliminar_comprobante(request, pk):
     """Admin elimina un comprobante."""
     if request.method == 'POST':
@@ -195,7 +195,7 @@ def admin_eliminar_comprobante(request, pk):
     # PÁGINA DE PAGOS RECHAZADOS Y CANCELACIONES RECHAZADAS
 
 
-@login_required
+@requiere_autenticacion
 def mis_rechazos(request):
     if request.user.is_staff:
         return redirect('dashboard')
