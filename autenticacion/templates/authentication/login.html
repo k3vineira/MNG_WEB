@@ -52,15 +52,7 @@
         </div>
         {% endif %}
 
-        {% if messages %}
-          {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">
-              <i class="bi {% if message.tags == 'success' %}bi-check-circle{% else %}bi-info-circle{% endif %} me-2"></i>
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        {% endif %}
+
 
         <!-- Input Usuario -->
         <div class="mb-3">
@@ -163,15 +155,7 @@
             </div>
             {% endif %}
 
-            {% if messages %}
-              {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">
-                  <i class="bi {% if message.tags == 'success' %}bi-check-circle{% else %}bi-info-circle{% endif %} me-2"></i>
-                  {{ message }}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              {% endfor %}
-            {% endif %}
+
 
             <!-- Input Usuario -->
             <div class="mb-3">

@@ -27,20 +27,7 @@
         </div>
     </div>
 
-    <!-- Mensajes Django -->
-    {% if messages %}
-    <div class="row mb-4">
-        <div class="col-12">
-            {% for msg in messages %}
-            <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}{{ msg.tags }}{% endif %} alert-dismissible fade show rounded-4 shadow-sm" role="alert">
-                <i class="bi {% if msg.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
-                {{ msg }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
+
 
     <!-- Listado de Cancelaciones -->
     {% if cancelaciones %}
