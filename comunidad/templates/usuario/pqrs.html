@@ -3,7 +3,19 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container-fluid py-5 mt-5 min-vh-100 d-flex align-items-center bg-light">
+<div class="container-fluid pt-1 pb-2 px-4" style="margin-top: 60px !important; position: relative; z-index: 1000;">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item fs-5 fw-semibold">
+                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none" style="color: #000000af !important;">Inicio</a>
+            </li>
+            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color: #000000af !important;">
+                PQRS
+            </li>
+        </ol>
+    </nav>
+</div>
+<div class="container-fluid pt-2 pb-5 mt-0 min-vh-100 d-flex align-items-center bg-light">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-10 col-lg-6">

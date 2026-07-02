@@ -5,8 +5,8 @@ from .models import PQRS, Blog
 from django.shortcuts import get_object_or_404
 from .forms import PqrsForm, BlogForm
 from django.contrib import messages
+from core.decoradores import requiere_autenticacion, requiere_administrador
 from usuarios.models import Cliente
-from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from notificaciones.models import Notificacion
 from notificaciones.utils import crear_notificacion_sistema
@@ -102,7 +102,7 @@ def guardar_pqrs(request):
     return redirect('mis_pqrs')
 
 
-@login_required
+@requiere_autenticacion
 def mis_pqrs_view(request):
     from usuarios.models import Cliente
     solicitudes_usuario = PQRS.objects.none()
@@ -206,10 +206,9 @@ def blog_usuario(request):
 
 # --- VIEWS EXTRAÍDAS DE USUARIOS ---
 
-from django.contrib.auth.decorators import user_passes_test
 from .models import Comentario
 
-@login_required
+@requiere_autenticacion
 def enviar_comentario(request):
     """Renderiza el histórico de opiniones y procesa las nuevas reseñas de paquetes."""
     if request.method == 'POST':
@@ -234,7 +233,7 @@ def enviar_comentario(request):
         'titulo': 'Comunidad Monagua — Reseñas y Experiencias'
     })
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def listar_comentarios(request):
     """Renderiza el módulo de moderación y auditoría de comentarios para el Staff."""
     comentarios = Comentario.objects.all().select_related(
@@ -244,7 +243,7 @@ def listar_comentarios(request):
         'comentarios': comentarios
     })
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def toggle_visible(request, pk):
     """Acción de backend para alternar la visibilidad pública de un comentario (Redirecciona)."""
     if request.method == 'POST':
@@ -256,7 +255,7 @@ def toggle_visible(request, pk):
     return redirect('listar_comentarios')
 
 
-@user_passes_test(lambda u: u.is_staff)
+@requiere_administrador
 def responder_comentario(request, pk):
     """Acción de backend para almacenar la respuesta oficial del administrador (Redirecciona)."""
     if request.method == 'POST':
@@ -267,7 +266,7 @@ def responder_comentario(request, pk):
     return redirect('listar_comentarios')
 
 
-@login_required
+@requiere_autenticacion
 def mis_resenas_view(request):
     """
     Renderiza el panel de reseñas del turista.

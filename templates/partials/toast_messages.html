@@ -1,0 +1,64 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 2000; margin-top: 5.5rem;">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="toast border-0 rounded-4 shadow-lg mb-3" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="6000">
+        <!-- Accent line indicating message status -->
+        <div class="rounded-top-4" style="height: 4px; 
+          {% if message.tags == 'success' %}background-color: #2c6e3c;
+          {% elif message.tags == 'error' or message.tags == 'danger' %}background-color: #dc3545;
+          {% elif message.tags == 'warning' %}background-color: #ffc107;
+          {% else %}background-color: #0dcaf0;{% endif %}">
+        </div>
+        
+        <div class="d-flex align-items-center p-3 bg-white rounded-bottom-4">
+          <!-- Icon with dynamic styling -->
+          <div class="me-3 fs-4 d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width: 40px; height: 40px;
+            {% if message.tags == 'success' %}background-color: rgba(44, 110, 60, 0.1); color: #2c6e3c;
+            {% elif message.tags == 'error' or message.tags == 'danger' %}background-color: rgba(220, 53, 69, 0.1); color: #dc3545;
+            {% elif message.tags == 'warning' %}background-color: rgba(255, 193, 7, 0.1); color: #ffc107;
+            {% else %}background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0;{% endif %}">
+            
+            {% if message.tags == 'success' %}
+              <i class="bi bi-check-circle-fill"></i>
+            {% elif message.tags == 'error' or message.tags == 'danger' %}
+              <i class="bi bi-exclamation-octagon-fill"></i>
+            {% elif message.tags == 'warning' %}
+              <i class="bi bi-exclamation-triangle-fill"></i>
+            {% else %}
+              <i class="bi bi-info-circle-fill"></i>
+            {% endif %}
+          </div>
+          
+          <!-- Text Body -->
+          <div class="flex-grow-1 text-dark pe-2">
+            <h6 class="fw-bold mb-0 text-start" style="font-size: 0.95rem;">
+              {% if message.tags == 'success' %}¡Excelente!
+              {% elif message.tags == 'error' or message.tags == 'danger' %}¡Error!
+              {% elif message.tags == 'warning' %}¡Atención!
+              {% else %}Información{% endif %}
+            </h6>
+            <div class="small text-muted mt-1 text-start">{{ message }}</div>
+          </div>
+          
+          <!-- Close Button -->
+          <button type="button" class="btn-close ms-auto align-self-start" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+{% if messages %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var toastElList = [].slice.call(document.querySelectorAll('.toast-container .toast'))
+    var toastList = toastElList.map(function (toastEl) {
+      return new bootstrap.Toast(toastEl, {
+        autohide: true,
+        delay: 6000
+      })
+    });
+    toastList.forEach(toast => toast.show());
+  });
+</script>
+{% endif %}

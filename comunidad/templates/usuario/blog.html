@@ -2,11 +2,18 @@
 {% load static %}
 
 {% block content %}
-
-<!-- Spacer to prevent header overlap -->
-<div style="height: 5rem; width: 100%; background-color: #ffffff;"></div>
-
-<!-- HERO -->
+<div class="container-fluid pt-1 pb-2 px-4" style="margin-top: 60px !important; position: relative; z-index: 1000;">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item fs-5 fw-semibold">
+                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none" style="color:  #000000af !important;">Inicio</a>
+            </li>
+            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color:  #000000af !important;">
+                Blog
+            </li>
+        </ol>
+    </nav>
+</div>
 <header class="position-relative overflow-hidden"
         style="background: url('{% static 'img/carousel/img1.webp' %}') center/cover no-repeat; min-height: 70vh;">
     <div class="container">

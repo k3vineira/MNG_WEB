@@ -8,7 +8,7 @@ class ReservaForm(ModelForm):
     class Meta:
         model = Reserva
         fields = ['usuario', 'paquete', 'fecha',
-                  'numero_adultos', 'numero_menores', 'estado']
+                  'numero_adultos', 'numero_menores']
         widgets = {
             'usuario': Select(attrs={'class': 'form-select'}),
             'paquete': Select(attrs={'class': 'form-select'}),
@@ -18,14 +18,13 @@ class ReservaForm(ModelForm):
             ),
             'numero_adultos': NumberInput(attrs={'class': 'form-control', 'min': 1}),
             'numero_menores': NumberInput(attrs={'class': 'form-control', 'min': 0}),
-            'estado': Select(attrs={'class': 'form-select'}),
         }
 
 
 class CancelacionForm(forms.ModelForm):
     class Meta:
         model = Cancelacion
-        fields = ['reserva', 'motivo', 'estado']
+        fields = ['reserva', 'motivo']
         widgets = {
             'reserva': forms.Select(attrs={
                 'class': 'form-control bg-light',
@@ -37,5 +36,4 @@ class CancelacionForm(forms.ModelForm):
                 'rows': 3, 
                 'readonly': 'readonly'
             }),
-            'estado': forms.Select(attrs={'class': 'form-select'}),
         }

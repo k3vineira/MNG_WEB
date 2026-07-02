@@ -202,12 +202,20 @@ def registro_otp_verify_view(request):
                 login(request, user, backend='autenticacion.backends.EmailOrUsernameModelBackend')
                 messages.success(request, 'Registro exitoso. ¡Bienvenido a Monagua!')
                 
+                # Obtener la URL de redirección si existe
+                next_url = registro_data.get('next')
+                
                 # Limpiar sesión de forma segura
                 request.session.pop('registro_data', None)
                 request.session.pop('registro_otp', None)
                 request.session.pop('registro_email', None)
                 
-                return redirect('inicio')
+                if next_url:
+                    response = redirect(next_url)
+                else:
+                    response = redirect('inicio')
+                response.set_cookie('ha_registrado', 'true', max_age=31536000)  # 1 año
+                return response
             else:
                 messages.error(request, 'Error al procesar los datos de registro.')
                 return redirect('registro')
@@ -250,6 +258,7 @@ class UsuarioLoginView(LoginView):
 class UsuarioLogoutView(LogoutView):
     """Gestiona el cierre de sesión y redirige al inicio."""
     next_page = reverse_lazy('inicio')
+    http_method_names = ['get', 'post', 'options']
 
     def get(self, request, *args, **kwargs):
         """Soporte para cerrar sesión vía GET (evita error 405 en Django 5+)."""
