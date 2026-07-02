@@ -1,10 +1,16 @@
+"""
+Pruebas unitarias para los modelos y lógica del catálogo de paquetes turísticos.
+"""
+
 from django.test import TestCase
 from django.utils import timezone
 from datetime import timedelta
 from catalogo.models import Categoria, Actividades, Paquete, Temporada, Tarifa
 
 class CatalogoTestCase(TestCase):
+    """Pruebas para los modelos Paquete, Actividades, Temporada y Tarifa del catálogo."""
     def setUp(self):
+        """Configura el entorno de prueba con categorías y actividades de ejemplo."""
         # Crear categoría
         self.categoria = Categoria.objects.create(
             nombre='Cultura',
@@ -30,6 +36,7 @@ class CatalogoTestCase(TestCase):
         )
 
     def test_paquete_apto_para_menores(self):
+        """Prueba la propiedad apto_para_menores según las actividades incluidas en el paquete."""
         # Paquete que sólo contiene la actividad apta para menores
         paquete_familiar = Paquete.objects.create(
             nombre='Mongua Familiar',
@@ -60,6 +67,7 @@ class CatalogoTestCase(TestCase):
         self.assertFalse(paquete_extremo.apto_para_menores)
 
     def test_precio_minimo_calculo(self):
+        """Prueba que precio_minimo retorne el precio correcto de la tarifa activa vigente."""
         paquete = Paquete.objects.create(
             nombre='Tour Histórico',
             descripcion='Descripción corta',

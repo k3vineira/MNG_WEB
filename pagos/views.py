@@ -1,3 +1,7 @@
+"""
+Vistas para la gestión de comprobantes de pago: envío, revisión y administración por parte del staff.
+"""
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
@@ -193,6 +197,15 @@ def admin_eliminar_comprobante(request, pk):
 
 @requiere_autenticacion
 def mis_rechazos(request):
+    """
+    Muestra al usuario autenticado sus pagos rechazados y cancelaciones rechazadas.
+
+    Args:
+        request (HttpRequest): Objeto de solicitud HTTP.
+
+    Returns:
+        HttpResponse: Página con los comprobantes y cancelaciones rechazadas del usuario.
+    """
     if request.user.is_staff:
         return redirect('dashboard')
 

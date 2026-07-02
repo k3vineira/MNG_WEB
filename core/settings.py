@@ -1,3 +1,8 @@
+"""
+Configuración general del proyecto Django MNG_WEB (Monagua).
+Contiene ajustes de base de datos, correo, archivos estáticos, seguridad y aplicaciones instaladas.
+"""
+
 import os
 from pathlib import Path
 

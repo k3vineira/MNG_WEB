@@ -1,10 +1,16 @@
+"""
+Pruebas unitarias para las utilidades del núcleo del proyecto.
+"""
+
 from django.test import TestCase
 from django.core import mail
 from datetime import time
 from core.utils import plantilla_reserva_html, plantilla_cancelacion_html, enviar_correo_html_monagua
 
 class CoreUtilsTestCase(TestCase):
+    """Pruebas para las funciones de plantillas de correo y envío de emails."""
     def test_plantilla_reserva_html_confirmada(self):
+        """Prueba que la plantilla de reserva confirmada contenga los datos correctos."""
         html = plantilla_reserva_html(
             nombre_cliente='Juan Pérez',
             paquete='Laguna de Tota',
@@ -25,6 +31,7 @@ class CoreUtilsTestCase(TestCase):
         self.assertIn('1 Menores', html)
 
     def test_plantilla_reserva_html_time_parsing(self):
+        """Prueba que una hora inválida use 00:00 como valor por defecto."""
         # Test default fallback when time string is invalid
         html = plantilla_reserva_html(
             nombre_cliente='Juan Pérez',
@@ -37,6 +44,7 @@ class CoreUtilsTestCase(TestCase):
         self.assertIn('00:00', html)
 
     def test_plantilla_cancelacion_html_aceptada(self):
+        """Prueba que la plantilla de cancelación aceptada contenga los datos correctos."""
         html = plantilla_cancelacion_html(
             nombre_cliente='Juan Pérez',
             paquete='Laguna de Tota',
@@ -49,6 +57,7 @@ class CoreUtilsTestCase(TestCase):
         self.assertIn('Solicitud Aceptada', html)
 
     def test_enviar_correo_html_monagua(self):
+        """Prueba que se envíe correctamente un correo HTML mediante la función de utilidad."""
         enviar_correo_html_monagua(
             asunto='Prueba de Correo',
             mensaje_texto='Hola Mundo',

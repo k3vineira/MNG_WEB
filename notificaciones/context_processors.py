@@ -1,9 +1,25 @@
+"""
+Context processors para inyectar notificaciones globales en todos los templates.
+"""
+
 from .models import Notificacion
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
 
 def lista_notificaciones_global(request):
+    """
+    Context processor que provee las notificaciones del usuario a todos los templates.
+
+    Captura los mensajes de Django, los guarda como notificaciones en BD y retorna
+    las últimas 5 notificaciones junto con el contador de no leídas.
+
+    Args:
+        request (HttpRequest): Objeto de solicitud HTTP.
+
+    Returns:
+        dict: Contexto con 'notificaciones_globales' y 'contador_notificaciones'.
+    """
     if request.user.is_authenticated:
         # Capturar los mensajes activos de Django y guardarlos como notificaciones de base de datos
         storage = messages.get_messages(request)

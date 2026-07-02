@@ -1,9 +1,17 @@
+"""
+Modelos de datos para la gestión de usuarios: Usuario personalizado, Cliente y Guía Turístico.
+"""
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
 
 class Usuario(AbstractUser):
+    """
+    Modelo de usuario personalizado que extiende AbstractUser con campos adicionales
+    como rol, tipo de documento, teléfono e imagen de perfil.
+    """
     class Roles(models.TextChoices):
         ADMIN = 'ADMIN', 'Administrador'
         CLIENTE = 'CLIENTE', 'Cliente'
@@ -60,12 +68,22 @@ class Usuario(AbstractUser):
     )
 
     def clean(self):
+        """
+        Normaliza el número de documento vacío a None para evitar errores de integridad.
+        """
         super().clean()
         # Evita errores de IntegrityError si se guarda como string vacío ("")
         if self.numero_documento == "":
             self.numero_documento = None
 
     def save(self, *args, **kwargs):
+        """
+        Asigna automáticamente el rol ADMIN a superusuarios y normaliza el número de documento.
+
+        Args:
+            *args: Argumentos posicionales adicionales.
+            **kwargs: Argumentos de clave-valor adicionales.
+        """
         # Garantiza que si es superusuario de Django, tome automáticamente el rol ADMIN
         if self.is_superuser and self.rol != self.Roles.ADMIN:
             self.rol = self.Roles.ADMIN
@@ -103,10 +121,15 @@ class Usuario(AbstractUser):
         verbose_name_plural = 'Usuarios'
 
     def __str__(self):
+        """Retorna el nombre de usuario y su rol como representación textual."""
         return f"{self.username} - {self.rol}"
 
 
 class Cliente(models.Model):
+    """
+    Perfil extendido para usuarios con rol de Cliente/Turista.
+    Asociado mediante una relación uno-a-uno con el modelo Usuario.
+    """
     # Relación uno a uno que mapea "USUARIO es un CLIENTE"
     usuario = models.OneToOneField(
         Usuario,
@@ -130,10 +153,15 @@ class Cliente(models.Model):
         verbose_name_plural = 'Clientes'
 
     def __str__(self):
+        """Retorna el nombre completo del cliente como representación textual."""
         return self.usuario.nombre_completo
 
 
 class GuiaTuristico(models.Model):
+    """
+    Perfil extendido para usuarios con rol de Guía Turístico.
+    Asociado mediante una relación uno-a-uno con el modelo Usuario.
+    """
     # Relación uno a uno que mapea "USUARIO es un GUIA_TURISTICO"
     usuario = models.OneToOneField(
         Usuario,
@@ -160,4 +188,5 @@ class GuiaTuristico(models.Model):
         verbose_name_plural = 'Guías Turísticos'
 
     def __str__(self):
+        """Retorna 'Guía:' seguido del nombre completo del usuario."""
         return f"Guía: {self.usuario.nombre_completo}"
