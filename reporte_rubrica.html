@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Reporte de Auditoria de Calidad - Proyecto MNG_WEB</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 0.8in;
+            @frame footer_frame {
+                -pdf-frame-content: footer_content;
+                bottom: 0.4in;
+                left: 0.8in;
+                width: 6.9in;
+                height: 0.3in;
+            }
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #334155;
+            font-size: 10pt;
+            line-height: 1.4;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #10b981;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 20pt;
+            font-weight: bold;
+            color: #0f766e;
+            margin: 0;
+        }
+        .subtitle {
+            font-size: 11pt;
+            color: #64748b;
+            margin: 5px 0 0 0;
+        }
+        .summary-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .summary-table {
+            width: 100%;
+        }
+        .summary-table td {
+            padding: 5px;
+            vertical-align: middle;
+        }
+        .score-large {
+            font-size: 26pt;
+            font-weight: bold;
+            color: #0f766e;
+            text-align: center;
+        }
+        .status-badge {
+            font-weight: bold;
+            text-align: center;
+            font-size: 12pt;
+            padding: 6px;
+            border-radius: 4px;
+        }
+        .status-GREEN { color: #047857; background-color: #d1fae5; }
+        .status-YELLOW { color: #b45309; background-color: #fef3c7; }
+        .status-RED { color: #b91c1c; background-color: #fee2e2; }
+        
+        .point-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
+        .point-header-table {
+            width: 100%;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 5px;
+        }
+        .point-header-table td {
+            padding: 3px 0;
+            vertical-align: middle;
+        }
+        .point-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .point-score {
+            text-align: right;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        .score-val-GREEN { color: #047857; }
+        .score-val-YELLOW { color: #b45309; }
+        .score-val-RED { color: #b91c1c; }
+        
+        .point-desc {
+            font-style: italic;
+            color: #475569;
+            margin-bottom: 6px;
+            font-size: 9.5pt;
+        }
+        .metrics-list {
+            margin: 0;
+            padding-left: 20px;
+            color: #334155;
+            font-size: 9pt;
+        }
+        .footer {
+            font-size: 8pt;
+            color: #94a3b8;
+            text-align: center;
+        }
+        .sugerencias-box {
+            background-color: #fffbeb;
+            border: 1px solid #fef3c7;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 20px;
+        }
+        .sugerencias-title {
+            font-weight: bold;
+            color: #b45309;
+            margin-bottom: 5px;
+            font-size: 11pt;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">REPORTE DE AUDITORIA TECNICA</div>
+        <div class="subtitle">Evaluacion de Calidad - Proyecto MNG_WEB</div>
+    </div>
+    
+    <div class="summary-box">
+        <table class="summary-table">
+            <tr>
+                <td width="35%">
+                    <div class="score-large">95 / 100</div>
+                    <div style="text-align: center; color: #64748b; font-size: 9pt;">PUNTUACION GLOBAL</div>
+                </td>
+                <td width="65%">
+                    <div class="status-badge status-GREEN">
+                        ESTADO: EXCELENTE / LISTO PARA ENTREGA
+                    </div>
+                    <div style="margin-top: 10px; font-size: 9.5pt;">
+                        Este reporte autoevalua el cumplimiento del proyecto frente a los 12 puntos de control de la rubrica tecnica de desarrollo (Frontend y Backend).
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <h3 style="color: #0f766e; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; margin-bottom: 10px;">DETALLE DE EVALUACION</h3>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">1. 1. Estructura de Componentes de Interfaz (Plantillas)</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Excelente. La arquitectura de Django Templates usa herencia de plantillas de forma modular.</div>
+        <ul class="metrics-list"><li>Total de plantillas HTML detectadas: 128</li><li>Plantillas que heredan ({% extends %}): 84</li><li>Plantillas con fragmentos reusables ({% include %}): 17</li><li>Bloques definidos ({% block %}): 86</li><li>Uso de static ({% load static %}): 79</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">2. 2. Enrutamiento de vistas y módulos</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Enrutamiento correcto mediante urls.py centralizado y modular en Django.</div>
+        <ul class="metrics-list"><li>Archivos urls.py mapeados: 9</li><li>Rutas/endpoints totales definidos en el servidor: 100</li><li>  - .\autenticacion\urls.py</li><li>  - .\catalogo\urls.py</li><li>  - .\comunidad\urls.py</li><li>  - .\core\urls.py</li><li>  - .\notificaciones\urls.py</li><li>  - .\pagos\urls.py</li><li>  - .\promociones\urls.py</li><li>  - .\reservas\urls.py</li><li>  - .\usuarios\urls.py</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">3. 3. Consumo de API REST, carga y errores</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Excelente. Se consumen APIs y se manejan correctamente los errores de conexión y estados de carga.</div>
+        <ul class="metrics-list"><li>  - .\static\js\auth\paises_ciudades.js (Frontend JS): 2 llamadas (Con manejo de errores y estado de carga)</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">4. 4. Estilos y metodologías CSS (BEM / Atómico)</td>
+                <td class="point-score score-val-RED" width="20%">70 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Diseño atómico basado en Bootstrap 5 / metodología BEM aplicado de forma general.</div>
+        <ul class="metrics-list"><li>Archivos CSS en la carpeta estática: 5</li><li>Selectores con estructura BEM (__ o --) detectados: 56</li><li>Estructuras de diseño atómico (clases utilitarias Bootstrap): 4385</li><li>Estilos en línea (style='...') en HTML: 724 (se sugiere minimizarlos)</li><li>Estilos en línea detectados por archivo:</li><li>  - autenticacion\templates\authentication\contraseña_reset_enviado.html: líneas 6, 10, 15, 16, 24, 47, 52, 57</li><li>  - autenticacion\templates\authentication\contraseña_reset_form.html: líneas 7, 11, 16, 17, 25</li><li>  - autenticacion\templates\authentication\contraseña_reset_guardar.html: líneas 6, 10, 15, 16, 24, 40, 44, 48</li><li>  - autenticacion\templates\authentication\login.html: líneas 9, 12, 15, 17, 74, 108, 110, 115, 120, 177</li><li>  - autenticacion\templates\authentication\password_reset_email.html: líneas 8, 10, 14, 18, 19, 20, 26, 27, 32, 33, 34, 35, 36, 37</li><li>  - autenticacion\templates\authentication\password_reset_otp_email.html: líneas 8, 10, 14, 18, 19, 20, 26, 27, 28, 29, 35, 36, 37, 38</li><li>  - autenticacion\templates\authentication\recuperar.html: líneas 6, 10, 15, 16, 24</li><li>  - autenticacion\templates\authentication\recuperar_apodo.html: líneas 6, 10, 15, 16, 24, 44, 45</li><li>  - autenticacion\templates\authentication\recuperar_otp.html: líneas 6, 10, 15, 16, 24, 66</li><li>  - autenticacion\templates\authentication\registro.html: líneas 10, 14, 18</li><li>  - autenticacion\templates\authentication\registro_otp.html: líneas 6, 10, 15, 16, 24, 66</li><li>  - autenticacion\templates\authentication\registro_otp_email.html: líneas 8, 10, 14, 18, 19, 20, 26, 27, 28, 29, 35, 36, 37, 38</li><li>  - catalogo\templates\admin\actividades\actividades.html: líneas 36, 46, 59, 75</li><li>  - catalogo\templates\admin\categorias\agregar_categoria.html: líneas 5</li><li>  - catalogo\templates\admin\categorias\categorias.html: líneas 36, 46, 59, 73</li><li>  - catalogo\templates\admin\paquetes\agregar_paquete.html: líneas 84</li><li>  - catalogo\templates\admin\paquetes\editar_paquete.html: líneas 81, 90</li><li>  - catalogo\templates\admin\paquetes\paquetes.html: líneas 35, 45, 58, 73, 75, 124, 126</li><li>  - catalogo\templates\admin\tarifas\tarifas.html: líneas 37, 47, 60, 133, 139</li><li>  - catalogo\templates\admin\temporada\agregar_temporada.html: líneas 14, 19</li><li>  - catalogo\templates\admin\temporada\temporada.html: líneas 38, 50, 63, 136, 140</li><li>  - catalogo\templates\usuario\destinos.html: líneas 7, 11, 13, 19, 30, 31, 39, 40, 48, 49, 68, 75, 98, 111, 132, 153, 164, 172</li><li>  - comunidad\templates\admin\blog\blog.html: líneas 5, 14, 17, 27, 29, 31, 35, 39, 48, 51, 64</li><li>  - comunidad\templates\admin\blog\editar_blog.html: líneas 9, 26, 30</li><li>  - comunidad\templates\admin\pqrs\pqrs.html: líneas 11, 18, 21, 31, 33, 35, 39, 43, 54, 55, 57, 74</li><li>  - comunidad\templates\comunidad\admin_comentarios.html: líneas 10, 55, 57, 58, 59, 61, 62, 74, 76, 79, 88, 91, 98, 102, 107, 113, 121, 123, 132, 143</li><li>  - comunidad\templates\comunidad\private_resenas.html: líneas 7, 28, 29, 30, 31, 33, 99, 100, 101, 102, 103, 127, 130, 135, 141, 155, 180, 184, 198, 201</li><li>  - comunidad\templates\usuario\blog.html: líneas 5, 9, 11, 18, 20, 81</li><li>  - comunidad\templates\usuario\detalle_blog.html: líneas 5, 13, 22, 26, 29, 33, 38, 52, 55, 62, 71, 74, 81, 88, 91, 99, 115, 116, 123, 141, 148</li><li>  - comunidad\templates\usuario\mis_pqrs.html: líneas 9, 10, 13, 15, 18, 57, 61, 65</li><li>  - comunidad\templates\usuario\pqrs.html: líneas 6, 10, 12, 24</li><li>  - notificaciones\templates\historial_completo.html: líneas 5, 18, 22, 25, 28, 36, 37, 40, 43, 46, 52, 64</li><li>  - notificaciones\templates\notificaciones.html: líneas 1, 2, 5, 8, 15, 18, 20, 23, 24</li><li>  - pagos\templates\pagos\admin_comprobantes.html: líneas 43, 57, 71, 85, 120, 122, 140, 143, 217, 259, 262, 310</li><li>  - pagos\templates\pagos\admin_revisar_comprobante.html: líneas 27, 32, 50, 112, 131</li><li>  - pagos\templates\pagos\enviar_comprobante.html: líneas 37, 51, 65, 161, 169, 181</li><li>  - pagos\templates\pagos\mis_comprobantes.html: líneas 37, 51, 65, 82, 100, 103, 139, 171, 206, 221, 224, 260, 279, 281</li><li>  - promociones\templates\promociones\_empty_state.html: líneas 3</li><li>  - promociones\templates\promociones\_promo_card.html: líneas 16, 30</li><li>  - promociones\templates\promociones\promociones.html: líneas 12, 38</li><li>  - promociones\templates\promociones_gestion.html: líneas 37, 177</li><li>  - reservas\templates\admin\cancelaciones\cancelaciones_admin.html: líneas 28, 51, 53</li><li>  - reservas\templates\admin\cancelaciones\editar_cancelacion.html: líneas 24, 60, 73</li><li>  - reservas\templates\admin\reservas\agregar_reserva.html: líneas 18</li><li>  - reservas\templates\admin\reservas\editar_reserva.html: líneas 24, 69</li><li>  - reservas\templates\admin\reservas\reservas.html: líneas 33, 58, 60</li><li>  - reservas\templates\usuario\cancelaciones\crear_cancelacion.html: líneas 10, 13, 17, 26, 35</li><li>  - reservas\templates\usuario\cancelaciones\mis_cancelaciones.html: líneas 41, 43, 45, 80, 88, 93, 103, 111, 115, 124, 169, 171</li><li>  - reservas\templates\usuario\carrito.html: líneas 8, 35, 37, 39, 81</li><li>  - reservas\templates\usuario\comprobante_multiple.html: líneas 8</li><li>  - reservas\templates\usuario\comprobante_reserva.html: líneas 8</li><li>  - reservas\templates\usuario\mis_facturas.html: líneas 33, 135, 137</li><li>  - reservas\templates\usuario\mis_reservas.html: líneas 7, 29, 31, 33, 69, 78, 86, 90, 99</li><li>  - reservas\templates\usuario\reservas.html: líneas 6, 11, 13, 69, 72, 75, 87, 90, 92, 120</li><li>  - templates\admin\gestion_guias.html: líneas 66, 69, 169, 171, 238, 315, 336, 413, 462, 469, 471</li><li>  - templates\admin\gestion_usuarios.html: líneas 30, 59, 61, 127, 129, 197, 201, 203, 238, 244, 250, 256, 265, 274, 283, 299, 303, 307, 317, 324, 352, 489</li><li>  - templates\base-admin.html: líneas 17, 19, 25</li><li>  - templates\emails\factura_email.html: líneas 8, 10, 14, 18, 19, 20, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 38, 39, 40, 45, 46, 55, 56, 57, 58, 62, 66, 75, 76, 77, 78</li><li>  - templates\index.html: líneas 6, 11, 21, 25, 27, 48, 50, 52, 54, 69, 71, 73, 75, 90, 92, 94, 96, 114, 116, 118, 120, 132, 144, 162, 177, 206, 217, 228, 239, 264, 302, 304, 305, 309, 310, 320, 323</li><li>  - templates\partials\accesibilidad.html: líneas 6, 29, 38, 81, 123, 125, 136</li><li>  - templates\partials\aside-admin.html: líneas 2, 6, 11, 13, 14, 28, 56, 131, 134, 153, 156, 241</li><li>  - templates\partials\aside-guia.html: líneas 3, 9, 14, 16, 17, 31, 41, 64, 100, 119, 122, 141, 144, 210</li><li>  - templates\partials\aside-turista.html: líneas 2, 5, 9, 11, 12, 24, 33, 86, 104, 107, 122, 124, 187</li><li>  - templates\partials\footer.html: líneas 9</li><li>  - templates\partials\mascota.html: líneas 3, 6, 7, 11, 15, 20, 22</li><li>  - templates\partials\pqrs_modals.html: líneas 16</li><li>  - templates\partials\toast_messages.html: líneas 1, 34</li><li>  - templates\partials\user_dropdown_items.html: líneas 4, 7, 10, 13</li><li>  - templates\private\base-turista-dashboard.html: líneas 18, 23, 31</li><li>  - templates\private\dashboard_turista.html: líneas 13, 42, 57, 76, 95, 116, 118, 121, 124, 206, 210, 216, 243, 247</li><li>  - templates\private\estadisticas_content.html: líneas 237, 328, 420, 467, 503</li><li>  - templates\private\factura.html: líneas 38, 57, 62, 68, 69, 70, 78</li><li>  - templates\private\factura_pdf.html: líneas 96, 98, 101, 103, 105, 107, 114, 116, 120, 126, 127, 130, 140, 141, 147, 148, 150, 154</li><li>  - templates\private\pago.html: líneas 41, 55, 101</li><li>  - templates\private\rechazos.html: líneas 53, 72, 80, 112, 115, 132, 145, 151, 175, 178</li><li>  - templates\public\blog\blog.html: líneas 10, 15, 18, 19, 27, 45</li><li>  - templates\public\blog\editar_blog.html: líneas 9, 26, 30</li><li>  - templates\public\nosotros.html: líneas 4, 23, 25, 31, 42, 50, 58, 66, 79, 86, 94, 116, 124, 132, 141, 146, 178, 189, 206, 217, 234, 254, 259, 261, 268, 272, 287, 291, 313, 318, 328, 343, 358, 373, 394, 399, 401, 403, 415, 420, 431, 432, 437, 438, 448, 453, 464, 465, 470, 471, 481, 486, 497, 498, 503, 504, 517, 521</li><li>  - templates\public\promociones.html: líneas 12, 38</li><li>  - templates\public\terminos.html: líneas 8, 11, 25, 26, 28, 29, 30, 31, 32, 43, 51, 53, 63, 65, 79, 81, 119, 121, 131, 133, 139, 144</li><li>  - usuarios\templates\admin\guias\guias_assign_modal.html: líneas 2</li><li>  - usuarios\templates\admin\guias\guias_modelos.html: líneas 99, 106, 117, 129, 136, 147</li><li>  - usuarios\templates\admin\guias\guias_tabla.html: líneas 107</li><li>  - usuarios\templates\admin\index-admin.html: líneas 20, 54, 69, 84, 99, 114, 127, 132, 133, 156, 168, 169, 171, 174, 177, 201, 204, 282, 309, 311, 313, 322</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">5. 5. Binding de datos reactivo y DOM</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Data binding unidireccional/bidireccional reactivo manejado mediante JS y listeners de eventos del DOM.</div>
+        <ul class="metrics-list"><li>Archivos JavaScript escaneados: 16</li><li>Escrituras dinámicas en el DOM (binding de salida): 23</li><li>Escuchadores de eventos de entrada (binding de entrada): 5</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">6. 6. Validación de formularios</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Cumplido. Se realizan validaciones robustas tanto en backend (Django Forms) como en frontend.</div>
+        <ul class="metrics-list"><li>Formularios de Django estructurados (forms.py): 5</li><li>Llamadas a validación segura en vistas (.is_valid()): 18</li><li>Atributos de validación HTML5 en plantillas frontend: 104</li><li>  - .\autenticacion\forms.py</li><li>  - .\catalogo\forms.py</li><li>  - .\comunidad\forms.py</li><li>  - .\reservas\forms.py</li><li>  - .\usuarios\forms.py</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">7. 7. Configuración limpia por Variables de Entorno</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Perfecto. Configuración limpia basada en variables de entorno sin datos sensibles expuestos.</div>
+        <ul class="metrics-list"><li>Archivo .env o .env.example presente: No (pero se detectó configuración de dotenv en código)</li><li>Llamadas a variables de entorno en código (os.getenv/decouple): 11</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">8. 8. Jerarquía y organización del código fuente</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Estructura de directorios altamente organizada bajo el estándar de aplicaciones Django MVT.</div>
+        <ul class="metrics-list"><li>  - vistas (views.py): 11</li><li>  - modelos (models.py): 10</li><li>  - formularios (forms.py): 5</li><li>  - rutas (urls.py): 9</li><li>  - plantillas (.html): 128</li><li>  - recursos estaticos (.css/.js): 21</li><li>  - tests (tests.py): 11</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">9. 9. Pruebas unitarias sobre componentes</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">¡Excelente cobertura de pruebas! Se encontraron 76 métodos de prueba estructurados.</div>
+        <ul class="metrics-list"><li>Archivos de prueba detectados: 11</li><li>Clases de Test definidos: 17</li><li>Funciones de prueba (test_*): 76</li><li>  - .\autenticacion\tests.py</li><li>  - .\catalogo\tests.py</li><li>  - .\comunidad\tests.py</li><li>  - .\core\tests.py</li><li>  - .\guias\tests.py</li><li>  - .\IA\tests.py</li><li>  - .\notificaciones\tests.py</li><li>  - .\pagos\tests.py</li><li>  - .\promociones\tests.py</li><li>  - .\reservas\tests.py</li><li>  - .\usuarios\tests.py</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">10. 10. Optimización de carga (Lazy loading / split)</td>
+                <td class="point-score score-val-RED" width="20%">75 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Optimización parcial. Añade loading='lazy' en imágenes pesadas de tus catálogos o galerías.</div>
+        <ul class="metrics-list"><li>Imágenes o recursos con carga diferida (loading='lazy'): 6</li><li>Uso de scripts asíncronos o diferidos (async/defer): 0</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">11. 11. Documentación (JSDoc / Comentarios)</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Código fuente ampliamente documentado con estándares JSDoc y Docstrings descriptivos.</div>
+        <ul class="metrics-list"><li>Archivos de código escaneados: 92 Python, 16 JavaScript</li><li>Docstrings de documentación en Python: 247</li><li>Comentarios estilo JSDoc en JavaScript: 4</li></ul>
+    </div>
+
+    <div class="point-card">
+        <table class="point-header-table">
+            <tr>
+                <td class="point-title" width="80%">12. 12. Adaptabilidad de la interfaz (Responsive)</td>
+                <td class="point-score score-val-GREEN" width="20%">100 / 100</td>
+            </tr>
+        </table>
+        <div class="point-desc">Diseño completamente responsivo y adaptable mediante Bootstrap Grid y consultas de medios CSS.</div>
+        <ul class="metrics-list"><li>Media Queries detectadas en hojas de estilo CSS: 117</li><li>Uso de contenedores y rejillas responsivas (Bootstrap Grid/Flexbox): 1263</li></ul>
+    </div>
+
+    
+    <div class="sugerencias-box">
+        <div class="sugerencias-title">RECOMENDACIONES CLAVE PARA MEJORA:</div>
+        <ul style="margin: 0; padding-left: 20px; font-size: 9pt; color: #78350f;">
+            <li>Reducir el uso de estilos en linea (style="...") en las plantillas HTML (trasladar a CSS).</li>
+            <li>Añadir loading="lazy" a imagenes y async/defer a scripts.</li>
+        </ul>
+    </div>
+
+    
+    <div id="footer_content" class="footer">
+        Reporte generado automaticamente - Proyecto MNG_WEB &bull; Pagina <pdf:pagenumber> de <pdf:pagecount>
+    </div>
+</body>
+</html>

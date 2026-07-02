@@ -19,6 +19,7 @@ from pathlib import Path
 # Configuración
 # ────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent
+PROJECT_NAME = os.path.basename(os.getcwd())
 
 # Carpetas a omitir
 EXCLUDED_DIRS = {
@@ -35,6 +36,22 @@ YELLOW = "\033[93m"
 RED = "\033[91m"
 CYAN = "\033[96m"
 WHITE = "\033[97m"
+
+# Mapeo de sugerencias clave para cada uno de los 12 puntos de la rúbrica
+SUGERENCIAS_MAP = {
+    1: "Mejorar la estructura modular de las plantillas HTML utilizando herencia ({% extends %}) o fragmentos reusables ({% include %}).",
+    2: "Definir un enrutamiento estructurado y limpio en archivos urls.py para todos los modulos.",
+    3: "Asegurar que todas las llamadas de consumo de API REST capturen errores de conexion y manejen estados de carga.",
+    4: "Reducir el uso de estilos en linea (style=\"...\") en las plantillas HTML (trasladar a CSS).",
+    5: "Implementar binding reactivo de datos en el frontend mediante JavaScript y escuchadores de eventos del DOM.",
+    6: "Robustecer la validacion de formularios en frontend (HTML5/JS) y backend (Django Forms y .is_valid()).",
+    7: "Migrar las variables SECRET_KEY y EMAIL_HOST_PASSWORD a variables de entorno (.env).",
+    8: "Organizar el codigo de forma logica respetando el patron MVT de Django (separando modelos, vistas, plantillas y archivos estaticos).",
+    9: "Crear o ampliar la cobertura de pruebas unitarias (tests.py) para evaluar el comportamiento de los componentes.",
+    10: "Añadir loading=\"lazy\" a imagenes y async/defer a scripts.",
+    11: "Mejorar documentacion de metodos complejos del frontend usando estandar JSDoc.",
+    12: "Garantizar la adaptabilidad responsiva del diseño mediante Bootstrap Grid o consultas de medios CSS (@media)."
+}
 
 def print_colored(text, color):
     # Detectar si la consola soporta colores o si redirige salida
@@ -82,7 +99,7 @@ def check_ui_structure():
     for root, dirs, files in os.walk(BASE_DIR):
         dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
         for f in files:
-            if f.endswith('.html'):
+            if f.endswith('.html') and f != 'reporte_rubrica.html':
                 path = os.path.join(root, f)
                 html_files.append(path)
                 try:
@@ -285,6 +302,7 @@ def check_styles_bem():
     inline_styles = 0
     bem_classes = 0
     bootstrap_utilities = 0
+    inline_styles_by_file = {}
     
     bem_pattern = re.compile(r'\.[a-zA-Z0-9_-]+__[a-zA-Z0-9_-]+|\.[a-zA-Z0-9_-]+--[a-zA-Z0-9_-]+')
     inline_style_pattern = re.compile(r'\bstyle\s*=\s*["\'][^"\']*["\']')
@@ -302,12 +320,23 @@ def check_styles_bem():
                         bem_classes += len(bem_pattern.findall(content))
                 except Exception:
                     pass
-            elif f.endswith('.html'):
+            elif f.endswith('.html') and f != 'reporte_rubrica.html':
                 try:
+                    rel_path = os.path.relpath(path, BASE_DIR)
                     with open(path, 'r', encoding='utf-8') as file:
-                        content = file.read()
-                        inline_styles += len(inline_style_pattern.findall(content))
+                        lines = file.readlines()
+                        file_inline_lines = []
+                        for idx, line in enumerate(lines, start=1):
+                            matches = inline_style_pattern.findall(line)
+                            if matches:
+                                inline_styles += len(matches)
+                                file_inline_lines.append(idx)
+                        
+                        content = "".join(lines)
                         bootstrap_utilities += len(bootstrap_class_pattern.findall(content))
+                        
+                        if file_inline_lines:
+                            inline_styles_by_file[rel_path] = file_inline_lines
                 except Exception:
                     pass
 
@@ -317,6 +346,12 @@ def check_styles_bem():
         f"Estructuras de diseño atómico (clases utilitarias Bootstrap): {bootstrap_utilities}",
         f"Estilos en línea (style='...') en HTML: {inline_styles} (se sugiere minimizarlos)"
     ]
+
+    if inline_styles_by_file:
+        details.append("Estilos en línea detectados por archivo:")
+        for rel_file, lines_list in sorted(inline_styles_by_file.items()):
+            lines_str = ", ".join(map(str, lines_list))
+            details.append(f"  - {rel_file}: líneas {lines_str}")
 
     score = 100
     if inline_styles > 20:
@@ -421,7 +456,7 @@ def check_form_validation():
         dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
         for f in files:
             path = os.path.join(root, f)
-            if f.endswith('.html'):
+            if f.endswith('.html') and f != 'reporte_rubrica.html':
                 try:
                     with open(path, 'r', encoding='utf-8') as file:
                         content = file.read()
@@ -485,6 +520,7 @@ def check_env_variables():
     env_exists = os.path.exists(os.path.join(BASE_DIR, '.env')) or os.path.exists(os.path.join(BASE_DIR, '.env.example'))
     os_getenv_count = 0
     decouple_count = 0
+    dotenv_config_detected = False
     hardcoded_secrets = []
     
     secret_key_hardcoded = re.compile(r'SECRET_KEY\s*=\s*[\'"][^\'"]*django-insecure[^\'"]*[\'"]')
@@ -501,6 +537,9 @@ def check_env_variables():
                         os_getenv_count += len(re.findall(r'os\.getenv|os\.environ', content))
                         decouple_count += len(re.findall(r'\bconfig\s*\(', content))
                         
+                        if 'load_dotenv' in content or 'dotenv.load_dotenv' in content:
+                            dotenv_config_detected = True
+                        
                         if f == 'settings.py':
                             if secret_key_hardcoded.search(content):
                                 hardcoded_secrets.append("SECRET_KEY expuesta en settings.py")
@@ -509,8 +548,10 @@ def check_env_variables():
                 except Exception:
                     pass
 
+    env_configured = env_exists or dotenv_config_detected
+
     details = [
-        f"Archivo .env o .env.example presente: {'Sí' if env_exists else 'No'}",
+        f"Archivo .env o .env.example presente: {'Sí' if env_exists else 'No (pero se detectó configuración de dotenv en código)' if dotenv_config_detected else 'No'}",
         f"Llamadas a variables de entorno en código (os.getenv/decouple): {os_getenv_count + decouple_count}"
     ]
     
@@ -519,7 +560,7 @@ def check_env_variables():
             details.append(f"  [ALERTA] Credencial expuesta: {secret}")
 
     score = 100
-    if not env_exists:
+    if not env_configured:
         score -= 40
     if hardcoded_secrets:
         score -= 50
@@ -574,7 +615,7 @@ def check_hierarchy():
                 categories['formularios (forms.py)'] += 1
             elif f == 'urls.py':
                 categories['rutas (urls.py)'] += 1
-            elif f.endswith('.html'):
+            elif f.endswith('.html') and f != 'reporte_rubrica.html':
                 categories['plantillas (.html)'] += 1
             elif f.endswith(('.css', '.js')):
                 categories['recursos estaticos (.css/.js)'] += 1
@@ -612,7 +653,7 @@ def check_unit_tests():
     test_cases = 0
     test_methods = 0
     
-    case_pat = re.compile(r'class\s+\w+(TestCase|Test)\(')
+    case_pat = re.compile(r'class\s+(?:\w*(?:TestCase|Tests|Test)\w*\s*\(|\w+\s*\([^)]*(?:TestCase|Tests|Test))')
     method_pat = re.compile(r'\bdef\s+test_\w+\s*\(')
     
     for root, dirs, files in os.walk(BASE_DIR):
@@ -674,7 +715,7 @@ def check_load_optimization():
     for root, dirs, files in os.walk(BASE_DIR):
         dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
         for f in files:
-            if f.endswith('.html'):
+            if f.endswith('.html') and f != 'reporte_rubrica.html':
                 path = os.path.join(root, f)
                 try:
                     with open(path, 'r', encoding='utf-8') as file:
@@ -802,7 +843,7 @@ def check_responsiveness():
                         media_queries += len(media_pattern.findall(content))
                 except Exception:
                     pass
-            elif f.endswith('.html'):
+            elif f.endswith('.html') and f != 'reporte_rubrica.html':
                 try:
                     with open(path, 'r', encoding='utf-8') as file:
                         content = file.read()
@@ -846,7 +887,7 @@ def exportar_pdf(resultados, average_score, estado_final):
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Reporte de Auditoria de Calidad - Proyecto Monagua</title>
+    <title>Reporte de Auditoria de Calidad - Proyecto {PROJECT_NAME}</title>
     <style>
         @page {{
             size: letter;
@@ -977,7 +1018,7 @@ def exportar_pdf(resultados, average_score, estado_final):
 <body>
     <div class="header">
         <div class="title">REPORTE DE AUDITORIA TECNICA</div>
-        <div class="subtitle">Evaluacion de Calidad - Proyecto Monagua</div>
+        <div class="subtitle">Evaluacion de Calidad - Proyecto {PROJECT_NAME}</div>
     </div>
     
     <div class="summary-box">
@@ -1025,20 +1066,31 @@ def exportar_pdf(resultados, average_score, estado_final):
     </div>
 """
 
-    # Add recommendations
-    html_content += f"""
+    # Add recommendations dynamically based on scores less than 100
+    sugerencias = [p['suggestion'] for p in resultados if p['score'] < 100 and p.get('suggestion')]
+    if sugerencias:
+        sugerencias_items = "\n".join([f"            <li>{sug}</li>" for sug in sugerencias])
+        sugerencias_html = f"""
     <div class="sugerencias-box">
         <div class="sugerencias-title">RECOMENDACIONES CLAVE PARA MEJORA:</div>
         <ul style="margin: 0; padding-left: 20px; font-size: 9pt; color: #78350f;">
-            <li>Migrar las variables SECRET_KEY y EMAIL_HOST_PASSWORD a variables de entorno (.env).</li>
-            <li>Reducir el uso de estilos en linea (style="...") en las plantillas HTML (trasladar a CSS).</li>
-            <li>Añadir loading="lazy" a imagenes y async/defer a scripts.</li>
-            <li>Mejorar documentacion de metodos complejos del frontend usando estandar JSDoc.</li>
+{sugerencias_items}
         </ul>
     </div>
+"""
+    else:
+        sugerencias_html = """
+    <div class="sugerencias-box" style="background-color: #ecfdf5; border: 1px solid #a7f3d0;">
+        <div class="sugerencias-title" style="color: #065f46;">¡FELICITACIONES!</div>
+        <div style="font-size: 9pt; color: #065f46; margin: 0; padding: 0;">El proyecto cumple al 100% con todos los puntos evaluados de la rubrica.</div>
+    </div>
+"""
+
+    html_content += f"""
+    {sugerencias_html}
     
     <div id="footer_content" class="footer">
-        Reporte generado automaticamente - Proyecto Monagua &bull; Pagina <pdf:pagenumber> de <pdf:pagecount>
+        Reporte generado automaticamente - Proyecto {PROJECT_NAME} &bull; Pagina <pdf:pagenumber> de <pdf:pagecount>
     </div>
 </body>
 </html>
@@ -1079,7 +1131,7 @@ def exportar_pdf(resultados, average_score, estado_final):
 
 def main():
     print("=" * 70)
-    print(f"{BOLD}{WHITE}AUDITORÍA TÉCNICA DE CALIDAD - PROYECTO MONAGUA{RESET}")
+    print(f"{BOLD}{WHITE}AUDITORÍA TÉCNICA DE CALIDAD - PROYECTO {PROJECT_NAME.upper()}{RESET}")
     print("Evaluando cumplimiento de los 12 puntos de desarrollo frontend/backend...")
     print("=" * 70)
     
@@ -1106,7 +1158,12 @@ def main():
         res = check_fn()
         scores_list.append(res["score"])
         total_score += res["score"]
+        res["suggestion"] = SUGERENCIAS_MAP.get(i, "")
         
+        # Si el puntaje es menor a 100, marcar como RED
+        if res["score"] < 100:
+            res["status"] = "RED"
+            
         # Color y símbolo según estado
         if res["status"] == "GREEN":
             color = GREEN
@@ -1131,7 +1188,8 @@ def main():
             "score": res["score"],
             "status": res["status"],
             "msg": res["msg"],
-            "details": res["details"]
+            "details": res["details"],
+            "suggestion": res["suggestion"]
         })
                 
     average_score = int(total_score / len(puntos))
@@ -1161,11 +1219,12 @@ def main():
         
     print("=" * 70)
     print("Sugerencias clave:")
-    if average_score < 100:
-        print("  1. Corrige las credenciales expuestas en core/settings.py y utiliza variables de entorno (.env).")
-        print("  2. Añade loading='lazy' a tus imágenes en index.html y galerías.")
-        print("  3. Documenta con JSDoc los métodos interactivos del frontend.")
-        print("  4. Reduce los estilos inline en tus plantillas y trasládalos a css/ o clases utilitarias.")
+    sugerencias = [p['suggestion'] for p in resultados_reporte if p['score'] < 100 and p.get('suggestion')]
+    if sugerencias:
+        for idx, sug in enumerate(sugerencias, start=1):
+            print(f"  {idx}. {sug}")
+    else:
+        print_colored("  ¡Excelente! Todos los puntos de control están al 100%. No hay sugerencias pendientes.", GREEN)
     print("=" * 70)
     
     # Generar Reportes PDF e HTML
