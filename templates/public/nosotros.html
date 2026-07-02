@@ -1,5 +1,4 @@
-{% extends "base.html" %} {% load static %} {% block titulo %}Nosotros |
-Monagua{% endblock %} {% block content %}
+{% extends "base.html" %} {% load static %} {% block titulo %}{{ block.super }} - Nosotros{% endblock %} {% block content %}
 
 <!-- Spacer to prevent green background under fixed navbar -->
 <div style="height: 5rem; width: 100%; background-color: #ffffff"></div>
