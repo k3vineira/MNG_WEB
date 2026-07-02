@@ -10,7 +10,6 @@ class CategoriaForm(ModelForm):
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 
@@ -25,7 +24,6 @@ class ActividadesForm(ModelForm):
             'apto_para_menores': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'equipo_requerimiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'recomendacion_salud': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 
@@ -43,7 +41,6 @@ class PaqueteForm(ModelForm):
             'hora_encuentro': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             'actividades': forms.SelectMultiple(attrs={'class': 'form-control'}),
-            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
 
@@ -56,7 +53,6 @@ class TarifaForm(ModelForm):
             'temporada': forms.Select(attrs={'class': 'form-select'}),
             'precio_adulto': forms.NumberInput(attrs={'class': 'form-control'}),
             'precio_menor': forms.NumberInput(attrs={'class': 'form-control'}),
-            'estado': forms.Select(attrs={'class': 'form-select'}),
         }
 
 
