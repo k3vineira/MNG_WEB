@@ -5,7 +5,7 @@
 {% block title %}Admin | Comprobantes de Pago{% endblock %}
 
 {% block extra_head %}
-<!-- Rediseño completo en base a Bootstrap 5, sin CSS personalizado -->
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -117,7 +117,7 @@
         <div class="card-body p-0">
             <!-- Tabla para escritorio -->
             <div class="table-responsive d-none d-md-block">
-                <table class="table table-hover mb-0 align-middle">
+                <table id="tablaComprobantes" class="table table-hover mb-0 align-middle" style="width:100%">
                     <thead class="table-light">
                         <tr class="text-secondary small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">
                             <th class="ps-4 py-3">Imagen</th>
@@ -330,5 +330,10 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
+<script src="{% static 'js/tconf/tconf-tablaComprobantes.js' %}"></script>
 {% endblock %}
 
