@@ -230,7 +230,7 @@ class CancelacionCreateView(CreateView):
     
 class CancelacionUpdateView(UpdateView):
     model = Cancelacion
-    form_class = CancelacionForm
+    fields = ['estado', 'penalidad']
     template_name = 'admin/cancelaciones/editar_cancelacion.html'
     success_url = reverse_lazy('administrar_cancelaciones')
     
