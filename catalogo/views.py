@@ -7,7 +7,10 @@ from django.db.models import Count, Q
 from django import forms
 from notificaciones.utils import crear_notificacion_sistema
 
+
+
 def destinos(request):
+
     destinos_list = Paquete.objects.filter(estado=True)
     busqueda = request.GET.get('q', '').strip()
     precio_max = request.GET.get('precio_max')
