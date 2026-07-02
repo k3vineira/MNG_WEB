@@ -4,6 +4,13 @@ from django.utils import timezone
 from datetime import timedelta
 
 def lista_notificaciones_global(request):
+    """
+    lista_notificaciones_global.
+    
+    :param request: Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     if request.user.is_authenticated:
         # Capturar los mensajes activos de Django y guardarlos como notificaciones de base de datos
         storage = messages.get_messages(request)

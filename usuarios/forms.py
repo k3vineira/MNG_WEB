@@ -15,5 +15,14 @@ class PerfilUsuarioForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
+        """
+        __init__.
+        
+        :param args: Descripción del parámetro.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         super().__init__(*args, **kwargs)
         self.fields['residencia'].required = False

@@ -14,6 +14,11 @@ class Promocion(models.Model):
         verbose_name_plural = "Promociones"
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return f"{self.nombre} ({self.descuento}%)"
 
 class Banner(models.Model):
@@ -27,4 +32,9 @@ class Banner(models.Model):
         verbose_name_plural = "Banners"
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return self.titulo

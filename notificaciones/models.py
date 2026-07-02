@@ -20,4 +20,9 @@ class Notificacion(models.Model):
         ordering = ['-fecha_creacion']
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return f"{self.titulo} - {self.cliente.username}"

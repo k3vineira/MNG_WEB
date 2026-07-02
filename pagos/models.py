@@ -74,7 +74,17 @@ class ComprobantePago(models.Model):
         ordering = ['-fecha_envio']
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return f"Comprobante #{self.pk} — {self.usuario.username} — {self.get_estado_display()}"
 
     def nombre_archivo(self):
+        """
+        nombre_archivo.
+        
+        :return: Respuesta de la función.
+        """
         return os.path.basename(self.imagen.name) if self.imagen else '—'

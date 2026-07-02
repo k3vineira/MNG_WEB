@@ -37,9 +37,21 @@ class ReservaListView(ListView):
     context_object_name = 'reservas'
 
     def get_queryset(self):
+        """
+        get_queryset.
+        
+        :return: Respuesta de la función.
+        """
         return Reserva.objects.exclude(estado='cancelada').order_by('-id')
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         context = super().get_context_data(**kwargs)
         stats = Reserva.objects.aggregate(
             total=Count('id'),
@@ -67,6 +79,13 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
     success_message = "¡La reserva ha sido creada con éxito!"
 
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: creación de reserva para un paquete específico.
+        
+        :return: Redirige a la página de listar reservas del usuario después de crear la reserva.
+        """
         form.instance.usuario = self.request.user
         return super().form_valid(form)
 
@@ -78,6 +97,13 @@ class ReservaUpdateView(UpdateView):
     success_url = reverse_lazy('listar_reservas')
 
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: edición de reserva para una reserva específica.
+        
+        :return: Redirige a la página de listar reservas del usuario después de editar la reserva.
+        """
         response = super().form_valid(form)
         reserva = self.object
         nombre_cliente = reserva.usuario.first_name or reserva.usuario.username
@@ -124,6 +150,13 @@ class ReservaDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def mis_reservas_usuario(request):
+    """
+    mis_reservas_usuario.
+    
+    :param request: las reservas del usuario autenticado y permite ver el historial de reservas.
+    
+    :return: las reservas del usuario y redirige a la página de mis reservas del usuario.
+    """
     mis_reservas = Reserva.objects.filter(usuario=request.user)\
         .select_related('paquete')\
         .prefetch_related('comprobantes', 'cancelaciones')\
@@ -155,6 +188,13 @@ class CancelacionListView(ListView):
     context_object_name = 'cancelaciones'
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         context = super().get_context_data(**kwargs)
         stats = Cancelacion.objects.aggregate(
             total=Count('id'),
@@ -181,6 +221,13 @@ class CancelacionCreateView(CreateView):
     success_url = reverse_lazy('mis_cancelaciones_usuario')
 
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: creación de cancelación para una reserva específica.
+        
+        :return: Redirige a la página de mis cancelaciones del usuario después de crear la cancelación.
+        """
         reserva_id = self.request.GET.get('reserva_id')
         if not reserva_id:
             messages.error(self.request, 'No se encontró la reserva para la cancelación.')
@@ -243,6 +290,13 @@ class CancelacionDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def mis_cancelaciones_usuario(request):
+    """
+    mis_cancelaciones_usuario.
+    
+    :param request: las cancelaciones del usuario autenticado y permite ver el historial de cancelaciones.
+    
+    :return: las cancelaciones del usuario y redirige a la página de mis cancelaciones del usuario.
+    """
     mis_cancelaciones = Cancelacion.objects.filter(reserva__usuario=request.user)\
         .select_related('reserva__paquete')\
         .prefetch_related('reserva__comprobantes')\
@@ -253,6 +307,13 @@ def mis_cancelaciones_usuario(request):
     }
     return render(request, 'usuario/cancelaciones/mis_cancelaciones.html', context)
 def administrar_cancelaciones(request):
+    """
+    administrar_cancelaciones.
+    
+    :param request: administracion de cancelaciones para el usuario autenticado y permite actualizar el estado y la penalidad de las cancelaciones.
+    
+    :return: administrar cancelaciones y redirige a la página de administración de cancelaciones del usuario.   
+    """
     if request.method == 'POST':
         cancelacion_id = request.POST.get('cancelacion_id')
         cancelacion = get_object_or_404(Cancelacion, id=cancelacion_id)
@@ -347,6 +408,13 @@ def administrar_cancelaciones(request):
 
 
 def reservas_view(request):
+    """
+    reservas_view.
+    
+    :param request: reservas para el usuario autenticado y permite seleccionar un paquete para reservar.
+    
+    :return: reservas y redirige a la página de mis reservas del usuario.
+    """
     paquetes = Paquete.objects.all()
     paquete_id = request.GET.get('paquete_id')
     paquete = None
@@ -377,6 +445,15 @@ def carrito_view(request):
 
 @login_required(login_url='login')
 def comprobante_reserva_html(request, reserva_id):
+    """
+    comprobante_reserva_html.
+    
+    :param request: comprobante de reserva en formato HTML para una reserva específica.
+    
+    :param reserva_id: comprobante de reserva para la reserva con el ID especificado.
+    
+    :return: comprobante de reserva en HTML que el usuario puede imprimir o guardar como PDF.
+    """
     reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
     # Render HTML comprobante (Bootstrap) que el usuario puede imprimir/guardar como PDF
     context = {
@@ -422,6 +499,15 @@ def comprobante_multiple(request):
 
 @login_required
 def guardar_reserva(request, paquete_id):
+    """
+    guardar_reserva.
+    
+    :param request: guardar reserva para un paquete específico.
+    
+    :param paquete_id: guarda la reserva para el paquete con el ID especificado.
+    
+    :return: guardar reserva y redirige a la página de mis reservas del usuario.
+    """
     if request.method == 'POST':
         paquete = get_object_or_404(Paquete, id=paquete_id)
         fecha_viaje = request.POST.get('fecha')

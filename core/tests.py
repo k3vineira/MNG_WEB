@@ -5,6 +5,11 @@ from core.utils import plantilla_reserva_html, plantilla_cancelacion_html, envia
 
 class CoreUtilsTestCase(TestCase):
     def test_plantilla_reserva_html_confirmada(self):
+        """
+        test_plantilla_reserva_html_confirmada.
+        
+        :return: Respuesta de la función.
+        """
         html = plantilla_reserva_html(
             nombre_cliente='Juan Pérez',
             paquete='Laguna de Tota',
@@ -25,6 +30,11 @@ class CoreUtilsTestCase(TestCase):
         self.assertIn('1 Menores', html)
 
     def test_plantilla_reserva_html_time_parsing(self):
+        """
+        test_plantilla_reserva_html_time_parsing.
+        
+        :return: Respuesta de la función.
+        """
         # Test default fallback when time string is invalid
         html = plantilla_reserva_html(
             nombre_cliente='Juan Pérez',
@@ -37,6 +47,11 @@ class CoreUtilsTestCase(TestCase):
         self.assertIn('00:00', html)
 
     def test_plantilla_cancelacion_html_aceptada(self):
+        """
+        test_plantilla_cancelacion_html_aceptada.
+        
+        :return: Respuesta de la función.
+        """
         html = plantilla_cancelacion_html(
             nombre_cliente='Juan Pérez',
             paquete='Laguna de Tota',
@@ -49,6 +64,11 @@ class CoreUtilsTestCase(TestCase):
         self.assertIn('Solicitud Aceptada', html)
 
     def test_enviar_correo_html_monagua(self):
+        """
+        test_enviar_correo_html_monagua.
+        
+        :return: Respuesta de la función.
+        """
         enviar_correo_html_monagua(
             asunto='Prueba de Correo',
             mensaje_texto='Hola Mundo',

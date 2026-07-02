@@ -5,6 +5,11 @@ from catalogo.models import Categoria, Actividades, Paquete, Temporada, Tarifa
 
 class CatalogoTestCase(TestCase):
     def setUp(self):
+        """
+        setUp.
+        
+        :return: Respuesta de la función.
+        """
         # Crear categoría
         self.categoria = Categoria.objects.create(
             nombre='Cultura',
@@ -30,6 +35,11 @@ class CatalogoTestCase(TestCase):
         )
 
     def test_paquete_apto_para_menores(self):
+        """
+        test_paquete_apto_para_menores.
+        
+        :return: Respuesta de la función.
+        """
         # Paquete que sólo contiene la actividad apta para menores
         paquete_familiar = Paquete.objects.create(
             nombre='Mongua Familiar',
@@ -60,6 +70,11 @@ class CatalogoTestCase(TestCase):
         self.assertFalse(paquete_extremo.apto_para_menores)
 
     def test_precio_minimo_calculo(self):
+        """
+        test_precio_minimo_calculo.
+        
+        :return: Respuesta de la función.
+        """
         paquete = Paquete.objects.create(
             nombre='Tour Histórico',
             descripcion='Descripción corta',

@@ -7,10 +7,15 @@ from django.db.models import Count, Q
 from django import forms
 from notificaciones.utils import crear_notificacion_sistema
 
-
-
+ 
 def destinos(request):
+    """
+    Vista que filtra y devuelve la lista de paquetes turísticos disponibles
+    según los criterios de búsqueda (nombre, precio máximo, apto para menores y categoría).
 
+    :param request: El objeto de la solicitud HTTP.
+    :return: Una respuesta HTTP con la lista de destinos filtrados.
+    """
     destinos_list = Paquete.objects.filter(estado=True)
     busqueda = request.GET.get('q', '').strip()
     precio_max = request.GET.get('precio_max')
@@ -48,6 +53,13 @@ class PaqueteListView(ListView):
     context_object_name = 'paquetes'
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: La lista de los paquetes y otros argumentos de contexto.
+        
+        :return: lista de paquetes y estadísticas de los paquetes.
+        """
         context = super().get_context_data(**kwargs)
 
         # Conteo para los paquetes
@@ -76,6 +88,13 @@ class PaqueteCreateView(CreateView):
     success_url = reverse_lazy('listar_paquetes')
 
     def get_form(self, form_class=None):
+        """
+        get_form.
+        
+        :param form_class=None: Crear un paquete turístico con el formulario especificado.
+        
+        :return: paquete turístico creado con éxito y notificación del sistema.
+        """
         form = super().get_form(form_class)
         for name, field in form.fields.items():
             if isinstance(field.widget, forms.CheckboxInput):
@@ -87,6 +106,13 @@ class PaqueteCreateView(CreateView):
         return form
 
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         response = super().form_valid(form)
         
         crear_notificacion_sistema(
@@ -99,6 +125,7 @@ class PaqueteCreateView(CreateView):
       
 
 class PaqueteUpdateView(UpdateView):
+    
     model = Paquete
     fields = [
         'imagen', 'nombre', 'descripcion', 'hora_encuentro',
@@ -108,6 +135,13 @@ class PaqueteUpdateView(UpdateView):
     success_url = reverse_lazy('listar_paquetes')
 
     def get_form(self, form_class=None):
+        """
+        get_form.
+        
+        :param form_class=None: editar un paquete turístico con el formulario especificado.
+        
+        :return: paquete turístico editado con éxito y notificación del sistema.
+        """
         form = super().get_form(form_class)
         for name, field in form.fields.items():
             if isinstance(field.widget, forms.CheckboxInput):
@@ -135,6 +169,17 @@ class PaqueteDeleteView(DeleteView):
     success_url = reverse_lazy('listar_paquetes')
     
     def delete(self, request, *args, **kwargs):
+        """
+        delete.
+        
+        :param request: borrar un paquete turístico con la solicitud especificada.
+        
+        :param args: parametros adicionales para la solicitud de eliminación.
+        
+        :param kwargs: parametros adicionales para la solicitud de eliminación.
+        
+        :return: paquete turístico eliminado con éxito y notificación del sistema.
+        """
         self.object = self.get_object()
         nombre_paquete = self.object.nombre 
         response = super().delete(request, *args, **kwargs)
@@ -157,6 +202,13 @@ class ActividadesListView(ListView):
     context_object_name = 'actividades'
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: actividades y otros argumentos de contexto.
+        
+        :return: lista de actividades y estadísticas de las actividades.
+        """
         context = super().get_context_data(**kwargs)
         stats = Actividades.objects.aggregate(
             total=Count('id'),
@@ -181,6 +233,13 @@ class ActividadesCreateView(CreateView):
     success_url = reverse_lazy('listar_actividades')
 
     def get_form(self, form_class=None):
+        """
+        get_form.
+        
+        :param form_class=None: Crear una actividad con el formulario especificado.
+        
+        :return: actividad creada con éxito y notificación del sistema.
+        """
         form = super().get_form(form_class)
         for name, field in form.fields.items():
             if isinstance(field.widget, forms.CheckboxInput):
@@ -192,6 +251,13 @@ class ActividadesCreateView(CreateView):
         return form
     
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -210,6 +276,13 @@ class ActividadesUpdateView(UpdateView):
     success_url = reverse_lazy('listar_actividades')
 
     def get_form(self, form_class=None):
+        """
+        get_form.
+        
+        :param form_class=None: Editar una actividad con el formulario especificado.    
+        
+        :return: actividad editada con éxito y notificación del sistema.
+        """
         form = super().get_form(form_class)
         for name, field in form.fields.items():
             if isinstance(field.widget, forms.CheckboxInput):
@@ -220,6 +293,13 @@ class ActividadesUpdateView(UpdateView):
                 field.widget.attrs.update({'class': 'form-control'})
         return form
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: Descripción del parámetro.
+        
+        :return: Editar una actividad con éxito y notificación del sistema.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -236,6 +316,17 @@ class ActividadesDeleteView(DeleteView):
     success_url = reverse_lazy('listar_actividades')
     
     def delete(self, request, *args, **kwargs):
+        """
+        delete.
+        
+        :param request: borrar una actividad con la solicitud especificada.
+        
+        :param args: parametros adicionales para la solicitud de eliminación.
+        
+        :param kwargs: parametros adicionales para la solicitud de eliminación.
+        
+        :return: actividad eliminada con éxito y notificación del sistema.
+        """
         self.object = self.get_object()
         nombre_actividad = self.object.nombre  
         response = super().delete(request, *args, **kwargs)
@@ -255,6 +346,13 @@ class CategoriaListView(ListView):
     context_object_name = 'categorias'
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: La lista de las categorías y otros argumentos de contexto.
+        
+        :return: lista de categorías y estadísticas de las categorías.
+        """
         context = super().get_context_data(**kwargs)
 
         stats = Categoria.objects.aggregate(
@@ -280,6 +378,13 @@ class CategoriaCreateView(CreateView):
     success_url = reverse_lazy('listar_categorias')
 
     def get_form(self, form_class=None):
+        """
+        get_form.
+        
+        :param form_class=None: Crear una categoría con el formulario especificado.
+        
+        :return: categoría creada con éxito y notificación del sistema.
+        """
         form = super().get_form(form_class)
         for name, field in form.fields.items():
             if isinstance(field.widget, forms.CheckboxInput):
@@ -291,6 +396,13 @@ class CategoriaCreateView(CreateView):
         return form
 
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: crear una categoría con el formulario especificado.
+        
+        :return: exito al crear una categoría y notificación del sistema.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -309,6 +421,13 @@ class CategoriaUpdateView(UpdateView):
     success_url = reverse_lazy('listar_categorias')
 
     def get_form(self, form_class=None):
+        """
+        get_form.
+        
+        :param form_class=None: Editar una categoría con el formulario especificado.
+        
+        :return: categoría editada con éxito y notificación del sistema.
+        """
         form = super().get_form(form_class)
         for name, field in form.fields.items():
             if isinstance(field.widget, forms.CheckboxInput):
@@ -319,6 +438,13 @@ class CategoriaUpdateView(UpdateView):
                 field.widget.attrs.update({'class': 'form-control'})
         return form
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: Editar una categoría con el formulario especificado.
+        
+        :return: categoría editada con éxito y notificación del sistema.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -335,6 +461,17 @@ class CategoriaDeleteView(DeleteView):
     success_url = reverse_lazy('listar_categorias')
     
     def delete(self, request, *args, **kwargs):
+        """
+        delete.
+        
+        :param request: categoría a eliminar con la solicitud especificada.
+        
+        :param args: parametros adicionales para la solicitud de eliminación.
+        
+        :param kwargs: parametros adicionales para la solicitud de eliminación.
+        
+        :return: categoría eliminada con éxito y notificación del sistema.
+        """
         self.object = self.get_object()
         nombre_categoria = self.object.nombre  
         response = super().delete(request, *args, **kwargs)
@@ -349,6 +486,13 @@ class CategoriaDeleteView(DeleteView):
 
 
 def reservas(request):
+    """
+    reservas.
+    
+    :param request: reservas de los paquetes turísticos según la solicitud especificada.
+    
+    :return: reservas de los paquetes turísticos y notificación del sistema.
+    """
 
     context = {
         'reservas': []  # Reemplaza con la lógica real
@@ -364,6 +508,13 @@ class TarifaListView(ListView):
     context_object_name = 'tarifas'
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: La lista de las tarifas y otros argumentos de contexto.
+        
+        :return: lista de tarifas y estadísticas de las tarifas.
+        """
         context = super().get_context_data(**kwargs)
 
         stats = Tarifa.objects.aggregate(
@@ -388,6 +539,13 @@ class TarifaCreateView(CreateView):
     success_url = reverse_lazy('listar_tarifas')
     
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: crear una tarifa con el formulario especificado.
+        
+        :return: crear una tarifa con éxito y notificación del sistema.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -407,6 +565,13 @@ class TarifaUpdateView(UpdateView):
     success_url = reverse_lazy('listar_tarifas')
     
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: editar una tarifa con el formulario especificado.
+        
+        :return: editar una tarifa con éxito y notificación del sistema.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -424,6 +589,13 @@ class TemporadaListView(ListView):
     context_object_name = 'temporadas'
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: La lista de las temporadas y otros argumentos de contexto.
+        
+        :return: lista de temporadas y estadísticas de las temporadas.
+        """
         context = super().get_context_data(**kwargs)
 
         stats = Temporada.objects.aggregate(
@@ -450,6 +622,13 @@ class TemporadaCreateView(CreateView):
     success_url = reverse_lazy('listar_temporadas')
     
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: crear una temporada con el formulario especificado.
+        
+        :return: temporada creada con éxito y notificación del sistema.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -467,6 +646,13 @@ class TemporadaUpdateView(UpdateView):
     success_url = reverse_lazy('listar_temporadas')
     
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: crear una temporada con el formulario especificado.
+        
+        :return: temporada editada con éxito y notificación del sistema.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,

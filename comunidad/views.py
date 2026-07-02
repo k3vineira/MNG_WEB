@@ -13,18 +13,41 @@ from notificaciones.utils import crear_notificacion_sistema
 
 
 def blog(request):
+    """
+    blog.
+    
+    :param request:Solicitud HTTP entrante.
+    
+    :return: Blogs filtlados 
+    """
     blogs = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
     context = {'blogs': blogs}
     return render(request, 'usuario/blog.html', context)
 
 
 def detalle_blog(request, id):
+    """
+    detalle_blog.
+    
+    :param request: Solicitud HTTP entrante.
+    
+    :param id: Identificador del blog a mostrar.
+    
+    :return: Respuesta de la función.
+    """
     post = get_object_or_404(Blog, id=id)
     context = {'post': post}
     return render(request, 'usuario/detalle_blog.html', context)
 
 
 def pqrs(request):
+    """
+    pqrs.
+    
+    :param request: Solicitud HTTP entrante.
+    
+    :return: todas las PQRS y formulario de creación de PQRS.
+    """
     pqrs = PQRS.objects.all()
     form = PqrsForm()
     context = {'pqrs': pqrs, 'form': form}
@@ -38,10 +61,16 @@ class PQRSListView(ListView):
     context_object_name = 'todas_las_pqrs'
 
     def get_queryset(self):
+        """
+        get_queryset.
+        
+        :return: lista de todas las PQRS ordenadas por fecha descendente.
+        """
 
         return PQRS.objects.all().order_by('-fecha')
 
     def get_context_data(self, **kwargs):
+      
         context = super().get_context_data(**kwargs)
 
         stats = PQRS.objects.aggregate(
@@ -62,6 +91,15 @@ class PQRSListView(ListView):
 
 
 def contestar_pqrs(request, pqrs_id):
+    """
+    contestar_pqrs.
+    
+    :param request: contiene la solicitud HTTP entrante.
+    
+    :param pqrs_id: parametro que representa el identificador de la PQRS a contestar.
+    
+    :return: solicitud HTTP de redirección a la lista de PQRS después de guardar la respuesta y actualizar el estado.
+    """
     pqr = get_object_or_404(PQRS, pk=pqrs_id)
     if request.method == 'POST':
         pqr.respuesta = request.POST.get('respuesta')
@@ -79,6 +117,13 @@ def contestar_pqrs(request, pqrs_id):
 
 
 def guardar_pqrs(request):
+    """
+    guardar_pqrs.
+    
+    :param request: guarda una nueva PQRS enviada por el usuario autenticado.
+    
+    :return: Redirecciona a la vista de mis PQRS después de guardar la nueva PQRS y mostrar un mensaje de éxito o error.
+    """
     if request.method == 'POST':
         form = PqrsForm(request.POST)
         if form.is_valid():
@@ -104,6 +149,13 @@ def guardar_pqrs(request):
 
 @requiere_autenticacion
 def mis_pqrs_view(request):
+    """
+    mis_pqrs_view.
+    
+    :param request: Renderiza el panel de PQRS del usuario autenticado y muestra sus solicitudes.
+    
+    :return: Renderiza la plantilla 'usuario/mis_pqrs.html' con las solicitudes del usuario y el formulario de PQRS.
+    """
     from usuarios.models import Cliente
     solicitudes_usuario = PQRS.objects.none()
     try:
@@ -128,6 +180,13 @@ class BlogListView(ListView):
     context_object_name = 'blogs'
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: blogs: Lista de blogs a mostrar en la vista.
+        
+        :return: blog y estadísticas de publicados vs borradores para la vista de administración.
+        """
         context = super().get_context_data(**kwargs)
 
         # Conteo de publicados vs borradores
@@ -152,6 +211,13 @@ class BlogCreateView(CreateView):
     success_url = reverse_lazy('listar_blog')
     
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: blog a crear con el formulario especificado.
+        
+        :return: blog creado con éxito y notificación del sistema.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -169,6 +235,13 @@ class BlogUpdateView(UpdateView):
     success_url = reverse_lazy('listar_blog')
     
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: blog a actualizar con el formulario especificado.
+        
+        :return: blog actualizado con éxito y notificación del sistema.
+        """
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -185,6 +258,17 @@ class BlogDeleteView(DeleteView):
     success_url = reverse_lazy('listar_blog')
     
     def delete(self, request, *args, **kwargs):
+        """
+        delete.
+        
+        :param request: Solicitud HTTP entrante.
+        
+        :param args: Descripción del parámetro.
+        
+        :param kwargs: blog_id: Identificador del blog a eliminar.
+        
+        :return: blog eliminado con éxito y notificación del sistema.
+        """
         self.object = self.get_object()
         titulo_blog = self.object.titulo  # Guardamos el título antes de borrar el registro
         response = super().delete(request, *args, **kwargs)
@@ -199,6 +283,13 @@ class BlogDeleteView(DeleteView):
 
 
 def blog_usuario(request):
+    """
+    blog_usuario.
+    
+    :param request: Solicitud HTTP entrante.
+    
+    :return: Renderiza la plantilla 'usuario/blog.html' con los artículos de blog publicados.
+    """
     articulos = Blog.objects.filter(
         publicado=True).order_by('-fecha_publicacion')
     context = {'blogs': articulos}

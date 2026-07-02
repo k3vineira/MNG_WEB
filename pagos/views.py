@@ -197,6 +197,13 @@ def admin_eliminar_comprobante(request, pk):
 
 @requiere_autenticacion
 def mis_rechazos(request):
+    """
+    mis_rechazos.
+    
+    :param request: Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     if request.user.is_staff:
         return redirect('dashboard')
 

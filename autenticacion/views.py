@@ -243,6 +243,11 @@ class UsuarioLoginView(LoginView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        """
+        get_success_url.
+        
+        :return: Respuesta de la función.
+        """
         # 1. Si existe un parámetro '?next=', respetarlo (ej: venía de reservar)
         next_url = self.request.GET.get(
             'next') or self.request.POST.get('next')

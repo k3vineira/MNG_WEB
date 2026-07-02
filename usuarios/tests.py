@@ -5,6 +5,11 @@ from autenticacion.forms import RegistroForm
 
 class AuthenticationAndEmailUniquenessTests(TestCase):
     def setUp(self):
+        """
+        setUp.
+        
+        :return: Respuesta de la función.
+        """
         # Crear un usuario de prueba
         self.user = Usuario.objects.create_user(
             username='testuser',

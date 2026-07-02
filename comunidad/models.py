@@ -29,9 +29,19 @@ class Blog(models.Model):
         ordering = ['-fecha_publicacion']
 
     def get_absolute_url(self):
+        """
+        get_absolute_url.
+        
+        :return: Respuesta de la función.
+        """
         return reverse('detalle_blog', kwargs={'id': self.id})
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return self.titulo
 
 
@@ -100,5 +110,10 @@ class Comentario(models.Model):
         verbose_name_plural = 'Comentarios'
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return f"Comentario de {self.usuario.username} - {self.titulo or 'sin título'}"
 

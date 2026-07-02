@@ -10,6 +10,11 @@ class CustomSetPasswordForm(SetPasswordForm):
     Valida que la nueva contraseña no sea idéntica a la actual.
     """
     def clean(self):
+        """
+        clean.
+        
+        :return: Respuesta de la función.
+        """
         cleaned_data = super().clean()
         password = cleaned_data.get('new_password1')
 
@@ -39,6 +44,11 @@ class RecuperacionPersonalizadaForm(PasswordResetForm):
     )
 
     def clean(self):
+        """
+        clean.
+        
+        :return: Respuesta de la función.
+        """
         cleaned_data = super().clean()
         email = cleaned_data.get("email")
         username = cleaned_data.get("username")
@@ -71,6 +81,11 @@ class RegistroForm(UserCreationForm):
         )
 
     def clean_numero_documento(self):
+        """
+        clean_numero_documento.
+        
+        :return: Respuesta de la función.
+        """
         numero_documento = self.cleaned_data.get('numero_documento')
         if numero_documento:
             if Usuario.objects.filter(numero_documento=numero_documento).exists():
@@ -79,6 +94,11 @@ class RegistroForm(UserCreationForm):
         return numero_documento
 
     def clean_email(self):
+        """
+        clean_email.
+        
+        :return: Respuesta de la función.
+        """
         email = self.cleaned_data.get('email')
         if email:
             email_lower = email.lower()
@@ -88,6 +108,11 @@ class RegistroForm(UserCreationForm):
         return email
 
     def clean_telefono(self):
+        """
+        clean_telefono.
+        
+        :return: Respuesta de la función.
+        """
         telefono = self.cleaned_data.get('telefono')
         if telefono:
             if Usuario.objects.filter(telefono=telefono).exists():
@@ -96,6 +121,11 @@ class RegistroForm(UserCreationForm):
         return telefono
 
     def clean_first_name(self):
+        """
+        clean_first_name.
+        
+        :return: Respuesta de la función.
+        """
         first_name = self.cleaned_data.get('first_name')
         if first_name:
             if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$', first_name):
@@ -104,6 +134,11 @@ class RegistroForm(UserCreationForm):
         return first_name
 
     def clean_last_name(self):
+        """
+        clean_last_name.
+        
+        :return: Respuesta de la función.
+        """
         last_name = self.cleaned_data.get('last_name')
         if last_name:
             if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$', last_name):
@@ -112,6 +147,11 @@ class RegistroForm(UserCreationForm):
         return last_name
 
     def clean_username(self):
+        """
+        clean_username.
+        
+        :return: Respuesta de la función.
+        """
         username = self.cleaned_data.get('username')
         if username:
             if Usuario.objects.filter(username__iexact=username).exists():

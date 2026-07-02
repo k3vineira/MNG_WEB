@@ -7,6 +7,11 @@ from promociones.models import Promocion, Banner
 
 class PromocionesTestCase(TestCase):
     def setUp(self):
+        """
+        setUp.
+        
+        :return: Respuesta de la función.
+        """
         # Crear categoría y paquete para la promoción
         self.categoria = Categoria.objects.create(
             nombre='Playas',
@@ -23,6 +28,11 @@ class PromocionesTestCase(TestCase):
         )
 
     def test_crear_promocion(self):
+        """
+        test_crear_promocion.
+        
+        :return: Respuesta de la función.
+        """
         fecha_fin = timezone.now().date() + datetime.timedelta(days=7)
         promo = Promocion.objects.create(
             paquete=self.paquete,
@@ -38,6 +48,11 @@ class PromocionesTestCase(TestCase):
         self.assertEqual(str(promo), 'Descuento de Temporada (15%)')
 
     def test_crear_banner(self):
+        """
+        test_crear_banner.
+        
+        :return: Respuesta de la función.
+        """
         banner = Banner.objects.create(
             imagen='banners/test_banner.jpg',
             titulo='Banner Principal',
@@ -50,6 +65,11 @@ class PromocionesTestCase(TestCase):
         self.assertEqual(str(banner), 'Banner Principal')
 
     def test_gestion_promociones_view(self):
+        """
+        test_gestion_promociones_view.
+        
+        :return: Respuesta de la función.
+        """
         fecha_fin = timezone.now().date() + datetime.timedelta(days=5)
         Promocion.objects.create(
             paquete=self.paquete,

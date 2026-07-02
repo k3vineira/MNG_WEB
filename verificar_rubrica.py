@@ -37,6 +37,15 @@ CYAN = "\033[96m"
 WHITE = "\033[97m"
 
 def print_colored(text, color):
+    """
+    print_colored.
+    
+    :param text: Descripción del parámetro.
+    
+    :param color: Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     # Detectar si la consola soporta colores o si redirige salida
     if sys.stdout.isatty():
         formatted_text = f"{color}{text}{RESET}"
@@ -1078,6 +1087,11 @@ def exportar_pdf(resultados, average_score, estado_final):
 # ────────────────────────────────────────────────────────
 
 def main():
+    """
+    main.
+    
+    :return: Respuesta de la función.
+    """
     print("=" * 70)
     print(f"{BOLD}{WHITE}AUDITORÍA TÉCNICA DE CALIDAD - PROYECTO MONAGUA{RESET}")
     print("Evaluando cumplimiento de los 12 puntos de desarrollo frontend/backend...")

@@ -60,12 +60,26 @@ class Usuario(AbstractUser):
     )
 
     def clean(self):
+        """
+        clean.
+        
+        :return: Respuesta de la función.
+        """
         super().clean()
         # Evita errores de IntegrityError si se guarda como string vacío ("")
         if self.numero_documento == "":
             self.numero_documento = None
 
     def save(self, *args, **kwargs):
+        """
+        save.
+        
+        :param args: Descripción del parámetro.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         # Garantiza que si es superusuario de Django, tome automáticamente el rol ADMIN
         if self.is_superuser and self.rol != self.Roles.ADMIN:
             self.rol = self.Roles.ADMIN
@@ -103,6 +117,11 @@ class Usuario(AbstractUser):
         verbose_name_plural = 'Usuarios'
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return f"{self.username} - {self.rol}"
 
 
@@ -130,6 +149,11 @@ class Cliente(models.Model):
         verbose_name_plural = 'Clientes'
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return self.usuario.nombre_completo
 
 
@@ -160,4 +184,9 @@ class GuiaTuristico(models.Model):
         verbose_name_plural = 'Guías Turísticos'
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return f"Guía: {self.usuario.nombre_completo}"

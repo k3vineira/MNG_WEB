@@ -3,6 +3,31 @@ from django.conf import settings
 from datetime import datetime, time
 
 def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menores=0, punto_encuentro=None, hora_encuentro=None, estado='pendiente', reserva_id='', monto_total='0.00'):
+    """
+    plantilla_reserva_html.
+    
+    :param nombre_cliente: Descripción del parámetro.
+    
+    :param paquete: Descripción del parámetro.
+    
+    :param fecha=None: Descripción del parámetro.
+    
+    :param adultos=1: Descripción del parámetro.
+    
+    :param menores=0: Descripción del parámetro.
+    
+    :param punto_encuentro=None: Descripción del parámetro.
+    
+    :param hora_encuentro=None: Descripción del parámetro.
+    
+    :param estado='pendiente': Descripción del parámetro.
+    
+    :param reserva_id='': Descripción del parámetro.
+    
+    :param monto_total='0.00': Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     if isinstance(hora_encuentro, str):
         try:
             hora_encuentro = datetime.strptime(hora_encuentro, '%H:%M').time()
@@ -115,6 +140,19 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menor
     """
 
 def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"):
+    """
+    plantilla_cancelacion_html.
+    
+    :param nombre_cliente: Descripción del parámetro.
+    
+    :param paquete: Descripción del parámetro.
+    
+    :param estado: Descripción del parámetro.
+    
+    :param penalidad="0.00": Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     if estado in ['aceptada', 'confirmada']:
         color_tag = "#dc3545"  # Rojo por cancelación aprobada
         bg_caja_estado = "#fff5f5"
@@ -160,6 +198,19 @@ def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"
     """
 
 def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_contenido):
+    """
+    enviar_correo_html_monagua.
+    
+    :param asunto: Descripción del parámetro.
+    
+    :param mensaje_texto: Descripción del parámetro.
+    
+    :param destinatario: Descripción del parámetro.
+    
+    :param html_contenido: Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     send_mail(
         asunto,
         mensaje_texto,

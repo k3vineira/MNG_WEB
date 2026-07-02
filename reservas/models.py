@@ -50,6 +50,11 @@ class Reserva(models.Model):
         ]
 
     def clean(self):
+        """
+        clean.
+        
+        :return: Respuesta de la función.
+        """
         super().clean()
         if self.usuario and self.paquete and self.fecha:
             query = Reserva.objects.filter(
@@ -66,6 +71,15 @@ class Reserva(models.Model):
                 )
 
     def save(self, *args, **kwargs):
+        """
+        save.
+        
+        :param args: Descripción del parámetro.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
        
         if self.paquete and self.fecha:
             try:
@@ -93,9 +107,19 @@ class Reserva(models.Model):
 
     @property
     def tiene_cancelacion_activa(self):
+        """
+        tiene_cancelacion_activa.
+        
+        :return: Respuesta de la función.
+        """
         return self.cancelaciones.filter(estado__in=['pendiente', 'revision']).exists()
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         nombre_usuario = self.usuario.get_full_name() or self.usuario.username
         return f"Reserva {self.id} - {nombre_usuario} ({self.paquete.nombre})"
    
@@ -119,6 +143,15 @@ class Cancelacion(models.Model):
         verbose_name_plural = 'Cancelaciones'
 
     def save(self, *args, **kwargs):
+        """
+        save.
+        
+        :param args: Descripción del parámetro.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         
         if not self.pk:
             fecha_viaje = self.reserva.fecha
@@ -146,4 +179,9 @@ class Cancelacion(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return f"Cancelación de Reserva #{self.reserva.id} - {self.get_estado_display()}"
