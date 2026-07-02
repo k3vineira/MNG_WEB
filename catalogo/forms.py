@@ -2,20 +2,15 @@ from django import forms
 from django.forms import ModelForm
 from .models import Categoria, Actividades, Paquete, Tarifa, Temporada
 
-# FORMULARIO DE CATEGORÍA
-
 
 class CategoriaForm(ModelForm):
     class Meta:
         model = Categoria
         exclude = ['estado']
         widgets = {
-            # Aplicas estilos CSS de Bootstrap para que se vea bien
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
-
-# FORMULARIO DE ACTIVIDADES
 
 
 class ActividadesForm(ModelForm):
@@ -30,8 +25,6 @@ class ActividadesForm(ModelForm):
             'equipo_requerimiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'recomendacion_salud': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
-
-# FORMULARIO DE PAQUETE
 
 
 class PaqueteForm(ModelForm):
