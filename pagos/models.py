@@ -1,9 +1,17 @@
+"""
+Modelo de datos para los comprobantes de pago enviados por los usuarios.
+"""
+
 import os
 from django.db import models
 from django.conf import settings
 
 
 class ComprobantePago(models.Model):
+    """
+    Comprobante de pago subido por un usuario para verificar el pago de una reserva o multa.
+    El administrador puede aprobarlo o rechazarlo.
+    """
     ESTADO_CHOICES = [
         ('pendiente',  'Pendiente de revisión'),
         ('aprobado',   'Aprobado'),
@@ -74,17 +82,14 @@ class ComprobantePago(models.Model):
         ordering = ['-fecha_envio']
 
     def __str__(self):
-        """
-        __str__.
-        
-        :return: Respuesta de la función.
-        """
+        """Retorna el ID, usuario y estado del comprobante como representación textual."""
         return f"Comprobante #{self.pk} — {self.usuario.username} — {self.get_estado_display()}"
 
     def nombre_archivo(self):
         """
-        nombre_archivo.
-        
-        :return: Respuesta de la función.
+        Retorna el nombre del archivo de imagen del comprobante.
+
+        Returns:
+            str: El nombre base del archivo, o '—' si no hay imagen.
         """
         return os.path.basename(self.imagen.name) if self.imagen else '—'

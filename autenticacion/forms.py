@@ -1,3 +1,7 @@
+"""
+Formularios de autenticación para el registro y recuperación de contraseñas.
+"""
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, PasswordResetForm, SetPasswordForm
 import re
@@ -11,9 +15,13 @@ class CustomSetPasswordForm(SetPasswordForm):
     """
     def clean(self):
         """
-        clean.
-        
-        :return: Respuesta de la función.
+        Valida que la nueva contraseña no sea igual a la contraseña actual.
+
+        Returns:
+            dict: Los datos limpios y validados.
+
+        Raises:
+            ValidationError: Si la nueva contraseña coincide con la contraseña actual.
         """
         cleaned_data = super().clean()
         password = cleaned_data.get('new_password1')
@@ -45,9 +53,13 @@ class RecuperacionPersonalizadaForm(PasswordResetForm):
 
     def clean(self):
         """
-        clean.
-        
-        :return: Respuesta de la función.
+        Valida que el correo, apodo y documento coincidan con un usuario registrado.
+
+        Returns:
+            dict: Los datos limpios y validados.
+
+        Raises:
+            ValidationError: Si los datos no coinciden con ningún usuario en el sistema.
         """
         cleaned_data = super().clean()
         email = cleaned_data.get("email")
@@ -82,9 +94,13 @@ class RegistroForm(UserCreationForm):
 
     def clean_numero_documento(self):
         """
-        clean_numero_documento.
-        
-        :return: Respuesta de la función.
+        Valida que el número de documento sea único en el sistema.
+
+        Returns:
+            str: El número de documento validado.
+
+        Raises:
+            ValidationError: Si el número de documento ya está registrado.
         """
         numero_documento = self.cleaned_data.get('numero_documento')
         if numero_documento:
@@ -95,9 +111,13 @@ class RegistroForm(UserCreationForm):
 
     def clean_email(self):
         """
-        clean_email.
-        
-        :return: Respuesta de la función.
+        Valida que el correo electrónico sea único en el sistema.
+
+        Returns:
+            str: El correo electrónico validado.
+
+        Raises:
+            ValidationError: Si el correo electrónico ya está registrado.
         """
         email = self.cleaned_data.get('email')
         if email:
@@ -109,9 +129,13 @@ class RegistroForm(UserCreationForm):
 
     def clean_telefono(self):
         """
-        clean_telefono.
-        
-        :return: Respuesta de la función.
+        Valida que el número de teléfono sea único en el sistema.
+
+        Returns:
+            str: El teléfono validado.
+
+        Raises:
+            ValidationError: Si el teléfono ya está registrado.
         """
         telefono = self.cleaned_data.get('telefono')
         if telefono:
@@ -122,9 +146,13 @@ class RegistroForm(UserCreationForm):
 
     def clean_first_name(self):
         """
-        clean_first_name.
-        
-        :return: Respuesta de la función.
+        Valida que el nombre solo contenga letras y espacios.
+
+        Returns:
+            str: El nombre validado.
+
+        Raises:
+            ValidationError: Si el nombre contiene caracteres no válidos.
         """
         first_name = self.cleaned_data.get('first_name')
         if first_name:
@@ -135,9 +163,13 @@ class RegistroForm(UserCreationForm):
 
     def clean_last_name(self):
         """
-        clean_last_name.
-        
-        :return: Respuesta de la función.
+        Valida que los apellidos solo contengan letras y espacios.
+
+        Returns:
+            str: Los apellidos validados.
+
+        Raises:
+            ValidationError: Si los apellidos contienen caracteres no válidos.
         """
         last_name = self.cleaned_data.get('last_name')
         if last_name:
@@ -148,9 +180,13 @@ class RegistroForm(UserCreationForm):
 
     def clean_username(self):
         """
-        clean_username.
-        
-        :return: Respuesta de la función.
+        Valida que el nombre de usuario (apodo) sea único (insensible a mayúsculas/minúsculas).
+
+        Returns:
+            str: El nombre de usuario validado.
+
+        Raises:
+            ValidationError: Si el nombre de usuario ya está en uso.
         """
         username = self.cleaned_data.get('username')
         if username:
@@ -158,3 +194,4 @@ class RegistroForm(UserCreationForm):
                 raise forms.ValidationError(
                     "Este nombre de usuario ya está en uso. Por favor, elige otro.")
         return username
+

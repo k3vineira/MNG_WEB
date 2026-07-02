@@ -1,3 +1,7 @@
+"""
+Registro de modelos del catálogo en el sitio de administración de Django.
+"""
+
 from django.contrib import admin
 from .models import Temporada, Categoria, Actividades, Paquete, Tarifa, PaqueteActividad
 

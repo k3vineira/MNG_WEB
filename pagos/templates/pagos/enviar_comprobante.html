@@ -129,10 +129,28 @@
 
                             <!-- Banco / Medio de pago -->
                             <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" name="banco_origen" id="id_banco_origen" class="form-control rounded-4 shadow-sm" placeholder="Ej: Nequi" required>
-                                    <label for="id_banco_origen">
+                                <div class="form-floating mb-3">
+                                    <select name="banco_origen" id="id_banco_origen_select" class="form-select rounded-4 shadow-sm" required>
+                                        <option value="" disabled selected>— Selecciona el banco o medio de pago —</option>
+                                        <option value="Nequi">Nequi</option>
+                                        <option value="Daviplata">Daviplata</option>
+                                        <option value="Bancolombia">Bancolombia</option>
+                                        <option value="Banco de Bogotá">Banco de Bogotá</option>
+                                        <option value="Davivienda">Davivienda</option>
+                                        <option value="BBVA">BBVA</option>
+                                        <option value="Banco de Occidente">Banco de Occidente</option>
+                                        <option value="Lulo Bank">Lulo Bank</option>
+                                        <option value="RappiPay">RappiPay</option>
+                                        <option value="Otro">Otro (Especificar)</option>
+                                    </select>
+                                    <label for="id_banco_origen_select">
                                         <i class="bi bi-bank text-success me-2"></i>Banco o Canal de Pago *
+                                    </label>
+                                </div>
+                                <div class="form-floating d-none" id="otro_banco_container">
+                                    <input type="text" id="id_banco_origen_otro" class="form-control rounded-4 shadow-sm" placeholder="Especificar otro banco">
+                                    <label for="id_banco_origen_otro">
+                                        <i class="bi bi-pencil-square text-success me-2"></i>Especifica el banco o medio de pago *
                                     </label>
                                 </div>
                             </div>
@@ -207,6 +225,27 @@ document.getElementById('inputImagen').addEventListener('change', function(event
     } else {
         previewImage.src = '';
         previewContainer.classList.add('d-none');
+    }
+});
+
+// Manejo dinámico de Banco/Medio de Pago "Otro"
+document.getElementById('id_banco_origen_select').addEventListener('change', function() {
+    const otroContainer = document.getElementById('otro_banco_container');
+    const otroInput = document.getElementById('id_banco_origen_otro');
+    const selectEl = this;
+    
+    if (selectEl.value === 'Otro') {
+        otroContainer.classList.remove('d-none');
+        otroInput.setAttribute('required', 'required');
+        otroInput.setAttribute('name', 'banco_origen');
+        selectEl.removeAttribute('name');
+        otroInput.focus();
+    } else {
+        otroContainer.classList.add('d-none');
+        otroInput.removeAttribute('required');
+        otroInput.removeAttribute('name');
+        otroInput.value = '';
+        selectEl.setAttribute('name', 'banco_origen');
     }
 });
 </script>

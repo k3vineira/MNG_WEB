@@ -1,3 +1,7 @@
+"""
+Pruebas unitarias para la aplicación de autenticación.
+"""
+
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model, authenticate
@@ -8,11 +12,12 @@ from autenticacion.forms import RegistroForm, RecuperacionPersonalizadaForm, Cus
 Usuario = get_user_model()
 
 class AutenticacionBackendTests(TestCase):
+    """
+    Pruebas para el backend de autenticación personalizado.
+    """
     def setUp(self):
         """
-        setUp.
-        
-        :return: Respuesta de la función.
+        Configura el entorno de prueba creando un usuario de prueba.
         """
         self.user = Usuario.objects.create_user(
             username='authuser',
@@ -28,9 +33,7 @@ class AutenticacionBackendTests(TestCase):
 
     def test_authenticate_by_username_success(self):
         """
-        test_authenticate_by_username_success.
-        
-        :return: Respuesta de la función.
+        Prueba la autenticación exitosa usando el nombre de usuario.
         """
         user = self.backend.authenticate(None, username='authuser', password='securepassword123')
         self.assertIsNotNone(user)
@@ -38,9 +41,7 @@ class AutenticacionBackendTests(TestCase):
 
     def test_authenticate_by_email_success(self):
         """
-        test_authenticate_by_email_success.
-        
-        :return: Respuesta de la función.
+        Prueba la autenticación exitosa usando el correo electrónico.
         """
         user = self.backend.authenticate(None, username='authuser@example.com', password='securepassword123')
         self.assertIsNotNone(user)
@@ -48,9 +49,7 @@ class AutenticacionBackendTests(TestCase):
 
     def test_authenticate_by_email_case_insensitive(self):
         """
-        test_authenticate_by_email_case_insensitive.
-        
-        :return: Respuesta de la función.
+        Prueba la autenticación exitosa insensible a mayúsculas/minúsculas usando el correo electrónico.
         """
         user = self.backend.authenticate(None, username='AUTHUSER@EXAMPLE.COM', password='securepassword123')
         self.assertIsNotNone(user)
@@ -58,29 +57,26 @@ class AutenticacionBackendTests(TestCase):
 
     def test_authenticate_invalid_password(self):
         """
-        test_authenticate_invalid_password.
-        
-        :return: Respuesta de la función.
+        Prueba que la autenticación falle con una contraseña incorrecta.
         """
         user = self.backend.authenticate(None, username='authuser', password='wrongpassword')
         self.assertIsNone(user)
 
     def test_authenticate_nonexistent_user(self):
         """
-        test_authenticate_nonexistent_user.
-        
-        :return: Respuesta de la función.
+        Prueba que la autenticación falle con un usuario inexistente.
         """
         user = self.backend.authenticate(None, username='nonexistent', password='securepassword123')
         self.assertIsNone(user)
 
 
 class AutenticacionFormTests(TestCase):
+    """
+    Pruebas para los formularios de registro y recuperación de contraseñas.
+    """
     def setUp(self):
         """
-        setUp.
-        
-        :return: Respuesta de la función.
+        Configura el entorno de prueba creando un usuario registrado previamente.
         """
         self.user = Usuario.objects.create_user(
             username='existinguser',
@@ -95,9 +91,7 @@ class AutenticacionFormTests(TestCase):
 
     def test_registro_form_valid(self):
         """
-        test_registro_form_valid.
-        
-        :return: Respuesta de la función.
+        Prueba que el formulario de registro sea válido con datos correctos.
         """
         form_data = {
             'username': 'newuser',
@@ -115,9 +109,7 @@ class AutenticacionFormTests(TestCase):
 
     def test_registro_form_duplicate_document(self):
         """
-        test_registro_form_duplicate_document.
-        
-        :return: Respuesta de la función.
+        Prueba que el formulario de registro invalide un documento duplicado.
         """
         form_data = {
             'username': 'newuser',
@@ -136,9 +128,7 @@ class AutenticacionFormTests(TestCase):
 
     def test_registro_form_invalid_names(self):
         """
-        test_registro_form_invalid_names.
-        
-        :return: Respuesta de la función.
+        Prueba que el formulario de registro invalide nombres con caracteres no permitidos.
         """
         form_data = {
             'username': 'newuser',
@@ -157,9 +147,7 @@ class AutenticacionFormTests(TestCase):
 
     def test_recuperacion_personalizada_form_valid(self):
         """
-        test_recuperacion_personalizada_form_valid.
-        
-        :return: Respuesta de la función.
+        Prueba que el formulario de recuperación sea válido si los datos coinciden con un usuario.
         """
         form_data = {
             'email': 'existing@example.com',
@@ -171,9 +159,7 @@ class AutenticacionFormTests(TestCase):
 
     def test_recuperacion_personalizada_form_invalid(self):
         """
-        test_recuperacion_personalizada_form_invalid.
-        
-        :return: Respuesta de la función.
+        Prueba que el formulario de recuperación invalide datos que no coinciden con un usuario.
         """
         form_data = {
             'email': 'existing@example.com',
@@ -185,9 +171,7 @@ class AutenticacionFormTests(TestCase):
 
     def test_custom_set_password_form_same_password(self):
         """
-        test_custom_set_password_form_same_password.
-        
-        :return: Respuesta de la función.
+        Prueba que no se permita usar la misma contraseña anterior al redefinirla.
         """
         form_data = {
             'new_password1': 'password123',
@@ -199,11 +183,12 @@ class AutenticacionFormTests(TestCase):
 
 
 class AutenticacionViewsTests(TestCase):
+    """
+    Pruebas para las vistas asociadas a la autenticación de usuarios.
+    """
     def setUp(self):
         """
-        setUp.
-        
-        :return: Respuesta de la función.
+        Configura el entorno creando un usuario para probar las vistas.
         """
         self.user = Usuario.objects.create_user(
             username='viewuser',
@@ -218,9 +203,7 @@ class AutenticacionViewsTests(TestCase):
 
     def test_login_view_get(self):
         """
-        test_login_view_get.
-        
-        :return: Respuesta de la función.
+        Prueba el acceso GET a la página de inicio de sesión.
         """
         response = self.client.get(reverse('login'))
         self.assertEqual(response.status_code, 200)
@@ -228,9 +211,7 @@ class AutenticacionViewsTests(TestCase):
 
     def test_login_view_post_success(self):
         """
-        test_login_view_post_success.
-        
-        :return: Respuesta de la función.
+        Prueba el envío POST exitoso para iniciar sesión.
         """
         response = self.client.post(reverse('login'), {
             'username': 'viewuser',
@@ -240,9 +221,7 @@ class AutenticacionViewsTests(TestCase):
 
     def test_logout_view(self):
         """
-        test_logout_view.
-        
-        :return: Respuesta de la función.
+        Prueba el cierre de sesión de un usuario autenticado.
         """
         self.client.login(username='viewuser', password='password123')
         response = self.client.get(reverse('logout'))
@@ -250,9 +229,7 @@ class AutenticacionViewsTests(TestCase):
 
     def test_recuperar_apodo_view_success(self):
         """
-        test_recuperar_apodo_view_success.
-        
-        :return: Respuesta de la función.
+        Prueba la vista de recuperación de apodo con datos correctos.
         """
         response = self.client.post(reverse('recuperar_apodo'), {
             'email': 'viewuser@example.com',
@@ -263,9 +240,7 @@ class AutenticacionViewsTests(TestCase):
 
     def test_recuperar_apodo_view_fail(self):
         """
-        test_recuperar_apodo_view_fail.
-        
-        :return: Respuesta de la función.
+        Prueba la vista de recuperación de apodo con datos incorrectos.
         """
         response = self.client.post(reverse('recuperar_apodo'), {
             'email': 'viewuser@example.com',
@@ -273,3 +248,4 @@ class AutenticacionViewsTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No encontramos ninguna cuenta')
+

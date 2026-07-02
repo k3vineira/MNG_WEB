@@ -73,7 +73,7 @@
                                                 <ul class="list-unstyled small text-secondary mb-0">
                                                     <li class="mb-1"><strong>Referencia:</strong> <code class="text-dark">{{ pago.referencia|default:"—" }}</code></li>
                                                     <li class="mb-1"><strong>Medio / Banco:</strong> {{ pago.banco_origen|default:"—" }}</li>
-                                                    <li class="mb-0"><strong>Monto Declarado:</strong> <span class="fw-bold text-danger">COP ${{ pago.monto|floatformat:0|intcomma }}</span></li>
+                                                    <li class="mb-0"><strong>Monto Declarado:</strong> <span class="fw-bold text-danger">{% if pago.monto %}COP ${{ pago.monto|floatformat:0|intcomma }}{% elif pago.reserva %}COP ${{ pago.reserva.monto_total|floatformat:0|intcomma }}{% else %}—{% endif %}</span></li>
                                                 </ul>
                                             </div>
                                             <div class="col-sm-6">

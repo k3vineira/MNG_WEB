@@ -1,9 +1,14 @@
+"""
+Formularios de gestión para el catálogo: categorías, actividades, paquetes, tarifas y temporadas.
+"""
+
 from django import forms
 from django.forms import ModelForm
 from .models import Categoria, Actividades, Paquete, Tarifa, Temporada
 
 
 class CategoriaForm(ModelForm):
+    """Formulario para crear y editar categorías de paquetes turísticos."""
     class Meta:
         model = Categoria
         exclude = ['estado']
@@ -14,6 +19,7 @@ class CategoriaForm(ModelForm):
 
 
 class ActividadesForm(ModelForm):
+    """Formulario para crear y editar actividades turísticas."""
     class Meta:
         model = Actividades
         exclude = ['estado']
@@ -28,6 +34,7 @@ class ActividadesForm(ModelForm):
 
 
 class PaqueteForm(ModelForm):
+    """Formulario para crear y editar paquetes turísticos incluyendo imagen y actividades."""
     class Meta:
         model = Paquete
         exclude = ['estado']
@@ -45,6 +52,7 @@ class PaqueteForm(ModelForm):
 
 
 class TarifaForm(ModelForm):
+    """Formulario para crear y editar tarifas asociadas a un paquete y temporada."""
     class Meta:
         model = Tarifa
         exclude = ['estado']
@@ -57,6 +65,7 @@ class TarifaForm(ModelForm):
 
 
 class TemporadaForm(ModelForm):
+    """Formulario para crear y editar temporadas turísticas con fechas de vigencia."""
     class Meta:
         model = Temporada
         fields = ['nombre', 'fecha_inicio', 'fecha_fin']

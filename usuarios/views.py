@@ -98,9 +98,10 @@ def dashboard_admin(request):
 
     current_year = timezone.now().year
     ingresos_mensuales = [0] * 12
-    for p in ComprobantePago.objects.filter(estado='aprobado', fecha_envio__year=current_year):
+    for p in ComprobantePago.objects.filter(estado='aprobado', fecha_envio__year=current_year).select_related('reserva'):
         m = p.fecha_envio.month - 1
-        ingresos_mensuales[m] += float(p.monto or 0)
+        monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
+        ingresos_mensuales[m] += float(monto_valor)
 
     reservas_confirmadas = Reserva.objects.filter(estado='confirmada').count()
     reservas_pendientes = Reserva.objects.filter(estado='pendiente').count()
@@ -148,10 +149,11 @@ def dashboard_admin(request):
             'texto': f"Nueva reserva de {nombre_usr} para {r.paquete.nombre}",
             'tiempo_dt': r.fecha_registro,
         })
-    for p in ComprobantePago.objects.select_related('usuario').order_by('-fecha_envio')[:5]:
+    for p in ComprobantePago.objects.select_related('usuario', 'reserva').order_by('-fecha_envio')[:5]:
         nombre_usr = p.usuario.get_full_name() or p.usuario.username
+        monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
         actividad_reciente.append({
-            'texto': f"Pago de COP ${p.monto or 0:,.0f} enviado por {nombre_usr} ({p.get_estado_display()})",
+            'texto': f"Pago de COP ${monto_valor:,.0f} enviado por {nombre_usr} ({p.get_estado_display()})",
             'tiempo_dt': p.fecha_envio,
         })
     actividad_reciente.sort(key=lambda x: x['tiempo_dt'], reverse=True)
@@ -577,7 +579,8 @@ def get_estadisticas_context(user, is_admin=False):
     # Obtener comprobantes de pago recientes
     for p in pagos.select_related('usuario', 'reserva', 'reserva__paquete').order_by('-fecha_envio')[:5]:
         nombre_usr = p.usuario.get_full_name() or p.usuario.username
-        monto_formatted = f"COP ${p.monto or 0:,.0f}"
+        monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
+        monto_formatted = f"COP ${monto_valor:,.0f}"
         if is_admin:
             desc = f"Pago de {monto_formatted} enviado por {nombre_usr} ({p.get_estado_display()})"
         else:
@@ -616,9 +619,10 @@ def get_estadisticas_context(user, is_admin=False):
         m = r.fecha.month - 1
         meses_datos[m] += 1
         
-    for p in pagos.filter(estado='aprobado', fecha_envio__year=current_year):
+    for p in pagos.filter(estado='aprobado', fecha_envio__year=current_year).select_related('reserva'):
         m = p.fecha_envio.month - 1
-        meses_inversion[m] += float(p.monto or 0)
+        monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
+        meses_inversion[m] += float(monto_valor)
         
     reporte_mensual = []
     for m in range(12):
@@ -713,7 +717,7 @@ def get_estadisticas_context(user, is_admin=False):
             'metodo': p.banco_origen,
             'estado': p.estado,
             'fecha': p.fecha_envio,
-            'monto': p.monto or 0
+            'monto': p.monto or (p.reserva.monto_total if p.reserva else 0)
         })
 
     # Reviews

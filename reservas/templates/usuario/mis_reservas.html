@@ -93,6 +93,8 @@
                                                         <div class="d-flex align-items-center gap-2">
                                                             {% if comp.monto %}
                                                                 <span class="small fw-bold text-success">COP ${{ comp.monto|floatformat:0|intcomma }}</span>
+                                                            {% elif comp.reserva %}
+                                                                <span class="small fw-bold text-success">COP ${{ comp.reserva.monto_total|floatformat:0|intcomma }}</span>
                                                             {% endif %}
                                                             <span class="badge {% if comp.estado == 'aprobado' %}bg-success{% elif comp.estado == 'pendiente' %}bg-warning text-dark{% else %}bg-danger{% endif %}" style="font-size: 0.7rem;">
                                                                 {{ comp.get_estado_display }}

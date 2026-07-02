@@ -1,14 +1,20 @@
+"""
+Configuración general del proyecto Django MNG_WEB (Monagua).
+Contiene ajustes de base de datos, correo, archivos estáticos, seguridad y aplicaciones instaladas.
+"""
+
 import os
 from pathlib import Path
-
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Cargar variables de entorno desde el archivo .env
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = 'django-insecure-p!+*=!t4f^dbv14nx*gk375-ieyq##$kmmd(^0&$gkyiuy=jdd'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-p!+*=!t4f^dbv14nx*gk375-ieyq##$kmmd(^0&$gkyiuy=jdd')
 
-
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 't', 'y', 'yes')
 
 ALLOWED_HOSTS = ['192.168.20.182', '192.168.1.149',
                  '192.168.1.112', '192.168.1.125', '192.168.1.128', '*']
@@ -82,12 +88,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+import dj_database_url
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}"
+    )
 }
 
 
@@ -141,8 +147,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'webmonagua@gmail.com'
-EMAIL_HOST_PASSWORD = 'hmwb jeod fcsi zfic'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'webmonagua@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'hmwb jeod fcsi zfic')
 
 
 # En settings.py

@@ -1,3 +1,7 @@
+"""
+Configuración de URLs principal del proyecto. Incluye todas las aplicaciones del proyecto.
+"""
+
 from django.contrib import admin
 from django.urls import path, include
 from .views import inicio

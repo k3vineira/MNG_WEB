@@ -1,32 +1,29 @@
+"""
+Utilidades del núcleo del proyecto: plantillas de correo HTML, envío de emails y generación de PDFs.
+"""
+
 from django.core.mail import send_mail
 from django.conf import settings
 from datetime import datetime, time
 
 def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menores=0, punto_encuentro=None, hora_encuentro=None, estado='pendiente', reserva_id='', monto_total='0.00'):
     """
-    plantilla_reserva_html.
-    
-    :param nombre_cliente: Descripción del parámetro.
-    
-    :param paquete: Descripción del parámetro.
-    
-    :param fecha=None: Descripción del parámetro.
-    
-    :param adultos=1: Descripción del parámetro.
-    
-    :param menores=0: Descripción del parámetro.
-    
-    :param punto_encuentro=None: Descripción del parámetro.
-    
-    :param hora_encuentro=None: Descripción del parámetro.
-    
-    :param estado='pendiente': Descripción del parámetro.
-    
-    :param reserva_id='': Descripción del parámetro.
-    
-    :param monto_total='0.00': Descripción del parámetro.
-    
-    :return: Respuesta de la función.
+    Genera el HTML de un correo electrónico para notificaciones de reservas.
+
+    Args:
+        nombre_cliente (str): Nombre del cliente destinatario.
+        paquete (str): Nombre del paquete reservado.
+        fecha (str, optional): Fecha de la reserva.
+        adultos (int): Número de adultos.
+        menores (int): Número de menores.
+        punto_encuentro (str, optional): Lugar de encuentro del tour.
+        hora_encuentro (str | time, optional): Hora de encuentro.
+        estado (str): Estado de la reserva ('pendiente', 'confirmada', 'cancelada').
+        reserva_id (str): Identificador de la reserva.
+        monto_total (str): Monto total formateado.
+
+    Returns:
+        str: Cadena HTML lista para enviar como cuerpo de correo.
     """
     if isinstance(hora_encuentro, str):
         try:
@@ -141,17 +138,16 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menor
 
 def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"):
     """
-    plantilla_cancelacion_html.
-    
-    :param nombre_cliente: Descripción del parámetro.
-    
-    :param paquete: Descripción del parámetro.
-    
-    :param estado: Descripción del parámetro.
-    
-    :param penalidad="0.00": Descripción del parámetro.
-    
-    :return: Respuesta de la función.
+    Genera el HTML de un correo electrónico para notificaciones de cancelaciones.
+
+    Args:
+        nombre_cliente (str): Nombre del cliente destinatario.
+        paquete (str): Nombre del paquete cancelado.
+        estado (str): Estado de la cancelación ('aceptada', 'rechazada', etc.).
+        penalidad (str): Monto de penalidad formateado.
+
+    Returns:
+        str: Cadena HTML lista para enviar como cuerpo de correo.
     """
     if estado in ['aceptada', 'confirmada']:
         color_tag = "#dc3545"  # Rojo por cancelación aprobada
@@ -199,17 +195,13 @@ def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"
 
 def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_contenido):
     """
-    enviar_correo_html_monagua.
-    
-    :param asunto: Descripción del parámetro.
-    
-    :param mensaje_texto: Descripción del parámetro.
-    
-    :param destinatario: Descripción del parámetro.
-    
-    :param html_contenido: Descripción del parámetro.
-    
-    :return: Respuesta de la función.
+    Envía un correo electrónico con contenido HTML desde la cuenta configurada en settings.
+
+    Args:
+        asunto (str): Asunto del correo.
+        mensaje_texto (str): Cuerpo del correo en texto plano (fallback).
+        destinatario (str): Dirección de correo del destinatario.
+        html_contenido (str): Cuerpo del correo en formato HTML.
     """
     send_mail(
         asunto,

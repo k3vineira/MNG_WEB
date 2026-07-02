@@ -1,3 +1,7 @@
+"""
+Backends de autenticación personalizados para el proyecto.
+"""
+
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -9,17 +13,16 @@ class EmailOrUsernameModelBackend(ModelBackend):
     """
     def authenticate(self, request, username=None, password=None, **kwargs):
         """
-        authenticate.
-        
-        :param request: Descripción del parámetro.
-        
-        :param username=None: Descripción del parámetro.
-        
-        :param password=None: Descripción del parámetro.
-        
-        :param kwargs: Descripción del parámetro.
-        
-        :return: Respuesta de la función.
+        Autentica a un usuario usando su correo electrónico o nombre de usuario.
+
+        Args:
+            request (HttpRequest): Objeto de solicitud HTTP actual.
+            username (str, optional): Nombre de usuario o correo electrónico.
+            password (str, optional): Contraseña del usuario.
+            **kwargs: Parámetros adicionales.
+
+        Returns:
+            User: El objeto del usuario autenticado si es exitoso, None en caso contrario.
         """
         UserModel = get_user_model()
         if username is None:
@@ -36,3 +39,4 @@ class EmailOrUsernameModelBackend(ModelBackend):
         if user.check_password(password) and self.user_can_authenticate(user):
             return user
         return None
+

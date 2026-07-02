@@ -158,7 +158,13 @@
                                     {% endif %}
                                 </td>
                                 <td class="fw-bold text-success">
-                                    {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}{% else %}—{% endif %}
+                                    {% if c.monto %}
+                                        COP ${{ c.monto|floatformat:0|intcomma }}
+                                    {% elif c.reserva %}
+                                        COP ${{ c.reserva.monto_total|floatformat:0|intcomma }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
                                 </td>
                                 <td class="text-secondary">{{ c.banco_origen|default:"—" }}</td>
                                 <td class="text-secondary font-monospace small">{{ c.referencia|default:"—" }}</td>
@@ -213,7 +219,7 @@
                                                 <div><strong>Usuario:</strong> {{ c.usuario.get_full_name|default:c.usuario.username }}</div>
                                                 <div><strong>Referencia:</strong> {{ c.referencia }}</div>
                                                 <div><strong>Banco:</strong> {{ c.banco_origen }}</div>
-                                                <div><strong>Monto:</strong> COP ${{ c.monto|floatformat:0|intcomma }}</div>
+                                                <div><strong>Monto:</strong> {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}{% elif c.reserva %}COP ${{ c.reserva.monto_total|floatformat:0|intcomma }}{% else %}—{% endif %}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -265,7 +271,7 @@
 
                         <div class="d-flex justify-content-between align-items-center border-top pt-2 small">
                             <span class="text-secondary fw-semibold">MONTO:</span>
-                            <span class="fw-bold text-success">COP ${{ c.monto|floatformat:0|intcomma }}</span>
+                            <span class="fw-bold text-success">{% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}{% elif c.reserva %}COP ${{ c.reserva.monto_total|floatformat:0|intcomma }}{% else %}—{% endif %}</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center small mt-1">
                             <span class="text-secondary fw-semibold">FECHA:</span>
@@ -306,7 +312,7 @@
                                     <div><strong>Usuario:</strong> {{ c.usuario.get_full_name|default:c.usuario.username }}</div>
                                     <div><strong>Referencia:</strong> {{ c.referencia }}</div>
                                     <div><strong>Banco:</strong> {{ c.banco_origen }}</div>
-                                    <div><strong>Monto:</strong> COP ${{ c.monto|floatformat:0|intcomma }}</div>
+                                    <div><strong>Monto:</strong> {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}{% elif c.reserva %}COP ${{ c.reserva.monto_total|floatformat:0|intcomma }}{% else %}—{% endif %}</div>
                                 </div>
                             </div>
                         </div>

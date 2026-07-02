@@ -1,7 +1,12 @@
+"""
+Definición de rutas URL para la autenticación, registro y recuperación de contraseñas de usuarios.
+"""
+
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 from .forms import CustomSetPasswordForm
+
 
 
 urlpatterns = [

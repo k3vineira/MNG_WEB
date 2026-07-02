@@ -1,3 +1,7 @@
+"""
+Modelos de datos para la comunidad: Calificaciones, Blog, PQRS y Comentarios.
+"""
+
 from django.db import models
 from django.urls import reverse
 
@@ -6,6 +10,10 @@ from django.urls import reverse
 
 
 class Calificacion(models.Model):
+    """
+    Calificación de un paquete turístico realizada por un cliente.
+    Solo se permite una calificación por cliente y paquete.
+    """
     cliente = models.ForeignKey('usuarios.Cliente', on_delete=models.CASCADE)
     paquete = models.ForeignKey('catalogo.Paquete', on_delete=models.CASCADE)
     puntaje = models.PositiveSmallIntegerField()
@@ -17,6 +25,9 @@ class Calificacion(models.Model):
 
 
 class Blog(models.Model):
+    """
+    Entrada de blog publicada por el equipo de Monagua.
+    """
     titulo = models.CharField(max_length=200)
     contenido = models.TextField()
     informacion_adicional = models.TextField(blank=True)
@@ -29,23 +40,18 @@ class Blog(models.Model):
         ordering = ['-fecha_publicacion']
 
     def get_absolute_url(self):
-        """
-        get_absolute_url.
-        
-        :return: Respuesta de la función.
-        """
+        """Retorna la URL de detalle de este post del blog."""
         return reverse('detalle_blog', kwargs={'id': self.id})
 
     def __str__(self):
-        """
-        __str__.
-        
-        :return: Respuesta de la función.
-        """
+        """Retorna el título del blog como representación textual."""
         return self.titulo
 
 
 class PQRS(models.Model):
+    """
+    Solicitud de Petición, Queja, Reclamo o Sugerencia enviada por un usuario.
+    """
     TIPO_CHOICES = [
         ('peticion',    'Petición'),
         ('queja',       'Queja'),
@@ -110,10 +116,6 @@ class Comentario(models.Model):
         verbose_name_plural = 'Comentarios'
 
     def __str__(self):
-        """
-        __str__.
-        
-        :return: Respuesta de la función.
-        """
+        """Retorna el usuario y título del comentario como representación textual."""
         return f"Comentario de {self.usuario.username} - {self.titulo or 'sin título'}"
 

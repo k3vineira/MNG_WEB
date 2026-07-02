@@ -1,3 +1,7 @@
+"""
+Definición de rutas URL para la gestión del catálogo: paquetes, categorías, actividades, temporadas y tarifas.
+"""
+
 from django.urls import path
 from . import views
 
