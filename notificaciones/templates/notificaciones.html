@@ -25,7 +25,6 @@
                 </a>
             </li>
         {% endfor %}
-        <li><a class="dropdown-item text-center fw-bold py-2 small enlace-historial" href="{% url 'lista_notificaciones' %}">Ver todo el historial</a></li>
     {% else %}
         <li class="p-4 text-center text-muted small"><i class="bi bi-bell-slash d-block mb-2 fs-4 text-secondary"></i>No tienes alertas pendientes.</li>
     {% endif %}
