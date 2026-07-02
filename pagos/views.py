@@ -67,13 +67,12 @@ def enviar_comprobante(request):
     # GET: mostrar formulario y reservas disponibles
     selected_reserva_id = request.GET.get('reserva_id')
     comprobantes = ComprobantePago.objects.filter(usuario=request.user)
-    from django.db.models import Sum
     context = {
         'comprobantes':       comprobantes,
         'reservas_usuario':   reservas_usuario,
         'selected_reserva_id': selected_reserva_id,
         'total_pendientes':   comprobantes.filter(estado='pendiente').count(),
-        'total_aprobados':    comprobantes.filter(estado='aprobado').aggregate(total=Sum('monto'))['total'] or 0,
+        'total_aprobados':    sum(p.monto or (p.reserva.monto_total if p.reserva else 0) for p in comprobantes.filter(estado='aprobado').select_related('reserva')),
         'total_rechazados':   comprobantes.filter(estado='rechazado').count(),
     }
     return render(request, 'pagos/enviar_comprobante.html', context)
@@ -83,11 +82,10 @@ def enviar_comprobante(request):
 def mis_comprobantes(request):
     """Usuario ve el historial de sus comprobantes."""
     comprobantes = ComprobantePago.objects.filter(usuario=request.user)
-    from django.db.models import Sum
     context = {
         'comprobantes':     comprobantes,
         'total_pendientes': comprobantes.filter(estado='pendiente').count(),
-        'total_aprobados':  comprobantes.filter(estado='aprobado').aggregate(total=Sum('monto'))['total'] or 0,
+        'total_aprobados':  sum(p.monto or (p.reserva.monto_total if p.reserva else 0) for p in comprobantes.filter(estado='aprobado').select_related('reserva')),
         'total_rechazados': comprobantes.filter(estado='rechazado').count(),
     }
     return render(request, 'pagos/mis_comprobantes.html', context)
@@ -109,9 +107,7 @@ def admin_comprobantes(request):
     total = ComprobantePago.objects.count()
     total_pendientes = ComprobantePago.objects.filter(
         estado='pendiente').count()
-    from django.db.models import Sum
-    total_aprobados = ComprobantePago.objects.filter(
-        estado='aprobado').aggregate(total=Sum('monto'))['total'] or 0
+    total_aprobados = sum(p.monto or (p.reserva.monto_total if p.reserva else 0) for p in ComprobantePago.objects.filter(estado='aprobado').select_related('reserva'))
     total_rechazados = ComprobantePago.objects.filter(
         estado='rechazado').count()
 

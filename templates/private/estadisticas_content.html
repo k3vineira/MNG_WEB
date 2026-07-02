@@ -609,7 +609,15 @@
                                     {% endif %}
                                 </td>
                                 <td class="text-center py-3 text-muted small">{{ pago.fecha|date:"d M Y"|default:"—" }}</td>
-                                <td class="text-end fw-bold text-dark py-3">COP ${{ pago.monto|floatformat:0|intcomma|default:"0" }}</td>
+                                <td class="text-end fw-bold text-dark py-3">
+                                    {% if pago.monto %}
+                                        COP ${{ pago.monto|floatformat:0|intcomma }}
+                                    {% elif pago.reserva %}
+                                        COP ${{ pago.reserva.monto_total|floatformat:0|intcomma }}
+                                    {% else %}
+                                        COP $0
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>
