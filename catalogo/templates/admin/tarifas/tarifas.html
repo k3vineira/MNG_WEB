@@ -1,5 +1,10 @@
 {% extends 'admin/base-admin.html' %}
 {% load humanize %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -52,7 +57,7 @@
     <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
         <!-- Tabla Desktop -->
         <div class="table-responsive d-none d-lg-block">
-            <table class="table table-hover align-middle mb-0">
+            <table id="tablaTarifas" class="table table-hover align-middle mb-0" style="width:100%">
                 <thead class="table-light text-muted">
                     <tr>
                         <th scope="col" class="fw-bold">Paquete</th>
@@ -153,4 +158,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
+<script src="{% static 'js/tconf/tconf-tablaTarifas.js' %}"></script>
 {% endblock %}
