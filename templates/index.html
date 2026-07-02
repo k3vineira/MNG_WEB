@@ -29,7 +29,9 @@
           entre montañas, senderos naturales, páramos, cascadas y la riqueza cultural de nuestra tierra. Conecta con la <strong>tranquilidad de la naturaleza</strong>, descubre tradiciones locales y crea <strong>recuerdos inolvidables</strong> en uno de los destinos más
            encantadores de Colombia. Cada recorrido es una oportunidad para aventurarte, respirar aire puro y conocer la <strong>esencia de Mongua</strong> desde una perspectiva diferente.</p>
         <div class="mt-4 mb-5">
-            <a href="{% url 'destinos' %}" class="btn btn-success btn-lg rounded-pill px-4 shadow-sm">Ver Paquetes</a>
+            <a href="{% url 'destinos' %}" class="btn btn-success bg-gradient btn-lg rounded-pill px-5 py-3 shadow-lg fw-bold d-inline-flex align-items-center gap-3 border border-2 border-white">
+              Ver Paquetes <i class="bi bi-arrow-right-circle-fill fs-4"></i>
+            </a>
         </div>
       </div>
     </div>
@@ -38,18 +40,22 @@
   <!-- Contenedor de cartas "Flotantes" -->
   <div class="container-fluid px-0 mb-0 overflow-hidden marquee-container">
     <div class="marquee-wrapper">
-      {# Generamos 16 cartas (un set de 8 repetido 2 veces) para lograr el bucle infinito suave #}
+      {# Generamos 16 cartas (un set de 4 repetido 4 veces) para lograr el bucle infinito suave #}
       {% for i in "1234" %}
       <!-- Laguna Negra -->
       <div class="marquee-item">
-        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
+        <div class="card text-bg-dark border-0 rounded-4 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
+          {% if forloop.first %}
+          <img src="{% static 'img/Fondo3.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Laguna Negra" fetchpriority="high">
+          {% else %}
           <img src="{% static 'img/Fondo3.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Laguna Negra" loading="lazy">
-          <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);">
-            <h3 class="card-title fw-bold text-white">Laguna Negra</h3>
-            <div>
-              <p class="card-text mb-1 d-flex align-items-center gap-2 text-white fw-semibold">
-                <span> 🌊 El misterio natural</span> 
-              </p>
+          {% endif %}
+          <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(to top, rgba(26, 38, 31, 0.95) 0%, rgba(26, 38, 31, 0.45) 50%, rgba(26, 38, 31, 0.15) 100%);">
+            <h3 class="card-title fw-bold text-white fs-4 mt-2">Laguna Negra</h3>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge-tag">
+                <i class="bi bi-water"></i> El misterio natural
+              </span>
               <!-- Enlace invisible que expande el área de clic a toda la tarjeta -->
               <a href="{% url 'blog' %}" class="stretched-link"></a>
             </div>
@@ -59,14 +65,18 @@
 
       <!-- Legado Ancestral -->
       <div class="marquee-item">
-        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
+        <div class="card text-bg-dark border-0 rounded-4 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
+          {% if forloop.first %}
+          <img src="{% static 'img/img_pictogramas.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Legado Ancestral" fetchpriority="high">
+          {% else %}
           <img src="{% static 'img/img_pictogramas.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Legado Ancestral" loading="lazy">
-          <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);">
-            <h3 class="card-title fw-bold text-white">Legado Ancestral</h3>
-            <div>
-              <p class="card-text mb-1 d-flex align-items-center gap-2 text-white fw-semibold">
-                <span>🗿 Iconografía milenaria</span> 
-              </p>
+          {% endif %}
+          <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(to top, rgba(26, 38, 31, 0.95) 0%, rgba(26, 38, 31, 0.45) 50%, rgba(26, 38, 31, 0.15) 100%);">
+            <h3 class="card-title fw-bold text-white fs-4 mt-2">Legado Ancestral</h3>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge-tag">
+                <i class="bi bi-feather"></i> Iconografía milenaria
+              </span>
               <!-- Enlace invisible que expande el área de clic a toda la tarjeta -->
               <a href="{% url 'blog' %}" class="stretched-link"></a>
             </div>
@@ -76,17 +86,21 @@
 
       <!-- Rutas de Aventura -->
       <div class="marquee-item">
-        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
+        <div class="card text-bg-dark border-0 rounded-4 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
+          {% if forloop.first %}
+          <img src="{% static 'img/img_rio.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Rutas de Aventura" fetchpriority="high">
+          {% else %}
           <img src="{% static 'img/img_rio.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Rutas de Aventura" loading="lazy">
-          <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);">
-            <h3 class="card-title fw-bold text-white">Rutas de Aventura</h3>
-            <div>
-              <p class="card-text mb-2 d-flex align-items-center gap-2 text-white fw-semibold">
-                <span>🥾 Senderismo</span>
-              </p>
-              <p class="card-text mb-1 d-flex align-items-center gap-2 text-white fw-semibold">
-                <span>📸 Fotografía</span>
-              </p>
+          {% endif %}
+          <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(to top, rgba(26, 38, 31, 0.95) 0%, rgba(26, 38, 31, 0.45) 50%, rgba(26, 38, 31, 0.15) 100%);">
+            <h3 class="card-title fw-bold text-white fs-4 mt-2">Rutas de Aventura</h3>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge-tag">
+                <i class="bi bi-compass"></i> Senderismo
+              </span>
+              <span class="badge-tag">
+                <i class="bi bi-camera"></i> Fotografía
+              </span>
               <!-- Enlace invisible que expande el área de clic a toda la tarjeta -->
               <a href="{% url 'blog' %}" class="stretched-link"></a>
             </div>
@@ -96,20 +110,25 @@
 
       <!-- Vivencias -->
       <div class="marquee-item">
-        <div class="card text-bg-dark border-0 rounded-3 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
+        <div class="card text-bg-dark border-0 rounded-4 overflow-hidden shadow-lg h-100 card-hover" style="min-height: 400px;">
+          {% if forloop.first %}
+          <img src="{% static 'img/img_museo.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Vivencias" fetchpriority="high">
+          {% else %}
           <img src="{% static 'img/img_museo.webp' %}" class="card-img w-100 h-100" style="object-fit: cover;" alt="Vivencias" loading="lazy">
-          <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 50%, rgba(0,0,0,0.6) 100%);">
-            <h3 class="card-title fw-bold text-white">Vivencias</h3>
-            <div>
-              <p class="card-text mb-2 d-flex align-items-center gap-2 text-white fw-semibold">
-                <span>🥟 Gastronomía</span> 
-              </p>
-              <p class="card-text mb-1 d-flex align-items-center gap-2 text-white fw-semibold">
-                <span>🛌 Hospedaje</span>
-              </p>
-              <div class="mt-3">
-                <!-- El botón ahora también lleva stretched-link asegurando consistencia visual -->
-                <a href="{% url 'blog' %}" class="btn btn-sm btn-outline-light rounded-pill px-3 stretched-link">Explorar Blog</a>
+          {% endif %}
+          <div class="card-img-overlay d-flex flex-column justify-content-between p-4" style="background: linear-gradient(to top, rgba(26, 38, 31, 0.95) 0%, rgba(26, 38, 31, 0.45) 50%, rgba(26, 38, 31, 0.15) 100%);">
+            <h3 class="card-title fw-bold text-white fs-4 mt-2">Vivencias</h3>
+            <div class="d-flex flex-column gap-3">
+              <div class="d-flex flex-wrap gap-2">
+                <span class="badge-tag">
+                  <i class="bi bi-cup-hot"></i> Gastronomía
+                </span>
+                <span class="badge-tag">
+                  <i class="bi bi-house-door"></i> Hospedaje
+                </span>
+              </div>
+              <div>
+                <a href="{% url 'blog' %}" class="btn btn-sm btn-outline-light rounded-pill px-3 stretched-link" style="border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); backdrop-filter: blur(5px);">Explorar Blog</a>
               </div>
             </div>
           </div>
@@ -279,14 +298,18 @@
 
     <!-- Columna del Mapa -->
     <div class="col-lg-6">
-      <div class="h-100" style="min-height: 400px;">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7939.44689722954!2d-72.80508830970857!3d5.752890876917691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6a4bd38f07ed2f%3A0x9f906e8745ffd73a!2zTW9uZ3VhLCBNb25nw7xhLCBCb3lhY8Oh!5e0!3m2!1ses-419!2sco!4v1773235132107!5m2!1ses-419!2sco" 
-          style="border:0; width: 100%; height: 100%;" 
-          allowfullscreen="" 
-          loading="lazy" 
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
+      <div id="map-container" class="h-100 position-relative overflow-hidden" style="min-height: 400px; background-color: #f8f9fa;">
+        <!-- Marcador de posición premium del mapa -->
+        <div id="map-placeholder" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center text-center p-4" style="background-image: radial-gradient(rgba(26, 38, 31, 0.08) 1.5px, transparent 0); background-size: 24px 24px;">
+          <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex justify-content-center align-items-center mb-3 shadow-sm" style="width: 70px; height: 70px; background-color: rgba(44, 110, 60, 0.08) !important;">
+            <i class="bi bi-map-fill fs-2 text-success"></i>
+          </div>
+          <h4 class="fw-bold text-dark mb-2">Mapa Interactivo de Mongua</h4>
+          <p class="text-muted small mb-4 mx-auto" style="max-width: 320px;">Haz clic a continuación para cargar el mapa interactivo y ver nuestra ubicación en tiempo real.</p>
+          <button id="load-map-btn" class="btn btn-success rounded-pill px-4 py-2 fw-semibold shadow-sm transition-all" style="background-color: #2c6e3c !important; border-color: #2c6e3c !important;">
+            <i class="bi bi-geo-alt-fill me-2"></i>Ver Mapa Interactivo
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -307,13 +330,13 @@
   </div>
 </section>
 
-<script>
+  <script>
     (function() {
       const section = document.getElementById('hero-reveal-section');
       const container = document.getElementById('flashlight-container');
       const img = document.getElementById('flashlight-img');
       
-      if (!container || window.getComputedStyle(container.parentElement).display === 'none') return;
+      if (!section || !container || !img || window.getComputedStyle(container.parentElement).display === 'none') return;
 
       let rafId = null;
 
@@ -321,12 +344,10 @@
         if (rafId) cancelAnimationFrame(rafId);
 
         rafId = requestAnimationFrame(() => {
-          // Usamos el rect de la sección completa ya que la imagen es el fondo
           const rect = section.getBoundingClientRect();
           const x = e.clientX - rect.left;
           const y = e.clientY - rect.top;
           
-          // Círculo de revelación más grande para que el texto sea legible sobre la imagen
           const maskValue = `radial-gradient(circle 300px at ${x}px ${y}px, black 0%, rgba(0, 0, 0, 0.41) 50%, transparent 80%)`;
           
           img.style.webkitMaskImage = maskValue;
@@ -340,6 +361,26 @@
         if (rafId) cancelAnimationFrame(rafId);
         img.style.webkitMaskImage = 'radial-gradient(circle 0px at 50% 50%, black, transparent)';
         img.style.maskImage = 'radial-gradient(circle 0px at 50% 50%, black, transparent)';
+      });
+    })();
+
+    // Carga de Mapa bajo demanda (Click-to-Load)
+    (function() {
+      const container = document.getElementById('map-container');
+      const loadBtn = document.getElementById('load-map-btn');
+      if (!container || !loadBtn) return;
+
+      loadBtn.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7939.44689722954!2d-72.80508830970857!3d5.752890876917691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6a4bd38f07ed2f%3A0x9f906e8745ffd73a!2zTW9uZ3VhLCBNb25nw7xhLCBCb3lhY8Oh!5e0!3m2!1ses-419!2sco!4v1773235132107!5m2!1ses-419!2sco";
+        iframe.style.border = "0";
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+        iframe.allowFullscreen = "";
+        iframe.referrerPolicy = "no-referrer-when-downgrade";
+        
+        container.innerHTML = '';
+        container.appendChild(iframe);
       });
     })();
   </script>
