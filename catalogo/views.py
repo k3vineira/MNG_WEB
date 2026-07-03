@@ -588,14 +588,21 @@ class TemporadaListView(ListView):
     template_name = 'admin/temporada/temporada.html'
     context_object_name = 'temporadas'
 
+    def get_queryset(self):
+        queryset = Temporada.objects.all()
+
+        fecha_inicio = self.request.GET.get("fecha_inicio")
+        fecha_fin = self.request.GET.get("fecha_fin")
+
+        if fecha_inicio:
+            queryset = queryset.filter(fecha_inicio__gte=fecha_inicio)
+
+        if fecha_fin:
+            queryset = queryset.filter(fecha_fin__lte=fecha_fin)
+
+        return queryset
+
     def get_context_data(self, **kwargs):
-        """
-        get_context_data.
-        
-        :param kwargs: La lista de las temporadas y otros argumentos de contexto.
-        
-        :return: lista de temporadas y estadísticas de las temporadas.
-        """
         context = super().get_context_data(**kwargs)
 
         stats = Temporada.objects.aggregate(
@@ -613,6 +620,7 @@ class TemporadaListView(ListView):
             ('Finalizadas', stats['finalizadas'], 'text-info'),
         ]
         return context
+    
 
 
 class TemporadaCreateView(CreateView):

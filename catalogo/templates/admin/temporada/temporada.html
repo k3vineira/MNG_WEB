@@ -22,6 +22,7 @@
             </a>
         </div>
     </div>
+    
 
     <!-- 2. Tarjetas de Estadísticas -->
     <div class="row g-4 mb-4">
@@ -54,7 +55,45 @@
         </div>
         {% endfor %}
     </div>
+  <div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-2 align-items-center">
 
+            <div class="col-auto">
+                <span class="badge bg-success p-3">
+                    <i class="bi bi-funnel-fill"></i>
+                </span>
+            </div>
+
+            <div class="col-md">
+                <input type="date" name="fecha_inicio"
+                    class="form-control"
+                    value="{{ request.GET.fecha_inicio }}">
+            </div>
+
+            <div class="col-md">
+                <input type="date" name="fecha_fin"
+                    class="form-control"
+                    value="{{ request.GET.fecha_fin }}">
+            </div>
+
+           <div class="col-auto">
+    <div class="btn-group">
+
+        <button class="btn btn-success">
+            <i class="bi bi-search me-1"></i> Buscar
+        </button>
+
+        <a href="{% url 'listar_temporadas' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-clockwise me-1"></i> Limpiar
+        </a>
+
+    </div>
+</div>
+      
+        </form>
+    </div>
+</div>
     <!-- 3. Lista de Temporadas -->
     <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
         <!-- Tabla Desktop -->
