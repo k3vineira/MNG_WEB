@@ -26,6 +26,13 @@
 <script src="{% static 'js/mascota.js' %}" defer></script>
 
 <style>
+#condor-mascot-container {
+    bottom: 30px;
+    left: 30px;
+    z-index: 1060;
+    transition: left 0.4s ease, opacity 0.4s ease !important;
+}
+
 #condor-img {
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -40,10 +47,6 @@
     50% { transform: translateY(-8px); }
 }
 
-#condor-mascot-container {
-    transition: left 0.4s ease, opacity 0.4s ease !important;
-}
-
 #condor-mascot-container.collapsed {
     left: -80px !important;
     opacity: 0.6;
@@ -55,6 +58,34 @@
 
 #condor-mascot-container.collapsed #condor-speech-bubble {
     display: none !important;
+}
+
+#condor-toggle-btn {
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+#condor-speech-bubble {
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 250px;
+    z-index: 11;
+}
+
+#condor-speech-bubble .position-absolute {
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #198754 transparent transparent transparent;
 }
 </style>
 

@@ -8,9 +8,9 @@
     <div class="col-md-5">
       <div class="h-100 shadow-sm rounded-4 overflow-hidden border bg-light d-flex align-items-center justify-content-center">
         {% if paquete and paquete.imagen %}
-          <img src="{{ paquete.imagen.url }}" class="img-full u-style-ab29e95c" alt="{{ paquete.nombre }}" />
+          <img src="{{ paquete.imagen.url }}" class="img-fluid w-100 h-100 object-fit-cover" alt="{{ paquete.nombre }}" />
         {% else %}
-          <img src="{% static 'img/carousel/paramo.webp' %}" class="img-full u-style-ab29e95c" alt="Paisaje por defecto" />
+          <img src="{% static 'img/carousel/paramo.webp' %}" class="img-fluid w-100 h-100 object-fit-cover" alt="Paisaje por defecto" />
         {% endif %}
       </div>
     </div>
