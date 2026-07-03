@@ -7,14 +7,14 @@
     <div class="row g-0 w-100 justify-content-center px-3">
         
         <main class="col-12 d-flex align-items-center justify-content-center">
-            <div class="card p-4 shadow-lg rounded-4 bg-white w-100 border-0 border-top border-danger border-5 u-style-1357bbd5">
+            <div class="card p-4 shadow-lg rounded-4 bg-white w-100 border-0 border-top border-danger border-5" style="max-width: 500px;">
                 
                 <div class="text-center mb-4">
-                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 shadow-sm u-style-948068dd">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 shadow-sm" style="width: 70px; height: 70px;">
                         <i class="bi bi-x-octagon-fill fs-1"></i>
                     </div>
                     <h3 class="text-dark fw-bold mb-2">¿Cancelar tu Aventura?</h3>
-                    <p class="text-muted px-2 small u-style-a7fa4ad9">
+                    <p class="text-muted px-2 small" style="line-height: 1.5;">
                         Lamentamos que no puedas acompañarnos en esta experiencia en <strong>Mongua</strong>. Cuéntanos brevemente el motivo para procesar tu solicitud.
                     </p>
                 </div>
@@ -23,15 +23,16 @@
                     {% csrf_token %}
                     
                     <div class="mb-4">
-                        <label for="id_motivo" class="form-label fw-bold text-secondary small u-style-e2eb0d8e">
+                        <label for="id_motivo" class="form-label fw-bold text-secondary small" style="letter-spacing: 0.5px;">
                             MOTIVO DE LA CANCELACIÓN:
                         </label>
                         <textarea 
                             name="motivo" 
                             id="id_motivo" 
-                            class="form-control rounded-3 p-3 text-secondary u-style-49d12894" 
+                            class="form-control rounded-3 p-3 text-secondary" 
                             rows="4" 
-                            placeholder="Por favor, indícanos aquí si es por motivos de salud, cruce de horarios, clima o temas laborales..."
+                            placeholder="Por favor, indícanos aquí si es por motivos de salud, cruce de horarios, clima o temas laborales..." 
+                            style="resize: none; font-size: 0.9rem;"
                             required></textarea>
                     </div>
 
