@@ -87,7 +87,7 @@
                     </div>
                 </div>
                 <div class="card-body p-4 p-md-5">
-                    <form method="POST" enctype="multipart/form-data" id="formComprobante">
+                    <form action="{% url 'enviar_comprobante' %}" method="POST" enctype="multipart/form-data" id="formComprobante">
                         {% csrf_token %}
 
                         <div class="row g-4">
