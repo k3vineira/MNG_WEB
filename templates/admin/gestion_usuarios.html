@@ -27,7 +27,7 @@
                 <a href="{% url 'gestion_usuarios' %}?filtro=CLIENTE" class="btn btn-outline-success {% if filtro_actual == 'CLIENTE' %}active{% endif %}">Clientes/Turistas</a>
             </div>
             
-            <form method="GET" action="{% url 'gestion_usuarios' %}" class="input-group shadow-sm" style="max-width: 300px;">
+            <form method="GET" action="{% url 'gestion_usuarios' %}" class="input-group shadow-sm u-style-9dd291e0">
                 {% if filtro_actual %}
                     <input type="hidden" name="filtro" value="{{ filtro_actual }}">
                 {% endif %}
@@ -56,9 +56,9 @@
                         <td>
                             <div class="d-flex align-items-center">
                                 {% if u.imagen_perfil %}
-                                <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm me-3 border {% if u.rol == 'ADMIN' %}border-primary{% elif u.rol == 'GUIA' %}border-warning{% else %}border-info{% endif %} border-opacity-50" width="45" height="45" style="object-fit: cover;">
+                                <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm me-3 border {% if u.rol == 'ADMIN' %}border-primary{% elif u.rol == 'GUIA' %}border-warning{% else %}border-info{% endif %} border-opacity-50 u-style-ca362336" width="45" height="45">
                                 {% else %}
-                                <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-white fw-bold {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 45px; height: 45px;">
+                                <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-white fw-bold {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %} u-style-55a6b999">
                                     {{ u.first_name|first|default:u.username|first|upper }}
                                 </div>
                                 {% endif %}
@@ -124,9 +124,9 @@
                             <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
                                 <div class="d-flex align-items-center gap-3">
                                     {% if u.imagen_perfil %}
-                                        <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border" width="50" height="50" style="object-fit: cover;">
+                                        <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border u-style-ca362336" width="50" height="50">
                                     {% else %}
-                                        <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-white fw-bold {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 50px; height: 50px;">
+                                        <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-white fw-bold {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %} u-style-250a21b0">
                                             {{ u.first_name|first|default:u.username|first|upper }}
                                         </div>
                                     {% endif %}
@@ -194,13 +194,13 @@
 {% for u in usuarios %}
 
     <!-- OFFCANVAS DE DETALLES (Reemplaza el antiguo modal) -->
-    <div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="offcanvasDetallesUsuario{{ u.id }}" style="width: 480px;">
+    <div class="offcanvas offcanvas-end border-0 shadow-lg u-style-c407f9e8" tabindex="-1" id="offcanvasDetallesUsuario{{ u.id }}">
         <div class="offcanvas-header {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning{% else %}bg-info{% endif %} bg-opacity-10 border-bottom p-4">
             <div class="d-flex align-items-center gap-3">
                 {% if u.imagen_perfil %}
-                    <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow border border-white" width="55" height="55" style="object-fit: cover;">
+                    <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow border border-white u-style-ca362336" width="55" height="55">
                 {% else %}
-                    <div class="rounded-circle shadow d-flex align-items-center justify-content-center text-white fw-bold fs-4 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 55px; height: 55px;">
+                    <div class="rounded-circle shadow d-flex align-items-center justify-content-center text-white fw-bold fs-4 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %} u-style-92a91487">
                         {{ u.first_name|first|default:u.username|first|upper }}
                     </div>
                 {% endif %}
@@ -235,25 +235,25 @@
                 <div class="row g-3 mb-4">
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-3">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Nombres</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Nombres</small>
                             <span class="fw-bold text-dark">{{ u.first_name|default:"—" }}</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-3">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Apellidos</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Apellidos</small>
                             <span class="fw-bold text-dark">{{ u.last_name|default:"—" }}</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-3">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Tipo Documento</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Tipo Documento</small>
                             <span class="fw-bold text-dark">{{ u.tipo_documento|default:"—" }}</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-3">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Nro. Documento</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Nro. Documento</small>
                             <span class="fw-bold text-dark font-monospace">{{ u.numero_documento|default:"—" }}</span>
                         </div>
                     </div>
@@ -262,7 +262,7 @@
                 <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-telephone me-2 text-success"></i>Contacto</h6>
                 <div class="list-group list-group-flush mb-4">
                     <div class="list-group-item bg-transparent px-0 d-flex align-items-center gap-3 border-bottom">
-                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center u-style-80722803">
                             <i class="bi bi-envelope-fill"></i>
                         </div>
                         <div>
@@ -271,7 +271,7 @@
                         </div>
                     </div>
                     <div class="list-group-item bg-transparent px-0 d-flex align-items-center gap-3 border-bottom">
-                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center u-style-80722803">
                             <i class="bi bi-telephone-fill"></i>
                         </div>
                         <div>
@@ -280,7 +280,7 @@
                         </div>
                     </div>
                     <div class="list-group-item bg-transparent px-0 d-flex align-items-center gap-3">
-                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center u-style-80722803">
                             <i class="bi bi-geo-alt-fill"></i>
                         </div>
                         <div>
@@ -296,15 +296,15 @@
                 <div class="bg-warning bg-opacity-10 rounded-4 p-3 border border-warning border-opacity-25 mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-warning border-opacity-25 pb-2">
                         <div>
-                            <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.65rem; letter-spacing: 0.5px;">Licencia de Turismo</small>
+                            <small class="text-muted text-uppercase fw-bold d-block u-style-22c80133">Licencia de Turismo</small>
                             <span class="fw-bold text-dark fs-5 font-monospace">{% if u.guia %}{{ u.guia.licencia_turismo|default:"—" }}{% else %}—{% endif %}</span>
                         </div>
                         <div class="text-end">
-                            <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.65rem; letter-spacing: 0.5px;">Experiencia</small>
+                            <small class="text-muted text-uppercase fw-bold d-block u-style-22c80133">Experiencia</small>
                             <span class="fw-bold text-success fs-5">{% if u.guia %}{{ u.guia.experiencia_anos|default:0 }}{% else %}0{% endif %} <small class="text-muted fw-normal">años</small></span>
                         </div>
                     </div>
-                    <small class="text-muted text-uppercase fw-bold d-block mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Biografía Profesional</small>
+                    <small class="text-muted text-uppercase fw-bold d-block mb-2 u-style-22c80133">Biografía Profesional</small>
                     <div class="bg-white rounded-3 p-3 border">
                         <p class="text-dark small mb-0 lh-lg">{% if u.guia and u.guia.biografia %}{{ u.guia.biografia }}{% else %}Sin biografía registrada.{% endif %}</p>
                     </div>
@@ -314,14 +314,14 @@
                 <div class="bg-info bg-opacity-10 rounded-4 p-3 border border-info border-opacity-25 mb-3">
                     <div class="row g-3">
                         <div class="col-6">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">País de Procedencia</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">País de Procedencia</small>
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-globe-americas text-info"></i>
                                 <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.pais|default:"—" }}{% else %}—{% endif %}</span>
                             </div>
                         </div>
                         <div class="col-6">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Ciudad</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Ciudad</small>
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-building text-info"></i>
                                 <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.ciudad|default:"—" }}{% else %}—{% endif %}</span>
@@ -349,7 +349,7 @@
     </div>
 
     <!-- OFFCANVAS DE EDICIÓN -->
-    <div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="offcanvasEditarUsuario{{ u.id }}" style="width: 450px;">
+    <div class="offcanvas offcanvas-end border-0 shadow-lg u-style-5d401be2" tabindex="-1" id="offcanvasEditarUsuario{{ u.id }}">
         <div class="offcanvas-header bg-secondary bg-opacity-10 border-bottom p-4">
             <h5 class="offcanvas-title fw-bold text-dark d-flex align-items-center gap-2 m-0">
                 <i class="bi bi-person-gear fs-4"></i> Editar Usuario #{{ u.id }}
@@ -486,7 +486,7 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="form-floating">
-                                            <textarea class="form-control form-control-sm" name="biografia" style="height: 100px">{% if u.rol == 'GUIA' and u.guia %}{{ u.guia.biografia }}{% endif %}</textarea>
+                                            <textarea class="form-control form-control-sm u-style-1a3a679d" name="biografia">{% if u.rol == 'GUIA' and u.guia %}{{ u.guia.biografia }}{% endif %}</textarea>
                                             <label class="text-muted small">Biografía / Presentación</label>
                                         </div>
                                     </div>

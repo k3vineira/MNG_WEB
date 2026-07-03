@@ -8,6 +8,13 @@ from pagos.models import ComprobantePago
 
 
 def crear_usuario(username='pago_user'):
+    """
+    crear_usuario.
+    
+    :param username='pago_user': Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     return Usuario.objects.create_user(
         username=username,
         password='pass123',
@@ -16,6 +23,11 @@ def crear_usuario(username='pago_user'):
 
 
 def crear_paquete():
+    """
+    crear_paquete.
+    
+    :return: Respuesta de la función.
+    """
     cat = Categoria.objects.create(nombre='Cat Pagos', descripcion='Desc')
     return Paquete.objects.create(
         nombre='Paquete Pagos',
@@ -29,6 +41,15 @@ def crear_paquete():
 
 
 def crear_reserva(usuario, paquete):
+    """
+    crear_reserva.
+    
+    :param usuario: Descripción del parámetro.
+    
+    :param paquete: Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     fecha = timezone.now().date() + datetime.timedelta(days=30)
     return Reserva.objects.create(
         usuario=usuario,
@@ -45,11 +66,21 @@ def crear_reserva(usuario, paquete):
 class ComprobantePagoCreacionTest(TestCase):
 
     def setUp(self):
+        """
+        setUp.
+        
+        :return: Respuesta de la función.
+        """
         self.usuario = crear_usuario()
         self.paquete = crear_paquete()
         self.reserva = crear_reserva(self.usuario, self.paquete)
 
     def test_crear_comprobante_estado_pendiente(self):
+        """
+        test_crear_comprobante_estado_pendiente.
+        
+        :return: Respuesta de la función.
+        """
         comp = ComprobantePago.objects.create(
             usuario=self.usuario,
             reserva=self.reserva,
@@ -63,6 +94,11 @@ class ComprobantePagoCreacionTest(TestCase):
         self.assertTrue(comp.pk)
 
     def test_str_comprobante(self):
+        """
+        test_str_comprobante.
+        
+        :return: Respuesta de la función.
+        """
         comp = ComprobantePago.objects.create(
             usuario=self.usuario,
             imagen='comprobantes/test.jpg'
@@ -72,6 +108,11 @@ class ComprobantePagoCreacionTest(TestCase):
         self.assertIn('Pendiente', resultado)
 
     def test_estado_default_pendiente(self):
+        """
+        test_estado_default_pendiente.
+        
+        :return: Respuesta de la función.
+        """
         comp = ComprobantePago.objects.create(
             usuario=self.usuario,
             imagen='comprobantes/test.jpg'
@@ -79,6 +120,11 @@ class ComprobantePagoCreacionTest(TestCase):
         self.assertEqual(comp.estado, 'pendiente')
 
     def test_monto_puede_ser_nulo(self):
+        """
+        test_monto_puede_ser_nulo.
+        
+        :return: Respuesta de la función.
+        """
         comp = ComprobantePago.objects.create(
             usuario=self.usuario,
             imagen='comprobantes/test.jpg',
@@ -87,6 +133,11 @@ class ComprobantePagoCreacionTest(TestCase):
         self.assertIsNone(comp.monto)
 
     def test_reserva_puede_ser_nula(self):
+        """
+        test_reserva_puede_ser_nula.
+        
+        :return: Respuesta de la función.
+        """
         comp = ComprobantePago.objects.create(
             usuario=self.usuario,
             imagen='comprobantes/test.jpg',
@@ -98,15 +149,30 @@ class ComprobantePagoCreacionTest(TestCase):
 class ComprobantePagoEstadosTest(TestCase):
 
     def setUp(self):
+        """
+        setUp.
+        
+        :return: Respuesta de la función.
+        """
         self.usuario = crear_usuario('estado_pago')
 
     def test_choices_estado_validos(self):
+        """
+        test_choices_estado_validos.
+        
+        :return: Respuesta de la función.
+        """
         estados = [e[0] for e in ComprobantePago.ESTADO_CHOICES]
         self.assertIn('pendiente', estados)
         self.assertIn('aprobado', estados)
         self.assertIn('rechazado', estados)
 
     def test_cambiar_estado_a_aprobado(self):
+        """
+        test_cambiar_estado_a_aprobado.
+        
+        :return: Respuesta de la función.
+        """
         comp = ComprobantePago.objects.create(
             usuario=self.usuario,
             imagen='comprobantes/test.jpg'
@@ -117,6 +183,11 @@ class ComprobantePagoEstadosTest(TestCase):
         self.assertEqual(comp.estado, 'aprobado')
 
     def test_cambiar_estado_a_rechazado(self):
+        """
+        test_cambiar_estado_a_rechazado.
+        
+        :return: Respuesta de la función.
+        """
         comp = ComprobantePago.objects.create(
             usuario=self.usuario,
             imagen='comprobantes/test.jpg'
@@ -127,6 +198,11 @@ class ComprobantePagoEstadosTest(TestCase):
         self.assertEqual(comp.estado, 'rechazado')
 
     def test_nombre_archivo_sin_imagen(self):
+        """
+        test_nombre_archivo_sin_imagen.
+        
+        :return: Respuesta de la función.
+        """
         comp = ComprobantePago.objects.create(
             usuario=self.usuario,
             imagen='comprobantes/recibo.jpg'
@@ -135,6 +211,11 @@ class ComprobantePagoEstadosTest(TestCase):
         self.assertEqual(comp.nombre_archivo(), 'recibo.jpg')
 
     def test_ordenamiento_por_fecha_envio_descendente(self):
+        """
+        test_ordenamiento_por_fecha_envio_descendente.
+        
+        :return: Respuesta de la función.
+        """
         comp1 = ComprobantePago.objects.create(
             usuario=self.usuario,
             imagen='comprobantes/a.jpg'
@@ -147,6 +228,11 @@ class ComprobantePagoEstadosTest(TestCase):
         self.assertEqual(comprobantes[0].pk, comp2.pk)
 
     def test_relacion_usuario_comprobante(self):
+        """
+        test_relacion_usuario_comprobante.
+        
+        :return: Respuesta de la función.
+        """
         comp = ComprobantePago.objects.create(
             usuario=self.usuario,
             imagen='comprobantes/test.jpg'

@@ -5,16 +5,12 @@
 <!-- ============================================================ -->
 <!-- VERSIÓN MÓVIL: Imagen de fondo + formulario con transparencia -->
 <!-- ============================================================ -->
-<div class="d-lg-none position-relative vh-100"
+<div class="d-lg-none position-relative min-vh-100 d-flex flex-column justify-content-center pt-5 pb-4"
      style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
 
-  <!-- Spacer para el header (transparente para ver la imagen) -->
-  <div style="height: 5rem;"></div>
-
   <!-- Contenedor centrado del formulario -->
-  <div class="d-flex align-items-center justify-content-center px-3 py-4" style="min-height: calc(100vh - 5rem);">
-    <div class="w-100 rounded-4 shadow-lg p-4 p-sm-5"
-         style="max-width: 420px; background-color: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px) saturate(180%); -webkit-backdrop-filter: blur(15px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.3);">
+  <div class="d-flex align-items-center justify-content-center px-3 w-100">
+    <div class="w-100 rounded-4 shadow-lg p-4 p-sm-5 bg-white bg-opacity-95" style="max-width: 480px;">
 
       <!-- Cabecera Editorial -->
       <div class="mb-5">
@@ -56,9 +52,9 @@
 
         <!-- Input Usuario -->
         <div class="mb-3">
-          <label class="form-label small fw-semibold text-secondary ps-3">Correo o Usuario</label>
+          <label class="form-label small fw-semibold text-secondary ps-3">Correo electrónico o Nombre de usuario</label>
           <input type="text" name="username" class="form-control rounded-pill py-3 px-4"
-                 placeholder="aventura@monagua.com" required>
+                 placeholder="aventura@monagua.com o tunombre" required>
         </div>
 
         <!-- Input Password -->
@@ -70,8 +66,7 @@
           <div class="position-relative">
             <input type="password" name="password" class="form-control rounded-pill py-3 px-4 pe-5"
                    placeholder="••••••••" required>
-            <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary"
-               style="cursor: pointer;"
+            <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary u-style-26590802"
                onclick="const input = this.previousElementSibling; if(input.type === 'password'){ input.type='text'; this.classList.replace('bi-eye', 'bi-eye-slash'); } else { input.type='password'; this.classList.replace('bi-eye-slash', 'bi-eye'); }"></i>
           </div>
         </div>
@@ -104,20 +99,17 @@
 <!-- VERSIÓN DESKTOP: Layout original de dos columnas              -->
 <!-- ============================================================ -->
 <div class="d-none d-lg-block">
-  <!-- Spacer para el header -->
-  <div style="height: 5rem; width: 100%; background-color: transparent;"></div>
-
-  <section class="container-fluid p-0 overflow-hidden" style="height: calc(100vh - 5rem);">
-    <div class="row g-0 h-100 w-100 m-0">
+  <section class="container-fluid p-0 overflow-hidden min-vh-100 pt-5">
+    <div class="row g-0 min-vh-100 w-100 m-0">
 
       <!-- Columna Izquierda: Imagen de Naturaleza -->
-      <div class="col-lg-6 position-relative h-100"
+      <div class="col-lg-6 min-vh-100"
            style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
       </div>
 
       <!-- Columna Derecha: Formulario Minimalista -->
-      <div class="col-lg-6 bg-white d-flex align-items-center justify-content-center p-5 h-100 overflow-auto">
-        <div class="w-100" style="max-width: 420px;">
+      <div class="col-lg-6 bg-white d-flex align-items-center justify-content-center p-5 min-vh-100 overflow-auto">
+        <div class="w-100" style="max-width: 480px;">
 
           <!-- Cabecera Editorial -->
           <div class="mb-5">
@@ -159,9 +151,9 @@
 
             <!-- Input Usuario -->
             <div class="mb-3">
-              <label class="form-label small fw-semibold text-secondary ps-3">Correo o Usuario</label>
+              <label class="form-label small fw-semibold text-secondary ps-3">Correo electrónico o Nombre de usuario</label>
               <input type="text" name="username" class="form-control rounded-pill py-3 px-4"
-                     placeholder="aventura@monagua.com" required>
+                     placeholder="aventura@monagua.com o tunombre" required>
             </div>
 
             <!-- Input Password -->
@@ -173,8 +165,7 @@
               <div class="position-relative">
                 <input type="password" name="password" class="form-control rounded-pill py-3 px-4 pe-5"
                        placeholder="••••••••" required>
-                <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary"
-                   style="cursor: pointer;"
+                <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary u-style-26590802"
                    onclick="const input = this.previousElementSibling; if(input.type === 'password'){ input.type='text'; this.classList.replace('bi-eye', 'bi-eye-slash'); } else { input.type='password'; this.classList.replace('bi-eye-slash', 'bi-eye'); }"></i>
               </div>
             </div>

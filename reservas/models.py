@@ -1,3 +1,7 @@
+"""
+Modelos de datos para reservas y cancelaciones de paquetes turísticos.
+"""
+
 from django.db import models
 from django.conf import settings
 from catalogo.models import Paquete
@@ -6,6 +10,10 @@ from django.utils import timezone
 
 
 class Reserva(models.Model):
+    """
+    Reserva realizada por un usuario para un paquete turístico en una fecha específica.
+    Calcula automáticamente el monto total según las tarifas y temporadas activas.
+    """
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente'),
         ('confirmada', 'Confirmada'),
@@ -50,6 +58,12 @@ class Reserva(models.Model):
         ]
 
     def clean(self):
+        """
+        Valida que el usuario no tenga dos reservas duplicadas para el mismo paquete y fecha.
+
+        Raises:
+            ValidationError: Si ya existe una reserva para el mismo usuario, paquete y fecha.
+        """
         super().clean()
         if self.usuario and self.paquete and self.fecha:
             query = Reserva.objects.filter(
@@ -66,6 +80,13 @@ class Reserva(models.Model):
                 )
 
     def save(self, *args, **kwargs):
+        """
+        Calcula el monto_total de la reserva según la temporada y tarifa vigente antes de guardar.
+
+        Args:
+            *args: Argumentos posicionales adicionales.
+            **kwargs: Argumentos de clave-valor adicionales.
+        """
        
         if self.paquete and self.fecha:
             try:
@@ -93,15 +114,26 @@ class Reserva(models.Model):
 
     @property
     def tiene_cancelacion_activa(self):
+        """
+        Verifica si la reserva tiene una solicitud de cancelación activa.
+
+        Returns:
+            bool: True si hay alguna cancelación en estado 'pendiente' o 'revision'.
+        """
         return self.cancelaciones.filter(estado__in=['pendiente', 'revision']).exists()
 
     def __str__(self):
+        """Retorna el ID, usuario y paquete de la reserva como representación textual."""
         nombre_usuario = self.usuario.get_full_name() or self.usuario.username
         return f"Reserva {self.id} - {nombre_usuario} ({self.paquete.nombre})"
    
    
 
 class Cancelacion(models.Model):
+    """
+    Solicitud de cancelación de una reserva realizada por un usuario.
+    Calcula automáticamente la penalidad según los días de antelación.
+    """
      
     ESTADOS_CANCELACION = [
         ('pendiente', 'Pendiente'),  
@@ -119,6 +151,16 @@ class Cancelacion(models.Model):
         verbose_name_plural = 'Cancelaciones'
 
     def save(self, *args, **kwargs):
+        """
+        Calcula la penalidad económica y actualiza el estado de la reserva al guardar.
+
+        La penalidad es del 10% si se cancela con más de 15 días, del 50% entre 5-15 días,
+        y del 100% si quedan menos de 5 días para el viaje.
+
+        Args:
+            *args: Argumentos posicionales adicionales.
+            **kwargs: Argumentos de clave-valor adicionales.
+        """
         
         if not self.pk:
             fecha_viaje = self.reserva.fecha
@@ -146,4 +188,5 @@ class Cancelacion(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        """Retorna el ID de la reserva cancelada y el estado de la cancelación."""
         return f"Cancelación de Reserva #{self.reserva.id} - {self.get_estado_display()}"

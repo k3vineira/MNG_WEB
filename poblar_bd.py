@@ -18,6 +18,11 @@ from decimal import Decimal
 
 
 def poblar_base_datos():
+    """
+    poblar_base_datos.
+    
+    :return: Respuesta de la función.
+    """
     print("Iniciando el poblado de la base de datos...")
     print("0. Limpiando la base de datos...")
     Notificacion.objects.all().delete()
@@ -98,7 +103,7 @@ def poblar_base_datos():
                 'rol': Usuario.Roles.ADMIN,
                 'tipo_documento': Usuario.TipoDocumento.CC,
                 'numero_documento': '1000000001',
-                'telefono': '+57 310 000 0001',
+                'telefono': '+573100000001',
                 'residencia': 'Mongua, Boyacá',
             }
         )
@@ -121,10 +126,10 @@ def poblar_base_datos():
 
     # Crear 10 Clientes
     telefonos_clientes = [
-        '+57 315 234 5678', '+57 320 111 2233', '+57 300 456 7890',
-        '+57 312 987 6543', '+57 318 222 3344', '+57 301 555 6677',
-        '+57 316 888 9900', '+57 322 333 4455', '+57 305 666 7788',
-        '+57 319 444 5566'
+        '+573152345678', '+573201112233', '+573004567890',
+        '+573129876543', '+573182223344', '+573015556677',
+        '+573168889900', '+573223334455', '+573056667788',
+        '+573194445566'
     ]
     for i in range(10):
         username = f"cliente_{i}_{random.randint(1000, 9999)}"
@@ -168,7 +173,7 @@ def poblar_base_datos():
             rol=Usuario.Roles.GUIA,
             tipo_documento=Usuario.TipoDocumento.CC,
             numero_documento=f"2000{i}{random.randint(100, 999)}",
-            telefono=f"+57 31{random.randint(0,9)} {random.randint(100,999)} {random.randint(1000,9999)}",
+            telefono=f"+5731{random.randint(0,9)}{random.randint(1000000,9999999)}",
             residencia=f"{ciudades[i]}, Boyacá"
         )
         g = GuiaTuristico.objects.create(

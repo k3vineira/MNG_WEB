@@ -8,9 +8,9 @@
     <div class="col-md-5">
       <div class="h-100 shadow-sm rounded-4 overflow-hidden border bg-light d-flex align-items-center justify-content-center">
         {% if paquete and paquete.imagen %}
-          <img src="{{ paquete.imagen.url }}" class="img-full" style="object-fit: cover; width: 100%; height: 100%; min-height: 400px;" alt="{{ paquete.nombre }}" />
+          <img src="{{ paquete.imagen.url }}" class="img-fluid w-100 h-100 object-fit-cover" alt="{{ paquete.nombre }}" />
         {% else %}
-          <img src="{% static 'img/carousel/paramo.webp' %}" class="img-full" style="object-fit: cover; width: 100%; height: 100%; min-height: 400px;" alt="Paisaje por defecto" />
+          <img src="{% static 'img/carousel/paramo.webp' %}" class="img-fluid w-100 h-100 object-fit-cover" alt="Paisaje por defecto" />
         {% endif %}
       </div>
     </div>
@@ -66,13 +66,13 @@
                   <small class="text-muted">Mayores de 12 años</small>
                 </div>
                 <div class="d-flex align-items-center gap-3">
-                  <button type="button" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" onclick="updateCount('adultos', -1)">
+                  <button type="button" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center u-style-8bf9f9a0" onclick="updateCount('adultos', -1)">
                     <i class="bi bi-dash fw-bold"></i>
                   </button>
-                  <span id="adultos_count" class="fw-bold fs-5" style="min-width: 20px; text-align: center;">1</span>
+                  <span id="adultos_count" class="fw-bold fs-5 u-style-416df0f6">1</span>
                   <input type="hidden" name="adultos" id="adultos_input" value="1">
                   <input type="hidden" name="numero_personas" id="numero_personas_compat" value="1">
-                  <button type="button" class="btn btn-outline-success bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" onclick="updateCount('adultos', 1)">
+                  <button type="button" class="btn btn-outline-success bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center u-style-8bf9f9a0" onclick="updateCount('adultos', 1)">
                     <i class="bi bi-plus fw-bold"></i>
                   </button>
                 </div>
@@ -84,12 +84,12 @@
                   <small class="text-muted">De 2 a 11 años</small>
                 </div>
                 <div class="d-flex align-items-center gap-3">
-                  <button type="button" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" onclick="updateCount('menores', -1)">
+                  <button type="button" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center u-style-8bf9f9a0" onclick="updateCount('menores', -1)">
                     <i class="bi bi-dash fw-bold"></i>
                   </button>
-                  <span id="menores_count" class="fw-bold fs-5" style="min-width: 20px; text-align: center;">0</span>
+                  <span id="menores_count" class="fw-bold fs-5 u-style-416df0f6">0</span>
                   <input type="hidden" name="menores" id="menores_input" value="0">
-                  <button type="button" class="btn btn-outline-success bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" onclick="updateCount('menores', 1)">
+                  <button type="button" class="btn btn-outline-success bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center u-style-8bf9f9a0" onclick="updateCount('menores', 1)">
                     <i class="bi bi-plus fw-bold"></i>
                   </button>
                 </div>
@@ -117,7 +117,7 @@
               </button>
             </div>
 
-            <div id="contenedor-tarifas" style="display: none;">
+            <div class="u-style-9c766357" id="contenedor-tarifas">
               {% for tarifa in paquete.tarifas.all %}
                 <span class="tarifa-item" 
                       data-inicio="{{ tarifa.temporada.fecha_inicio|date:'Y-m-d' }}" 

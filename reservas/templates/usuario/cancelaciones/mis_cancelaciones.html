@@ -38,11 +38,11 @@
                         <div class="row g-0 align-items-stretch">
                             
                             <!-- Imagen en Escritorio -->
-                            <div class="col-md-4 position-relative d-none d-md-block" style="min-height: 240px;">
+                            <div class="col-md-4 position-relative d-none d-md-block u-style-47f2ed6c">
                                 {% if cancelacion.reserva.paquete.imagen %}
-                                    <img src="{{ cancelacion.reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="{{ cancelacion.reserva.paquete.nombre }}">
+                                    <img src="{{ cancelacion.reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0 u-style-ca362336" alt="{{ cancelacion.reserva.paquete.nombre }}">
                                 {% else %}
-                                    <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="Imagen por defecto">
+                                    <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 position-absolute start-0 top-0 u-style-ca362336" alt="Imagen por defecto">
                                 {% endif %}
                             </div>
 
@@ -77,7 +77,7 @@
                                     <div class="row g-3 mb-4">
                                         <div class="col-sm-8">
                                             <div class="border rounded-4 p-3 bg-light h-100">
-                                                <span class="text-uppercase text-muted small fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Motivo Informado:</span>
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-1 u-style-22c80133">Motivo Informado:</span>
                                                 <p class="mb-0 text-dark small fw-medium">{{ cancelacion.motivo }}</p>
                                             </div>
                                         </div>
@@ -85,12 +85,12 @@
                                         <div class="col-sm-4">
                                             {% if cancelacion.penalidad > 0 %}
                                                 <div class="border rounded-4 p-3 h-100 bg-danger bg-opacity-10 text-danger border-danger border-opacity-25">
-                                                    <span class="text-uppercase text-danger-emphasis small fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Multa / Penalidad:</span>
+                                                    <span class="text-uppercase text-danger-emphasis small fw-bold d-block mb-1 u-style-22c80133">Multa / Penalidad:</span>
                                                     <h5 class="fw-bold text-danger mb-0">COP ${{ cancelacion.penalidad|floatformat:0|intcomma }}</h5>
                                                 </div>
                                             {% else %}
                                                 <div class="border rounded-4 p-3 h-100 bg-light text-secondary">
-                                                    <span class="text-uppercase text-muted small fw-bold d-block mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Multa / Penalidad:</span>
+                                                    <span class="text-uppercase text-muted small fw-bold d-block mb-1 u-style-22c80133">Multa / Penalidad:</span>
                                                     <h5 class="fw-bold text-dark mb-0">Sin multa</h5>
                                                 </div>
                                             {% endif %}
@@ -100,7 +100,7 @@
                                     <!-- Relación de Comprobantes de Pago para la Multa -->
                                     {% if cancelacion.reserva.comprobantes.all %}
                                         <div class="mb-4 border-top pt-3">
-                                            <h6 class="fw-bold text-secondary mb-2" style="font-size: 0.85rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                                            <h6 class="fw-bold text-secondary mb-2 u-style-1952029f">
                                                 <i class="bi bi-credit-card me-1"></i> Comprobantes de pago enviados
                                             </h6>
                                             <div class="d-flex flex-column gap-2">
@@ -108,18 +108,20 @@
                                                     <div class="d-flex align-items-center justify-content-between p-2 rounded-3 border bg-light flex-wrap gap-2">
                                                         <div class="d-flex align-items-center gap-2">
                                                             {% if comp.imagen %}
-                                                                <img src="{{ comp.imagen.url }}" alt="Comprobante" class="rounded border" style="width: 32px; height: 32px; object-fit: cover;">
+                                                                <img src="{{ comp.imagen.url }}" alt="Comprobante" class="rounded border u-style-35afc132">
                                                             {% endif %}
                                                             <div>
                                                                 <div class="small fw-semibold text-dark">Referencia: {{ comp.referencia|default:"—" }}</div>
-                                                                <div class="text-muted" style="font-size: 0.72rem;">{{ comp.banco_origen|default:"Medio desconocido" }} · {{ comp.fecha_envio|date:"d M Y" }}</div>
+                                                                <div class="text-muted u-style-e58064fd">{{ comp.banco_origen|default:"Medio desconocido" }} · {{ comp.fecha_envio|date:"d M Y" }}</div>
                                                             </div>
                                                         </div>
                                                         <div class="d-flex align-items-center gap-2">
                                                             {% if comp.monto %}
                                                                 <span class="small fw-bold text-success">COP ${{ comp.monto|floatformat:0|intcomma }}</span>
+                                                            {% elif comp.reserva %}
+                                                                <span class="small fw-bold text-success">COP ${{ comp.reserva.monto_total|floatformat:0|intcomma }}</span>
                                                             {% endif %}
-                                                            <span class="badge {% if comp.estado == 'aprobado' %}bg-success{% elif comp.estado == 'pendiente' %}bg-warning text-dark{% else %}bg-danger{% endif %}" style="font-size: 0.7rem;">
+                                                            <span class="badge {% if comp.estado == 'aprobado' %}bg-success{% elif comp.estado == 'pendiente' %}bg-warning text-dark{% else %}bg-danger{% endif %} u-style-dd8eb2f6">
                                                                 {{ comp.get_estado_display }}
                                                             </span>
                                                         </div>
@@ -164,9 +166,9 @@
         <!-- Sin Cancelaciones -->
         <div class="card border-0 shadow-sm rounded-4 bg-white py-5">
             <div class="card-body text-center py-4">
-                <i class="bi bi-check-circle text-muted" style="font-size: 3.5rem;"></i>
+                <i class="bi bi-check-circle text-muted u-style-212b6b2b"></i>
                 <h5 class="fw-bold text-dark mt-3">No tienes cancelaciones</h5>
-                <p class="text-muted mx-auto" style="max-width: 400px;">Aquí aparecerá el histórico de tus solicitudes de cancelación tramitadas.</p>
+                <p class="text-muted mx-auto u-style-6bdce2a0">Aquí aparecerá el histórico de tus solicitudes de cancelación tramitadas.</p>
                 <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2 shadow-sm fw-semibold">Ver mis reservas</a>
             </div>
         </div>

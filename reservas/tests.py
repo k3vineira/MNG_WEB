@@ -10,6 +10,11 @@ Usuario = get_user_model()
 
 class ReservasYCancelacionesTestCase(TestCase):
     def setUp(self):
+        """
+        setUp.
+        
+        :return: Respuesta de la función.
+        """
         # Crear usuario de prueba
         self.user = Usuario.objects.create_user(
             username='cliente_test',
@@ -51,6 +56,11 @@ class ReservasYCancelacionesTestCase(TestCase):
         )
 
     def test_creacion_reserva_calculo_tarifa(self):
+        """
+        test_creacion_reserva_calculo_tarifa.
+        
+        :return: Respuesta de la función.
+        """
         # Crear reserva para 2 adultos y 1 menor
         reserva = Reserva.objects.create(
             usuario=self.user,
@@ -64,6 +74,11 @@ class ReservasYCancelacionesTestCase(TestCase):
         self.assertEqual(reserva.monto_total, 250000)
 
     def test_reserva_duplicada_validation(self):
+        """
+        test_reserva_duplicada_validation.
+        
+        :return: Respuesta de la función.
+        """
         # Crear la primera reserva
         Reserva.objects.create(
             usuario=self.user,
@@ -87,6 +102,11 @@ class ReservasYCancelacionesTestCase(TestCase):
             reserva_duplicada.full_clean()
 
     def test_cancelacion_penalidad_mas_de_15_dias(self):
+        """
+        test_cancelacion_penalidad_mas_de_15_dias.
+        
+        :return: Respuesta de la función.
+        """
         # Reserva viaja en 20 días
         fecha_reserva = self.hoy + timedelta(days=20)
         reserva = Reserva.objects.create(
@@ -109,6 +129,11 @@ class ReservasYCancelacionesTestCase(TestCase):
         self.assertEqual(cancelacion.penalidad, 10000)
 
     def test_cancelacion_penalidad_entre_5_y_15_dias(self):
+        """
+        test_cancelacion_penalidad_entre_5_y_15_dias.
+        
+        :return: Respuesta de la función.
+        """
         # Reserva viaja en 10 días
         fecha_reserva = self.hoy + timedelta(days=10)
         reserva = Reserva.objects.create(
@@ -128,6 +153,11 @@ class ReservasYCancelacionesTestCase(TestCase):
         self.assertEqual(cancelacion.penalidad, 50000)
 
     def test_cancelacion_penalidad_menos_de_5_dias(self):
+        """
+        test_cancelacion_penalidad_menos_de_5_dias.
+        
+        :return: Respuesta de la función.
+        """
         # Reserva viaja en 2 días
         fecha_reserva = self.hoy + timedelta(days=2)
         reserva = Reserva.objects.create(
@@ -147,6 +177,11 @@ class ReservasYCancelacionesTestCase(TestCase):
         self.assertEqual(cancelacion.penalidad, 100000)
 
     def test_flujo_estados_cancelacion(self):
+        """
+        test_flujo_estados_cancelacion.
+        
+        :return: Respuesta de la función.
+        """
         reserva = Reserva.objects.create(
             usuario=self.user,
             paquete=self.paquete,

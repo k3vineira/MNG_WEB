@@ -10,10 +10,14 @@ from usuarios.models import Cliente
 from django.db.models import Count, Q
 from notificaciones.models import Notificacion
 from notificaciones.utils import crear_notificacion_sistema
+from django.core.paginator import Paginator
 
 
 def blog(request):
-    blogs = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
+    blogs_list = Blog.objects.filter(publicado=True).order_by('-fecha_publicacion')
+    paginator = Paginator(blogs_list, 6)  # Mostrar 6 blogs por página
+    page_number = request.GET.get('page')
+    blogs = paginator.get_page(page_number)
     context = {'blogs': blogs}
     return render(request, 'usuario/blog.html', context)
 

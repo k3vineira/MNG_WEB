@@ -1,34 +1,105 @@
-<div class="dropdown position-fixed end-0 top-0 m-4" style="z-index: 1050;">
-  <button class="btn-campanita-negra border-4 d-flex align-items-center justify-content-center position-relative border-opacity-25" type="button" id="dropdownPanelNotif" data-bs-toggle="dropdown" aria-expanded="false" style="width: 78px; height: 78px; border-radius: 50%; border-color: var(--verde-claro);">
-    <i class="bi bi-bell-fill text-white fs-2"></i>
-    {% if contador_notificaciones > 0 %}
-      <span class="badge-contador-rojo position-absolute top-0 end-0 translate-middle bg-danger text-white fw-bold d-flex align-items-center justify-content-center border border-3 border-white" style="min-width: 30px; height: 30px; border-radius: 50%; font-size: .9rem;">{{ contador_notificaciones }}</span>
-    {% endif %}
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 overflow-hidden mt-3" aria-labelledby="dropdownPanelNotif" style="width: 360px;">
-    <li class="dropdown-header text-white fw-bold py-2 fs-6 header-degradado-monagua">Notificaciones Recientes</li>
-    {% if notificaciones_globales %}
-        {% for noti in notificaciones_globales %}
-            <li>
-                <a class="dropdown-item p-3 border-bottom d-block text-decoration-none {% if noti.leida %}opacity-50 bg-light{% endif %}" href="{% url 'marcar_leida' noti.id %}">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="badge {% if noti.tipo == 'reserva' or noti.tipo == 'paquete' %}bg-success{% elif noti.tipo == 'pqrs' %}bg-primary{% else %}bg-warning text-dark{% endif %} text-uppercase px-2" style="font-size: 0.65rem;">{{ noti.tipo }}</span>
-                        <div class="d-flex align-items-center gap-1">
-                            {% if not noti.leida %}
-                                <span class="p-1 bg-danger rounded-circle d-inline-block animate-pulse" style="width: 6px; height: 6px;"></span>
-                            {% endif %}
-                            <small class="text-muted" style="font-size: 0.7rem;">{{ noti.fecha_creacion|timesince }}</small>
-                        </div>
-                    </div>
-                    <strong class="text-dark d-block text-truncate" style="font-size: 0.9rem;">{{ noti.titulo }}</strong>
-                    <p class="mb-0 text-secondary small text-wrap text-truncate" style="max-width: 260px;">{{ noti.mensaje }}</p>
-                </a>
-            </li>
-        {% endfor %}
-        <li><a class="dropdown-item text-center fw-bold py-2 small enlace-historial" href="{% url 'lista_notificaciones' %}">Ver todo el historial</a></li>
-    {% else %}
-        <li class="p-4 text-center text-muted small"><i class="bi bi-bell-slash d-block mb-2 fs-4 text-secondary"></i>No tienes alertas pendientes.</li>
-    {% endif %}
-  </ul>
-</div>
+<div class="dropdown d-flex align-items-center position-fixed" style="top: 20px; right: 20px; z-index: 1050;">
+    <button class="btn btn-success p-0 rounded-circle d-flex align-items-center justify-content-center position-relative shadow-lg" 
+            style="width: 50px; height: 50px;"
+            type="button" 
+            id="dropdownPanelNotif" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false"
+            onmouseover="this.style.transform='scale(1.06)'" 
+            onmouseout="this.style.transform='scale(1)'">
+        
+        <i class="bi bi-bell-fill text-white fs-4"></i>
+        
+        {% if contador_notificaciones > 0 %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white fw-bold shadow d-flex align-items-center justify-content-center animate-pulse u-style-01cfbebd">
+                {{ contador_notificaciones }}
+            </span>
+        {% endif %}
+    </button>
 
+    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 overflow-hidden mt-2 u-style-60eeacd2" 
+        aria-labelledby="dropdownPanelNotif">
+        
+        <li class="dropdown-header text-white fw-bold py-3 fs-6 bg-success d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-bell me-2"></i>Notificaciones Recientes</span>
+            {% if contador_notificaciones > 0 %}
+                <span class="badge bg-white text-success small rounded-pill px-2">{{ contador_notificaciones }} nuevas</span>
+            {% endif %}
+        </li>
+
+        <div class="u-style-b40b0ada">
+            {% if notificaciones_globales %}
+                {% for noti in notificaciones_globales %}
+                    <li>
+                        <a class="dropdown-item p-3 border-bottom d-block text-decoration-none {% if noti.leida %}opacity-50 bg-light{% endif %}" href="{% url 'marcar_leida' noti.id %}">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge {% if noti.tipo == 'reserva' or noti.tipo == 'paquete' %}bg-success bg-opacity-10 text-success{% elif noti.tipo == 'pqrs' %}bg-primary bg-opacity-10 text-primary{% else %}bg-warning bg-opacity-15 text-dark{% endif %} text-uppercase px-2 py-1 rounded u-style-10b9dc21">
+                                    {{ noti.tipo }}
+                                </span>
+                                <div class="d-flex align-items-center gap-1">
+                                    {% if not noti.leida %}
+                                        <span class="p-1 bg-danger rounded-circle d-inline-block u-style-285b47d4"></span>
+                                    {% endif %}
+                                    <small class="text-muted u-style-dd8eb2f6">{{ noti.fecha_creacion|timesince }}</small>
+                                </div>
+                            </div>
+                            <strong class="text-dark d-block text-truncate u-style-8e9648ec">{{ noti.titulo }}</strong>
+                            <p class="mb-0 text-secondary small text-wrap text-truncate u-style-12deccef">{{ noti.mensaje }}</p>
+                        </a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="p-4 text-center text-muted small">
+                    <i class="bi bi-bell-slash d-block mb-2 fs-4 text-secondary"></i>No tienes alertas pendientes.
+                </li>
+            {% endif %}
+        </div>
+    </ul>
+</div>
+<script>
+// Make the bell movable
+const notifBtn = document.getElementById('dropdownPanelNotif');
+const notifContainer = notifBtn.parentElement;
+let isDragging = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+
+notifBtn.addEventListener('mousedown', dragStart);
+notifBtn.addEventListener('touchstart', dragStart, {passive: true});
+document.addEventListener('mouseup', dragEnd);
+document.addEventListener('touchend', dragEnd);
+document.addEventListener('mousemove', drag);
+document.addEventListener('touchmove', drag, {passive: true});
+
+function dragStart(e) {
+    if (e.type === 'touchstart') {
+        initialX = e.touches[0].clientX - xOffset;
+        initialY = e.touches[0].clientY - yOffset;
+    } else {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+    }
+    if (e.target.closest('#dropdownPanelNotif')) isDragging = true;
+}
+
+function dragEnd() {
+    initialX = currentX;
+    initialY = currentY;
+    isDragging = false;
+}
+
+function drag(e) {
+    if (isDragging) {
+        if (e.type === 'touchmove') {
+            currentX = e.touches[0].clientX - initialX;
+            currentY = e.touches[0].clientY - initialY;
+        } else {
+            e.preventDefault();
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+        }
+        xOffset = currentX;
+        yOffset = currentY;
+        setTranslate(currentX, currentY, notifContainer);
+    }
+}
+function setTranslate(xPos, yPos, el) { el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`; }
+</script>

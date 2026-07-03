@@ -37,9 +37,21 @@ class ReservaListView(ListView):
     context_object_name = 'reservas'
 
     def get_queryset(self):
+        """
+        get_queryset.
+        
+        :return: Respuesta de la función.
+        """
         return Reserva.objects.exclude(estado='cancelada').order_by('-id')
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         context = super().get_context_data(**kwargs)
         stats = Reserva.objects.aggregate(
             total=Count('id'),
@@ -67,6 +79,13 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
     success_message = "¡La reserva ha sido creada con éxito!"
 
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: creación de reserva para un paquete específico.
+        
+        :return: Redirige a la página de listar reservas del usuario después de crear la reserva.
+        """
         form.instance.usuario = self.request.user
         return super().form_valid(form)
 
@@ -78,6 +97,13 @@ class ReservaUpdateView(UpdateView):
     success_url = reverse_lazy('listar_reservas')
 
     def form_valid(self, form):
+        """
+        form_valid.
+        
+        :param form: edición de reserva para una reserva específica.
+        
+        :return: Redirige a la página de listar reservas del usuario después de editar la reserva.
+        """
         response = super().form_valid(form)
         reserva = self.object
         nombre_cliente = reserva.usuario.first_name or reserva.usuario.username
@@ -124,6 +150,13 @@ class ReservaDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def mis_reservas_usuario(request):
+    """
+    mis_reservas_usuario.
+    
+    :param request: las reservas del usuario autenticado y permite ver el historial de reservas.
+    
+    :return: las reservas del usuario y redirige a la página de mis reservas del usuario.
+    """
     mis_reservas = Reserva.objects.filter(usuario=request.user)\
         .select_related('paquete')\
         .prefetch_related('comprobantes', 'cancelaciones')\
@@ -155,6 +188,13 @@ class CancelacionListView(ListView):
     context_object_name = 'cancelaciones'
 
     def get_context_data(self, **kwargs):
+        """
+        get_context_data.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         context = super().get_context_data(**kwargs)
         stats = Cancelacion.objects.aggregate(
             total=Count('id'),
@@ -178,59 +218,82 @@ class CancelacionCreateView(CreateView):
     model = Cancelacion
     fields = ['motivo']
     template_name = 'usuario/cancelaciones/crear_cancelacion.html'
-    success_url = reverse_lazy('mis_cancelaciones_usuario')
+    
+    def get_success_url(self):
+        return reverse_lazy('mis_reservas_usuario')
 
     def form_valid(self, form):
         reserva_id = self.request.GET.get('reserva_id')
         if not reserva_id:
             messages.error(self.request, 'No se encontró la reserva para la cancelación.')
-            return redirect('mis_cancelaciones_usuario')
+            return redirect('mis_reservas_usuario')
 
         reserva = get_object_or_404(Reserva, id=reserva_id, usuario=self.request.user)
 
-        if reserva.estado == 'cancelada':
+        if reserva.estado.lower() == 'cancelada':
             messages.warning(self.request, 'Esta reserva ya está cancelada.')
-            return redirect('mis_cancelaciones_usuario')
+            return redirect('mis_reservas_usuario')
+
+        nombre_cliente = self.request.user.first_name or self.request.user.username
+
+     
+        if reserva.estado.lower() == 'pendiente' and not reserva.comprobantes.exists():
+            reserva.estado = 'cancelada'
+            reserva.save()
+
+            asunto = f"Reserva #{reserva.id} Descartada - Monagua"
+            mensaje_texto = f"Hola {nombre_cliente}, has cancelado tu reserva pendiente para {reserva.paquete.nombre}. No se aplicaron cargos."
+            
+            html_cancelacion = plantilla_cancelacion_html(
+                nombre_cliente=nombre_cliente,
+                paquete=reserva.paquete.nombre,
+                estado='cancelada',  
+                penalidad="0.00"
+            )
+            
+            try:
+                enviar_correo_html_monagua(asunto, mensaje_texto, self.request.user.email, html_cancelacion)
+            except Exception as e:
+                print(f"Error al enviar correo de reserva descartada: {e}")
+
+            messages.success(self.request, 'Tu reserva pendiente ha sido cancelada exitosamente sin ninguna penalización.')
+            return redirect('mis_reservas_usuario')
+
 
         if Cancelacion.objects.filter(reserva=reserva, estado__in=['pendiente', 'revision', 'aceptada']).exists():
             messages.warning(self.request, 'Ya existe una solicitud de cancelación activa para esta reserva.')
             return redirect('mis_reservas_usuario')
 
+        # Se registra la solicitud para que el administrador la revise en su panel
         form.instance.reserva = reserva
         form.instance.usuario = self.request.user
         form.instance.estado = 'pendiente'  
        
         response = super().form_valid(form)
         
-    
-        nombre_cliente = self.request.user.first_name or self.request.user.username
-        asunto = f"Solicitud de cancelación Recibida - Reserva #{reserva.id}"
-        mensaje_texto = f"Hola {nombre_cliente}, hemos recibido tu solicitud de cancelación para el paquete {reserva.paquete.nombre}."
+        # Si tenía comprobante, le avisamos que el administrador revisará el caso debido al pago enviado
+        asunto = f"Solicitud de cancelación en revisión - Reserva #{reserva.id}"
+        mensaje_texto = f"Hola {nombre_cliente}, recibimos tu solicitud. Como ya registraste un pago, un asesor revisará tu caso."
         
         html_cancelacion = plantilla_cancelacion_html(
             nombre_cliente=nombre_cliente,
             paquete=reserva.paquete.nombre,
             estado='pendiente',  
-            penalidad="0.00"
+            penalidad="Sujeta a revisión (Pago detectado)"
         )
         
         try:
-            enviar_correo_html_monagua(
-                asunto,
-                mensaje_texto,
-                self.request.user.email,
-                html_cancelacion
-            )
-            messages.success(self.request, 'Tu solicitud de cancelación ha sido enviada y se te ha notificado por correo.')
+            enviar_correo_html_monagua(asunto, mensaje_texto, self.request.user.email, html_cancelacion)
+            messages.success(self.request, 'Tu solicitud ha sido enviada. Un administrador revisará el comprobante adjunto para procesar la devolución o penalidad.')
         except Exception as e:
-            print(f"Error al enviar el correo inicial de cancelación: {e}")
-            messages.success(self.request, 'Tu solicitud fue radicada pero hubo un inconveniente al enviar la notificación por correo.')
+            print(f"Error al enviar el correo de cancelación: {e}")
+            messages.success(self.request, 'Solicitud radicada. Revisaremos tu comprobante de pago a la brevedad.')
 
         return response
     
 class CancelacionUpdateView(UpdateView):
     model = Cancelacion
-    form_class = CancelacionForm
+    fields = ['estado', 'penalidad']
     template_name = 'admin/cancelaciones/editar_cancelacion.html'
     success_url = reverse_lazy('administrar_cancelaciones')
     
@@ -243,6 +306,13 @@ class CancelacionDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def mis_cancelaciones_usuario(request):
+    """
+    mis_cancelaciones_usuario.
+    
+    :param request: las cancelaciones del usuario autenticado y permite ver el historial de cancelaciones.
+    
+    :return: las cancelaciones del usuario y redirige a la página de mis cancelaciones del usuario.
+    """
     mis_cancelaciones = Cancelacion.objects.filter(reserva__usuario=request.user)\
         .select_related('reserva__paquete')\
         .prefetch_related('reserva__comprobantes')\
@@ -253,6 +323,13 @@ def mis_cancelaciones_usuario(request):
     }
     return render(request, 'usuario/cancelaciones/mis_cancelaciones.html', context)
 def administrar_cancelaciones(request):
+    """
+    administrar_cancelaciones.
+    
+    :param request: administracion de cancelaciones para el usuario autenticado y permite actualizar el estado y la penalidad de las cancelaciones.
+    
+    :return: administrar cancelaciones y redirige a la página de administración de cancelaciones del usuario.   
+    """
     if request.method == 'POST':
         cancelacion_id = request.POST.get('cancelacion_id')
         cancelacion = get_object_or_404(Cancelacion, id=cancelacion_id)
@@ -347,6 +424,13 @@ def administrar_cancelaciones(request):
 
 
 def reservas_view(request):
+    """
+    reservas_view.
+    
+    :param request: reservas para el usuario autenticado y permite seleccionar un paquete para reservar.
+    
+    :return: reservas y redirige a la página de mis reservas del usuario.
+    """
     paquetes = Paquete.objects.all()
     paquete_id = request.GET.get('paquete_id')
     paquete = None
@@ -377,6 +461,15 @@ def carrito_view(request):
 
 @login_required(login_url='login')
 def comprobante_reserva_html(request, reserva_id):
+    """
+    comprobante_reserva_html.
+    
+    :param request: comprobante de reserva en formato HTML para una reserva específica.
+    
+    :param reserva_id: comprobante de reserva para la reserva con el ID especificado.
+    
+    :return: comprobante de reserva en HTML que el usuario puede imprimir o guardar como PDF.
+    """
     reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
     # Render HTML comprobante (Bootstrap) que el usuario puede imprimir/guardar como PDF
     context = {
@@ -422,6 +515,15 @@ def comprobante_multiple(request):
 
 @login_required
 def guardar_reserva(request, paquete_id):
+    """
+    guardar_reserva.
+    
+    :param request: guardar reserva para un paquete específico.
+    
+    :param paquete_id: guarda la reserva para el paquete con el ID especificado.
+    
+    :return: guardar reserva y redirige a la página de mis reservas del usuario.
+    """
     if request.method == 'POST':
         paquete = get_object_or_404(Paquete, id=paquete_id)
         fecha_viaje = request.POST.get('fecha')

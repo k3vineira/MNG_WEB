@@ -17,7 +17,7 @@
 <header class="position-relative overflow-hidden"
         style="background: url('{% static 'img/carousel/img1.webp' %}') center/cover no-repeat; min-height: 70vh;">
     <div class="container">
-        <div class="row justify-content-center align-items-center text-center text-white" style="min-height: 70vh;">
+        <div class="row justify-content-center align-items-center text-center text-white u-style-b4553598">
             <div class="col-lg-8">
                 <h1 class="display-1 fw-bold mb-5">
                     El Corazón Verde de Mongua
@@ -54,11 +54,13 @@
                             {% if post.imagen %}
                                 <img src="{{ post.imagen.url }}"
                                      class="object-fit-cover w-100 h-100"
-                                     alt="{{ post.titulo }}">
+                                     alt="{{ post.titulo }}"
+                                     loading="lazy">
                             {% else %}
                                 <img src="{% static 'img/lagunanegra.webp' %}"
                                      class="object-fit-cover w-100 h-100"
-                                     alt="Imagen por defecto">
+                                     alt="Imagen por defecto"
+                                     loading="lazy">
                             {% endif %}
                         </div>
 
@@ -76,7 +78,7 @@
                                 {{ post.titulo }}
                             </h3>
 
-                            <p class="text-muted mb-4 lh-relaxed text-start" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            <p class="text-muted mb-4 lh-relaxed text-start u-style-85ae1781">
                                 {{ post.contenido|truncatewords:20 }}
                             </p>
                         </div>
@@ -120,6 +122,49 @@
             {% endfor %}
 
         </div>
+
+        {# Paginación #}
+        {% if blogs.has_other_pages %}
+        <nav aria-label="Navegación de páginas de blog" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if blogs.has_previous %}
+                <li class="page-item">
+                    <a class="page-link text-success border-success border-opacity-25" href="?page={{ blogs.previous_page_number }}#historias" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo; Anterior</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link text-muted border-success border-opacity-10">&laquo; Anterior</span>
+                </li>
+                {% endif %}
+
+                {% for num in blogs.paginator.page_range %}
+                {% if blogs.number == num %}
+                <li class="page-item active">
+                    <span class="page-link bg-success border-success text-white">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link text-success border-success border-opacity-25" href="?page={{ num }}#historias">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if blogs.has_next %}
+                <li class="page-item">
+                    <a class="page-link text-success border-success border-opacity-25" href="?page={{ blogs.next_page_number }}#historias" aria-label="Siguiente">
+                        <span aria-hidden="true">Siguiente &raquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link text-muted border-success border-opacity-10">Siguiente &raquo;</span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
 
     </div>
 </section>

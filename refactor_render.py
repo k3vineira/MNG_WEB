@@ -129,6 +129,13 @@ def corregir_archivo(ruta: str, lineas_problema: list[int]) -> int:
     correcciones = 0
 
     def reemplazar(m):
+        """
+        reemplazar.
+        
+        :param m: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         nonlocal correcciones
         indentacion = m.group(1)
         request_var = m.group(3)
@@ -158,6 +165,11 @@ def corregir_archivo(ruta: str, lineas_problema: list[int]) -> int:
 # ──────────────────────────────────────────────
 
 def main():
+    """
+    main.
+    
+    :return: Respuesta de la función.
+    """
     modo_fix = '--fix' in sys.argv
 
     print(SEP)

@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block titulo %}Términos y Condiciones | Monagua{% endblock %}
+{% block titulo %}{{ block.super }} - Términos{% endblock %}
 
 {% block content %}
 
-<section class="pt-5 pb-4 text-center" style="background-color:#2d4a31;">
+<section class="pt-5 pb-4 text-center u-style-a78d1879">
   <div class="container mt-5 mb-4">
-    <span class="badge rounded-pill border border-light border-opacity-25 text-white-50 fw-normal px-3 py-2 mb-3"
-          style="background:rgba(255,255,255,0.10);letter-spacing:.15em;font-size:.68rem;">
+    <span class="badge rounded-pill border border-light border-opacity-25 text-white-50 fw-normal px-3 py-2 mb-3 u-style-7c27b441">
       LEGAL
     </span>
     <h1 class="fw-bold mb-2 text-white">Términos y Condiciones</h1>
@@ -22,14 +21,14 @@
 
     <!-- Sidebar -->
     <div class="col-lg-3 d-none d-lg-block">
-      <div class="card border-0 shadow-sm rounded-3 p-3" style="position:sticky;top:80px;">
-        <p class="fw-semibold small text-uppercase text-muted mb-3" style="letter-spacing:.1em;">Contenido</p>
+      <div class="card border-0 shadow-sm rounded-3 p-3 u-style-be2d3229">
+        <p class="fw-semibold small text-uppercase text-muted mb-3 u-style-7cc76d3d">Contenido</p>
         <nav class="nav flex-column gap-1">
-          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#introduccion" style="font-size:.88rem;">1. Introducción</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#reservas" style="font-size:.88rem;">2. Reservas y Pagos</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#cancelaciones" style="font-size:.88rem;">3. Cancelaciones</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#responsabilidades" style="font-size:.88rem;">4. Responsabilidades</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2" href="#privacidad" style="font-size:.88rem;">5. Protección de Datos</a>
+          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#introduccion">1. Introducción</a>
+          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#reservas">2. Reservas y Pagos</a>
+          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#cancelaciones">3. Cancelaciones</a>
+          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#responsabilidades">4. Responsabilidades</a>
+          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#privacidad">5. Protección de Datos</a>
         </nav>
       </div>
     </div>
@@ -40,7 +39,7 @@
 
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
           <div>
-            <div class="fw-semibold" style="color:#2d4a31;">Monagua Agencia de Viajes</div>
+            <div class="fw-semibold u-style-40db361c">Monagua Agencia de Viajes</div>
             <small class="text-muted">Sogamoso, Boyacá — Colombia</small>
           </div>
           <span class="badge bg-light text-muted border px-3 py-2">Actualizado: 26 de marzo, 2026</span>
@@ -48,9 +47,8 @@
 
         <!-- 1 -->
         <div id="introduccion" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
-                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">1</span>
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">1</span>
             Introducción
           </h4>
           <p class="text-muted lh-lg">Bienvenido a <strong>Monagua Agencia de Viajes y Turismo</strong>. Al utilizar nuestros servicios y plataforma web, usted acepta cumplir con los términos detallados a continuación. Estos términos regulan la relación contractual entre el cliente y nuestra agencia radicada en Sogamoso, Boyacá.</p>
@@ -60,9 +58,8 @@
 
         <!-- 2 -->
         <div id="reservas" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
-                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">2</span>
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">2</span>
             Reservas y Pagos
           </h4>
           <p class="text-muted lh-lg">Toda reserva se confirma tras el pago del anticipo mínimo del <strong>30%</strong> del valor total. Monagua se reserva el derecho de ajustar precios ante cambios en tasas gubernamentales o costos de proveedores.</p>
@@ -76,9 +73,8 @@
 
         <!-- 3 -->
         <div id="cancelaciones" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
-                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">3</span>
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">3</span>
             Políticas de Cancelación
           </h4>
           <p class="text-muted lh-lg">Para mantener la logística con nuestros guías y transportadores, aplicamos las siguientes condiciones:</p>
@@ -116,9 +112,8 @@
 
         <!-- 4 -->
         <div id="responsabilidades" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
-                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">4</span>
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">4</span>
             Responsabilidades
           </h4>
           <p class="text-muted lh-lg">Monagua actúa como intermediario entre el cliente y los prestadores de servicios (hoteles, transporte, guías). No nos hacemos responsables por retrasos climáticos, cierres viales o situaciones de fuerza mayor que alteren el itinerario original, aunque brindaremos asistencia total para reprogramaciones.</p>
@@ -128,20 +123,18 @@
 
         <!-- 5 -->
         <div id="privacidad" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2" style="color:#2d4a31;">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
-                  style="width:30px;height:30px;min-width:30px;background:#3b5e3f;font-size:.8rem;">5</span>
+          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">5</span>
             Protección de Datos
           </h4>
           <p class="text-muted lh-lg">Sus datos personales son tratados conforme a la Ley 1581 de 2012 de Colombia. No compartimos su información con terceros sin consentimiento previo. Puede solicitar acceso, corrección o eliminación escribiendo a <strong>contacto@monagua.com</strong>.</p>
         </div>
 
-        <div class="rounded-3 p-4 text-center mt-2" style="background:#f5f0e8;">
+        <div class="rounded-3 p-4 text-center mt-2 u-style-0300d8ca">
           <p class="mb-2 text-muted small">¿Tiene dudas sobre nuestros términos?</p>
           <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vt74117@gmail.com&su=Dudas%20sobre%20los%20términos%20legales"
              target="_blank"
-             class="btn btn-sm fw-semibold rounded-pill px-4 text-white"
-             style="background:#3b5e3f;">
+             class="btn btn-sm fw-semibold rounded-pill px-4 text-white u-style-96ada96c">
             <i class="bi bi-envelope me-2"></i>Contactar soporte jurídico
           </a>
         </div>

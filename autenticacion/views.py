@@ -1,3 +1,7 @@
+"""
+Vistas para la gestión de autenticación de usuarios, registro y recuperación de cuentas.
+"""
+
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
@@ -243,6 +247,15 @@ class UsuarioLoginView(LoginView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        """
+        Determina la URL de redirección después de un inicio de sesión exitoso.
+
+        Redirige al dashboard de administración si es staff, o al inicio del turista de lo contrario,
+        a menos que haya un parámetro '?next=' definido.
+
+        Returns:
+            str: La URL a la que se debe redirigir al usuario.
+        """
         # 1. Si existe un parámetro '?next=', respetarlo (ej: venía de reservar)
         next_url = self.request.GET.get(
             'next') or self.request.POST.get('next')

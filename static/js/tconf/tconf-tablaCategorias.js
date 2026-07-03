@@ -1,12 +1,12 @@
 $(document).ready(function() {
-    $('#tablaReservas').DataTable({
+    $('#tablaCategorias').DataTable({
         // 1. ESTRUCTURA VISUAL: Mantiene botones y buscador alineados en la misma fila
         dom: "<'row mb-3 align-items-center'<'col-md-6'B><'col-md-6 d-flex justify-content-end'f>>" +
              "<'row'<'col-sm-12'tr>>" +
              "<'row mt-3'<'col-md-5'i><'col-md-7 d-flex justify-content-end'p>>",
 
         // 2. BOTONES DE EXPORTACIÓN
-       buttons: [
+      buttons: [
     {
         extend: 'excelHtml5',
         text: '<i class="bi bi-file-earmark-excel-fill text-success fs-4"></i>',

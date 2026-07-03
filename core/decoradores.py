@@ -11,6 +11,17 @@ def requiere_autenticacion(vista_func):
     """
     @wraps(vista_func)
     def _wrapper(request, *args, **kwargs):
+        """
+        _wrapper.
+        
+        :param request: Descripción del parámetro.
+        
+        :param args: Descripción del parámetro.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         if not request.user.is_authenticated:
             messages.warning(request, "Debes iniciar sesión para acceder a esta página.")
             return redirect('login')
@@ -25,6 +36,17 @@ def requiere_administrador(vista_func):
     """
     @wraps(vista_func)
     def _wrapper(request, *args, **kwargs):
+        """
+        _wrapper.
+        
+        :param request: Descripción del parámetro.
+        
+        :param args: Descripción del parámetro.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         # Primero asegurar que esté autenticado
         if not request.user.is_authenticated:
             messages.warning(request, "Debes iniciar sesión para acceder a esta página.")
@@ -45,6 +67,17 @@ def requiere_guia(vista_func):
     """
     @wraps(vista_func)
     def _wrapper(request, *args, **kwargs):
+        """
+        _wrapper.
+        
+        :param request: Descripción del parámetro.
+        
+        :param args: Descripción del parámetro.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         if not request.user.is_authenticated:
             messages.warning(request, "Debes iniciar sesión para acceder a esta página.")
             return redirect('login')
@@ -64,6 +97,17 @@ def requiere_cliente(vista_func):
     """
     @wraps(vista_func)
     def _wrapper(request, *args, **kwargs):
+        """
+        _wrapper.
+        
+        :param request: Descripción del parámetro.
+        
+        :param args: Descripción del parámetro.
+        
+        :param kwargs: Descripción del parámetro.
+        
+        :return: Respuesta de la función.
+        """
         if not request.user.is_authenticated:
             messages.warning(request, "Debes iniciar sesión para acceder a esta página.")
             return redirect('login')

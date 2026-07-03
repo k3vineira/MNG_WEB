@@ -1,6 +1,10 @@
 {% extends 'admin/base-admin.html' %}
 {% load static %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid py-4">
     
@@ -28,8 +32,7 @@
                     <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm
                         {% if color == 'text-success' %} bg-success bg-opacity-10 text-success
                         {% elif color == 'text-danger' %} bg-danger bg-opacity-10 text-danger
-                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %}" 
-                        style="width: 60px; height: 60px; font-size: 1.5rem;">
+                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} u-style-c5b9e7ac">
                         {% if color == 'text-dark' %}
                             <i class="bi bi-collection"></i>
                         {% elif color == 'text-success' %}
@@ -39,7 +42,7 @@
                         {% endif %}
                     </div>
                     <div>
-                        <h6 class="text-muted text-uppercase fw-bold mb-1" style="font-size: 0.8rem; letter-spacing: 0.5px;">{{ label }}</h6>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 u-style-75b54407">{{ label }}</h6>
                         <h3 class="fw-black mb-0 {{ color }}">{{ count }}</h3>
                     </div>
                 </div>
@@ -52,7 +55,7 @@
     <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
         <!-- Tabla Desktop -->
         <div class="table-responsive d-none d-lg-block">
-            <table class="table table-hover align-middle mb-0">
+            <table id="tablaActividades" class="table table-hover align-middle mb-0 u-style-6d567387">
                 <thead class="table-light text-muted">
                     <tr>
                         <th scope="col" class="fw-bold">Actividad</th>
@@ -68,7 +71,7 @@
                         <td>
                             <div>
                                 <h6 class="fw-bold text-dark mb-1">{{ actividad.nombre }}</h6>
-                                <p class="text-muted small mb-0 text-truncate" style="max-width: 400px;" title="{{ actividad.descripcion }}">{{ actividad.descripcion }}</p>
+                                <p class="text-muted small mb-0 text-truncate u-style-6bdce2a0" title="{{ actividad.descripcion }}">{{ actividad.descripcion }}</p>
                             </div>
                         </td>
                         <td class="text-center">
@@ -174,4 +177,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
+<script src="{% static 'js/tconf/tconf-tablaActividades.js' %}"></script>
 {% endblock %}

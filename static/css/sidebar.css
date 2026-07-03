@@ -1,23 +1,82 @@
-/* ══════════════ SIDEBAR DUAL (WIDE / SLIM) ══════════════ */
-/* Sincronizar Sidebar Dual con mainContent */
+/* ══════════════ SIDEBAR ADMIN – WIDE / SLIM ══════════════
+   Gestiona dos estados:
+   · (por defecto / wide)  → 280 px
+   · body.sidebar-slim-active → 70 px
+   En móvil (<992px) la barra está fuera de pantalla por defecto
+   y se desliza cuando body tiene la clase sidebar-open
+   ══════════════════════════════════════════════════════════ */
 
+/* ── 1. CONTENEDOR PRINCIPAL ─────────────────────────────── */
 #mainSidebar {
-  transition: width 0.3s ease, transform 0.3s ease !important;
+  width: 280px;
+  z-index: 1045;
+  transition: width 0.3s ease, transform 0.3s ease;
+  /* En móvil empieza oculto a la izquierda */
+  transform: translateX(-100%);
 }
 
-body.sidebar-slim-active #mainSidebar {
-  width: 70px !important;
-}
-
+/* ── 2. ESCRITORIO (≥992px): siempre visible ─────────────── */
 @media (min-width: 992px) {
+  #mainSidebar {
+    transform: translateX(0) !important;
+  }
+
+  /* Contenido principal se desplaza para dejar espacio al aside */
+  #mainContent {
+    margin-left: 280px;
+    transition: margin-left 0.3s ease;
+  }
+
+  /* Estado slim: barra reducida a solo iconos */
+  body.sidebar-slim-active #mainSidebar {
+    width: 70px;
+  }
   body.sidebar-slim-active #mainContent {
-    margin-left: 70px !important;
+    margin-left: 70px;
+  }
+
+  /* Ocultamos el botón hamburguesa y el overlay en desktop */
+  #sidebar-toggle,
+  #sidebar-overlay {
+    display: none !important;
   }
 }
 
-/* Ocultar botón toggle interno en móviles para no interferir con el canvas móvil */
-@media (max-width: 991px) {
+/* ── 3. MÓVIL (<992px): slider con overlay ──────────────── */
+@media (max-width: 991.98px) {
+  #mainContent {
+    margin-left: 0 !important;
+  }
+
+  body.sidebar-open #mainSidebar {
+    transform: translateX(0);
+  }
+
+  body.sidebar-open #sidebar-overlay {
+    display: block !important;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  /* El botón interno de colapso no tiene sentido en móvil */
   .toggle-sidebar-btn {
     display: none !important;
   }
+}
+
+/* ── 4. LINKS DEL MENÚ ───────────────────────────────────── */
+#mainSidebar .nav-link {
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+#mainSidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Cuando la barra está en slim, ocultamos los textos de los submenús */
+body.sidebar-slim-active #sidebarWide {
+  display: none !important;
+}
+body:not(.sidebar-slim-active) #sidebarSlim {
+  display: none !important;
 }

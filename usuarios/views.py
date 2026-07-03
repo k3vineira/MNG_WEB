@@ -98,9 +98,10 @@ def dashboard_admin(request):
 
     current_year = timezone.now().year
     ingresos_mensuales = [0] * 12
-    for p in ComprobantePago.objects.filter(estado='aprobado', fecha_envio__year=current_year):
+    for p in ComprobantePago.objects.filter(estado='aprobado', fecha_envio__year=current_year).select_related('reserva'):
         m = p.fecha_envio.month - 1
-        ingresos_mensuales[m] += float(p.monto or 0)
+        monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
+        ingresos_mensuales[m] += float(monto_valor)
 
     reservas_confirmadas = Reserva.objects.filter(estado='confirmada').count()
     reservas_pendientes = Reserva.objects.filter(estado='pendiente').count()
@@ -110,8 +111,8 @@ def dashboard_admin(request):
     start_of_week = hoy - datetime.timedelta(days=hoy.weekday())
     end_of_week = start_of_week + datetime.timedelta(days=6)
     reservas_semana = [0] * 7
-    for r in Reserva.objects.filter(fecha__range=[start_of_week, end_of_week]):
-        reservas_semana[r.fecha.weekday()] += 1
+    for r in Reserva.objects.filter(fecha_registro__date__range=[start_of_week, end_of_week]):
+        reservas_semana[r.fecha_registro.weekday()] += 1
 
     tasa_confirmacion = int(reservas_confirmadas / total_reservas * 100) if total_reservas > 0 else 0
 
@@ -120,7 +121,7 @@ def dashboard_admin(request):
 
     ingreso_por_reserva = total_ventas / total_reservas if total_reservas > 0 else 0
 
-    cancelaciones_hoy = Cancelacion.objects.filter(reserva__fecha=hoy).count()
+    cancelaciones_hoy = Cancelacion.objects.filter(fecha_solicitud__date=hoy).count()
     cancelaciones_rechazadas = Cancelacion.objects.filter(estado='rechazada').count()
     cancelaciones_pendientes = Cancelacion.objects.filter(estado__in=['pendiente', 'revision']).count()
 
@@ -148,10 +149,11 @@ def dashboard_admin(request):
             'texto': f"Nueva reserva de {nombre_usr} para {r.paquete.nombre}",
             'tiempo_dt': r.fecha_registro,
         })
-    for p in ComprobantePago.objects.select_related('usuario').order_by('-fecha_envio')[:5]:
+    for p in ComprobantePago.objects.select_related('usuario', 'reserva').order_by('-fecha_envio')[:5]:
         nombre_usr = p.usuario.get_full_name() or p.usuario.username
+        monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
         actividad_reciente.append({
-            'texto': f"Pago de COP ${p.monto or 0:,.0f} enviado por {nombre_usr} ({p.get_estado_display()})",
+            'texto': f"Pago de COP ${monto_valor:,.0f} enviado por {nombre_usr} ({p.get_estado_display()})",
             'tiempo_dt': p.fecha_envio,
         })
     actividad_reciente.sort(key=lambda x: x['tiempo_dt'], reverse=True)
@@ -506,6 +508,15 @@ def guias_guardar(request):
 
 
 def get_estadisticas_context(user, is_admin=False):
+    """
+    get_estadisticas_context.
+    
+    :param user: Descripción del parámetro.
+    
+    :param is_admin=False: Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     import datetime
     from django.db.models import Sum, Count, Avg, Max
     from django.utils import timezone
@@ -568,7 +579,8 @@ def get_estadisticas_context(user, is_admin=False):
     # Obtener comprobantes de pago recientes
     for p in pagos.select_related('usuario', 'reserva', 'reserva__paquete').order_by('-fecha_envio')[:5]:
         nombre_usr = p.usuario.get_full_name() or p.usuario.username
-        monto_formatted = f"COP ${p.monto or 0:,.0f}"
+        monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
+        monto_formatted = f"COP ${monto_valor:,.0f}"
         if is_admin:
             desc = f"Pago de {monto_formatted} enviado por {nombre_usr} ({p.get_estado_display()})"
         else:
@@ -607,9 +619,10 @@ def get_estadisticas_context(user, is_admin=False):
         m = r.fecha.month - 1
         meses_datos[m] += 1
         
-    for p in pagos.filter(estado='aprobado', fecha_envio__year=current_year):
+    for p in pagos.filter(estado='aprobado', fecha_envio__year=current_year).select_related('reserva'):
         m = p.fecha_envio.month - 1
-        meses_inversion[m] += float(p.monto or 0)
+        monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
+        meses_inversion[m] += float(monto_valor)
         
     reporte_mensual = []
     for m in range(12):
@@ -704,7 +717,7 @@ def get_estadisticas_context(user, is_admin=False):
             'metodo': p.banco_origen,
             'estado': p.estado,
             'fecha': p.fecha_envio,
-            'monto': p.monto or 0
+            'monto': p.monto or (p.reserva.monto_total if p.reserva else 0)
         })
 
     # Reviews

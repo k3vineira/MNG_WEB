@@ -1,8 +1,7 @@
-{% extends "base.html" %} {% load static %} {% block titulo %}Nosotros |
-Monagua{% endblock %} {% block content %}
+{% extends "base.html" %} {% load static %} {% block titulo %}{{ block.super }} - Nosotros{% endblock %} {% block content %}
 
 <!-- Spacer to prevent green background under fixed navbar -->
-<div style="height: 5rem; width: 100%; background-color: #ffffff"></div>
+<div class="u-style-285fadeb"></div>
 
 <!-- ══ HERO ══ -->
 <section class="py-5 bg-success">
@@ -10,26 +9,19 @@ Monagua{% endblock %} {% block content %}
     <div class="row align-items-center g-5">
       <div class="col-lg-6">
         <span
-          class="badge rounded-pill border border-light border-opacity-25 text-white-50 fw-normal px-3 py-2 mb-3"
-          style="
-            background: rgba(255, 255, 255, 0.1);
-            letter-spacing: 0.12em;
-            font-size: 0.68rem;
-          "
+          class="badge rounded-pill border border-light border-opacity-25 text-white-50 fw-normal px-3 py-2 mb-3 u-style-b2da976a"
         >
           NUESTRA HISTORIA
         </span>
         <h1
-          class="fw-bold lh-sm mb-3 text-white"
-          style="font-size: clamp(2rem, 5vw, 3.1rem)"
+          class="fw-bold lh-sm mb-3 text-white u-style-2952c0ba"
         >
-          Hacemos del viaje<br /><em class="fst-italic" style="color: #d1fae5"
+          Hacemos del viaje<br /><em class="fst-italic u-style-ee61f9ce"
             >una experiencia</em
           >
         </h1>
         <p
-          class="text-white-50 fw-light mb-4"
-          style="max-width: 460px; line-height: 1.8"
+          class="text-white-50 fw-light mb-4 u-style-9fc51a4a"
         >
           En Monagua creemos que cada destino guarda una historia única. Desde
           2015 llevamos a nuestros viajeros a descubrir los rincones más
@@ -39,32 +31,28 @@ Monagua{% endblock %} {% block content %}
           <div class="col-6 col-sm-3">
             <div class="fw-bold fs-2 text-white">9+</div>
             <small
-              class="text-white-50 text-uppercase"
-              style="letter-spacing: 0.1em; font-size: 0.68rem"
+              class="text-white-50 text-uppercase u-style-d981e74b"
               >Años</small
             >
           </div>
           <div class="col-6 col-sm-3">
             <div class="fw-bold fs-2 text-white">4.8K</div>
             <small
-              class="text-white-50 text-uppercase"
-              style="letter-spacing: 0.1em; font-size: 0.68rem"
+              class="text-white-50 text-uppercase u-style-d981e74b"
               >Viajeros</small
             >
           </div>
           <div class="col-6 col-sm-3">
             <div class="fw-bold fs-2 text-white">38</div>
             <small
-              class="text-white-50 text-uppercase"
-              style="letter-spacing: 0.1em; font-size: 0.68rem"
+              class="text-white-50 text-uppercase u-style-d981e74b"
               >Destinos</small
             >
           </div>
           <div class="col-6 col-sm-3">
             <div class="fw-bold fs-2 text-white">99%</div>
             <small
-              class="text-white-50 text-uppercase"
-              style="letter-spacing: 0.1em; font-size: 0.68rem"
+              class="text-white-50 text-uppercase u-style-d981e74b"
               >Satisfacción</small
             >
           </div>
@@ -76,15 +64,13 @@ Monagua{% endblock %} {% block content %}
           <img
             src="{% static 'img/fondo.webp' %}"
             alt="Paisaje Monagua"
-            class="img-fluid w-100 rounded-4"
-            style="height: 380px; object-fit: cover"
+            class="img-fluid w-100 rounded-4 u-style-7d1aff05"
           />
           <div
             class="position-absolute bottom-0 start-0 m-3 bg-white rounded-3 px-3 py-2 d-flex align-items-center gap-2 shadow-sm"
           >
             <div
-              class="d-flex align-items-center justify-content-center rounded-2 bg-success bg-opacity-10"
-              style="width: 34px; height: 34px; min-width: 34px"
+              class="d-flex align-items-center justify-content-center rounded-2 bg-success bg-opacity-10 u-style-9b5fa2de"
             >
               <i class="bi bi-patch-check-fill text-success"></i>
             </div>
@@ -92,7 +78,7 @@ Monagua{% endblock %} {% block content %}
               <div class="fw-semibold small text-success">
                 Turismo responsable monagua
               </div>
-              <div class="text-muted" style="font-size: 0.7rem">
+              <div class="text-muted u-style-dd8eb2f6">
                 Certificados desde 2018
               </div>
             </div>
@@ -113,24 +99,21 @@ Monagua{% endblock %} {% block content %}
             <img
               src="{% static 'img/fondo3.webp' %}"
               alt="Guía turístico"
-              class="img-fluid w-100 rounded-3"
-              style="height: 200px; object-fit: cover"
+              class="img-fluid w-100 rounded-3 u-style-728dbe70"
             />
           </div>
           <div class="col-6">
             <img
               src="{% static 'img/fondo4.webp' %}"
               alt="Camino"
-              class="img-fluid w-100 rounded-3"
-              style="height: 150px; object-fit: cover"
+              class="img-fluid w-100 rounded-3 u-style-f49c8429"
             />
           </div>
           <div class="col-6">
             <img
-              src="{% static 'img/fondo2.webp' %}"
-              alt="Bosque"
-              class="img-fluid w-100 rounded-3"
-              style="height: 150px; object-fit: cover"
+              src="{% static 'img/paramo.webp' %}"
+              alt="Bosque del Páramo"
+              class="img-fluid w-100 rounded-3 u-style-f49c8429"
             />
           </div>
         </div>
@@ -138,13 +121,11 @@ Monagua{% endblock %} {% block content %}
 
       <div class="col-lg-7">
         <small
-          class="text-uppercase fw-semibold text-success"
-          style="letter-spacing: 0.15em"
+          class="text-uppercase fw-semibold text-success u-style-79ecfdaa"
           >Quiénes somos</small
         >
         <h2
-          class="fw-bold mt-1 mb-3 text-dark"
-          style="font-size: clamp(1.7rem, 3vw, 2.4rem)"
+          class="fw-bold mt-1 mb-3 text-dark u-style-f242153a"
         >
           Una agencia nacida del<br /><span class="text-success"
             >amor por explorar</span
@@ -163,20 +144,13 @@ Monagua{% endblock %} {% block content %}
 
         <div class="d-flex gap-3 align-items-start mb-2">
           <div
-            class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 fw-semibold bg-success"
-            style="
-              width: 32px;
-              height: 32px;
-              min-width: 32px;
-              font-size: 0.85rem;
-            "
+            class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 fw-semibold bg-success u-style-494fa1fa"
           >
             1
           </div>
           <div>
             <small
-              class="text-uppercase fw-semibold text-success"
-              style="letter-spacing: 0.1em"
+              class="text-uppercase fw-semibold text-success u-style-c35107f7"
               >2015 — Fundación</small
             >
             <p class="text-muted small mb-0">
@@ -186,25 +160,17 @@ Monagua{% endblock %} {% block content %}
           </div>
         </div>
         <div
-          class="border-start border-2 ms-2 my-1 border-success border-opacity-25"
-          style="height: 24px; margin-left: 15px !important"
+          class="border-start border-2 ms-2 my-1 border-success border-opacity-25 u-style-04b96318"
         ></div>
         <div class="d-flex gap-3 align-items-start mb-2">
           <div
-            class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 fw-semibold bg-success"
-            style="
-              width: 32px;
-              height: 32px;
-              min-width: 32px;
-              font-size: 0.85rem;
-            "
+            class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 fw-semibold bg-success u-style-494fa1fa"
           >
             2
           </div>
           <div>
             <small
-              class="text-uppercase fw-semibold text-success"
-              style="letter-spacing: 0.1em"
+              class="text-uppercase fw-semibold text-success u-style-c35107f7"
               >2018 — Certificación</small
             >
             <p class="text-muted small mb-0">
@@ -214,25 +180,17 @@ Monagua{% endblock %} {% block content %}
           </div>
         </div>
         <div
-          class="border-start border-2 ms-2 my-1 border-success border-opacity-25"
-          style="height: 24px; margin-left: 15px !important"
+          class="border-start border-2 ms-2 my-1 border-success border-opacity-25 u-style-04b96318"
         ></div>
         <div class="d-flex gap-3 align-items-start">
           <div
-            class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 fw-semibold bg-success"
-            style="
-              width: 32px;
-              height: 32px;
-              min-width: 32px;
-              font-size: 0.85rem;
-            "
+            class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 fw-semibold bg-success u-style-494fa1fa"
           >
             3
           </div>
           <div>
             <small
-              class="text-uppercase fw-semibold text-success"
-              style="letter-spacing: 0.1em"
+              class="text-uppercase fw-semibold text-success u-style-c35107f7"
               >2022 — Plataforma digital</small
             >
             <p class="text-muted small mb-0">
@@ -251,26 +209,22 @@ Monagua{% endblock %} {% block content %}
   <div class="container py-4">
     <div class="text-center mb-5">
       <small
-        class="text-white-50 text-uppercase fw-semibold"
-        style="letter-spacing: 0.15em"
+        class="text-white-50 text-uppercase fw-semibold u-style-79ecfdaa"
         >Propósito</small
       >
       <h2
-        class="fw-bold mt-1 text-white"
-        style="font-size: clamp(1.7rem, 3vw, 2.4rem)"
+        class="fw-bold mt-1 text-white u-style-f242153a"
       >
-        Lo que nos <span style="color: #d1fae5">guía cada día</span>
+        Lo que nos <span class="u-style-ee61f9ce">guía cada día</span>
       </h2>
     </div>
     <div class="row g-4">
       <div class="col-md-6">
         <div
-          class="card h-100 border-0 rounded-4 p-4 p-lg-5"
-          style="background: rgba(255, 255, 255, 0.12)"
+          class="card h-100 border-0 rounded-4 p-4 p-lg-5 bg-white bg-opacity-10"
         >
           <div
-            class="d-flex align-items-center justify-content-center rounded-2 bg-white bg-opacity-10 mb-3"
-            style="width: 42px; height: 42px"
+            class="d-flex align-items-center justify-content-center rounded-2 bg-white bg-opacity-10 mb-3 u-style-b0f12021"
           >
             <i class="bi bi-compass text-white fs-5"></i>
           </div>
@@ -284,12 +238,10 @@ Monagua{% endblock %} {% block content %}
       </div>
       <div class="col-md-6">
         <div
-          class="card h-100 border-0 rounded-4 p-4 p-lg-5"
-          style="background: rgba(255, 255, 255, 0.12)"
+          class="card h-100 border-0 rounded-4 p-4 p-lg-5 bg-white bg-opacity-10"
         >
           <div
-            class="d-flex align-items-center justify-content-center rounded-2 bg-white bg-opacity-10 mb-3"
-            style="width: 42px; height: 42px"
+            class="d-flex align-items-center justify-content-center rounded-2 bg-white bg-opacity-10 mb-3 u-style-b0f12021"
           >
             <i class="bi bi-eye text-white fs-5"></i>
           </div>
@@ -310,13 +262,11 @@ Monagua{% endblock %} {% block content %}
   <div class="container py-4">
     <div class="text-center mb-5">
       <small
-        class="text-uppercase fw-semibold text-success"
-        style="letter-spacing: 0.15em"
+        class="text-uppercase fw-semibold text-success u-style-79ecfdaa"
         >Valores</small
       >
       <h2
-        class="fw-bold mt-1 text-dark"
-        style="font-size: clamp(1.7rem, 3vw, 2.4rem)"
+        class="fw-bold mt-1 text-dark u-style-f242153a"
       >
         Los principios que nos <span class="text-success">definen</span>
       </h2>
@@ -325,8 +275,7 @@ Monagua{% endblock %} {% block content %}
       <div class="col-sm-6 col-lg-3">
         <div class="card h-100 border-0 rounded-4 p-4 shadow-sm bg-white">
           <div
-            class="d-flex align-items-center justify-content-center rounded-2 mb-3 bg-success bg-opacity-10"
-            style="width: 42px; height: 42px"
+            class="d-flex align-items-center justify-content-center rounded-2 mb-3 bg-success bg-opacity-10 u-style-b0f12021"
           >
             <i class="bi bi-tree fs-5 text-success"></i>
           </div>
@@ -340,8 +289,7 @@ Monagua{% endblock %} {% block content %}
       <div class="col-sm-6 col-lg-3">
         <div class="card h-100 border-0 rounded-4 p-4 shadow-sm bg-white">
           <div
-            class="d-flex align-items-center justify-content-center rounded-2 mb-3 bg-success bg-opacity-10"
-            style="width: 42px; height: 42px"
+            class="d-flex align-items-center justify-content-center rounded-2 mb-3 bg-success bg-opacity-10 u-style-b0f12021"
           >
             <i class="bi bi-shield-check fs-5 text-success"></i>
           </div>
@@ -355,8 +303,7 @@ Monagua{% endblock %} {% block content %}
       <div class="col-sm-6 col-lg-3">
         <div class="card h-100 border-0 rounded-4 p-4 shadow-sm bg-white">
           <div
-            class="d-flex align-items-center justify-content-center rounded-2 mb-3 bg-success bg-opacity-10"
-            style="width: 42px; height: 42px"
+            class="d-flex align-items-center justify-content-center rounded-2 mb-3 bg-success bg-opacity-10 u-style-b0f12021"
           >
             <i class="bi bi-people fs-5 text-success"></i>
           </div>
@@ -370,8 +317,7 @@ Monagua{% endblock %} {% block content %}
       <div class="col-sm-6 col-lg-3">
         <div class="card h-100 border-0 rounded-4 p-4 shadow-sm bg-white">
           <div
-            class="d-flex align-items-center justify-content-center rounded-2 mb-3 bg-success bg-opacity-10"
-            style="width: 42px; height: 42px"
+            class="d-flex align-items-center justify-content-center rounded-2 mb-3 bg-success bg-opacity-10 u-style-b0f12021"
           >
             <i class="bi bi-star fs-5 text-success"></i>
           </div>
@@ -391,17 +337,15 @@ Monagua{% endblock %} {% block content %}
   <div class="container py-4">
     <div class="text-center mb-5">
       <small
-        class="text-white-50 text-uppercase fw-semibold"
-        style="letter-spacing: 0.15em"
+        class="text-white-50 text-uppercase fw-semibold u-style-79ecfdaa"
         >Equipo</small
       >
       <h2
-        class="fw-bold mt-1 text-white"
-        style="font-size: clamp(1.7rem, 3vw, 2.4rem)"
+        class="fw-bold mt-1 text-white u-style-f242153a"
       >
-        Las personas detrás de <span style="color: #d1fae5">Monagua</span>
+        Las personas detrás de <span class="u-style-ee61f9ce">Monagua</span>
       </h2>
-      <p class="text-white-50 fw-light mx-auto" style="max-width: 420px">
+      <p class="text-white-50 fw-light mx-auto u-style-4e9ec4bc">
         Un equipo diverso, apasionado y con décadas de experiencia en turismo,
         aventura y hospitalidad.
       </p>
@@ -412,13 +356,12 @@ Monagua{% endblock %} {% block content %}
         <img
           src="{% static 'img/victor.webp' %}"
           alt="Victor Toledo"
-          class="rounded-circle border border-3 border-white border-opacity-25 mb-3"
-          style="width: 110px; height: 110px; object-fit: cover"
+          class="img-fluid rounded-circle border border-3 border-white border-opacity-25 mb-3 u-style-20e6cbf5"
+          style="width: 150px; height: 150px; object-fit: cover;"
         />
         <div class="fw-bold text-white">Victor Toledo</div>
         <small
-          class="text-white-50 text-uppercase fw-semibold d-block mb-2"
-          style="letter-spacing: 0.08em; font-size: 0.65rem"
+          class="text-white-50 text-uppercase fw-semibold d-block mb-2 u-style-98048c49"
           >CEO</small
         >
         <p class="text-white-50 small mb-3 px-1">
@@ -428,15 +371,15 @@ Monagua{% endblock %} {% block content %}
         <div class="d-flex justify-content-center gap-2">
           <a
             href="#"
-            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center"
-            style="width: 28px; height: 28px"
-            ><i class="bi bi-linkedin" style="font-size: 0.6rem"></i
+            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center u-style-83366e48"
+            aria-label="LinkedIn de Victor Toledo"
+            ><i class="bi bi-linkedin u-style-29fee910" aria-hidden="true"></i
           ></a>
           <a
             href="#"
-            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center"
-            style="width: 28px; height: 28px"
-            ><i class="bi bi-instagram" style="font-size: 0.6rem"></i
+            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center u-style-83366e48"
+            aria-label="Instagram de Victor Toledo"
+            ><i class="bi bi-instagram u-style-29fee910" aria-hidden="true"></i
           ></a>
         </div>
       </div>
@@ -445,13 +388,12 @@ Monagua{% endblock %} {% block content %}
         <img
           src="{% static 'img/kevin.webp' %}"
           alt="Kevin Neira"
-          class="rounded-circle border border-3 border-white border-opacity-25 mb-3"
-          style="width: 110px; height: 110px; object-fit: cover"
+          class="img-fluid rounded-circle border border-3 border-white border-opacity-25 mb-3 u-style-20e6cbf5"
+          style="width: 150px; height: 150px; object-fit: cover;"
         />
         <div class="fw-bold text-white">Kevin Neira</div>
         <small
-          class="text-white-50 text-uppercase fw-semibold d-block mb-2"
-          style="letter-spacing: 0.08em; font-size: 0.65rem"
+          class="text-white-50 text-uppercase fw-semibold d-block mb-2 u-style-98048c49"
           >Director de Rutas & CEO</small
         >
         <p class="text-white-50 small mb-3 px-1">
@@ -461,30 +403,29 @@ Monagua{% endblock %} {% block content %}
         <div class="d-flex justify-content-center gap-2">
           <a
             href="#"
-            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center"
-            style="width: 28px; height: 28px"
-            ><i class="bi bi-linkedin" style="font-size: 0.6rem"></i
+            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center u-style-83366e48"
+            aria-label="LinkedIn de Kevin Neira"
+            ><i class="bi bi-linkedin u-style-29fee910" aria-hidden="true"></i
           ></a>
           <a
             href="#"
-            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center"
-            style="width: 28px; height: 28px"
-            ><i class="bi bi-instagram" style="font-size: 0.6rem"></i
+            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center u-style-83366e48"
+            aria-label="Instagram de Kevin Neira"
+            ><i class="bi bi-instagram u-style-29fee910" aria-hidden="true"></i
           ></a>
         </div>
       </div>
 
       <div class="col-6 col-md-3 text-center">
         <img
-          src="{% static 'img/victor.webp' %}"
+          src="{% static 'img/avatar_pred.webp' %}"
           alt="Dayana Mozo"
-          class="rounded-circle border border-3 border-white border-opacity-25 mb-3"
-          style="width: 110px; height: 110px; object-fit: cover"
+          class="img-fluid rounded-circle border border-3 border-white border-opacity-25 mb-3 u-style-20e6cbf5"
+          style="width: 150px; height: 150px; object-fit: cover;"
         />
         <div class="fw-bold text-white">Dayana Mozo</div>
         <small
-          class="text-white-50 text-uppercase fw-semibold d-block mb-2"
-          style="letter-spacing: 0.08em; font-size: 0.65rem"
+          class="text-white-50 text-uppercase fw-semibold d-block mb-2 u-style-98048c49"
           >Experiencia del Viajero & CEO</small
         >
         <p class="text-white-50 small mb-3 px-1">
@@ -494,15 +435,15 @@ Monagua{% endblock %} {% block content %}
         <div class="d-flex justify-content-center gap-2">
           <a
             href="#"
-            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center"
-            style="width: 28px; height: 28px"
-            ><i class="bi bi-linkedin" style="font-size: 0.6rem"></i
+            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center u-style-83366e48"
+            aria-label="LinkedIn de Dayana Mozo"
+            ><i class="bi bi-linkedin u-style-29fee910" aria-hidden="true"></i
           ></a>
           <a
             href="#"
-            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center"
-            style="width: 28px; height: 28px"
-            ><i class="bi bi-instagram" style="font-size: 0.6rem"></i
+            class="btn btn-sm btn-outline-light rounded-circle p-0 d-flex align-items-center justify-content-center u-style-83366e48"
+            aria-label="Instagram de Dayana Mozo"
+            ><i class="bi bi-instagram u-style-29fee910" aria-hidden="true"></i
           ></a>
         </div>
       </div>
@@ -514,12 +455,11 @@ Monagua{% endblock %} {% block content %}
 <section class="py-5 text-center bg-white">
   <div class="container py-4">
     <h2
-      class="fw-bold mb-3 text-dark"
-      style="font-size: clamp(1.6rem, 3.5vw, 2.4rem)"
+      class="fw-bold mb-3 text-dark u-style-dd6bfaa4"
     >
       ¿Listo para tu próxima aventura?
     </h2>
-    <p class="fw-light mb-4 mx-auto text-muted" style="max-width: 420px">
+    <p class="fw-light mb-4 mx-auto text-muted u-style-4e9ec4bc">
       Cuéntanos a dónde sueñas con ir y construimos juntos la experiencia
       perfecta.
     </p>

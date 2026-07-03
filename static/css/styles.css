@@ -38,7 +38,8 @@
 
 /* Componente Reutilizable: Tarjetas de Sostenibilidad */
 
-.card-sustainability {
+.card-sustainability,
+.card-sustainability--base {
     min-height: 550px;
     background-size: cover;
     background-position: center;
@@ -46,13 +47,30 @@
     border: none !important;
 }
 
-.card-sustainability:hover {
+.card-sustainability:hover,
+.card-sustainability--hovered:hover {
     transform: scale(1.02);
     box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
 }
 
-.overlay-gradient {
+.overlay-gradient,
+.card-sustainability__overlay {
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.card-sustainability__title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.card-sustainability__description {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.card-sustainability__button {
+    font-weight: 600;
+    border-radius: 50px;
 }
 
 
@@ -67,16 +85,37 @@
     transition: all 0.3s ease;
 }
 
+.navbar-glass__brand {
+    font-weight: bold;
+}
+
+.navbar-glass__list {
+    display: flex;
+    justify-content: center;
+}
+
+.navbar-glass__item {
+    list-style: none;
+}
+
+.navbar-glass__actions {
+    display: flex;
+    align-items: center;
+}
+
 
 /* Efecto de Vidrio Verde al pasar el cursor */
 
-.navbar-glass .nav-link {
+.navbar-glass .nav-link,
+.navbar-glass__link {
     transition: all 0.3s ease;
     border-radius: 50px;
     padding: 0.5rem 1rem !important;
 }
 
-.navbar-glass .nav-link:hover {
+.navbar-glass .nav-link:hover,
+.navbar-glass__link:hover,
+.navbar-glass__link--hovered:hover {
     background: rgba(26, 38, 31, 0.15);
     /* Verde marca translúcido */
     backdrop-filter: blur(5px);
@@ -91,36 +130,65 @@
     color: rgba(255, 255, 255, 0.85);
 }
 
-.footer-monagua h5 {
+.footer-monagua__container {
+    width: 100%;
+}
+
+.footer-monagua__logo {
+    max-height: 60px;
+}
+
+.footer-monagua__brand {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.footer-monagua__social-icons {
+    display: flex;
+    gap: 1rem;
+}
+
+.footer-monagua__social-link {
+    color: #ffffff;
+}
+
+.footer-monagua h5,
+.footer-monagua__title {
     color: #ffffff;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-.footer-monagua a {
+.footer-monagua a,
+.footer-monagua__link {
     transition: all 0.3s ease;
 }
 
-.footer-monagua a:hover {
+.footer-monagua a:hover,
+.footer-monagua__link:hover,
+.footer-monagua__link--hovered:hover {
     color: #ffffff !important;
     transform: translateX(5px);
 }
 
-.form-footer {
+.form-footer,
+.footer-monagua__form-input {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #ffffff !important;
 }
 
-.form-footer::placeholder {
+.form-footer::placeholder,
+.footer-monagua__form-input::placeholder {
     color: rgba(255, 255, 255, 0.5);
 }
 
 
 /* ══════════════ MENÚ SECUNDARIO PREMIUM ══════════════ */
 
-.nav-secondary-link {
+.nav-secondary-link,
+.offcanvas-premium__secondary-link {
     color: #4a4a4a;
     text-decoration: none;
     font-size: 1.05rem;
@@ -128,7 +196,9 @@
     display: inline-block;
 }
 
-.nav-secondary-link:hover {
+.nav-secondary-link:hover,
+.offcanvas-premium__secondary-link:hover,
+.offcanvas-premium__secondary-link--hovered:hover {
     color: #000;
     transform: translateX(8px);
 }
@@ -148,7 +218,8 @@
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav-main-link {
+.nav-main-link,
+.offcanvas-premium__main-link {
     color: #ffffff;
     /* Blanco para contraste sobre vidrio verde */
     text-decoration: none;
@@ -157,7 +228,9 @@
     display: block;
 }
 
-.nav-main-link:hover {
+.nav-main-link:hover,
+.offcanvas-premium__main-link:hover,
+.offcanvas-premium__main-link--hovered:hover {
     color: #000;
     opacity: 0.6;
 }
@@ -165,16 +238,24 @@
 
 /* Ajuste para que los links secundarios se vean más ligeros */
 
-.nav-secondary-menu .nav-secondary-link {
+.nav-secondary-menu,
+.offcanvas-premium__secondary-menu {
+    /* Contenedor */
+}
+
+.nav-secondary-menu .nav-secondary-link,
+.offcanvas-premium__secondary-menu .offcanvas-premium__secondary-link {
     color: rgba(255, 255, 255, 0.7);
     /* Blanco traslúcido */
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
 }
 
-.nav-secondary-menu .nav-secondary-link:hover {
+.nav-secondary-menu .nav-secondary-link:hover,
+.offcanvas-premium__secondary-menu .offcanvas-premium__secondary-link:hover {
     color: #ffffff !important;
 }
+
 
 
 /* ══════════════ ESPACIADO EDITORIAL (APPLE STYLE) ══════════════ */
@@ -205,46 +286,10 @@
 }
 
 
-/* Diseño responsivo nativo para evitar bucles de layout  BASE-ADMIN.HTML*/
-
-
-/* Fuerza la barra de scroll para evitar saltos de ancho */
-
-#mainSidebar {
-    width: 280px;
-    z-index: 1040;
-    transition: transform .3s ease;
-    transform: translateX(-100%);
-}
+/* Diseño responsivo del sidebar → ver static/css/sidebar.css */
 
 #mainContent {
-    margin-left: 0 !important;
-    /* ELIMINADO: transition de margin-left para evitar bucles con Chart.js */
     min-height: 100vh;
-}
-
-@media (min-width: 992px) {
-    #mainSidebar {
-        transform: translateX(0) !important;
-    }
-    #mainContent {
-        margin-left: 280px !important;
-    }
-    #sidebar-toggle,
-    #sidebar-overlay {
-        display: none !important;
-    }
-}
-
-
-/* Clase de activación para móvil controlada por JS */
-
-body.sidebar-open #mainSidebar {
-    transform: translateX(0);
-}
-
-body.sidebar-open #sidebar-overlay {
-    display: block !important;
 }
 
 .font-playfair {
@@ -275,23 +320,27 @@ body.sidebar-open #sidebar-overlay {
     border-color: var(--verde) !important;
 }
 
-.card-hover {
+.card-hover,
+.marquee-container__card {
     transition: transform .4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color .4s ease !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     position: relative;
     transform: translate3d(0,0,0);
 }
 
-.card-hover .card-img {
+.card-hover .card-img,
+.marquee-container__card-img {
     transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.8s ease !important;
 }
 
-.card-hover:hover .card-img {
+.card-hover:hover .card-img,
+.marquee-container__card:hover .marquee-container__card-img {
     transform: scale(1.06);
     opacity: 0.8;
 }
 
-.marquee-wrapper {
+.marquee-wrapper,
+.marquee-container__wrapper {
     display: flex;
     width: max-content;
     /* Animación continua hacia la derecha acelerada por GPU */
@@ -300,11 +349,13 @@ body.sidebar-open #sidebar-overlay {
     transform: translate3d(0, 0, 0);
 }
 
-.marquee-wrapper:hover {
+.marquee-wrapper:hover,
+.marquee-container__wrapper:hover {
     animation-play-state: paused;
 }
 
-.marquee-item {
+.marquee-item,
+.marquee-container__item {
     width: 340px;
     padding: 0 12px;
     flex-shrink: 0;
@@ -313,24 +364,28 @@ body.sidebar-open #sidebar-overlay {
 }
 
 /* Efecto de Enfoque Apple Style Optimizado (solo opacidad y escala) */
-.marquee-wrapper:hover .marquee-item {
+.marquee-wrapper:hover .marquee-item,
+.marquee-container__wrapper:hover .marquee-container__item {
     opacity: 0.55;
     transform: scale(0.97);
 }
 
 /* Destacar el item actual que se está apuntando */
-.marquee-wrapper:hover .marquee-item:hover {
+.marquee-wrapper:hover .marquee-item:hover,
+.marquee-container__wrapper:hover .marquee-container__item:hover {
     opacity: 1;
     transform: scale(1.03);
     z-index: 10;
 }
 
-.marquee-wrapper:hover .marquee-item:hover .card-hover {
+.marquee-wrapper:hover .marquee-item:hover .card-hover,
+.marquee-container__wrapper:hover .marquee-container__item:hover .marquee-container__card {
     border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
 /* Modern Badge Tag (Optimized - No backdrop-filter to prevent mobile lag) */
-.badge-tag {
+.badge-tag,
+.marquee-container__badge {
     background: rgba(26, 38, 31, 0.88); /* Fondo de marca sólido y semi-transparente */
     border: 1px solid rgba(255, 255, 255, 0.15);
     padding: 0.45rem 0.9rem;
@@ -347,20 +402,24 @@ body.sidebar-open #sidebar-overlay {
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-.badge-tag i {
+.badge-tag i,
+.marquee-container__badge i {
     font-size: 1rem;
     color: #96DCAA; /* Tono de verde claro del sistema */
     display: inline-block;
     transition: transform 0.3s ease;
 }
 
-.badge-tag:hover {
+.badge-tag:hover,
+.marquee-container__badge:hover,
+.marquee-container__badge--hovered:hover {
     background: rgba(255, 255, 255, 0.25);
     border-color: rgba(255, 255, 255, 0.35);
     transform: translateY(-2px);
 }
 
-.badge-tag:hover i {
+.badge-tag:hover i,
+.marquee-container__badge:hover i {
     transform: scale(1.15);
 }
 
@@ -375,11 +434,13 @@ body.sidebar-open #sidebar-overlay {
 
 /* Ajuste responsivo para que las cartas no sean demasiado grandes en móviles */
 @media (max-width: 576px) {
-    .marquee-item {
+    .marquee-item,
+    .marquee-container__item {
         width: 280px;
         padding: 0 8px;
     }
-    .badge-tag {
+    .badge-tag,
+    .marquee-container__badge {
         padding: 0.35rem 0.75rem;
         font-size: 0.75rem;
     }

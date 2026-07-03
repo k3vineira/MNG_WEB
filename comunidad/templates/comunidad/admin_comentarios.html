@@ -7,7 +7,7 @@
 <!-- Top Bar -->
 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
   <div>
-    <h2 class="fw-bold mb-0 text-success" style="font-size:1.6rem">Gestión de Comentarios</h2>
+    <h2 class="fw-bold mb-0 text-success u-style-4a548d2f">Gestión de Comentarios</h2>
     <p class="text-muted mb-0 small">Calificaciones y reseñas publicadas por los usuarios.</p>
   </div>
   <div class="d-flex align-items-center gap-2">
@@ -52,14 +52,14 @@
   </div>
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
-      <thead class="table-light text-uppercase tracking-wider" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+      <thead class="table-light text-uppercase tracking-wider u-style-0b04a8e1">
         <tr>
-          <th class="ps-4 py-3" style="width: 250px;">Usuario</th>
-          <th class="py-3" style="width: 150px;">Tipo / Título</th>
-          <th class="py-3 text-center" style="width: 150px;">Calificación</th>
+          <th class="ps-4 py-3 u-style-e8dbada6">Usuario</th>
+          <th class="py-3 u-style-d9900c66">Tipo / Título</th>
+          <th class="py-3 text-center u-style-d9900c66">Calificación</th>
           <th class="py-3">Comentario</th>
-          <th class="py-3 text-center" style="width: 100px;">Estado</th>
-          <th class="pe-4 py-3 text-end" style="width: 150px;">Acciones</th>
+          <th class="py-3 text-center u-style-b3a15a8a">Estado</th>
+          <th class="pe-4 py-3 text-end u-style-d9900c66">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -70,13 +70,13 @@
             <div class="d-flex align-items-center gap-3">
               <img src="{% if comentario.usuario.imagen_perfil %}{{ comentario.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
                    alt="{{ comentario.usuario.get_full_name|default:comentario.usuario.username }}"
-                   class="rounded-circle border"
-                   width="38" height="38" style="object-fit:cover">
+                   class="rounded-circle border u-style-a2bbb072"
+                   width="38" height="38">
               <div>
-                <div class="fw-semibold text-dark" style="font-size: 0.9rem;">
+                <div class="fw-semibold text-dark u-style-8e9648ec">
                   {{ comentario.usuario.get_full_name|default:comentario.usuario.username }}
                 </div>
-                <div class="text-muted" style="font-size: 0.75rem;">
+                <div class="text-muted u-style-199b5800">
                   {{ comentario.usuario.email }}
                 </div>
               </div>
@@ -85,32 +85,32 @@
 
           <!-- Tipo & Título -->
           <td class="py-3">
-            <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5 rounded-3 fw-semibold mb-1 d-inline-block" style="font-size: 0.7rem;">
+            <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5 rounded-3 fw-semibold mb-1 d-inline-block u-style-dd8eb2f6">
               {% if comentario.paquete %}{{ comentario.paquete.nombre }}{% else %}{{ comentario.get_tipo_display }}{% endif %}
             </span>
-            <div class="fw-semibold text-dark small text-truncate" style="max-width: 200px;" title="{{ comentario.titulo }}">
+            <div class="fw-semibold text-dark small text-truncate u-style-7ea37169" title="{{ comentario.titulo }}">
               {{ comentario.titulo }}
             </div>
           </td>
 
           <!-- Calificación (stars) -->
           <td class="py-3 text-center">
-            <div class="text-warning" style="font-size: 0.85rem;">
+            <div class="text-warning u-style-851cab99">
               {% for s in comentario.estrellas %}<i class="bi bi-star-fill"></i>{% endfor %}
               {% for s in comentario.estrellas_vacias %}<i class="bi bi-star"></i>{% endfor %}
             </div>
-            <span class="text-muted fw-bold" style="font-size: 0.75rem;">({{ comentario.valoracion }}/5)</span>
+            <span class="text-muted fw-bold u-style-199b5800">({{ comentario.valoracion }}/5)</span>
           </td>
 
           <!-- Comentario -->
           <td class="py-3">
-            <div class="text-dark small lh-base" style="max-width: 350px; white-space: normal; word-break: break-word;">
+            <div class="text-dark small lh-base u-style-69d93155">
               {{ comentario.mensaje|default:"*Sin comentario escrito.*" }}
             </div>
             {% if comentario.admin_respuesta %}
             <div class="mt-2 bg-light rounded-3 p-3">
               <div class="text-success small fw-semibold mb-1">Respuesta del administrador</div>
-              <div class="text-secondary small" style="white-space:pre-wrap;">{{ comentario.admin_respuesta }}</div>
+              <div class="text-secondary small u-style-d07753cc">{{ comentario.admin_respuesta }}</div>
             </div>
             {% endif %}
           </td>
@@ -118,9 +118,9 @@
           <!-- Estado -->
           <td class="py-3 text-center">
             {% if comentario.visible %}
-              <span class="badge bg-primary bg-opacity-10 text-primary px-2.5 py-1.5 rounded-pill" style="font-size: 0.7rem;">Público</span>
+              <span class="badge bg-primary bg-opacity-10 text-primary px-2.5 py-1.5 rounded-pill u-style-dd8eb2f6">Público</span>
             {% else %}
-              <span class="badge bg-secondary bg-opacity-10 text-secondary px-2.5 py-1.5 rounded-pill" style="font-size: 0.7rem;">Oculto</span>
+              <span class="badge bg-secondary bg-opacity-10 text-secondary px-2.5 py-1.5 rounded-pill u-style-dd8eb2f6">Oculto</span>
             {% endif %}
           </td>
 
@@ -129,7 +129,7 @@
             <div class="text-muted small mb-2">{{ comentario.fecha_creacion|date:"d M, Y" }}</div>
             <form method="post" action="{% url 'toggle_visible' comentario.id %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm {% if comentario.visible %}btn-outline-danger{% else %}btn-outline-success{% endif %} rounded-pill px-3 mb-2" style="font-size: 0.7rem;">
+                <button type="submit" class="btn btn-sm {% if comentario.visible %}btn-outline-danger{% else %}btn-outline-success{% endif %} rounded-pill px-3 mb-2 u-style-dd8eb2f6">
                     {% if comentario.visible %}
                         <i class="bi bi-eye-slash-fill me-1"></i>Ocultar
                     {% else %}
@@ -140,7 +140,7 @@
             <form method="post" action="{% url 'responder_comentario' comentario.id %}">
                 {% csrf_token %}
                 <textarea name="admin_respuesta" class="form-control form-control-sm mb-2" rows="2" placeholder="Respuesta admin...">{{ comentario.admin_respuesta }}</textarea>
-                <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" style="font-size: 0.7rem;">Responder</button>
+                <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 u-style-dd8eb2f6">Responder</button>
             </form>
           </td>
         </tr>

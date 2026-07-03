@@ -3,8 +3,19 @@
 {% block footer %}{% endblock %}
 
 {% block content %}
-
-<div class="container py-5 mt-5" style="max-width:900px;">
+ <div class="container-fluid pt-1 pb-2 px-4 u-style-ed958017">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item fs-5 fw-semibold">
+                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none u-style-fea21948">Inicio</a>
+            </li>
+            <li class="breadcrumb-item active fs-5 fw-bold u-style-fea21948" aria-current="page">
+                Reseñas
+            </li>
+        </ol>
+    </nav>
+</div>
+<div class="container py-5 mt-5 u-style-10efeeeb">
 
 
 
@@ -25,12 +36,12 @@
         <div class="col-12 col-md-9">
           {% for i in "54321" %}
           <div class="d-flex align-items-center gap-2 mb-1">
-            <span class="text-muted small" style="min-width:1.2rem">{{ i }}</span>
-            <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
-            <div class="flex-grow-1 bg-light rounded-pill overflow-hidden" style="height:8px">
-              <div class="bg-success rounded-pill h-100" id="bar-{{ i }}" style="width:0%"></div>
+            <span class="text-muted small u-style-5a4a521a">{{ i }}</span>
+            <i class="bi bi-star-fill text-warning u-style-bc9efe64"></i>
+            <div class="flex-grow-1 bg-light rounded-pill overflow-hidden u-style-c9849390">
+              <div class="bg-success rounded-pill h-100 u-style-9c33ea5e" id="bar-{{ i }}"></div>
             </div>
-            <span class="text-muted small" id="cnt-{{ i }}" style="min-width:1.5rem">0</span>
+            <span class="text-muted small u-style-533f037e" id="cnt-{{ i }}">0</span>
           </div>
           {% endfor %}
         </div>
@@ -96,11 +107,11 @@
             <div class="mb-4">
               <label class="form-label fw-medium small d-block">Valoración general</label>
               <div class="d-flex gap-2 fs-3" id="starGeneral">
-                <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="1"></i>
-                <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="2"></i>
-                <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="3"></i>
-                <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="4"></i>
-                <i class="bi bi-star text-warning star-btn" style="cursor:pointer" data-val="5"></i>
+                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="1"></i>
+                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="2"></i>
+                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="3"></i>
+                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="4"></i>
+                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="5"></i>
               </div>
               <input type="hidden" name="valoracion" id="id_valoracion" value="5">
             </div>
@@ -124,21 +135,19 @@
           {% for r in mis_resenas %}
           <div class="border-bottom pb-3 mb-3">
             <div class="d-flex justify-content-between align-items-start mb-1 gap-2">
-              <span class="fw-semibold small text-truncate" style="max-width:140px">{{ r.titulo }}</span>
+              <span class="fw-semibold small text-truncate u-style-a497ea78">{{ r.titulo }}</span>
               <span
-                class="badge rounded-pill flex-shrink-0 {% if r.visible %}bg-success bg-opacity-25 text-success{% else %}bg-warning bg-opacity-25 text-warning{% endif %}"
-                style="font-size:.65rem">
+                class="badge rounded-pill flex-shrink-0 {% if r.visible %}bg-success bg-opacity-25 text-success{% else %}bg-warning bg-opacity-25 text-warning{% endif %} u-style-8cba01a2">
                 {% if r.visible %}Publicada{% else %}En revisión{% endif %}
               </span>
             </div>
             {% if r.paquete %}
-              <div class="small text-success mb-1" style="font-size:0.75rem;">
+              <div class="small text-success mb-1 u-style-4dc05622">
                 <i class="bi bi-compass-fill me-1"></i>{{ r.paquete.nombre }}
               </div>
             {% endif %}
             <!-- LÍMITE: truncatechars para el mensaje -->
-            <p class="text-muted small mb-1"
-              style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">
+            <p class="text-muted small mb-1 u-style-c69eaeed">
               {{ r.mensaje|truncatechars:90 }}
             </p>
             {% if r.admin_respuesta %}
@@ -152,7 +161,7 @@
                 {% for s in r.estrellas %}★{% endfor %}{% for s in r.estrellas_vacias %}<span
                   class="text-muted">★</span>{% endfor %}
               </span>
-              <span class="text-muted" style="font-size:.7rem">{{ r.fecha_creacion|date:"d M Y" }}</span>
+              <span class="text-muted u-style-bc9efe64">{{ r.fecha_creacion|date:"d M Y" }}</span>
             </div>
           </div>
           {% endfor %}
@@ -177,11 +186,11 @@
 
     <div id="resenas-container">
       {% for r in resenas_publicas %}
-      <div class="resena-item col-12 border-bottom py-4" style="display:none">
+      <div class="resena-item col-12 border-bottom py-4 u-style-cb458930">
         <div class="d-flex gap-3 align-items-center mb-2 flex-wrap">
           <img
             src="{% if r.usuario.imagen_perfil %}{{ r.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
-            class="rounded-circle flex-shrink-0" width="40" height="40" style="object-fit:cover;">
+            class="rounded-circle flex-shrink-0 u-style-a2bbb072" width="40" height="40">
           <div class="flex-grow-1 min-width-0">
             <h6 class="mb-0 fw-bold text-truncate">{{ r.usuario.get_full_name|default:r.usuario.username }}</h6>
             <small class="text-muted">{{ r.fecha_creacion|date:"d M, Y" }}</small>
@@ -195,10 +204,10 @@
         </div>
         <h6 class="fw-semibold mb-1">{{ r.titulo }}</h6>
         <!-- LÍMITE: mensaje cortado con "ver más" si es largo -->
-        <p class="text-secondary mb-2" style="overflow-wrap:break-word;word-break:break-word;max-width:100%">
+        <p class="text-secondary mb-2 u-style-e20e94e2">
           {{ r.mensaje|truncatechars:200 }}
         </p>
-        <span class="badge rounded-pill bg-primary bg-opacity-25 text-primary" style="font-size:.65rem">
+        <span class="badge rounded-pill bg-primary bg-opacity-25 text-primary u-style-8cba01a2">
           {% if r.paquete %}{{ r.paquete.nombre }}{% else %}{{ r.get_tipo_display }}{% endif %}
         </span>
       </div>

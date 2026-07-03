@@ -5,7 +5,7 @@
 {% block titulo %}Carrito | Monagua{% endblock %}
 
 {% block private_content %}
-<div class="container py-4" style="max-width:1000px;">
+<div class="container py-4 u-style-f694cf53">
 
   <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
     <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -32,11 +32,11 @@
           <div class="col-12">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
               <div class="row g-0 align-items-stretch">
-                <div class="col-md-4 position-relative" style="min-height: 180px;">
+                <div class="col-md-4 position-relative u-style-8731805f">
                   {% if reserva.paquete.imagen %}
-                    <img src="{{ reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="{{ reserva.paquete.nombre }}">
+                    <img src="{{ reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0 u-style-ca362336" alt="{{ reserva.paquete.nombre }}">
                   {% else %}
-                    <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="Imagen por defecto">
+                    <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 position-absolute start-0 top-0 u-style-ca362336" alt="Imagen por defecto">
                   {% endif %}
                 </div>
                 <div class="col-md-8 d-flex flex-column">
@@ -78,7 +78,7 @@
     </form>
 
     <!-- Bootstrap toast container for feedback -->
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div class="position-fixed bottom-0 end-0 p-3 u-style-b9d3aadf">
       <div id="cartToast" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
           <div class="toast-body">

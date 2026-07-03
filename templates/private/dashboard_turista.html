@@ -10,7 +10,7 @@
 <!-- ── Top Bar ── -->
 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
   <div>
-    <h2 class="fw-bold mb-0 text-success" style="font-size:1.6rem">
+    <h2 class="fw-bold mb-0 text-success u-style-4a548d2f">
       <i class="bi bi-compass me-2"></i>Hola, {{ user.first_name|default:user.username }}
     </h2>
     <p class="text-muted mb-0 small">Aquí tienes un resumen de tu actividad como viajero.</p>
@@ -39,7 +39,7 @@
         </div>
         <div class="text-muted small">Inversión en Viajes</div>
         <div class="fw-bold fs-5 text-success">COP ${{ total_invertido|floatformat:0|intcomma|default:"0" }}</div>
-        <div class="text-muted" style="font-size:.75rem"><i class="bi bi-check-circle text-success"></i> Pagos aprobados</div>
+        <div class="text-muted u-style-640fb1f6"><i class="bi bi-check-circle text-success"></i> Pagos aprobados</div>
       </div>
     </div>
   </div>
@@ -54,7 +54,7 @@
         </div>
         <div class="text-muted small">Mis Reservas</div>
         <div class="fw-bold fs-5 text-primary">{{ total_reservas|default:"0" }}</div>
-        <div style="font-size:.75rem">
+        <div class="u-style-640fb1f6">
           <a href="{% url 'mis_reservas_usuario' %}" class="text-decoration-none text-muted">
             Ver detalle <i class="bi bi-arrow-right text-primary"></i>
           </a>
@@ -73,7 +73,7 @@
         </div>
         <div class="text-muted small">Mis Reseñas</div>
         <div class="fw-bold fs-5 text-warning">{{ total_comentarios|default:"0" }}</div>
-        <div style="font-size:.75rem">
+        <div class="u-style-640fb1f6">
           <a href="{% url 'mis_resenas' %}" class="text-decoration-none text-muted">
             Ver reseñas <i class="bi bi-arrow-right text-warning"></i>
           </a>
@@ -92,7 +92,7 @@
         </div>
         <div class="text-muted small">PQRS Enviadas</div>
         <div class="fw-bold fs-5 text-danger">{{ total_pqrs|default:"0" }}</div>
-        <div style="font-size:.75rem">
+        <div class="u-style-640fb1f6">
           <a href="{% url 'mis_pqrs' %}" class="text-decoration-none text-muted">
             Ver solicitudes <i class="bi bi-arrow-right text-danger"></i>
           </a>
@@ -113,15 +113,15 @@
       </div>
       <div class="card-body d-flex flex-column align-items-center p-3">
         <div class="chart-container"><canvas id="chartEstado"></canvas></div>
-        <div class="d-flex justify-content-center gap-3 mt-3" style="font-size:.72rem;color:#666">
+        <div class="d-flex justify-content-center gap-3 mt-3 u-style-1602259d">
           <span class="d-flex align-items-center gap-1">
-            <span class="rounded-1 bg-success d-inline-block" style="width:10px;height:10px"></span> Confirmadas
+            <span class="rounded-1 bg-success d-inline-block u-style-bf6f6719"></span> Confirmadas
           </span>
           <span class="d-flex align-items-center gap-1">
-            <span class="rounded-1 bg-warning d-inline-block" style="width:10px;height:10px"></span> Pendientes
+            <span class="rounded-1 bg-warning d-inline-block u-style-bf6f6719"></span> Pendientes
           </span>
           <span class="d-flex align-items-center gap-1">
-            <span class="rounded-1 bg-danger d-inline-block" style="width:10px;height:10px"></span> Canceladas
+            <span class="rounded-1 bg-danger d-inline-block u-style-bf6f6719"></span> Canceladas
           </span>
         </div>
       </div>
@@ -207,13 +207,12 @@
             </span>
             <div class="flex-grow-1">
               <div class="small fw-medium">{{ r.paquete.nombre|default:"Paquete" }}</div>
-              <div class="text-muted" style="font-size:.72rem">
+              <div class="text-muted u-style-cc73531a">
                 {{ r.fecha|date:"d M, Y" }} —
                 <span class="badge rounded-pill
                   {% if r.estado == 'confirmada' %}bg-success bg-opacity-25 text-success
                   {% elif r.estado == 'pendiente' %}bg-warning bg-opacity-25 text-warning
-                  {% else %}bg-danger bg-opacity-25 text-danger{% endif %}"
-                  style="font-size:.6rem">
+                  {% else %}bg-danger bg-opacity-25 text-danger{% endif %} u-style-3166ff78">
                   {{ r.get_estado_display|default:r.estado }}
                 </span>
               </div>
@@ -240,11 +239,11 @@
   <div class="col-12 col-lg-5">
     <div class="card border-0 shadow-sm bg-success text-white h-100 position-relative overflow-hidden">
       <div class="position-absolute end-0 bottom-0 opacity-10 m-n3 d-none d-sm-block">
-        <i class="bi bi-compass" style="font-size: 12rem;"></i>
+        <i class="bi bi-compass u-style-0e92c391"></i>
       </div>
       <div class="card-body position-relative p-4">
         <h5 class="fw-bold mb-3"><i class="bi bi-tree-fill me-2"></i>Viajero Ecológico</h5>
-        <p class="small mb-4" style="line-height: 1.6;">En Monagua nos esforzamos por preservar los senderos del Páramo de Mongua. Cada viaje confirmado contribuye a la conservación y el apoyo a las comunidades locales.</p>
+        <p class="small mb-4 u-style-eb084630">En Monagua nos esforzamos por preservar los senderos del Páramo de Mongua. Cada viaje confirmado contribuye a la conservación y el apoyo a las comunidades locales.</p>
         <div class="bg-white bg-opacity-20 rounded-3 p-3">
           <div class="d-flex gap-3 align-items-center">
             <span class="fs-1">🌱</span>

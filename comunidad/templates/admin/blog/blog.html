@@ -1,83 +1,141 @@
 {% extends 'admin/base-admin.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="card border-0 shadow-sm mb-4 rounded-3 mx-auto" style="background-color: var(--verde-mid); color: white; max-width: 1100px;">
-        <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-            <h3 class="fw-bold mb-0">Administración de Blogs</h3>
-            <a href="{% url 'crear_blog' %}" class="btn btn-light fw-bold px-3">
-                <i class="bi bi-plus-circle"></i> Nuevo Blog
+<div class="container-fluid py-4">
+    
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
+                    <i class="bi bi-file-earmark-post me-3"></i>Administración de Blogs
+                </h1>
+                <p class="text-muted mb-0">Gestiona las entradas de blog, artículos informativos y noticias del sitio web.</p>
+            </div>
+            <a href="{% url 'crear_blog' %}" class="btn btn-success fw-bold rounded-pill shadow-sm px-4 py-2">
+                <i class="bi bi-plus-circle me-2"></i>Nuevo Blog
             </a>
         </div>
     </div>
 
-   <div class="row g-3 mb-4 mx-auto justify-content-center" style="max-width: 1100px;">
-    {% for label, count, color in stats_list %}
-    <div class="col-4">
-        <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background: #ffffff;">
-            <div class="card-body d-flex flex-column align-items-center justify-content-center p-1">
-                
-                <div class="rounded-circle d-flex align-items-center justify-content-center mb-2" 
-                     style="width: 60px; height: 60px; 
-                            {% if color == 'text-success' %} background-color: #e8f5e9; 
-                            {% elif color == 'text-danger' %} background-color: #ffebee; 
-                            {% else %} background-color: #f1f3f5; {% endif %}">
-                    
-                    {% if color == 'text-dark' %}
-                        <i class="bi bi-luggage-fill text-secondary" style="font-size: 1.6rem;"></i>
-                    {% elif color == 'text-success' %}
-                        <i class="bi bi-airplane-engines-fill text-success" style="font-size: 1.6rem;"></i>
-                    {% else %}
-                        <i class="bi bi-ticket-detailed-fill text-danger" style="font-size: 1.6rem;"></i>
-                    {% endif %}
+    <div class="row g-4 mb-4">
+        {% for label, count, color in stats_list %}
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm
+                        {% if color == 'text-success' %} bg-success bg-opacity-10 text-success
+                        {% elif color == 'text-danger' %} bg-danger bg-opacity-10 text-danger
+                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} u-style-c5b9e7ac">
+                        
+                        {% if color == 'text-dark' %}
+                            <i class="bi bi-journal-text"></i>
+                        {% elif color == 'text-success' %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-pencil-square"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 u-style-75b54407">{{ label }}</h6>
+                        <h3 class="fw-black mb-0 {{ color }}">{{ count|default:0 }}</h3>
+                    </div>
                 </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-                <span class="text-muted small text-uppercase fw-semibold mb-1" style="font-size: 0.75rem; letter-spacing: 0.3px;">
-                    {{ label }}
-                </span>
-                
-                <h2 class="fw-black mb-0 {{ color }}" style="font-size: 2.1rem; font-weight: 800; line-height: 1;">
-                    {{ count|default:0 }}
-                </h2>
-                
+    <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
+        <div class="table-responsive d-none d-lg-block">
+            <table id="tablaBlogs" class="table table-hover align-middle mb-0 u-style-6d567387">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th scope="col" class="fw-bold ps-3">Título</th>
+                        <th scope="col" class="fw-bold text-center">Estado</th>
+                        <th scope="col" class="fw-bold text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entrada in blogs %}
+                    <tr>
+                        <td class="ps-3">
+                            <h6 class="fw-bold text-dark mb-0">{{ entrada.titulo }}</h6>
+                        </td>
+                        <td class="text-center">
+                            {% if entrada.publicado %}
+                                <span class="badge bg-success bg-opacity-75 px-3 py-2 rounded-pill shadow-sm">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Publicado
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger bg-opacity-75 px-3 py-2 rounded-pill shadow-sm">
+                                    <i class="bi bi-exclamation-circle-fill me-1"></i> Borrador
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group shadow-sm">
+                                <a href="{% url 'editar_blog' entrada.pk %}" class="btn btn-sm btn-outline-secondary" title="Editar Blog">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'eliminar_blog' entrada.pk %}" class="btn btn-sm btn-outline-danger" title="Eliminar Blog">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center py-5 text-muted">No hay entradas de blog registradas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-lg-none">
+            <div class="row g-3">
+                {% for entrada in blogs %}
+                <div class="col-12">
+                    <div class="card border border-light shadow-sm rounded-4 p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2 border-bottom pb-2">
+                            <div>
+                                <h5 class="fw-bold text-dark mb-0">{{ entrada.titulo }}</h5>
+                            </div>
+                            <div>
+                                {% if entrada.publicado %}
+                                    <span class="badge bg-success bg-opacity-75 rounded-pill shadow-sm">Publicado</span>
+                                {% else %}
+                                    <span class="badge bg-danger bg-opacity-75 rounded-pill shadow-sm">Borrador</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-2">
+                            <a href="{% url 'editar_blog' entrada.pk %}" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill">
+                                <i class="bi bi-pencil me-1"></i> Editar
+                            </a>
+                            <a href="{% url 'eliminar_blog' entrada.pk %}" class="btn btn-sm btn-outline-danger flex-fill fw-bold rounded-pill">
+                                <i class="bi bi-trash me-1"></i> Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center p-4 text-muted border rounded shadow-sm bg-light">
+                    No hay entradas de blog registradas.
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
-    {% endfor %}
 </div>
-    <div class="card border-0 shadow-sm rounded-3 mx-auto" style="max-width: 1100px; overflow: hidden;">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr class="text-uppercase text-muted" style="font-size: 0.9rem;">
-                    <th class="ps-4 py-4">Título</th>
-                    
-                    <th class="text-center py-4">Estado</th>
-                    <th class="text-center py-4">Acciones</th>
-                </tr>
-            </thead>
-            <tbody class="fs-5">
-                {% for entrada in blogs %}
-                <tr>
-                    <td class="ps-4 py-4 fw-bold text-dark">{{ entrada.titulo }}</td>
-                   <td class="text-center py-4">
-                    {% if entrada.publicado %}
-                   <span class="badge text-white rounded-pill px-4 py-2 fs-6" style="background-color: var(--verde-mid);"> Publicado</span>
-                    {% else %}
-                    <span class="badge bg-danger text-white rounded-pill px-4 py-2 fs-6">Borrador</span>
-                    {% endif %}
-                    </td>
-                    <td class="text-center py-4">
-                        <a href="{% url 'editar_blog' entrada.pk %}" class="text-primary text-decoration-none mx-2 fw-bold">EDITAR</a>
-                        <a href="{% url 'eliminar_blog' entrada.pk %}" class="text-danger text-decoration-none mx-2 fw-bold">ELIMINAR</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="3" class="text-center py-5 text-muted">No hay entradas de blog registradas.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/tconf/tconf-tablaBlogs.js' %}"></script>
 {% endblock %}
