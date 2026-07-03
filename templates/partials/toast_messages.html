@@ -1,4 +1,4 @@
-<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 2000; margin-top: 5.5rem;">
+<div class="toast-container position-fixed top-0 end-0 p-3 u-style-899f04b0">
   {% if messages %}
     {% for message in messages %}
       <div class="toast border-0 rounded-4 shadow-lg mb-3" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="6000">
@@ -31,7 +31,7 @@
           
           <!-- Text Body -->
           <div class="flex-grow-1 text-dark pe-2">
-            <h6 class="fw-bold mb-0 text-start" style="font-size: 0.95rem;">
+            <h6 class="fw-bold mb-0 text-start u-style-f0396903">
               {% if message.tags == 'success' %}¡Excelente!
               {% elif message.tags == 'error' or message.tags == 'danger' %}¡Error!
               {% elif message.tags == 'warning' %}¡Atención!

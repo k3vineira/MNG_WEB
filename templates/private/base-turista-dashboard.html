@@ -12,23 +12,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'css/styles_generated.css' %}">
   {% block extra_head %}{% endblock %}
   
 </head>
-<body class="bg-light" style="font-family:'Poppins',sans-serif">
+<body class="bg-light u-style-0e1c2a89">
 
 <!-- ── Botón hamburguesa (solo móvil) ── -->
 <button id="sidebar-toggle"
-        class="btn btn-success position-fixed d-lg-none"
-        style="top:12px;left:12px;z-index:1045;width:42px;height:42px;border-radius:10px;padding:0;display:flex;align-items:center;justify-content:center"
+        class="btn btn-success position-fixed d-lg-none u-style-f3ff7e61"
         aria-label="Abrir menú" aria-expanded="false" aria-controls="mainSidebar">
   <i class="bi bi-list fs-5"></i>
 </button>
 
 <!-- ── Overlay móvil ── -->
 <div id="sidebar-overlay"
-     class="position-fixed top-0 start-0 w-100 h-100 d-none"
-     style="background:rgba(0,0,0,.5);z-index:1039"></div>
+     class="position-fixed top-0 start-0 w-100 h-100 d-none u-style-11b54de0"></div>
 
 <!-- ══════════════ SIDEBAR ══════════════ -->
 {% include 'partials/aside-turista.html' %}

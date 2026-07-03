@@ -34,8 +34,7 @@
                         {% elif color == 'text-danger' %} bg-danger bg-opacity-10 text-danger
                         {% elif color == 'text-info' %} bg-info bg-opacity-10 text-info
                         {% elif color == 'text-secondary' %} bg-secondary bg-opacity-10 text-secondary
-                        {% else %} bg-light text-dark {% endif %}" 
-                        style="width: 50px; height: 50px; font-size: 1.3rem;">
+                        {% else %} bg-light text-dark {% endif %} u-style-97db017b">
                         {% if color == 'text-dark' %}
                             <i class="bi bi-calendar-check"></i>
                         {% elif color == 'text-success' %}
@@ -47,7 +46,7 @@
                         {% endif %}
                     </div>
                     <div>
-                        <h6 class="text-muted text-uppercase fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 0.5px;">{{ label }}</h6>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 u-style-0b04a8e1">{{ label }}</h6>
                         <h4 class="fw-black mb-0 {{ color }}">{{ count }}</h4>
                     </div>
                 </div>
@@ -60,7 +59,7 @@
     <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
         <!-- Tabla Desktop -->
         <div class="table-responsive d-none d-lg-block">
-            <table id="tablaTemporadas" class="table table-hover align-middle mb-0" style="width:100%">
+            <table id="tablaTemporadas" class="table table-hover align-middle mb-0 u-style-6d567387">
                 <thead class="table-light text-muted">
                     <tr>
                         <th scope="col" class="fw-bold">Nombre de la Temporada</th>
@@ -133,11 +132,11 @@
                         
                         <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.65rem;">Fecha Inicio</small>
+                                <small class="text-muted d-block text-uppercase fw-bold u-style-10b9dc21">Fecha Inicio</small>
                                 <span class="fw-semibold text-secondary small">{{ t.fecha_inicio|date:"d M, Y" }}</span>
                             </div>
                             <div class="col-6">
-                                <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.65rem;">Fecha Fin</small>
+                                <small class="text-muted d-block text-uppercase fw-bold u-style-10b9dc21">Fecha Fin</small>
                                 <span class="fw-semibold text-secondary small">{{ t.fecha_fin|date:"d M, Y" }}</span>
                             </div>
                         </div>

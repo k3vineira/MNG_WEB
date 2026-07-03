@@ -1,17 +1,17 @@
 {% load static %}
-<div id="mainSidebar" class="position-fixed top-0 start-0 h-100 d-flex shadow-lg bg-dark" style="z-index: 1040;">
+<div id="mainSidebar" class="position-fixed top-0 start-0 h-100 d-flex shadow-lg bg-dark u-style-b9a43dee">
   <!--1. VISTA EXPANDIDA (SIDEBAR ADMIN ANCHO) -->
   <div class="collapse collapse-horizontal show toggle-admin-sidebar" id="sidebarWide">
     
-    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary" style="width: 280px; min-width: 280px; max-width: 280px; flex-shrink: 0;">
+    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary u-style-a3df2370">
       
       <!-- Header / Brand -->
       <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
         <a href="/" class="d-flex align-items-center gap-2 text-white text-decoration-none">
-          <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="rounded-circle border border-success flex-shrink-0" width="35" height="35" style="object-fit:cover">
+          <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="rounded-circle border border-success flex-shrink-0 u-style-a2bbb072" width="35" height="35">
           <div class="d-flex flex-column">
-            <span class="fw-bold small" style="letter-spacing: 1px;">MONAGUA</span>
-            <span class="text-success text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 2px;">Admin Panel</span>
+            <span class="fw-bold small u-style-135310c2">MONAGUA</span>
+            <span class="text-success text-uppercase fw-bold u-style-6c971d9b">Admin Panel</span>
           </div>
         </a>
         <button class="btn btn-sm btn-outline-secondary border-0 text-white flex-shrink-0 toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-admin-sidebar" aria-label="Contraer menú">
@@ -25,7 +25,7 @@
           
           <!-- Sección Principal -->
           <li class="nav-item mt-1 mb-1">
-            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Principal</span>
+            <span class="text-secondary text-uppercase fw-bold small px-2 u-style-e8f06dcb">Principal</span>
           </li>
           <li class="nav-item">
             <a href="/" class="nav-link text-white opacity-75 d-flex align-items-center gap-2">
@@ -53,7 +53,7 @@
 
           <!-- Sección Gestión -->
           <li class="nav-item mt-2 mb-1">
-            <span class="text-secondary text-uppercase fw-bold small px-2" style="font-size: 0.65rem; letter-spacing: 1px;">Gestión</span>
+            <span class="text-secondary text-uppercase fw-bold small px-2 u-style-e8f06dcb">Gestión</span>
           </li>
 
           <!-- Paquetes -->
@@ -128,10 +128,10 @@
       <!-- Footer: Perfil + Logout -->
       <div class="p-3 border-top border-secondary">
         <div class="d-flex align-items-center gap-3 mb-3">
-          <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success flex-shrink-0" width="40" height="40" style="object-fit:cover">
+          <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success flex-shrink-0 u-style-a2bbb072" width="40" height="40">
           <div class="overflow-hidden">
             <div class="fw-bold text-white fs-6 text-truncate">{{ user.first_name|default:'Administrador' }}</div>
-            <div class="text-success fw-semibold text-truncate" style="font-size:.7rem">Super Admin</div>
+            <div class="text-success fw-semibold text-truncate u-style-bc9efe64">Super Admin</div>
           </div>
         </div>
         <form action="{% url 'logout' %}" method="post">
@@ -150,10 +150,10 @@
        ========================================================================= -->
   <div class="collapse collapse-horizontal toggle-admin-sidebar" id="sidebarSlim">
     
-    <aside class="bg-dark text-white d-flex flex-column align-items-center h-100 border-end border-secondary" style="width: 70px;">
+    <aside class="bg-dark text-white d-flex flex-column align-items-center h-100 border-end border-secondary u-style-1ba5ed5b">
       
       <!-- Header / Icono de despliegue -->
-      <div class="d-flex align-items-center justify-content-center p-3 w-100 border-bottom border-secondary" style="height: 72px;">
+      <div class="d-flex align-items-center justify-content-center p-3 w-100 border-bottom border-secondary u-style-0d0bd2ea">
         <button class="btn btn-sm btn-outline-secondary border-0 text-white toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-admin-sidebar" aria-label="Expandir menú">
           <i class="bi bi-list fs-4"></i>
         </button>
@@ -238,7 +238,7 @@
 
       <!-- Footer Slim -->
       <div class="p-2 w-100 text-center border-top border-secondary d-flex flex-column align-items-center gap-3">
-        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success" width="34" height="34" style="object-fit:cover" title="{{ user.first_name|default:'Administrador' }}">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success u-style-a2bbb072" width="34" height="34" title="{{ user.first_name|default:'Administrador' }}">
         <form action="{% url 'logout' %}" method="post" class="w-100">
           {% csrf_token %}
           <button type="submit" class="btn btn-sm btn-outline-danger border-0 w-100" title="Cerrar Sesión">
@@ -253,6 +253,6 @@
 </div>
 
 <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-<script src="{% static 'js/sidebar.js' %}"></script>
+<script src="{% static 'js/sidebar.js' %}" defer></script>
 
 {% include 'notificaciones.html' %}

@@ -1,5 +1,5 @@
 {% if guia_sel %}
-  <div class="modal fade show" id="modalAsignar{{ guia_sel.id }}" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);" aria-modal="true" role="dialog">
+  <div class="modal fade show u-style-1efdc42d" id="modalAsignar{{ guia_sel.id }}" tabindex="-1" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content shadow-lg border-0">
         <form action="{% url 'asignar_tour_guia' guia_sel.id %}" method="POST">

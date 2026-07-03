@@ -1,16 +1,16 @@
 <!-- Encabezado de Usuario por Rol -->
 <li class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column">
   {% if user.is_staff or user.is_superuser %}
-    <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Gestión Global</span>
+    <span class="text-muted fw-bold text-uppercase u-style-22c80133">Gestión Global</span>
     <span class="small fw-semibold text-dark">Administrador</span>
   {% elif user.es_guia %}
-    <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Panel de Trabajo</span>
+    <span class="text-muted fw-bold text-uppercase u-style-22c80133">Panel de Trabajo</span>
     <span class="small fw-semibold text-dark">Guía Turístico</span>
   {% elif user.es_turista %}
-    <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Mi Cuenta</span>
+    <span class="text-muted fw-bold text-uppercase u-style-22c80133">Mi Cuenta</span>
     <span class="small fw-semibold text-dark">Viajero</span>
   {% else %}
-    <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px">Mi Cuenta</span>
+    <span class="text-muted fw-bold text-uppercase u-style-22c80133">Mi Cuenta</span>
     <span class="small fw-semibold text-dark">Usuario</span>
   {% endif %}
 </li>

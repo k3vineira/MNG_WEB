@@ -31,8 +31,7 @@
                     <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm
                         {% if color == 'text-success' %} bg-success bg-opacity-10 text-success
                         {% elif color == 'text-danger' %} bg-danger bg-opacity-10 text-danger
-                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %}" 
-                        style="width: 60px; height: 60px; font-size: 1.5rem;">
+                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} u-style-c5b9e7ac">
                         {% if color == 'text-dark' %}
                             <i class="bi bi-luggage-fill"></i>
                         {% elif color == 'text-success' %}
@@ -42,7 +41,7 @@
                         {% endif %}
                     </div>
                     <div>
-                        <h6 class="text-muted text-uppercase fw-bold mb-1" style="font-size: 0.8rem; letter-spacing: 0.5px;">{{ label }}</h6>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 u-style-75b54407">{{ label }}</h6>
                         <h3 class="fw-black mb-0 {{ color }}">{{ count }}</h3>
                     </div>
                 </div>
@@ -55,7 +54,7 @@
     <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
         <!-- Tabla Desktop -->
         <div class="table-responsive d-none d-lg-block">
-            <table id="tablaPaquetes" class="table table-hover align-middle mb-0" style="width:100%">
+            <table id="tablaPaquetes" class="table table-hover align-middle mb-0 u-style-6d567387">
                 <thead class="table-light text-muted">
                     <tr>
                         <th scope="col" class="fw-bold">Paquete</th>
@@ -70,9 +69,9 @@
                         <td>
                             <div class="d-flex align-items-center gap-3">
                                 {% if paquete.imagen %}
-                                    <img src="{{ paquete.imagen.url }}" alt="{{ paquete.nombre }}" class="rounded shadow-sm" style="width: 100px; height: 60px; object-fit: cover;">
+                                    <img src="{{ paquete.imagen.url }}" alt="{{ paquete.nombre }}" class="rounded shadow-sm u-style-aa43df9a">
                                 {% else %}
-                                    <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center text-muted" style="width: 100px; height: 60px;">
+                                    <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center text-muted u-style-93c7e9a4">
                                         <i class="bi bi-image fs-4"></i>
                                     </div>
                                 {% endif %}
@@ -121,9 +120,9 @@
                 <div class="col-12">
                     <div class="card border border-light shadow-sm rounded-4">
                         {% if paquete.imagen %}
-                            <img src="{{ paquete.imagen.url }}" alt="{{ paquete.nombre }}" class="card-img-top object-fit-cover" style="height: 150px; border-top-left-radius: var(--bs-border-radius-xl); border-top-right-radius: var(--bs-border-radius-xl);">
+                            <img src="{{ paquete.imagen.url }}" alt="{{ paquete.nombre }}" class="card-img-top object-fit-cover u-style-7fac7ccf">
                         {% else %}
-                            <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 150px; border-top-left-radius: var(--bs-border-radius-xl); border-top-right-radius: var(--bs-border-radius-xl);">
+                            <div class="bg-light d-flex align-items-center justify-content-center text-muted u-style-7fac7ccf">
                                 <i class="bi bi-image fs-1"></i>
                             </div>
                         {% endif %}

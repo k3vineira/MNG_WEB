@@ -60,13 +60,12 @@
                       <img
                         src="{{ user_guia.imagen_perfil.url }}"
                         alt="Foto"
-                        class="rounded-circle shadow-sm me-3 border border-warning border-opacity-50"
+                        class="rounded-circle shadow-sm me-3 border border-warning border-opacity-50 u-style-ca362336"
                         width="45"
                         height="45"
-                        style="object-fit: cover"
                       />
                       {% else %}
-                      <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-dark fw-bold bg-warning" style="width: 45px; height: 45px;">
+                      <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-dark fw-bold bg-warning u-style-55a6b999">
                           {{ user_guia.first_name|first|default:user_guia.username|first|upper }}
                       </div>
                       {% endif %}
@@ -166,9 +165,9 @@
                               <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
                                   <div class="d-flex align-items-center gap-3">
                                       {% if user_guia.imagen_perfil %}
-                                          <img src="{{ user_guia.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border border-warning" width="50" height="50" style="object-fit: cover;">
+                                          <img src="{{ user_guia.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border border-warning u-style-ca362336" width="50" height="50">
                                       {% else %}
-                                          <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-dark fw-bold bg-warning" style="width: 50px; height: 50px;">
+                                          <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-dark fw-bold bg-warning u-style-250a21b0">
                                               {{ user_guia.first_name|first|default:user_guia.username|first|upper }}
                                           </div>
                                       {% endif %}
@@ -235,7 +234,7 @@
 <!-- ============================================== -->
 <!-- COMPONENTES PARA NUEVO GUÍA (FUERA DEL BUCLE) -->
 <!-- ============================================== -->
-<div class="offcanvas offcanvas-end border-0 shadow" tabindex="-1" id="offcanvasNuevoGuia" style="width: 400px">
+<div class="offcanvas offcanvas-end border-0 shadow u-style-faff040a" tabindex="-1" id="offcanvasNuevoGuia">
   <div class="offcanvas-header bg-success bg-opacity-10 border-bottom">
     <h5 class="offcanvas-title fw-bold text-success d-flex align-items-center gap-2 m-0">
       <i class="bi bi-person-plus fs-4"></i>
@@ -312,7 +311,7 @@
           <label class="text-muted small">Años de Experiencia *</label>
       </div>
       <div class="form-floating mb-4">
-          <textarea class="form-control form-control-sm" name="biografia" style="height: 100px" placeholder="Breve descripción..."></textarea>
+          <textarea class="form-control form-control-sm u-style-1a3a679d" name="biografia" placeholder="Breve descripción..."></textarea>
           <label class="text-muted small">Biografía / Presentación</label>
       </div>
 
@@ -333,7 +332,7 @@
 <!-- ============================================== -->
 {% for user_guia in guias %}
     <!-- OFFCANVAS DE EDICIÓN -->
-    <div class="offcanvas offcanvas-end border-0 shadow" tabindex="-1" id="offcanvasEditarGuia{{ user_guia.id }}" style="width: 400px">
+    <div class="offcanvas offcanvas-end border-0 shadow u-style-faff040a" tabindex="-1" id="offcanvasEditarGuia{{ user_guia.id }}">
       <div class="offcanvas-header bg-secondary bg-opacity-10 border-bottom p-4">
         <h5 class="offcanvas-title fw-bold text-dark d-flex align-items-center gap-2 m-0">
           <i class="bi bi-pencil-square fs-4"></i>
@@ -410,7 +409,7 @@
               <label class="text-muted small">Años de Experiencia *</label>
           </div>
           <div class="form-floating mb-4">
-              <textarea class="form-control form-control-sm" name="biografia" style="height: 100px">{% if user_guia.guia %}{{ user_guia.guia.biografia|default:'' }}{% endif %}</textarea>
+              <textarea class="form-control form-control-sm u-style-1a3a679d" name="biografia">{% if user_guia.guia %}{{ user_guia.guia.biografia|default:'' }}{% endif %}</textarea>
               <label class="text-muted small">Biografía / Presentación</label>
           </div>
 
@@ -459,16 +458,16 @@
             </div>
             
             <div class="mb-4">
-              <label class="text-muted small fw-bold text-uppercase" style="letter-spacing: 1px;">Licencia de Turismo</label>
+              <label class="text-muted small fw-bold text-uppercase u-style-135310c2">Licencia de Turismo</label>
               <div class="fs-4 font-monospace fw-bold text-dark border-bottom border-warning pb-2">
                 {% if user_guia.guia %}{{ user_guia.guia.licencia_turismo|default:"—" }}{% else %}—{% endif %}
               </div>
             </div>
 
             <div>
-              <label class="text-muted small fw-bold text-uppercase mb-2" style="letter-spacing: 1px;">Biografía Oficial</label>
+              <label class="text-muted small fw-bold text-uppercase mb-2 u-style-135310c2">Biografía Oficial</label>
               <div class="bg-light p-3 rounded border">
-                <p class="text-dark small mb-0 lh-lg" style="text-align: justify;">
+                <p class="text-dark small mb-0 lh-lg u-style-5288d5e7">
                   {% if user_guia.guia and user_guia.guia.biografia %}
                       {{ user_guia.guia.biografia }}
                   {% else %}

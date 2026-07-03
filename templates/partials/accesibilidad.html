@@ -2,8 +2,7 @@
 <!-- Accesibilidad: {{ a11y_mode|default:"activo" }} -->
 <!-- ── Botón flotante de Accesibilidad ── -->
 <button id="a11y-btn" onclick="A11y.toggle()" aria-label="Opciones de accesibilidad" aria-expanded="false"
-  class="a11y-btn-main position-fixed shadow-lg p-0 d-flex align-items-center justify-content-center"
-  style="bottom:1.5rem;right:1.5rem;z-index:9999;width:60px;height:60px;border:3px solid rgba(255,255,255,0.4)">
+  class="a11y-btn-main position-fixed shadow-lg p-0 d-flex align-items-center justify-content-center u-style-efdfc8ed">
   <i class="bi bi-universal-access fs-3"></i>
 </button>
 
@@ -25,8 +24,7 @@
 </style>
 
 <!-- ── Panel de Accesibilidad ── -->
-<div id="a11y-panel" class="card a11y-panel position-fixed d-none shadow-lg"
-  style="bottom:5.5rem;right:1.5rem;z-index:9998;border-radius:16px;overflow:hidden"
+<div id="a11y-panel" class="card a11y-panel position-fixed d-none shadow-lg u-style-75bb772a"
   role="dialog" aria-modal="true" aria-label="Panel de accesibilidad">
 
   <!-- Header del Panel con Botón Reset -->
@@ -35,7 +33,7 @@
       <i class="bi bi-universal-access fs-5"></i> 
       <span class="d-none d-sm-inline">Accesibilidad</span>
     </span>
-    <button class="btn btn-sm py-0 px-2" id="btn-reset" style="font-size:.7rem" title="Restablecer todas las opciones">
+    <button class="btn btn-sm py-0 px-2 u-style-bc9efe64" id="btn-reset" title="Restablecer todas las opciones">
       <i class="bi bi-arrow-counterclockwise me-1"></i><span class="d-none d-sm-inline">Restablecer</span>
     </button>
   </div>
@@ -78,7 +76,7 @@
     </div>
 
     <!-- TAB 2: Visualización -->
-    <div id="panel-visualización" class="a11y-tab-panel" role="tabpanel" aria-labelledby="tab-visualización" style="display:none;">
+    <div id="panel-visualización" class="a11y-tab-panel u-style-cb458930" role="tabpanel" aria-labelledby="tab-visualización">
       
       <!-- Tema de Colores -->
       <div class="mb-2">
@@ -120,9 +118,9 @@
   </div>
 
   <!-- Footer del Panel -->
-  <div class="a11y-panel-footer border-top d-flex align-items-center justify-content-between px-3 py-2" style="font-size:.65rem">
+  <div class="a11y-panel-footer border-top d-flex align-items-center justify-content-between px-3 py-2 u-style-8cba01a2">
     <div class="d-flex align-items-center gap-2">
-      <span class="badge rounded-circle p-1" style="width:8px;height:8px;display:inline-block"></span>
+      <span class="badge rounded-circle p-1 u-style-3fa034ce"></span>
       <span>Guardado automáticamente</span>
     </div>
     <div class="d-none d-sm-block">
@@ -132,8 +130,7 @@
 </div>
 
 <!-- ── Toast de confirmación ── -->
-<div id="a11y-toast" class="toast position-fixed border-0"
-  style="bottom:6rem;right:1.5rem;z-index:10000;--bs-toast-bg: #22c55e;--bs-toast-color: white" role="status" aria-live="polite">
+<div id="a11y-toast" class="toast position-fixed border-0 u-style-d67f9080" role="status" aria-live="polite">
   <div class="d-flex">
     <div class="toast-body small fw-semibold" id="a11y-toast-msg"></div>
     <button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>

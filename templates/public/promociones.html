@@ -9,7 +9,7 @@
         <div class="col-12 text-center">
             <h1 class="display-4 fw-bold text-success text-uppercase">Ofertas de Temporada</h1>
             <p class="text-muted">Explora Mongua con precios especiales</p>
-            <hr class="mx-auto" style="width: 80px; height: 4px; background-color: #418d76; border: none; opacity: 1;">
+            <hr class="mx-auto u-style-61ba5605">
         </div>
     </div>
 
@@ -35,7 +35,7 @@
                     
                     <div class="mb-3">
                         <h4 class="text-success fw-bold">¡Precio Especial!</h4>
-                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Válido hasta: {{ promo.fecha_fin|date:"d/m/Y" }}</p>
+                        <p class="text-muted mb-0 u-style-851cab99">Válido hasta: {{ promo.fecha_fin|date:"d/m/Y" }}</p>
                     </div>
 
                     <a href="{% url 'reservas' %}?paquete_id={{ promo.paquete.id }}" class="btn btn-success w-100 mb-2 shadow-sm fw-bold">
