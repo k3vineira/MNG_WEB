@@ -5,15 +5,12 @@
 <!-- ============================================================ -->
 <!-- VERSIÓN MÓVIL: Imagen de fondo + formulario con transparencia -->
 <!-- ============================================================ -->
-<div class="d-lg-none position-relative vh-100"
+<div class="d-lg-none position-relative min-vh-100 d-flex flex-column justify-content-center pt-5 pb-4"
      style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
 
-  <!-- Spacer para el header (transparente para ver la imagen) -->
-  <div class="u-style-933bea3c"></div>
-
   <!-- Contenedor centrado del formulario -->
-  <div class="d-flex align-items-center justify-content-center px-3 py-4 u-style-df428014">
-    <div class="w-100 rounded-4 shadow-lg p-4 p-sm-5 u-style-8d238508">
+  <div class="d-flex align-items-center justify-content-center px-3 w-100">
+    <div class="w-100 rounded-4 shadow-lg p-4 p-sm-5 bg-white bg-opacity-95" style="max-width: 480px;">
 
       <!-- Cabecera Editorial -->
       <div class="mb-5">
@@ -102,20 +99,17 @@
 <!-- VERSIÓN DESKTOP: Layout original de dos columnas              -->
 <!-- ============================================================ -->
 <div class="d-none d-lg-block">
-  <!-- Spacer para el header -->
-  <div class="u-style-612bb24c"></div>
-
-  <section class="container-fluid p-0 overflow-hidden u-style-94e05d99">
-    <div class="row g-0 h-100 w-100 m-0">
+  <section class="container-fluid p-0 overflow-hidden min-vh-100 pt-5">
+    <div class="row g-0 min-vh-100 w-100 m-0">
 
       <!-- Columna Izquierda: Imagen de Naturaleza -->
-      <div class="col-lg-6 position-relative h-100"
+      <div class="col-lg-6 min-vh-100"
            style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
       </div>
 
       <!-- Columna Derecha: Formulario Minimalista -->
-      <div class="col-lg-6 bg-white d-flex align-items-center justify-content-center p-5 h-100 overflow-auto">
-        <div class="w-100 u-style-4e9ec4bc">
+      <div class="col-lg-6 bg-white d-flex align-items-center justify-content-center p-5 min-vh-100 overflow-auto">
+        <div class="w-100" style="max-width: 480px;">
 
           <!-- Cabecera Editorial -->
           <div class="mb-5">
