@@ -58,11 +58,11 @@
 
           <!-- Paquetes -->
           <li class="nav-item">
-            <button class="nav-link w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" style="color: white !important;" 
-                    data-bs-toggle="collapse" data-bs-target="#menuPaquetes" aria-expanded="{% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}true{% else %}false{% endif %}">
-              <div class="d-flex align-items-center gap-2 text-white"><i class="bi bi-box-seam-fill"></i> Paquetes</div>
-              <i class="bi bi-chevron-down small text-white"></i>
-            </button>
+            <a href="#menuPaquetes" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-box-seam-fill"></i> Paquetes</div>
+              <i class="bi bi-chevron-down small"></i>
+            </a>
             <div class="collapse {% if 'listar_paquetes' in request.resolver_match.url_name or 'listar_actividades' in request.resolver_match.url_name or 'listar_tarifas' in request.resolver_match.url_name or 'listar_temporadas' in request.resolver_match.url_name or 'listar_categorias' in request.resolver_match.url_name %}show{% endif %}" id="menuPaquetes" data-bs-parent="#adminAccordion">
               <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'listar_categorias' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_categorias' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-bookmark me-1"></i> 1. Categorías</a></li>
@@ -76,11 +76,11 @@
 
           <!-- Reservas & Pagos -->
           <li class="nav-item">
-            <button class="nav-link w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" style="color: white !important;" 
-                    data-bs-toggle="collapse" data-bs-target="#menuReservas" aria-expanded="{% if request.resolver_match.url_name in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}true{% else %}false{% endif %}">
-              <div class="d-flex align-items-center gap-2 text-white"><i class="bi bi-calendar-check-fill"></i> Reservas &amp; Pagos</div>
-              <i class="bi bi-chevron-down small text-white"></i>
-            </button>
+            <a href="#menuReservas" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if request.resolver_match.url_name in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-calendar-check-fill"></i> Reservas &amp; Pagos</div>
+              <i class="bi bi-chevron-down small"></i>
+            </a>
             <div class="collapse {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}show{% endif %}" id="menuReservas" data-bs-parent="#adminAccordion">
               <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'listar_reservas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_reservas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar2-check me-1"></i> Reservas</a></li>
@@ -93,11 +93,11 @@
 
           <!-- Usuarios & Guías -->
           <li class="nav-item">
-            <button class="nav-link w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'gestion_usuarios gestion_guias' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" style="color: white !important;" 
-                    data-bs-toggle="collapse" data-bs-target="#menuUsuarios" aria-expanded="{% if request.resolver_match.url_name in 'gestion_usuarios gestion_guias' %}true{% else %}false{% endif %}">
-              <div class="d-flex align-items-center gap-2 text-white"><i class="bi bi-people-fill"></i> Usuarios &amp; Guías</div>
-              <i class="bi bi-chevron-down small text-white"></i>
-            </button>
+            <a href="#menuUsuarios" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'gestion_usuarios gestion_guias' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if request.resolver_match.url_name in 'gestion_usuarios gestion_guias' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-people-fill"></i> Usuarios &amp; Guías</div>
+              <i class="bi bi-chevron-down small"></i>
+            </a>
             <div class="collapse {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}show{% endif %}" id="menuUsuarios" data-bs-parent="#adminAccordion">
               <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'gestion_usuarios' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'gestion_usuarios' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-person-fill me-1"></i> Gestionar Usuarios</a></li>
@@ -108,11 +108,11 @@
 
           <!-- Contenido -->
           <li class="nav-item">
-            <button class="nav-link w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_blog listar_pqrs gestion_promociones' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" style="color: white !important;" 
-                    data-bs-toggle="collapse" data-bs-target="#menuContenido" aria-expanded="{% if request.resolver_match.url_name in 'listar_blog listar_pqrs gestion_promociones' %}true{% else %}false{% endif %}">
-              <div class="d-flex align-items-center gap-2 text-white"><i class="bi bi-journal-text"></i> Contenido</div>
-              <i class="bi bi-chevron-down small text-white"></i>
-            </button>
+            <a href="#menuContenido" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_blog listar_pqrs gestion_promociones' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if request.resolver_match.url_name in 'listar_blog listar_pqrs gestion_promociones' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-journal-text"></i> Contenido</div>
+              <i class="bi bi-chevron-down small"></i>
+            </a>
             <div class="collapse {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}show{% endif %}" id="menuContenido" data-bs-parent="#adminAccordion">
               <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'listar_blog' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_blog' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-journal-richtext me-1"></i> Blog</a></li>
