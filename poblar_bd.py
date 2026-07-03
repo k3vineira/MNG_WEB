@@ -18,6 +18,11 @@ from decimal import Decimal
 
 
 def poblar_base_datos():
+    """
+    poblar_base_datos.
+    
+    :return: Respuesta de la función.
+    """
     print("Iniciando el poblado de la base de datos...")
     print("0. Limpiando la base de datos...")
     Notificacion.objects.all().delete()

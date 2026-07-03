@@ -508,6 +508,15 @@ def guias_guardar(request):
 
 
 def get_estadisticas_context(user, is_admin=False):
+    """
+    get_estadisticas_context.
+    
+    :param user: Descripción del parámetro.
+    
+    :param is_admin=False: Descripción del parámetro.
+    
+    :return: Respuesta de la función.
+    """
     import datetime
     from django.db.models import Sum, Count, Avg, Max
     from django.utils import timezone

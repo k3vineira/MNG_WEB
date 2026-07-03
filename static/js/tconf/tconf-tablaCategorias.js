@@ -6,23 +6,35 @@ $(document).ready(function() {
              "<'row mt-3'<'col-md-5'i><'col-md-7 d-flex justify-content-end'p>>",
 
         // 2. BOTONES DE EXPORTACIÓN
-        buttons: [
-            {
-                extend: 'excelHtml5',
-                text: 'Excel',
-                className: 'btn btn-success btn-sm mx-1 rounded'
-            },
-            {
-                extend: 'pdfHtml5',
-                text: 'PDF',
-                className: 'btn btn-danger btn-sm mx-1 rounded'
-            },
-            {
-                extend: 'print',
-                text: 'Imprimir',
-                className: 'btn btn-info btn-sm text-white mx-1 rounded'
-            }
-        ],
+      buttons: [
+    {
+        extend: 'excelHtml5',
+        text: '<i class="bi bi-file-earmark-excel-fill text-success fs-4"></i>',
+        titleAttr: 'Exportar a Excel',
+        className: 'btn btn-light rounded-circle shadow-sm border-0 mx-1 d-flex align-items-center justify-content-center',
+        attr: {
+            style: 'width:48px;height:48px;'
+        }
+    },
+    {
+        extend: 'pdfHtml5',
+        text: '<i class="bi bi-file-earmark-pdf-fill text-dark fs-5"></i>',
+        titleAttr: 'Exportar a PDF',
+        className: 'btn btn-light rounded-circle shadow-sm border-0 mx-1 d-flex align-items-center justify-content-center',
+        attr: {
+            style: 'width:48px;height:48px;'
+        }
+    },
+    {
+        extend: 'print',
+        text: '<i class="bi bi-printer-fill text-dark fs-5"></i>',
+        titleAttr: 'Imprimir',
+        className: 'btn btn-light rounded-circle shadow-sm border-0 mx-1 d-flex align-items-center justify-content-center',
+        attr: {
+            style: 'width:48px;height:48px;'
+        }
+    }
+],
 
         // 3. TRADUCCIÓN COMPLETA DE TU PROYECTO MONAGUA
         language: {

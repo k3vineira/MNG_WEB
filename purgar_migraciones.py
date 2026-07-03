@@ -3,6 +3,11 @@ from pathlib import Path
 
 
 def gestionar_limpieza():
+    """
+    gestionar_limpieza.
+    
+    :return: Respuesta de la función.
+    """
     # Directorio actual donde se encuentra este script
     directorio_raiz = Path(__file__).parent.resolve()
 

@@ -206,6 +206,11 @@ class PaqueteActividad(models.Model):
         verbose_name_plural = 'Temporadas'
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return self.nombre
 
 
@@ -220,6 +225,11 @@ class Categoria(models.Model):
         verbose_name_plural = 'Categorías'
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return self.nombre
 
 
@@ -247,6 +257,11 @@ class Actividades(models.Model):
         verbose_name_plural = 'Actividades'
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return self.nombre
 
 
@@ -268,10 +283,20 @@ class Paquete(models.Model):
     estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return self.nombre
 
     @property
     def precio_minimo(self):
+        """
+        precio_minimo.
+        
+        :return: Respuesta de la función.
+        """
         fecha_hoy = timezone.now().date()
 
         tarifas_validas = self.tarifas.filter(
@@ -296,6 +321,11 @@ class Paquete(models.Model):
 
     @property
     def apto_para_menores(self):
+        """
+        apto_para_menores.
+        
+        :return: Respuesta de la función.
+        """
         # Si tiene al menos una actividad no apta, el paquete no es apto para menores
         return not self.actividades.filter(apto_para_menores=False).exists()
 
@@ -319,6 +349,11 @@ class Tarifa(models.Model):
         unique_together = ('paquete', 'temporada')
 
     def __str__(self):
+        """
+        __str__.
+        
+        :return: Respuesta de la función.
+        """
         return f"{self.paquete.nombre} - {self.temporada.nombre}"
 
 
