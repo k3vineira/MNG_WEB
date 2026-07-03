@@ -107,29 +107,38 @@
                                     {% endif %}
 
                                     <div class="mt-auto d-flex gap-2 flex-wrap pt-2 border-top">
-                                        {% if reserva.estado == 'pendiente' or reserva.estado == 'Pendiente' %}
-                                            <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
-                                                <i class="bi bi-wallet2 me-1"></i> Enviar pago
-                                            </a>
-                                        {% endif %}
-                                        {% if reserva.estado == 'confirmada' or reserva.estado == 'Confirmada' %}
-                                            <a href="{% url 'ver_factura' reserva.id %}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
-                                                <i class="bi bi-file-earmark-ruled me-1"></i> Ver Factura
-                                            </a>
-                                        {% endif %}
-                                        {% if reserva.estado != 'cancelada' and reserva.estado != 'Cancelada' %}
-                                            {% if reserva.tiene_cancelacion_activa %}
-                                                <button class="btn btn-outline-warning rounded-pill px-4 py-2" disabled>
-                                                    <i class="bi bi-hourglass-split me-1"></i> Cancelación Solicitada
-                                                </button>
-                                            {% else %}
-                                                <a href="{% url 'crear_cancelacion' %}?reserva_id={{ reserva.id }}" class="btn btn-outline-danger rounded-pill px-4 py-2">
-                                                    <i class="bi bi-trash3 me-1"></i> Cancelar Reserva
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                    </div>
-
+    {% if reserva.estado == 'pendiente' or reserva.estado == 'Pendiente' %}
+        <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
+            <i class="bi bi-wallet2 me-1"></i> Enviar pago
+        </a>
+    {% endif %}
+    
+    {% if reserva.estado == 'confirmada' or reserva.estado == 'Confirmada' %}
+        <a href="{% url 'ver_factura' reserva.id %}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
+            <i class="bi bi-file-earmark-ruled me-1"></i> Ver Factura
+        </a>
+    {% endif %}
+    
+    {% if reserva.estado != 'cancelada' and reserva.estado != 'Cancelada' %}
+        {% if reserva.tiene_cancelacion_activa %}
+            <button class="btn btn-outline-warning rounded-pill px-4 py-2" disabled>
+                <i class="bi bi-hourglass-split me-1"></i> Cancelación Solicitada
+            </button>
+        {% else %}
+            
+            {% if reserva.estado == 'pendiente' or reserva.estado == 'Pendiente' and not reserva.comprobantes.all %}
+                <a href="{% url 'crear_cancelacion' %}?reserva_id={{ reserva.id }}" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                    <i class="bi bi-x-lg me-1"></i> Descartar Reserva
+                </a>
+            {% else %}
+                <a href="{% url 'crear_cancelacion' %}?reserva_id={{ reserva.id }}" class="btn btn-outline-danger rounded-pill px-4 py-2">
+                    <i class="bi bi-trash3 me-1"></i> Cancelar Reserva
+                </a>
+            {% endif %}
+            
+        {% endif %}
+    {% endif %}
+</div>
                                 </div>
                             </div> </div>
                     </div>

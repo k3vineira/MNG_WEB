@@ -218,60 +218,76 @@ class CancelacionCreateView(CreateView):
     model = Cancelacion
     fields = ['motivo']
     template_name = 'usuario/cancelaciones/crear_cancelacion.html'
-    success_url = reverse_lazy('mis_cancelaciones_usuario')
+    
+    def get_success_url(self):
+        return reverse_lazy('mis_reservas_usuario')
 
     def form_valid(self, form):
-        """
-        form_valid.
-        
-        :param form: creación de cancelación para una reserva específica.
-        
-        :return: Redirige a la página de mis cancelaciones del usuario después de crear la cancelación.
-        """
         reserva_id = self.request.GET.get('reserva_id')
         if not reserva_id:
             messages.error(self.request, 'No se encontró la reserva para la cancelación.')
-            return redirect('mis_cancelaciones_usuario')
+            return redirect('mis_reservas_usuario')
 
         reserva = get_object_or_404(Reserva, id=reserva_id, usuario=self.request.user)
 
-        if reserva.estado == 'cancelada':
+        if reserva.estado.lower() == 'cancelada':
             messages.warning(self.request, 'Esta reserva ya está cancelada.')
-            return redirect('mis_cancelaciones_usuario')
+            return redirect('mis_reservas_usuario')
+
+        nombre_cliente = self.request.user.first_name or self.request.user.username
+
+     
+        if reserva.estado.lower() == 'pendiente' and not reserva.comprobantes.exists():
+            reserva.estado = 'cancelada'
+            reserva.save()
+
+            asunto = f"Reserva #{reserva.id} Descartada - Monagua"
+            mensaje_texto = f"Hola {nombre_cliente}, has cancelado tu reserva pendiente para {reserva.paquete.nombre}. No se aplicaron cargos."
+            
+            html_cancelacion = plantilla_cancelacion_html(
+                nombre_cliente=nombre_cliente,
+                paquete=reserva.paquete.nombre,
+                estado='cancelada',  
+                penalidad="0.00"
+            )
+            
+            try:
+                enviar_correo_html_monagua(asunto, mensaje_texto, self.request.user.email, html_cancelacion)
+            except Exception as e:
+                print(f"Error al enviar correo de reserva descartada: {e}")
+
+            messages.success(self.request, 'Tu reserva pendiente ha sido cancelada exitosamente sin ninguna penalización.')
+            return redirect('mis_reservas_usuario')
+
 
         if Cancelacion.objects.filter(reserva=reserva, estado__in=['pendiente', 'revision', 'aceptada']).exists():
             messages.warning(self.request, 'Ya existe una solicitud de cancelación activa para esta reserva.')
             return redirect('mis_reservas_usuario')
 
+        # Se registra la solicitud para que el administrador la revise en su panel
         form.instance.reserva = reserva
         form.instance.usuario = self.request.user
         form.instance.estado = 'pendiente'  
        
         response = super().form_valid(form)
         
-    
-        nombre_cliente = self.request.user.first_name or self.request.user.username
-        asunto = f"Solicitud de cancelación Recibida - Reserva #{reserva.id}"
-        mensaje_texto = f"Hola {nombre_cliente}, hemos recibido tu solicitud de cancelación para el paquete {reserva.paquete.nombre}."
+        # Si tenía comprobante, le avisamos que el administrador revisará el caso debido al pago enviado
+        asunto = f"Solicitud de cancelación en revisión - Reserva #{reserva.id}"
+        mensaje_texto = f"Hola {nombre_cliente}, recibimos tu solicitud. Como ya registraste un pago, un asesor revisará tu caso."
         
         html_cancelacion = plantilla_cancelacion_html(
             nombre_cliente=nombre_cliente,
             paquete=reserva.paquete.nombre,
             estado='pendiente',  
-            penalidad="0.00"
+            penalidad="Sujeta a revisión (Pago detectado)"
         )
         
         try:
-            enviar_correo_html_monagua(
-                asunto,
-                mensaje_texto,
-                self.request.user.email,
-                html_cancelacion
-            )
-            messages.success(self.request, 'Tu solicitud de cancelación ha sido enviada y se te ha notificado por correo.')
+            enviar_correo_html_monagua(asunto, mensaje_texto, self.request.user.email, html_cancelacion)
+            messages.success(self.request, 'Tu solicitud ha sido enviada. Un administrador revisará el comprobante adjunto para procesar la devolución o penalidad.')
         except Exception as e:
-            print(f"Error al enviar el correo inicial de cancelación: {e}")
-            messages.success(self.request, 'Tu solicitud fue radicada pero hubo un inconveniente al enviar la notificación por correo.')
+            print(f"Error al enviar el correo de cancelación: {e}")
+            messages.success(self.request, 'Solicitud radicada. Revisaremos tu comprobante de pago a la brevedad.')
 
         return response
     
