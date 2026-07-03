@@ -111,8 +111,8 @@ def dashboard_admin(request):
     start_of_week = hoy - datetime.timedelta(days=hoy.weekday())
     end_of_week = start_of_week + datetime.timedelta(days=6)
     reservas_semana = [0] * 7
-    for r in Reserva.objects.filter(fecha__range=[start_of_week, end_of_week]):
-        reservas_semana[r.fecha.weekday()] += 1
+    for r in Reserva.objects.filter(fecha_registro__date__range=[start_of_week, end_of_week]):
+        reservas_semana[r.fecha_registro.weekday()] += 1
 
     tasa_confirmacion = int(reservas_confirmadas / total_reservas * 100) if total_reservas > 0 else 0
 
@@ -121,7 +121,7 @@ def dashboard_admin(request):
 
     ingreso_por_reserva = total_ventas / total_reservas if total_reservas > 0 else 0
 
-    cancelaciones_hoy = Cancelacion.objects.filter(reserva__fecha=hoy).count()
+    cancelaciones_hoy = Cancelacion.objects.filter(fecha_solicitud__date=hoy).count()
     cancelaciones_rechazadas = Cancelacion.objects.filter(estado='rechazada').count()
     cancelaciones_pendientes = Cancelacion.objects.filter(estado__in=['pendiente', 'revision']).count()
 
