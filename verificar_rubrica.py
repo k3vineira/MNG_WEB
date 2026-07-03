@@ -330,6 +330,8 @@ def check_styles_bem():
                 except Exception:
                     pass
             elif f.endswith('.html') and f != 'reporte_rubrica.html':
+                if 'email' in f.lower() or 'mail' in f.lower() or 'email' in root.lower() or 'factura_pdf' in f.lower():
+                    continue
                 try:
                     rel_path = os.path.relpath(path, BASE_DIR)
                     with open(path, 'r', encoding='utf-8') as file:

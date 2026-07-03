@@ -24,12 +24,12 @@
         <!-- Voucher Image Column -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white text-center">
-                <span class="fw-bold text-secondary text-uppercase small mb-3 d-block text-start" style="letter-spacing: 0.5px;">
+                <span class="fw-bold text-secondary text-uppercase small mb-3 d-block text-start u-style-e2eb0d8e">
                     <i class="bi bi-image text-primary me-2"></i>Imagen del Comprobante
                 </span>
                 {% if comprobante.imagen %}
                     <a href="{{ comprobante.imagen.url }}" target="_blank" title="Ver imagen completa" class="d-block rounded-4 overflow-hidden shadow-sm">
-                        <img src="{{ comprobante.imagen.url }}" alt="Comprobante de Pago" class="img-fluid rounded-4 transition-all" style="max-height: 550px; object-fit: contain;">
+                        <img src="{{ comprobante.imagen.url }}" alt="Comprobante de Pago" class="img-fluid rounded-4 transition-all u-style-d0c65112">
                     </a>
                     <div class="form-text text-muted mt-3">
                         <i class="bi bi-zoom-in me-1"></i> Haz clic en la imagen para abrirla en tamaño completo en otra pestaña
@@ -47,7 +47,7 @@
         <div class="col-lg-6">
             <!-- User & Booking Info -->
             <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
-                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block" style="letter-spacing: 0.5px;">
+                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block u-style-e2eb0d8e">
                     <i class="bi bi-info-circle text-primary me-2"></i>Detalles de la Transacción
                 </span>
                 
@@ -109,7 +109,7 @@
 
             <!-- Review Action Card -->
             <div class="card border-0 shadow rounded-4 p-4 bg-white">
-                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block" style="letter-spacing: 0.5px;">
+                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block u-style-e2eb0d8e">
                     <i class="bi bi-shield-check text-primary me-2"></i>Tomar Decisión
                 </span>
 
@@ -128,7 +128,7 @@
 
                     <!-- Nota del Administrador con Floating Labels -->
                     <div class="form-floating mb-4">
-                        <textarea name="nota_admin" id="id_nota_admin" class="form-control rounded-4 shadow-sm" style="height: 120px;" placeholder="Escribe aquí el motivo de rechazo o cualquier nota aclaratoria para el usuario...">{{ comprobante.nota_admin }}</textarea>
+                        <textarea name="nota_admin" id="id_nota_admin" class="form-control rounded-4 shadow-sm u-style-f3d33437" placeholder="Escribe aquí el motivo de rechazo o cualquier nota aclaratoria para el usuario...">{{ comprobante.nota_admin }}</textarea>
                         <label for="id_nota_admin">Nota del Administrador</label>
                         <div class="form-text text-muted mt-2 ps-2">Esta nota será visible para el usuario en su historial de comprobantes.</div>
                     </div>

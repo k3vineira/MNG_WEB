@@ -4,7 +4,7 @@
 {% block titulo %}Mis Reservas | Monagua{% endblock %}
 
 {% block private_content %}
-<div class="container py-4 mx-auto" style="max-width:1000px;">
+<div class="container py-4 mx-auto u-style-f694cf53">
 
     <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
         <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -26,11 +26,11 @@
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
                         <div class="row g-0 align-items-stretch">
                             
-                            <div class="col-md-4 position-relative" style="min-height: 240px;">
+                            <div class="col-md-4 position-relative u-style-47f2ed6c">
                                 {% if reserva.paquete.imagen %}
-                                    <img src="{{ reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="{{ reserva.paquete.nombre }}">
+                                    <img src="{{ reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0 u-style-ca362336" alt="{{ reserva.paquete.nombre }}">
                                 {% else %}
-                                    <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 position-absolute start-0 top-0" style="object-fit: cover;" alt="Imagen por defecto">
+                                    <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 position-absolute start-0 top-0 u-style-ca362336" alt="Imagen por defecto">
                                 {% endif %}
                             </div>
 
@@ -66,7 +66,7 @@
                                         </div>
 
                                         <div class="col-sm-6">
-                                            <div class="border rounded-4 p-3 h-100" style="background-color: #e8f5e9;">
+                                            <div class="border rounded-4 p-3 h-100 u-style-ae701efb">
                                                 <small class="text-success-emphasis d-block mb-1 fw-medium">Total de Reserva</small>
                                                 <h5 class="fw-bold text-success mb-0">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</h5>
                                             </div>
@@ -75,7 +75,7 @@
 
                                     {% if reserva.comprobantes.all %}
                                         <div class="mb-4 border-top pt-3">
-                                            <h6 class="fw-bold text-secondary mb-2" style="font-size: 0.85rem; letter-spacing: 0.5px; text-transform: uppercase;">
+                                            <h6 class="fw-bold text-secondary mb-2 u-style-1952029f">
                                                 <i class="bi bi-credit-card me-1"></i> Comprobantes de pago enviados
                                             </h6>
                                             <div class="d-flex flex-column gap-2">
@@ -83,11 +83,11 @@
                                                     <div class="d-flex align-items-center justify-content-between p-2 rounded-3 border bg-light flex-wrap gap-2">
                                                         <div class="d-flex align-items-center gap-2">
                                                             {% if comp.imagen %}
-                                                                <img src="{{ comp.imagen.url }}" alt="Comprobante" class="rounded border" style="width: 32px; height: 32px; object-fit: cover;">
+                                                                <img src="{{ comp.imagen.url }}" alt="Comprobante" class="rounded border u-style-35afc132">
                                                             {% endif %}
                                                             <div>
                                                                 <div class="small fw-semibold text-dark">Referencia: {{ comp.referencia|default:"—" }}</div>
-                                                                <div class="text-muted" style="font-size: 0.72rem;">{{ comp.banco_origen|default:"Medio desconocido" }} · {{ comp.fecha_envio|date:"d M Y" }}</div>
+                                                                <div class="text-muted u-style-e58064fd">{{ comp.banco_origen|default:"Medio desconocido" }} · {{ comp.fecha_envio|date:"d M Y" }}</div>
                                                             </div>
                                                         </div>
                                                         <div class="d-flex align-items-center gap-2">
@@ -96,7 +96,7 @@
                                                             {% elif comp.reserva %}
                                                                 <span class="small fw-bold text-success">COP ${{ comp.reserva.monto_total|floatformat:0|intcomma }}</span>
                                                             {% endif %}
-                                                            <span class="badge {% if comp.estado == 'aprobado' %}bg-success{% elif comp.estado == 'pendiente' %}bg-warning text-dark{% else %}bg-danger{% endif %}" style="font-size: 0.7rem;">
+                                                            <span class="badge {% if comp.estado == 'aprobado' %}bg-success{% elif comp.estado == 'pendiente' %}bg-warning text-dark{% else %}bg-danger{% endif %} u-style-dd8eb2f6">
                                                                 {{ comp.get_estado_display }}
                                                             </span>
                                                         </div>

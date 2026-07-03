@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid pt-1 pb-2 px-4" style="margin-top: 60px !important; position: relative; z-index: 1000;">
+<div class="container-fluid pt-1 pb-2 px-4 u-style-ed958017">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item fs-5 fw-semibold">
-                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none" style="color:  #000000af !important;">Inicio</a>
+                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none u-style-fcc43f49">Inicio</a>
             </li>
-            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color:  #000000af !important;">
+            <li class="breadcrumb-item active fs-5 fw-bold u-style-fcc43f49" aria-current="page">
                 Blog
             </li>
         </ol>
@@ -17,7 +17,7 @@
 <header class="position-relative overflow-hidden"
         style="background: url('{% static 'img/carousel/img1.webp' %}') center/cover no-repeat; min-height: 70vh;">
     <div class="container">
-        <div class="row justify-content-center align-items-center text-center text-white" style="min-height: 70vh;">
+        <div class="row justify-content-center align-items-center text-center text-white u-style-b4553598">
             <div class="col-lg-8">
                 <h1 class="display-1 fw-bold mb-5">
                     El Corazón Verde de Mongua
@@ -78,7 +78,7 @@
                                 {{ post.titulo }}
                             </h3>
 
-                            <p class="text-muted mb-4 lh-relaxed text-start" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            <p class="text-muted mb-4 lh-relaxed text-start u-style-85ae1781">
                                 {{ post.contenido|truncatewords:20 }}
                             </p>
                         </div>

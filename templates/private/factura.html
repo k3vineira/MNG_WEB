@@ -35,7 +35,7 @@
                     <div class="row align-items-center g-3">
                         <div class="col-sm-6 text-sm-start text-center d-flex align-items-center justify-content-center justify-content-sm-start gap-3">
                             {% if logo_base64 %}
-                                <img src="{{ logo_base64 }}" alt="Logo Monagua" class="rounded-circle bg-white p-1" width="50" height="50" style="object-fit: cover;">
+                                <img src="{{ logo_base64 }}" alt="Logo Monagua" class="rounded-circle bg-white p-1 u-style-ca362336" width="50" height="50">
                             {% endif %}
                             <div class="text-start">
                                 <h3 class="fw-bold mb-0">MONAGUA</h3>
@@ -54,20 +54,20 @@
                     <!-- Fila de Información de Emisor y Cliente -->
                     <div class="row mb-5 g-4">
                         <div class="col-sm-4 text-sm-start text-center">
-                            <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="letter-spacing: 0.5px;">Facturado a:</span>
+                            <span class="text-uppercase text-muted small fw-bold d-block mb-2 u-style-e2eb0d8e">Facturado a:</span>
                             <h5 class="fw-bold text-dark mb-1">{{ cliente_nombre }}</h5>
                             <p class="text-secondary small mb-0">{{ cliente_email }}</p>
                         </div>
                         <div class="col-sm-4 text-sm-start text-center">
-                            <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="letter-spacing: 0.5px;">Detalles del Pago:</span>
+                            <span class="text-uppercase text-muted small fw-bold d-block mb-2 u-style-e2eb0d8e">Detalles del Pago:</span>
                             <p class="small text-dark mb-1"><strong>Fecha Emisión:</strong> {{ fecha_emision }}</p>
                             <p class="small text-dark mb-1"><strong>Método de Pago:</strong> {{ metodo_pago }}</p>
                             <p class="small text-dark mb-0"><strong>Estado:</strong> <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small fw-bold">PAGADO</span></p>
                         </div>
                         <div class="col-sm-4 text-sm-end text-center d-flex flex-column align-items-center align-items-sm-end justify-content-center">
-                            <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="letter-spacing: 0.5px;">Verificación QR:</span>
-                            <img src="{{ qr_base64 }}" alt="Código QR Factura" class="border p-1 bg-white" style="width: 90px; height: 90px;">
-                            <small class="text-muted d-block mt-1" style="font-size: 0.65rem;">Escanea para verificar validez</small>
+                            <span class="text-uppercase text-muted small fw-bold d-block mb-2 u-style-e2eb0d8e">Verificación QR:</span>
+                            <img src="{{ qr_base64 }}" alt="Código QR Factura" class="border p-1 bg-white u-style-d302122c">
+                            <small class="text-muted d-block mt-1 u-style-10b9dc21">Escanea para verificar validez</small>
                         </div>
                     </div>
 
@@ -75,7 +75,7 @@
                     <div class="table-responsive">
                         <table class="table align-middle">
                             <thead class="table-light">
-                                <tr class="text-secondary small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                                <tr class="text-secondary small fw-bold text-uppercase u-style-65e738b5">
                                     <th class="border-0">Concepto / Descripción</th>
                                     <th class="border-0 text-end">Total</th>
                                 </tr>

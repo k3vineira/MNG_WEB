@@ -96,14 +96,14 @@
 
 <!-- Modal Confirmar Baja -->
 <div class="modal fade" id="modalBaja" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+  <div class="modal-dialog modal-dialog-centered u-style-ae18a06a">
     <div class="modal-content shadow-lg border-0 rounded-4">
       <div class="modal-header bg-danger text-white">
         <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Baja</h5>
         <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body p-4 text-center">
-        <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle mb-4" style="width: 64px; height: 64px;">
+        <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle mb-4 u-style-db29ee0b">
           <i class="bi bi-person-x-fill fs-2"></i>
         </div>
         <p class="mb-1 text-dark">
@@ -114,7 +114,7 @@
       </div>
       <div class="modal-footer border-0 justify-content-center gap-2 p-4 pt-0">
         <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
-        <form id="formBaja" method="POST" action="{% url 'guias_baja_reactivar' id=0 estado='desactivar' %}" style="display:inline;">
+        <form class="u-style-5677b988" id="formBaja" method="POST" action="{% url 'guias_baja_reactivar' id=0 estado='desactivar' %}">
           {% csrf_token %}
           <input type="hidden" name="guia_id" id="inputBajaId" />
           <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold"><i class="bi bi-person-dash-fill me-1"></i> Dar de Baja</button>
@@ -126,14 +126,14 @@
 
 <!-- Modal Reactivar Guía -->
 <div class="modal fade" id="modalReactivar" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+  <div class="modal-dialog modal-dialog-centered u-style-ae18a06a">
     <div class="modal-content shadow-lg border-0 rounded-4">
       <div class="modal-header bg-success text-white">
         <h5 class="modal-title fw-bold"><i class="bi bi-person-check-fill me-2"></i>Reactivar Guía</h5>
         <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body p-4 text-center">
-        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle mb-4" style="width: 64px; height: 64px;">
+        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle mb-4 u-style-db29ee0b">
           <i class="bi bi-person-check-fill fs-2"></i>
         </div>
         <p class="mb-1 text-dark">
@@ -144,7 +144,7 @@
       </div>
       <div class="modal-footer border-0 justify-content-center gap-2 p-4 pt-0">
         <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
-        <form id="formReactivar" method="POST" action="{% url 'guias_baja_reactivar' id=0 estado='activar' %}" style="display:inline;">
+        <form class="u-style-5677b988" id="formReactivar" method="POST" action="{% url 'guias_baja_reactivar' id=0 estado='activar' %}">
           {% csrf_token %}
           <input type="hidden" name="guia_id" id="inputReactivarId" />
           <button type="submit" class="btn btn-success px-4 rounded-pill fw-bold"><i class="bi bi-person-check-fill me-1"></i> Reactivar</button>

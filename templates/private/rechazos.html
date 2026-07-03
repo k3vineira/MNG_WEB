@@ -50,7 +50,7 @@
                                     
                                     <!-- Cabecera de tarjeta -->
                                     <div class="d-flex align-items-center gap-3 mb-3">
-                                        <div class="bg-danger bg-opacity-10 text-danger rounded-4 p-3 fs-3 d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <div class="bg-danger bg-opacity-10 text-danger rounded-4 p-3 fs-3 d-inline-flex align-items-center justify-content-center u-style-250a21b0">
                                             <i class="bi bi-cash-stack"></i>
                                         </div>
                                         <div>
@@ -69,7 +69,7 @@
                                     <div class="border-top pt-3">
                                         <div class="row g-3">
                                             <div class="col-sm-6">
-                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Detalles del Comprobante:</span>
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2 u-style-22c80133">Detalles del Comprobante:</span>
                                                 <ul class="list-unstyled small text-secondary mb-0">
                                                     <li class="mb-1"><strong>Referencia:</strong> <code class="text-dark">{{ pago.referencia|default:"—" }}</code></li>
                                                     <li class="mb-1"><strong>Medio / Banco:</strong> {{ pago.banco_origen|default:"—" }}</li>
@@ -77,7 +77,7 @@
                                                 </ul>
                                             </div>
                                             <div class="col-sm-6">
-                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Motivo del Rechazo:</span>
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2 u-style-22c80133">Motivo del Rechazo:</span>
                                                 {% if pago.nota_admin %}
                                                     <div class="bg-danger bg-opacity-10 text-danger-emphasis border border-danger border-opacity-25 rounded-3 p-3 small lh-sm fw-medium">
                                                         <i class="bi bi-chat-left-text-fill me-1"></i> {{ pago.nota_admin }}
@@ -109,10 +109,10 @@
                 <div class="card border-0 shadow-sm rounded-4 bg-white text-center py-5">
                     <div class="card-body py-4">
                         <div class="mb-3 text-success">
-                            <i class="bi bi-shield-check" style="font-size: 3.5rem;"></i>
+                            <i class="bi bi-shield-check u-style-212b6b2b"></i>
                         </div>
                         <h5 class="fw-bold text-dark mt-2">No tienes pagos rechazados</h5>
-                        <p class="text-muted mx-auto" style="max-width: 400px;">¡Excelente! Todos tus comprobantes han sido procesados correctamente.</p>
+                        <p class="text-muted mx-auto u-style-6bdce2a0">¡Excelente! Todos tus comprobantes han sido procesados correctamente.</p>
                     </div>
                 </div>
             {% endif %}
@@ -129,7 +129,7 @@
 
                                     <!-- Cabecera de tarjeta -->
                                     <div class="d-flex align-items-center gap-3 mb-3">
-                                        <div class="bg-danger bg-opacity-10 text-danger rounded-4 p-3 fs-3 d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <div class="bg-danger bg-opacity-10 text-danger rounded-4 p-3 fs-3 d-inline-flex align-items-center justify-content-center u-style-250a21b0">
                                             <i class="bi bi-x-circle-fill"></i>
                                         </div>
                                         <div>
@@ -142,13 +142,13 @@
                                     <div class="border-top pt-3">
                                         <div class="row g-3">
                                             <div class="col-sm-6">
-                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Tu Motivo de Cancelación:</span>
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2 u-style-22c80133">Tu Motivo de Cancelación:</span>
                                                 <div class="bg-light text-secondary rounded-3 p-3 small lh-sm fw-medium">
                                                     "{{ cancelacion.motivo }}"
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
-                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Estado de la Solicitud:</span>
+                                                <span class="text-uppercase text-muted small fw-bold d-block mb-2 u-style-22c80133">Estado de la Solicitud:</span>
                                                 <div class="bg-danger bg-opacity-10 text-danger-emphasis border border-danger border-opacity-25 rounded-3 p-3 small lh-sm fw-medium">
                                                     <i class="bi bi-info-circle-fill me-1"></i> La solicitud de cancelación ha sido rechazada. Tu reserva se mantiene activa en el sistema.
                                                 </div>
@@ -172,10 +172,10 @@
                 <div class="card border-0 shadow-sm rounded-4 bg-white text-center py-5">
                     <div class="card-body py-4">
                         <div class="mb-3 text-success">
-                            <i class="bi bi-shield-check" style="font-size: 3.5rem;"></i>
+                            <i class="bi bi-shield-check u-style-212b6b2b"></i>
                         </div>
                         <h5 class="fw-bold text-dark mt-2">No tienes cancelaciones rechazadas</h5>
-                        <p class="text-muted mx-auto" style="max-width: 400px;">No registras solicitudes de cancelación que hayan sido denegadas.</p>
+                        <p class="text-muted mx-auto u-style-6bdce2a0">No registras solicitudes de cancelación que hayan sido denegadas.</p>
                     </div>
                 </div>
             {% endif %}

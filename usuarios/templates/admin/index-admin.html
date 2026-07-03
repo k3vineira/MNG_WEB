@@ -17,7 +17,7 @@
 <!-- ── Top Bar ── -->
 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
   <div>
-    <h2 class="fw-bold mb-0 text-success" style="font-size:1.6rem">Tablero de Rendimiento</h2>
+    <h2 class="fw-bold mb-0 text-success u-style-4a548d2f">Tablero de Rendimiento</h2>
     <p class="text-muted mb-0 small">Visión general del negocio y métricas clave.</p>
   </div>
   <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -51,7 +51,7 @@
         </div>
         <div class="text-muted small">Ingresos Totales</div>
         <div class="fw-bold fs-5 text-success">COP ${{ total_ventas|floatformat:0|intcomma|default:"0" }}</div>
-        <div class="text-muted" style="font-size:.75rem"><i class="bi bi-arrow-up-right text-success"></i> Reservas confirmadas</div>
+        <div class="text-muted u-style-640fb1f6"><i class="bi bi-arrow-up-right text-success"></i> Reservas confirmadas</div>
       </div>
     </div>
   </div>
@@ -66,7 +66,7 @@
         </div>
         <div class="text-muted small">Usuarios Registrados</div>
         <div class="fw-bold fs-5 text-primary">{{ total_usuarios|intcomma|default:"0" }}</div>
-        <div class="text-muted" style="font-size:.75rem"><i class="bi bi-arrow-up-right text-primary"></i> Clientes activos</div>
+        <div class="text-muted u-style-640fb1f6"><i class="bi bi-arrow-up-right text-primary"></i> Clientes activos</div>
       </div>
     </div>
   </div>
@@ -81,7 +81,7 @@
         </div>
         <div class="text-muted small">Reservas Totales</div>
         <div class="fw-bold fs-5 text-warning">{{ total_reservas|intcomma|default:"0" }}</div>
-        <div class="text-muted" style="font-size:.75rem"><i class="bi bi-arrow-up-right text-warning"></i> Paquetes vendidos</div>
+        <div class="text-muted u-style-640fb1f6"><i class="bi bi-arrow-up-right text-warning"></i> Paquetes vendidos</div>
       </div>
     </div>
   </div>
@@ -96,7 +96,7 @@
         </div>
         <div class="text-muted small">Tours Activos</div>
         <div class="fw-bold fs-5 text-danger">{{ total_tours|intcomma|default:"0" }}</div>
-        <div class="text-muted" style="font-size:.75rem"><i class="bi bi-dot"></i> Disponibles ahora</div>
+        <div class="text-muted u-style-640fb1f6"><i class="bi bi-dot"></i> Disponibles ahora</div>
       </div>
     </div>
   </div>
@@ -111,7 +111,7 @@
         </div>
         <div class="text-muted small">Pagos Rechazados</div>
         <div class="fw-bold fs-5 text-danger">{{ total_pagos_rechazados|intcomma|default:"0" }}</div>
-        <div style="font-size:.75rem">
+        <div class="u-style-640fb1f6">
           <a href="{% url 'admin_comprobantes' %}?estado=rechazado" class="text-decoration-none text-muted">
             Ver detalles <i class="bi bi-arrow-right text-danger"></i>
           </a>
@@ -124,13 +124,13 @@
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
-          <span class="rounded p-2 fs-5" style="background:#e0e7ff;color:#6366f1">
+          <span class="rounded p-2 fs-5 u-style-ad9d2b60">
             <i class="bi bi-megaphone-fill"></i>
           </span>
         </div>
         <div class="text-muted small">Anuncios / Banners</div>
-        <div class="fw-bold fs-5" style="color:#6366f1">{{ total_promociones|intcomma|default:"0" }}</div>
-        <div style="font-size:.75rem">
+        <div class="fw-bold fs-5 u-style-bcd9f448">{{ total_promociones|intcomma|default:"0" }}</div>
+        <div class="u-style-640fb1f6">
           <a href="#" class="text-decoration-none text-muted">
             Configurar <i class="bi bi-arrow-right"></i>
           </a>
@@ -153,7 +153,7 @@
         <span class="badge bg-success">{{ "now"|date:"Y" }}</span>
       </div>
       <div class="card-body p-3">
-        <div class="chart-container" style="position: relative; height: 250px; width: 100%;"><canvas id="chartIngresos"></canvas></div>
+        <div class="chart-container u-style-a0f98509"><canvas id="chartIngresos"></canvas></div>
       </div>
     </div>
   </div>
@@ -165,16 +165,16 @@
         <div class="text-muted small">Distribución actual</div>
       </div>
       <div class="card-body d-flex flex-column align-items-center p-3">
-        <div class="chart-container" style="position: relative; height: 200px; width: 100%;"><canvas id="chartEstado"></canvas></div>
-        <div class="d-flex justify-content-center gap-3 mt-3" style="font-size:.72rem;color:#666">
+        <div class="chart-container u-style-21d6332a"><canvas id="chartEstado"></canvas></div>
+        <div class="d-flex justify-content-center gap-3 mt-3 u-style-1602259d">
           <span class="d-flex align-items-center gap-1">
-            <span class="rounded-1 bg-success d-inline-block" style="width:10px;height:10px"></span> Confirmadas
+            <span class="rounded-1 bg-success d-inline-block u-style-bf6f6719"></span> Confirmadas
           </span>
           <span class="d-flex align-items-center gap-1">
-            <span class="rounded-1 bg-warning d-inline-block" style="width:10px;height:10px"></span> Pendientes
+            <span class="rounded-1 bg-warning d-inline-block u-style-bf6f6719"></span> Pendientes
           </span>
           <span class="d-flex align-items-center gap-1">
-            <span class="rounded-1 bg-danger d-inline-block" style="width:10px;height:10px"></span> Canceladas
+            <span class="rounded-1 bg-danger d-inline-block u-style-bf6f6719"></span> Canceladas
           </span>
         </div>
       </div>
@@ -198,10 +198,10 @@
         {% if actividad_reciente %}
           {% for item in actividad_reciente %}
           <div class="d-flex align-items-start gap-2 py-2 border-bottom">
-            <span class="rounded-circle bg-success flex-shrink-0 mt-1" style="width:8px;height:8px;display:inline-block"></span>
+            <span class="rounded-circle bg-success flex-shrink-0 mt-1 u-style-3fa034ce"></span>
             <div>
               <div class="small fw-medium">{{ item.texto }}</div>
-              <div class="text-muted" style="font-size:.72rem">{{ item.tiempo }}</div>
+              <div class="text-muted u-style-cc73531a">{{ item.tiempo }}</div>
             </div>
           </div>
           {% endfor %}
@@ -279,7 +279,7 @@
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">
         <tr>
-          <th style="width:60px">Pos.</th>
+          <th class="u-style-c5ac9c43">Pos.</th>
           <th>Tour</th>
           <th>Precio</th>
           <th>Reservas</th>
@@ -306,9 +306,9 @@
               {{ tour.numero_reservas }} <i class="bi bi-ticket-detailed ms-1"></i>
             </span>
           </td>
-          <td style="min-width:130px">
+          <td class="u-style-bd123a7f">
             <div class="d-flex align-items-center gap-2">
-              <div class="progress flex-grow-1" style="height:5px">
+              <div class="progress flex-grow-1 u-style-eb682f54">
                 <div class="progress-bar bg-success"
                      style="width: {{ tour.porcentaje }}%; border-radius:99px"
                      role="progressbar">
@@ -319,7 +319,7 @@
           </td>
           <td>
             <span class="badge rounded-pill bg-success bg-opacity-25 text-success">
-              <i class="bi bi-circle-fill me-1" style="font-size:.45rem"></i>Activo
+              <i class="bi bi-circle-fill me-1 u-style-c37a0638"></i>Activo
             </span>
           </td>
         </tr>
