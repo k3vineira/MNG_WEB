@@ -2,105 +2,194 @@
 {% load static %}
 {% block content %}
 
-<!-- Fondo completo -->
-<div class="min-vh-100 d-flex align-items-center justify-content-center px-3 pb-5 pt-5" style="background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url('{% static "img/Fondo.webp" %}'); background-size: cover; background-position: center; background-attachment: fixed;">
-  <div class="w-100" style="max-width: 500px;">
- 
-    <!-- Tarjeta principal -->
-    <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white bg-opacity-75">
- 
-      <!-- Imagen de portada superior -->
-      <div class="position-relative" style="height: 180px; background-image: url('{% static 'img/Fondo3.webp' %}'); background-size: cover; background-position: center;">
-        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-25"></div>
+<!-- ============================================================ -->
+<!-- VERSIÓN MÓVIL: Imagen de fondo + formulario con transparencia -->
+<!-- ============================================================ -->
+<div class="d-lg-none position-relative min-vh-100 d-flex flex-column justify-content-center pt-5 pb-4"
+     style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
+
+  <!-- Contenedor centrado del formulario -->
+  <div class="d-flex align-items-center justify-content-center px-3 w-100">
+    <div class="w-100 rounded-4 shadow-lg p-4 p-sm-5 bg-white bg-opacity-95" style="max-width: 480px;">
+
+      <!-- Cabecera Editorial -->
+      <div class="mb-5">
+        <h1 class="display-4 fw-bold text-dark mb-1">¡Hola!</h1>
+        <p class="text-muted mb-4 small fw-medium">Bienvenido de vuelta a las montañas de Mongua.</p>
+        <h2 class="h4 fw-bold text-dark">Inicia sesión</h2>
       </div>
- 
-      <div class="card-body p-4 p-md-5 position-relative pt-5">
-        
-        <!-- Ícono flotante circular sobre el borde -->
-        <div class="position-absolute top-0 start-50 translate-middle">
-          <div class="d-flex align-items-center justify-content-center rounded-circle bg-white border border-success border-opacity-25 shadow-lg" style="width: 80px; height: 80px;">
-            <i class="bi bi-person-circle text-success fs-2"></i>
+
+      {% if not request.COOKIES.ha_registrado %}
+      <div class="alert alert-success alert-dismissible fade show border-0 bg-light rounded-4 shadow p-4 mb-4" role="alert">
+        <div class="d-flex align-items-center gap-3 pe-4">
+          <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
+            <i class="bi bi-compass fs-3 d-block"></i>
+          </div>
+          <div>
+            <h5 class="mb-1 fw-bold text-dark">¿Quieres realizar una reserva pero no tienes una cuenta?</h5>
+            <p class="mb-0 text-muted">
+              <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold text-decoration-none">Regístrate</a> y entra a la familia Monagua.
+            </p>
           </div>
         </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
 
-        <!-- Cabecera Editorial -->
-        <div class="text-center mb-4">
-          <h1 class="h3 fw-bold text-dark mb-1">¡Hola!</h1>
-          <p class="text-muted small mb-0">Bienvenido de vuelta a las montañas de Mongua.</p>
-        </div>
+      <!-- Formulario -->
+      <form method="POST" action="" class="mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
 
-        {% if not request.COOKIES.ha_registrado %}
-        <div class="alert alert-success alert-dismissible fade show border-0 bg-light rounded-4 shadow p-3 mb-4" role="alert">
-          <div class="d-flex align-items-center gap-2 text-start">
-            <i class="bi bi-compass text-success fs-4 flex-shrink-0"></i>
-            <div>
-              <span class="small text-muted">
-                ¿No tienes cuenta? <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold text-decoration-none">Regístrate</a> y reserva.
-              </span>
-            </div>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {% if form.errors %}
+        <div class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">
+          <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña incorrectos.
+          <button type="button" class="btn-close small" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endif %}
 
-        <!-- Formulario -->
-        <form method="POST" action="" class="mb-4">
-          {% csrf_token %}
-          <input type="hidden" name="next" value="{{ request.GET.next }}">
 
-          {% if form.errors %}
-          <div class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña incorrectos.
-            <button type="button" class="btn-close small" data-bs-dismiss="alert" aria-label="Close"></button>
+
+        <!-- Input Usuario -->
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-secondary ps-3">Correo o Usuario</label>
+          <input type="text" name="username" class="form-control rounded-pill py-3 px-4"
+                 placeholder="aventura@monagua.com" required>
+        </div>
+
+        <!-- Input Password -->
+        <div class="mb-4">
+          <div class="d-flex justify-content-between px-3">
+            <label class="form-label small fw-semibold text-secondary">Contraseña</label>
+            <a href="{% url 'password_reset' %}" class="small link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover">¿La olvidaste?</a>
+          </div>
+          <div class="position-relative">
+            <input type="password" name="password" class="form-control rounded-pill py-3 px-4 pe-5"
+                   placeholder="••••••••" required>
+            <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary u-style-26590802"
+               onclick="const input = this.previousElementSibling; if(input.type === 'password'){ input.type='text'; this.classList.replace('bi-eye', 'bi-eye-slash'); } else { input.type='password'; this.classList.replace('bi-eye-slash', 'bi-eye'); }"></i>
+          </div>
+        </div>
+
+        <!-- Botón -->
+        <div class="d-grid pt-2">
+          <button type="submit" class="btn btn-success rounded-pill py-3 fw-bold shadow-sm">
+            Iniciar Aventura
+          </button>
+        </div>
+      </form>
+
+      <!-- Pie de Formulario -->
+      <div class="text-center">
+        <p class="small text-muted mb-0">¿Aún no tienes cuenta?
+          <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover ms-1">Únete ahora</a>
+        </p>
+      </div>
+
+      <!-- Branding Sutil -->
+      <div class="text-center mt-4">
+        <img src="{% static 'img/Logo.webp' %}" alt="Logo Monagua" width="40">
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VERSIÓN DESKTOP: Layout original de dos columnas              -->
+<!-- ============================================================ -->
+<div class="d-none d-lg-block">
+  <section class="container-fluid p-0 overflow-hidden min-vh-100 pt-5">
+    <div class="row g-0 min-vh-100 w-100 m-0">
+
+      <!-- Columna Izquierda: Imagen de Naturaleza -->
+      <div class="col-lg-6 min-vh-100"
+           style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
+      </div>
+
+      <!-- Columna Derecha: Formulario Minimalista -->
+      <div class="col-lg-6 bg-white d-flex align-items-center justify-content-center p-5 min-vh-100 overflow-auto">
+        <div class="w-100" style="max-width: 480px;">
+
+          <!-- Cabecera Editorial -->
+          <div class="mb-5">
+            <h1 class="display-4 fw-bold text-dark mb-1">¡Hola!</h1>
+            <p class="text-muted mb-4 small fw-medium">Bienvenido de vuelta a las montañas de Mongua.</p>
+            <h2 class="h4 fw-bold text-dark">Inicia sesión</h2>
+          </div>
+
+          {% if not request.COOKIES.ha_registrado %}
+          <div class="alert alert-success alert-dismissible fade show border-0 bg-light rounded-4 shadow p-4 mb-4" role="alert">
+            <div class="d-flex align-items-center gap-3 pe-4">
+              <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
+                <i class="bi bi-compass fs-3 d-block"></i>
+              </div>
+              <div>
+                <h5 class="mb-1 fw-bold text-dark">¿Quieres realizar una reserva pero no tienes una cuenta?</h5>
+                <p class="mb-0 text-muted">
+                  <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold text-decoration-none">Regístrate</a> y entra a la familia Monagua.
+                </p>
+              </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
           {% endif %}
 
-          <!-- Input Usuario -->
-          <div class="mb-3">
-            <label class="form-label small fw-semibold text-secondary ps-3">Correo o Usuario</label>
-            <input type="text" name="username" class="form-control rounded-pill py-3 px-4"
-                   placeholder="aventura@monagua.com" required>
-          </div>
+          <!-- Formulario -->
+          <form method="POST" action="" class="mb-4">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
 
-          <!-- Input Password -->
-          <div class="mb-4">
-            <div class="d-flex justify-content-between px-3">
-              <label class="form-label small fw-semibold text-secondary">Contraseña</label>
-              <a href="{% url 'password_reset' %}" class="small link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover">¿La olvidaste?</a>
+            {% if form.errors %}
+            <div class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show" role="alert">
+              <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña incorrectos.
+              <button type="button" class="btn-close small" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="position-relative">
-              <input type="password" name="password" class="form-control rounded-pill py-3 px-4 pe-5"
-                     placeholder="••••••••" required>
-              <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary"
-                 style="cursor: pointer;"
-                 onclick="const input = this.previousElementSibling; if(input.type === 'password'){ input.type='text'; this.classList.replace('bi-eye', 'bi-eye-slash'); } else { input.type='password'; this.classList.replace('bi-eye-slash', 'bi-eye'); }"></i>
+            {% endif %}
+
+
+
+            <!-- Input Usuario -->
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-secondary ps-3">Correo o Usuario</label>
+              <input type="text" name="username" class="form-control rounded-pill py-3 px-4"
+                     placeholder="aventura@monagua.com" required>
             </div>
+
+            <!-- Input Password -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between px-3">
+                <label class="form-label small fw-semibold text-secondary">Contraseña</label>
+                <a href="{% url 'password_reset' %}" class="small link-secondary link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover">¿La olvidaste?</a>
+              </div>
+              <div class="position-relative">
+                <input type="password" name="password" class="form-control rounded-pill py-3 px-4 pe-5"
+                       placeholder="••••••••" required>
+                <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary u-style-26590802"
+                   onclick="const input = this.previousElementSibling; if(input.type === 'password'){ input.type='text'; this.classList.replace('bi-eye', 'bi-eye-slash'); } else { input.type='password'; this.classList.replace('bi-eye-slash', 'bi-eye'); }"></i>
+              </div>
+            </div>
+
+            <!-- Botón -->
+            <div class="d-grid pt-2">
+              <button type="submit" class="btn btn-success rounded-pill py-3 fw-bold shadow-sm">
+                Iniciar Aventura
+              </button>
+            </div>
+          </form>
+
+          <!-- Pie de Formulario -->
+          <div class="text-center">
+            <p class="small text-muted mb-0">¿Aún no tienes cuenta?
+              <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover ms-1">Únete ahora</a>
+            </p>
           </div>
 
-          <!-- Botón -->
-          <div class="d-grid pt-2">
-            <button type="submit" class="btn btn-success rounded-pill py-3 fw-bold shadow-sm">
-              Iniciar Aventura
-            </button>
-          </div>
-        </form>
-
-        <!-- Pie de Formulario -->
-        <div class="text-center">
-          <p class="small text-muted mb-0">¿Aún no tienes cuenta?
-            <a href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="link-success fw-bold link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover ms-1">Únete ahora</a>
-          </p>
         </div>
-
       </div>
-    </div>
 
-    <!-- Logo -->
-    <div class="text-center mt-3">
-      <img src="{% static 'img/Logo.webp' %}" alt="Logo Monagua" width="60" height="60" class="opacity-75">
     </div>
-
-  </div>
+  </section>
 </div>
 
 <script src="{% static 'js/auth/alertas.js' %}"></script>
