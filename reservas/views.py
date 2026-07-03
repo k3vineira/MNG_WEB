@@ -30,7 +30,6 @@ from notificaciones.models import Notificacion
 # RESERVAS ADMIN 
 # =========================
 
-
 class ReservaListView(ListView):
     model = Reserva
     template_name = 'admin/reservas/reservas.html'
@@ -38,21 +37,28 @@ class ReservaListView(ListView):
 
     def get_queryset(self):
         """
-        get_queryset.
-        
-        :return: Respuesta de la función.
+        Controla los estados. Si es 'todas', trae el historial completo sin omitir nada.
         """
-        return Reserva.objects.exclude(estado='cancelada').order_by('-id')
+        estado_param = self.request.GET.get('estado')
+
+        if estado_param == 'todas':
+            # 1. SI SELECCIONA "VER TODO": Trae absolutamente todas las reservas
+            queryset = Reserva.objects.all()
+        elif estado_param:
+            # 2. SI SELECCIONA UN ESTADO ESPECÍFICO: Filtra (ej. solo pendientes)
+            queryset = Reserva.objects.filter(estado=estado_param)
+        else:
+            # 3. POR DEFECTO (SIN FILTRO): Mantiene tu vista limpia ocultando las canceladas
+            queryset = Reserva.objects.exclude(estado='cancelada')
+            
+        return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
         """
-        get_context_data.
-        
-        :param kwargs: Descripción del parámetro.
-        
-        :return: Respuesta de la función.
+        Estadísticas globales sincronizadas.
         """
         context = super().get_context_data(**kwargs)
+        
         stats = Reserva.objects.aggregate(
             total=Count('id'),
             pendientes=Count('id', filter=Q(estado='pendiente')),
@@ -67,9 +73,11 @@ class ReservaListView(ListView):
             ('Confirmadas', stats['confirmadas'], 'text-success'),
             ('Canceladas', stats['canceladas'], 'text-danger'),
         ]
+
+        context['estado_seleccionado'] = self.request.GET.get('estado', '')
+        
         return context
-
-
+    
 class ReservaCreateView(SuccessMessageMixin, CreateView):
     model = Reserva
     fields = ['usuario', 'paquete', 'fecha', 'numero_adultos', 'numero_menores']
@@ -187,30 +195,44 @@ class CancelacionListView(ListView):
     template_name = 'admin/cancelaciones/cancelaciones_admin.html'
     context_object_name = 'cancelaciones'
 
+    def get_queryset(self):
+        """
+        Filtra las solicitudes usando los estados exactos del modelo en minúsculas.
+        """
+        queryset = super().get_queryset()
+        estado_param = self.request.GET.get('estado')
+
+        # Si viene un estado y no es 'todas', filtramos con el valor exacto en la BD
+        if estado_param and estado_param != 'todas':
+            queryset = queryset.filter(estado=estado_param)
+            
+        return queryset.order_by('-id')
+
     def get_context_data(self, **kwargs):
         """
-        get_context_data.
-        
-        :param kwargs: Descripción del parámetro.
-        
-        :return: Respuesta de la función.
+        Estadísticas mapeadas perfectamente con tu tupla ESTADOS_CANCELACION.
         """
         context = super().get_context_data(**kwargs)
+        
+        # Conteo exacto usando los valores en minúsculas del modelo
         stats = Cancelacion.objects.aggregate(
             total=Count('id'),
-            revisando=Count('id', filter=Q(
-                estado__in=['pendiente', 'revision'])),
-            aceptadas=Count('id', filter=Q(
-                estado__in=['confirmada', 'aceptada'])),
-            rechazadas=Count('id', filter=Q(
-                estado__in=['cancelada', 'rechazada']))
+            pendientes=Count('id', filter=Q(estado='pendiente')),
+            aceptadas=Count('id', filter=Q(estado='aceptada')),
+            rechazadas=Count('id', filter=Q(estado='rechazada'))
         )
+        context.update(stats)
+        
+        # Tus tarjetas superiores (Total, En Revisión/Pendientes, Aceptadas, Rechazadas)
         context['stats_list'] = [
             ('Total', stats['total'], 'text-dark'),
-            ('En Revisión', stats['revisando'], 'text-warning'),
+            ('En Revisión', stats['pendientes'], 'text-warning'),
             ('Aceptadas', stats['aceptadas'], 'text-success'),
             ('Rechazadas', stats['rechazadas'], 'text-danger'),
         ]
+
+        # Guardamos el parámetro para que el select recuerde qué opción se marcó
+        context['estado_seleccionado'] = self.request.GET.get('estado', '')
         return context
 
 

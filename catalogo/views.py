@@ -52,17 +52,28 @@ class PaqueteListView(ListView):
     template_name = 'admin/paquetes/paquetes.html'
     context_object_name = 'paquetes'
 
+    def get_queryset(self):
+        """
+        Filtra los paquetes según la categoría seleccionada en el formulario superior.
+        """
+        queryset = super().get_queryset()
+        
+        
+        categoria_id = self.request.GET.get('categoria')
+        
+        if categoria_id:
+            queryset = queryset.filter(categoria_id=categoria_id)
+            
+        return queryset
+
     def get_context_data(self, **kwargs):
         """
-        get_context_data.
-        
-        :param kwargs: La lista de los paquetes y otros argumentos de contexto.
-        
-        :return: lista de paquetes y estadísticas de los paquetes.
+        Mantiene las estadísticas globales de paquetes e inyecta las categorías
+        para renderizar el selector dinámico de filtros.
         """
         context = super().get_context_data(**kwargs)
 
-        # Conteo para los paquetes
+      
         stats = Paquete.objects.aggregate(
             total=Count('id'),
             activos=Count('id', filter=Q(estado=True)),
@@ -75,6 +86,12 @@ class PaqueteListView(ListView):
             ('Activos', stats['activos'], 'text-success'),
             ('Inactivos', stats['inactivos'], 'text-danger'),
         ]
+        
+    
+        context['categorias'] = Categoria.objects.all()
+      
+        context['categoria_seleccionada'] = self.request.GET.get('categoria', '')
+        
         return context
 
 
@@ -195,21 +212,34 @@ class PaqueteDeleteView(DeleteView):
 
 # ACTIVIDADES
 
-
 class ActividadesListView(ListView):
     model = Actividades
     template_name = 'admin/actividades/actividades.html'
     context_object_name = 'actividades'
+       
+    def get_queryset(self):
+        """
+        Filtra el set de datos principal antes de mandarlo al template.
+        """
+        queryset = super().get_queryset()
+        
+   
+        apto_menores_param = self.request.GET.get('apto_menores')
+        
+        if apto_menores_param == 'si':
+            queryset = queryset.filter(apto_para_menores=True)
+        elif apto_menores_param == 'no':
+            queryset = queryset.filter(apto_para_menores=False)
+            
+        return queryset
 
     def get_context_data(self, **kwargs):
         """
-        get_context_data.
-        
-        :param kwargs: actividades y otros argumentos de contexto.
-        
-        :return: lista de actividades y estadísticas de las actividades.
+        Mantiene el conteo global de estadísticas intacto y pasa el estado actual del filtro.
         """
         context = super().get_context_data(**kwargs)
+        
+      
         stats = Actividades.objects.aggregate(
             total=Count('id'),
             activas=Count('id', filter=Q(estado=True)),
@@ -222,6 +252,10 @@ class ActividadesListView(ListView):
             ('Activas', stats['activas'], 'text-success'),
             ('Inactivas', stats['inactivas'], 'text-danger'),
         ]
+        
+   
+        context['apto_menores_seleccionado'] = self.request.GET.get('apto_menores', '')
+        
         return context
 
 
@@ -501,22 +535,32 @@ def reservas(request):
 
 # TARIFAS
 
-
 class TarifaListView(ListView):
     model = Tarifa
     template_name = 'admin/tarifas/tarifas.html'
     context_object_name = 'tarifas'
 
+    def get_queryset(self):
+        """
+        Filtra las tarifas en base al paquete turístico seleccionado.
+        """
+        queryset = super().get_queryset()
+        
+       
+        paquete_id = self.request.GET.get('paquete')
+        
+        if paquete_id:
+            queryset = queryset.filter(paquete_id=paquete_id)
+            
+        return queryset
+
     def get_context_data(self, **kwargs):
         """
-        get_context_data.
-        
-        :param kwargs: La lista de las tarifas y otros argumentos de contexto.
-        
-        :return: lista de tarifas y estadísticas de las tarifas.
+        Mantiene las estadísticas globales e inyecta la lista de paquetes para el filtro.
         """
         context = super().get_context_data(**kwargs)
 
+     
         stats = Tarifa.objects.aggregate(
             total=Count('id'),
             activas=Count('id', filter=Q(estado='activa')),
@@ -529,6 +573,13 @@ class TarifaListView(ListView):
             ('Activas', stats['activas'], 'text-success'),
             ('Inactivas', stats['inactivas'], 'text-danger'),
         ]
+        
+        
+        context['paquetes'] = Paquete.objects.all()
+        
+      
+        context['paquete_seleccionado'] = self.request.GET.get('paquete', '')
+        
         return context
 
 

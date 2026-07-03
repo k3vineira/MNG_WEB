@@ -1,14 +1,12 @@
 from django import forms
 from django.forms import ModelForm, Select, DateInput, NumberInput
+from datetime import date, timedelta
 from .models import Reserva, Cancelacion
-
-
 
 class ReservaForm(ModelForm):
     class Meta:
         model = Reserva
-        fields = ['usuario', 'paquete', 'fecha',
-                  'numero_adultos', 'numero_menores']
+        fields = ['usuario', 'paquete', 'fecha', 'numero_adultos', 'numero_menores']
         widgets = {
             'usuario': Select(attrs={'class': 'form-select'}),
             'paquete': Select(attrs={'class': 'form-select'}),
@@ -20,6 +18,13 @@ class ReservaForm(ModelForm):
             'numero_menores': NumberInput(attrs={'class': 'form-control', 'min': 0}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # 2 días de anticipación obligatoria desde hoy
+        fecha_minima = date.today() + timedelta(days=2)
+        
+        # Forzamos que se pase en formato texto limpio YYYY-MM-DD que exige el navegador
+        self.fields['fecha'].widget.attrs['min'] = fecha_minima.strftime('%Y-%m-%d')
 
 class CancelacionForm(forms.ModelForm):
     class Meta:
