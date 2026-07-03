@@ -28,10 +28,10 @@ class EmailOrUsernameModelBackend(ModelBackend):
         if username is None:
             username = kwargs.get(UserModel.USERNAME_FIELD)
         
-        try:
-            # Buscar por username (apodo) o por correo electrónico (email), ignorando mayúsculas/minúsculas
-            user = UserModel.objects.get(Q(username__iexact=username) | Q(email__iexact=username))
-        except UserModel.DoesNotExist:
+        # Buscar por username (apodo) o por correo electrónico (email), ignorando mayúsculas/minúsculas
+        user = UserModel.objects.filter(Q(username__iexact=username) | Q(email__iexact=username)).first()
+        
+        if not user:
             # Ejecutar el hasher de contraseñas para mitigar ataques de temporización
             UserModel().set_password(password)
             return None
