@@ -1,5 +1,6 @@
-<div class="dropdown d-flex align-items-center">
-    <button class="btn p-0 d-flex align-items-center justify-content-center position-relative shadow-lg u-style-9f8e6e1a" 
+<div class="dropdown d-flex align-items-center position-fixed" style="top: 20px; right: 20px; z-index: 1050;">
+    <button class="btn btn-success p-0 rounded-circle d-flex align-items-center justify-content-center position-relative shadow-lg" 
+            style="width: 50px; height: 50px;"
             type="button" 
             id="dropdownPanelNotif" 
             data-bs-toggle="dropdown" 
@@ -7,7 +8,7 @@
             onmouseover="this.style.transform='scale(1.06)'" 
             onmouseout="this.style.transform='scale(1)'">
         
-        <i class="bi bi-bell-fill text-white fs-1"></i>
+        <i class="bi bi-bell-fill text-white fs-4"></i>
         
         {% if contador_notificaciones > 0 %}
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white fw-bold shadow d-flex align-items-center justify-content-center animate-pulse u-style-01cfbebd">
@@ -55,3 +56,50 @@
         </div>
     </ul>
 </div>
+<script>
+// Make the bell movable
+const notifBtn = document.getElementById('dropdownPanelNotif');
+const notifContainer = notifBtn.parentElement;
+let isDragging = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+
+notifBtn.addEventListener('mousedown', dragStart);
+notifBtn.addEventListener('touchstart', dragStart, {passive: true});
+document.addEventListener('mouseup', dragEnd);
+document.addEventListener('touchend', dragEnd);
+document.addEventListener('mousemove', drag);
+document.addEventListener('touchmove', drag, {passive: true});
+
+function dragStart(e) {
+    if (e.type === 'touchstart') {
+        initialX = e.touches[0].clientX - xOffset;
+        initialY = e.touches[0].clientY - yOffset;
+    } else {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+    }
+    if (e.target.closest('#dropdownPanelNotif')) isDragging = true;
+}
+
+function dragEnd() {
+    initialX = currentX;
+    initialY = currentY;
+    isDragging = false;
+}
+
+function drag(e) {
+    if (isDragging) {
+        if (e.type === 'touchmove') {
+            currentX = e.touches[0].clientX - initialX;
+            currentY = e.touches[0].clientY - initialY;
+        } else {
+            e.preventDefault();
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+        }
+        xOffset = currentX;
+        yOffset = currentY;
+        setTranslate(currentX, currentY, notifContainer);
+    }
+}
+function setTranslate(xPos, yPos, el) { el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`; }
+</script>
