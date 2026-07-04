@@ -127,7 +127,6 @@
                 </span>
               {% endfor %}
             </div>
-
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
             <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
             <script src="{% static 'js/reserva.js' %}"></script>
@@ -136,11 +135,17 @@
                 const dateInput = document.getElementById('fecha_input');
                 if (dateInput) {
                     dateInput.setAttribute('type', 'text');
+                    
+                    // Calculamos HOY + 2 días para la anticipación justa de Monagua
+                    const fechaMinima = new Date();
+                    fechaMinima.setDate(fechaMinima.getDate() + 2);
+
                     flatpickr(dateInput, {
                         locale: 'es',
                         dateFormat: 'Y-m-d',
                         allowInput: true,
-                        minDate: 'today',
+                        // Reemplazamos 'today' por nuestra constante calculada
+                        minDate: fechaMinima,
                         onChange: function(selectedDates, dateStr, instance) {
                             if (typeof window.updatePrice === 'function') {
                                 window.updatePrice();
