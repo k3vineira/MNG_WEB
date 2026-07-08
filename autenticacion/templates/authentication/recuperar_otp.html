@@ -3,14 +3,14 @@
 {% block content %}
 
 <!-- Fondo completo -->
-<div class="min-vh-100 d-flex align-items-center justify-content-center px-3 pb-5 pt-5" style="background-image: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url('{% static "img/Fondo.webp" %}'); background-size: cover; background-position: center; background-attachment: fixed;">
-  <div class="w-100" style="max-width: 500px;">
+<div class="min-vh-100 d-flex align-items-center justify-content-center px-3 pb-5 pt-5 auth-page-bg">
+  <div class="auth-card-wrapper auth-card-wrapper--medium">
  
     <!-- Tarjeta principal -->
     <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white bg-opacity-75">
  
       <!-- Imagen de portada superior -->
-      <div class="position-relative" style="height: 180px; background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;">
+      <div class="auth-header-bg">
         <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-25"></div>
       </div>
  
@@ -18,7 +18,7 @@
         
         <!-- Ícono flotante circular sobre el borde -->
         <div class="position-absolute top-0 start-50 translate-middle">
-          <div class="d-flex align-items-center justify-content-center rounded-circle bg-white border border-success border-opacity-25 shadow-lg" style="width: 80px; height: 80px;">
+          <div class="auth-icon-circle">
             <i class="bi bi-shield-check text-success fs-2"></i>
           </div>
         </div>
