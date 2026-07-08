@@ -37,7 +37,7 @@
                         <i class="bi bi-files"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-uppercase fw-bold stat-label">Total Recibidos</div>
+                        <div class="text-muted text-uppercase fw-bold" style="font-size:.68rem;letter-spacing:.05em">Total Recibidos</div>
                         <div class="fw-bold fs-3 text-dark lh-1">{{ total }}</div>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                         <i class="bi bi-hourglass-split"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-uppercase fw-bold stat-label">Pendientes</div>
+                        <div class="text-muted text-uppercase fw-bold" style="font-size:.68rem;letter-spacing:.05em">Pendientes</div>
                         <div class="fw-bold fs-3 text-warning lh-1">{{ total_pendientes }}</div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                         <i class="bi bi-check-circle-fill"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-uppercase fw-bold stat-label">Total Aprobado</div>
+                        <div class="text-muted text-uppercase fw-bold" style="font-size:.68rem;letter-spacing:.05em">Total Aprobado</div>
                         <div class="fw-bold fs-5 text-success lh-1 mt-1">COP ${{ total_aprobados|floatformat:0|intcomma }}</div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                         <i class="bi bi-x-circle-fill"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-uppercase fw-bold stat-label">Rechazados</div>
+                        <div class="text-muted text-uppercase fw-bold" style="font-size:.68rem;letter-spacing:.05em">Rechazados</div>
                         <div class="fw-bold fs-3 text-danger lh-1">{{ total_rechazados }}</div>
                     </div>
                 </div>
@@ -90,7 +90,8 @@
             <div class="d-flex flex-wrap align-items-center gap-3">
                 <input type="text"
                        id="buscarComprobante"
-                       class="form-control rounded-pill w-auto flex-grow-1 search-input--320"
+                       class="form-control rounded-pill w-auto flex-grow-1"
+                       style="max-width:320px"
                        placeholder="🔍  Buscar usuario, referencia…">
 
                 <div class="d-flex flex-wrap gap-2 ms-auto">
@@ -136,12 +137,14 @@
                         {% if c.imagen %}
                             <img src="{{ c.imagen.url }}"
                                  alt="Comprobante"
-                                 class="rounded-3 border comp-thumbnail"
+                                 class="rounded-3 border object-fit-cover"
+                                 style="width:72px;height:72px;cursor:zoom-in"
                                  data-bs-toggle="modal"
                                  data-bs-target="#modalComp{{ c.id }}"
                                  title="Clic para ampliar">
                         {% else %}
-                            <div class="rounded-3 border border-dashed bg-light d-flex align-items-center justify-content-center text-secondary comp-placeholder">
+                            <div class="rounded-3 border border-dashed bg-light d-flex align-items-center justify-content-center text-secondary"
+                                 style="width:72px;height:72px;font-size:1.6rem">
                                 <i class="bi bi-image"></i>
                             </div>
                         {% endif %}
@@ -178,7 +181,7 @@
                         <!-- Metadatos -->
                         <div class="row row-cols-2 row-cols-md-4 g-2 small">
                             <div class="col">
-                                <div class="text-muted fw-semibold text-uppercase stat-label">Monto</div>
+                                <div class="text-muted fw-semibold text-uppercase" style="font-size:.68rem">Monto</div>
                                 <div class="fw-bold text-success">
                                     {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}
                                     {% elif c.reserva %}COP ${{ c.reserva.monto_total|floatformat:0|intcomma }}
@@ -186,15 +189,15 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <div class="text-muted fw-semibold text-uppercase stat-label">Canal / Banco</div>
+                                <div class="text-muted fw-semibold text-uppercase" style="font-size:.68rem">Canal / Banco</div>
                                 <div class="fw-semibold">{{ c.banco_origen|default:"—" }}</div>
                             </div>
                             <div class="col">
-                                <div class="text-muted fw-semibold text-uppercase stat-label">Referencia</div>
+                                <div class="text-muted fw-semibold text-uppercase" style="font-size:.68rem">Referencia</div>
                                 <div class="font-monospace text-secondary">{{ c.referencia|default:"—" }}</div>
                             </div>
                             <div class="col">
-                                <div class="text-muted fw-semibold text-uppercase stat-label">Fecha Envío</div>
+                                <div class="text-muted fw-semibold text-uppercase" style="font-size:.68rem">Fecha Envío</div>
                                 <div class="text-muted">{{ c.fecha_envio|date:"d/m/Y H:i" }}</div>
                             </div>
                         </div>
@@ -244,7 +247,8 @@
                         <div class="row g-4">
                             <div class="col-md-7 text-center">
                                 <img src="{{ c.imagen.url }}"
-                                     class="img-fluid rounded-3 border comp-modal-img"
+                                     class="img-fluid rounded-3 border"
+                                     style="max-height:420px;object-fit:contain"
                                      alt="Comprobante">
                             </div>
                             <div class="col-md-5">

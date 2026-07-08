@@ -2,19 +2,20 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid pt-1 pb-2 px-4 destinos-header-nav">
+<div class="container-fluid pt-1 pb-2 px-4" style="margin-top: 60px !important; position: relative; z-index: 1000;">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item fs-5 fw-semibold">
-                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none destinos-breadcrumb-link">Inicio</a>
+                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none" style="color:  #000000af !important;">Inicio</a>
             </li>
-            <li class="breadcrumb-item active fs-5 fw-bold destinos-breadcrumb-link" aria-current="page">
+            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color:  #000000af !important;">
                 Blog
             </li>
         </ol>
     </nav>
 </div>
-<header class="position-relative overflow-hidden blog-header">
+<header class="position-relative overflow-hidden"
+        style="background: url('{% static 'img/carousel/img1.webp' %}') center/cover no-repeat; min-height: 70vh;">
     <div class="container">
         <div class="row justify-content-center align-items-center text-center text-white u-style-b4553598">
             <div class="col-lg-8">

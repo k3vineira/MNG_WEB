@@ -202,7 +202,8 @@
         {% if ultimas_reservas %}
           {% for r in ultimas_reservas %}
           <div class="d-flex align-items-start gap-2 py-2 {% if not forloop.last %}border-bottom{% endif %}">
-            <span class="rounded-circle flex-shrink-0 mt-1 d-inline-block status-dot {% if r.estado == 'confirmada' %}status-dot--confirmada{% elif r.estado == 'pendiente' %}status-dot--pendiente{% else %}status-dot--cancelada{% endif %}">
+            <span class="rounded-circle flex-shrink-0 mt-1 d-inline-block"
+                  style="width:8px;height:8px;background:{% if r.estado == 'confirmada' %}#198754{% elif r.estado == 'pendiente' %}#ffc107{% else %}#dc3545{% endif %}">
             </span>
             <div class="flex-grow-1">
               <div class="small fw-medium">{{ r.paquete.nombre|default:"Paquete" }}</div>
