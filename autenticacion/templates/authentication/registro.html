@@ -104,17 +104,23 @@
                         </div>
 
                         <div class="row g-2 mb-3">
-                            <div class="col-sm-6 form-floating">
+                            <div class="col-md-4 form-floating">
                                 <select name="pais" id="id_pais" class="form-select rounded-4 shadow-sm text-secondary" data-prev="{{ request.POST.pais }}" required>
                                     <option value="" selected disabled>Cargando países...</option>
                                 </select>
                                 <label for="id_pais" class="text-secondary small ms-2"><i class="bi bi-globe text-success me-1"></i>País</label>
                             </div>
-                            <div class="col-sm-6 form-floating">
-                                <select name="ciudad" id="id_ciudad" class="form-select rounded-4 shadow-sm text-secondary" data-prev="{{ request.POST.ciudad }}" required disabled>
+                            <div class="col-md-4 form-floating">
+                                <select name="departamento" id="id_departamento" class="form-select rounded-4 shadow-sm text-secondary" data-prev="{{ request.POST.departamento }}" required disabled>
                                     <option value="" selected disabled>Elige un país primero</option>
                                 </select>
-                                <label for="id_ciudad" class="text-secondary small ms-2"><i class="bi bi-building text-success me-1"></i>Ciudad</label>
+                                <label for="id_departamento" class="text-secondary small ms-2"><i class="bi bi-map text-success me-1"></i>Departamento</label>
+                            </div>
+                            <div class="col-md-4 form-floating">
+                                <select name="ciudad" id="id_ciudad" class="form-select rounded-4 shadow-sm text-secondary" data-prev="{{ request.POST.ciudad }}" required disabled>
+                                    <option value="" selected disabled>Elige un departamento primero</option>
+                                </select>
+                                <label for="id_ciudad" class="text-secondary small ms-2"><i class="bi bi-building text-success me-1"></i>Ciudad/Mun.</label>
                             </div>
                         </div>
 

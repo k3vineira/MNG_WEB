@@ -56,7 +56,7 @@ def crear_datos_prueba():
     # 2. Obtener o crear cliente asociado
     cliente, creado = Cliente.objects.get_or_create(
         usuario=usuario,
-        defaults={'pais': 'Colombia', 'ciudad': 'Bogota'}
+        defaults={'pais': 'Colombia', 'departamento': 'Bogotá D.C.', 'ciudad': 'Bogota'}
     )
     if creado:
         print(f"[OK] Cliente creado para {usuario.username}")

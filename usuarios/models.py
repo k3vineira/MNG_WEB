@@ -138,12 +138,17 @@ class Cliente(models.Model):
         verbose_name='Cuenta de Usuario'
     )
     pais = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         verbose_name='País'
     )
+    departamento = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='Departamento'
+    )
     ciudad = models.CharField(
-        max_length=50,
+        max_length=100,
         blank=True,
         verbose_name='Ciudad'
     )

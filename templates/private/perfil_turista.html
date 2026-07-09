@@ -244,7 +244,7 @@
               </div>
 
               <!-- País (NO EDITABLE - usa APIs de registro) -->
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-floating">
                   <select
                     id="id_pais"
@@ -260,8 +260,25 @@
                 </div>
               </div>
 
+              <!-- Departamento (NO EDITABLE - usa APIs de registro) -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  <select
+                    id="id_departamento"
+                    class="form-select rounded-4 shadow-sm bg-light text-muted"
+                    data-prev="{{ user.cliente.departamento }}"
+                    disabled
+                  >
+                    <option value="" selected disabled>Elige un país primero</option>
+                  </select>
+                  <label for="id_departamento">
+                    <i class="bi bi-map text-success me-2"></i>Departamento
+                  </label>
+                </div>
+              </div>
+
               <!-- Ciudad (NO EDITABLE - usa APIs de registro) -->
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-floating">
                   <select
                     id="id_ciudad"
@@ -269,7 +286,7 @@
                     data-prev="{{ user.cliente.ciudad }}"
                     disabled
                   >
-                    <option value="" selected disabled>Elige un país primero</option>
+                    <option value="" selected disabled>Elige un departamento primero</option>
                   </select>
                   <label for="id_ciudad">
                     <i class="bi bi-building text-success me-2"></i>Ciudad

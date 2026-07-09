@@ -354,6 +354,7 @@ def usuarios_guardar(request):
     if rol == Usuario.Roles.CLIENTE:
         perfil, _ = Cliente.objects.get_or_create(usuario=user)
         perfil.pais = request.POST.get('pais', perfil.pais)
+        perfil.departamento = request.POST.get('departamento', perfil.departamento)
         perfil.ciudad = request.POST.get('ciudad', perfil.ciudad)
         perfil.save()
     elif rol == Usuario.Roles.GUIA:

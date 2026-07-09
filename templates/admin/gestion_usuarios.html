@@ -313,15 +313,22 @@
                 <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-airplane me-2 text-info"></i>Información de Origen</h6>
                 <div class="bg-info bg-opacity-10 rounded-4 p-3 border border-info border-opacity-25 mb-3">
                     <div class="row g-3">
-                        <div class="col-6">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">País de Procedencia</small>
+                        <div class="col-4">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">País</small>
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-globe-americas text-info"></i>
                                 <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.pais|default:"—" }}{% else %}—{% endif %}</span>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Ciudad</small>
+                        <div class="col-4">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Departamento</small>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-map text-info"></i>
+                                <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.departamento|default:"—" }}{% else %}—{% endif %}</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Ciudad/Mun.</small>
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-building text-info"></i>
                                 <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.ciudad|default:"—" }}{% else %}—{% endif %}</span>
@@ -458,16 +465,22 @@
                         <div id="collapseEditarCliente{{ u.id }}" class="accordion-collapse collapse {% if u.rol == 'CLIENTE' %}show{% endif %}" data-bs-parent="#accordionEditarRoles{{ u.id }}">
                             <div class="accordion-body bg-info bg-opacity-10">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-floating">
                                             <input type="text" class="form-control form-control-sm" name="pais" value="{% if u.rol == 'CLIENTE' and u.cliente %}{{ u.cliente.pais }}{% endif %}">
                                             <label class="text-muted small">País de Origen</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-sm" name="departamento" value="{% if u.rol == 'CLIENTE' and u.cliente %}{{ u.cliente.departamento }}{% endif %}">
+                                            <label class="text-muted small">Departamento</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="form-floating">
                                             <input type="text" class="form-control form-control-sm" name="ciudad" value="{% if u.rol == 'CLIENTE' and u.cliente %}{{ u.cliente.ciudad }}{% endif %}">
-                                            <label class="text-muted small">Ciudad</label>
+                                            <label class="text-muted small">Ciudad / Municipio</label>
                                         </div>
                                     </div>
                                 </div>

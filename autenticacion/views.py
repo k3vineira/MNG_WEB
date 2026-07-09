@@ -211,6 +211,7 @@ def registro_otp_verify_view(request):
                 Cliente.objects.create(
                     usuario=user,
                     pais=registro_data.get('pais', ''),
+                    departamento=registro_data.get('departamento', ''),
                     ciudad=registro_data.get('ciudad', '')
                 )
                 login(request, user, backend='autenticacion.backends.EmailOrUsernameModelBackend')

@@ -73,6 +73,8 @@ def poblar_base_datos():
                 'Cúcuta', 'Bucaramanga', 'Pereira', 'Santa Marta', 'Manizales']
     paises = ['Colombia', 'México', 'Argentina', 'Chile', 'Perú',
               'España', 'Ecuador', 'Panamá', 'Costa Rica', 'Brasil']
+    departamentos = ['Bogotá D.C.', 'Estado de México', 'Buenos Aires', 'Santiago', 'Lima',
+                    'Madrid', 'Pichincha', 'Panamá', 'San José', 'Río de Janeiro']
     categorias_nombres = ['Aventura', 'Ecoturismo', 'Cultural', 'Playa', 'Montaña',
                           'Gastronómico', 'Histórico', 'Relajación', 'Deportivo', 'Familiar']
     actividades_nombres = ['Senderismo', 'Buceo', 'Museos', 'Escalada', 'Ciclismo',
@@ -167,7 +169,7 @@ def poblar_base_datos():
             residencia=f"{ciudades[i]}, {paises[i]}"
         )
         c = Cliente.objects.create(
-            usuario=u, pais=paises[i], ciudad=ciudades[i])
+            usuario=u, pais=paises[i], departamento=departamentos[i], ciudad=ciudades[i])
         clientes_creados.append(c)
 
     # Crear 10 Guías (sin duplicados)
