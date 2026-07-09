@@ -23,4 +23,5 @@ urlpatterns = [
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='authentication/contraseña_reset_enviado.html'), name='password_reset_done'),
     path('password-reset/confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='authentication/contraseña_reset_form.html', form_class=CustomSetPasswordForm, success_url='/autenticacion/password-reset/complete/'), name='password_reset_confirm'),
     path('password-reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='authentication/contraseña_reset_guardar.html'), name='password_reset_complete'),
+    path('verificar-campo/', views.verificar_campo_ajax, name='verificar_campo'),
 ]

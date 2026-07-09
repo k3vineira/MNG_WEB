@@ -282,3 +282,39 @@ class AutenticacionViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Por favor ingresa tu correo electrónico o tu número de documento.')
 
+    def test_verificar_campo_ajax_username_taken(self):
+        """Prueba que verificar-campo retorna disponible=False para un usuario existente."""
+        response = self.client.get(reverse('verificar_campo'), {'campo': 'username', 'valor': 'viewuser'})
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), {
+            'disponible': False,
+            'mensaje': 'Este nombre de usuario ya está registrado.'
+        })
+
+    def test_verificar_campo_ajax_username_available(self):
+        """Prueba que verificar-campo retorna disponible=True para un usuario inexistente."""
+        response = self.client.get(reverse('verificar_campo'), {'campo': 'username', 'valor': 'newuser123'})
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), {
+            'disponible': True,
+            'mensaje': ''
+        })
+
+    def test_verificar_campo_ajax_email_taken(self):
+        """Prueba que verificar-campo retorna disponible=False para un correo existente."""
+        response = self.client.get(reverse('verificar_campo'), {'campo': 'email', 'valor': 'viewuser@example.com'})
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), {
+            'disponible': False,
+            'mensaje': 'Este correo electrónico ya está registrado.'
+        })
+
+    def test_verificar_campo_ajax_document_taken(self):
+        """Prueba que verificar-campo retorna disponible=False para un documento existente."""
+        response = self.client.get(reverse('verificar_campo'), {'campo': 'numero_documento', 'valor': '12345'})
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), {
+            'disponible': False,
+            'mensaje': 'Este número de documento ya está registrado.'
+        })
+
