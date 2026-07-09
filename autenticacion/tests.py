@@ -227,23 +227,58 @@ class AutenticacionViewsTests(TestCase):
         response = self.client.get(reverse('logout'))
         self.assertEqual(response.status_code, 302)
 
-    def test_recuperar_apodo_view_success(self):
+    def test_recuperar_apodo_view_success_email_only(self):
         """
-        Prueba la vista de recuperación de apodo con datos correctos.
+        Prueba la vista de recuperación de apodo con solo el correo electrónico.
         """
         response = self.client.post(reverse('recuperar_apodo'), {
-            'email': 'viewuser@example.com'
+            'email': 'viewuser@example.com',
+            'numero_documento': ''
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'viewuser')
 
-    def test_recuperar_apodo_view_fail(self):
+    def test_recuperar_apodo_view_success_document_only(self):
         """
-        Prueba la vista de recuperación de apodo con datos incorrectos.
+        Prueba la vista de recuperación de apodo con solo el número de documento.
         """
         response = self.client.post(reverse('recuperar_apodo'), {
-            'email': 'wrongemail@example.com'
+            'email': '',
+            'numero_documento': '12345'
         })
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No encontramos ninguna cuenta asociada a ese correo electrónico.')
+        self.assertContains(response, 'viewuser')
+
+    def test_recuperar_apodo_view_success_both(self):
+        """
+        Prueba la vista de recuperación de apodo con correo y documento correctos.
+        """
+        response = self.client.post(reverse('recuperar_apodo'), {
+            'email': 'viewuser@example.com',
+            'numero_documento': '12345'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'viewuser')
+
+    def test_recuperar_apodo_view_fail_mismatch(self):
+        """
+        Prueba que falla si el correo y el documento no corresponden al mismo usuario.
+        """
+        response = self.client.post(reverse('recuperar_apodo'), {
+            'email': 'viewuser@example.com',
+            'numero_documento': '99999'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'No encontramos ninguna cuenta con los datos proporcionados.')
+
+    def test_recuperar_apodo_view_fail_empty(self):
+        """
+        Prueba que falla si ambos campos están vacíos.
+        """
+        response = self.client.post(reverse('recuperar_apodo'), {
+            'email': '',
+            'numero_documento': ''
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Por favor ingresa tu correo electrónico o tu número de documento.')
 
