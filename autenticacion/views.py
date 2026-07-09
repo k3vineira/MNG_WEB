@@ -22,28 +22,24 @@ from .forms import RegistroForm, RecuperacionPersonalizadaForm
 def recuperar_apodo_view(request):
     """
     Permite al usuario recuperar su apodo (username) verificando
-    su correo electrónico y número de documento en la base de datos.
+    su correo electrónico en la base de datos.
     """
     context = {}
 
     if request.method == 'POST':
         email = request.POST.get('email', '').strip()
-        numero_documento = request.POST.get('numero_documento', '').strip()
 
-        if email and numero_documento:
+        if email:
             try:
-                usuario = Usuario.objects.get(
-                    email__iexact=email,
-                    numero_documento=numero_documento
-                )
+                usuario = Usuario.objects.get(email__iexact=email)
                 context['apodo_encontrado'] = usuario.username
             except Usuario.DoesNotExist:
                 context['error'] = (
-                    'No encontramos ninguna cuenta con ese correo y número de documento. '
+                    'No encontramos ninguna cuenta asociada a ese correo electrónico. '
                     'Verifica que los datos sean correctos.'
                 )
         else:
-            context['error'] = 'Por favor completa todos los campos.'
+            context['error'] = 'Por favor ingresa tu correo electrónico.'
 
     return render(request, 'authentication/recuperar_apodo.html', context)
 

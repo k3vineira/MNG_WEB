@@ -232,8 +232,7 @@ class AutenticacionViewsTests(TestCase):
         Prueba la vista de recuperación de apodo con datos correctos.
         """
         response = self.client.post(reverse('recuperar_apodo'), {
-            'email': 'viewuser@example.com',
-            'numero_documento': '12345'
+            'email': 'viewuser@example.com'
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'viewuser')
@@ -243,9 +242,8 @@ class AutenticacionViewsTests(TestCase):
         Prueba la vista de recuperación de apodo con datos incorrectos.
         """
         response = self.client.post(reverse('recuperar_apodo'), {
-            'email': 'viewuser@example.com',
-            'numero_documento': 'wrongdoc'
+            'email': 'wrongemail@example.com'
         })
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No encontramos ninguna cuenta')
+        self.assertContains(response, 'No encontramos ninguna cuenta asociada a ese correo electrónico.')
 

@@ -29,30 +29,7 @@
     </div>
   </div>
 
-  <!-- Input Número de Documento -->
-  <div class="mb-4">
-    <label for="documento_apodo" class="form-label small fw-semibold text-secondary mb-2">
-      Número de documento
-    </label>
-    <div class="input-group">
-      <span class="input-group-text bg-light border-end-0 rounded-start-3">
-        <i class="bi bi-card-text text-success"></i>
-      </span>
-      <input
-        type="text"
-        id="documento_apodo"
-        name="numero_documento"
-        class="form-control border-start-0 bg-light rounded-end-3 shadow-none py-3"
-        placeholder="Tu número de documento"
-        required
-        {% if request.POST.numero_documento %}value="{{ request.POST.numero_documento }}"{% endif %}
-      >
-    </div>
-    <div class="form-text ps-1">
-      <i class="bi bi-info-circle me-1"></i>
-      Usa los datos con los que te registraste en Monagua.
-    </div>
-  </div>
+
 
   <!-- Botón -->
   <div class="d-grid mb-3">
