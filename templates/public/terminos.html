@@ -1,147 +1,326 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block titulo %}{{ block.super }} - Términos{% endblock %}
+{% block titulo %}{{ block.super }} - Términos y Condiciones{% endblock %}
 
 {% block content %}
 
-<section class="pt-5 pb-4 text-center u-style-a78d1879">
-  <div class="container mt-5 mb-4">
-    <span class="badge rounded-pill border border-light border-opacity-25 text-white-50 fw-normal px-3 py-2 mb-3 u-style-7c27b441">
-      LEGAL
+<!-- ============================================================ -->
+<!-- HERO: Encabezado con gradiente y glassmorphism                -->
+<!-- ============================================================ -->
+<section class="pt-5 pb-4 text-center position-relative overflow-hidden"
+         style="background: linear-gradient(135deg, #0d6e3e 0%, #198754 40%, #20c997 100%); min-height: 220px;">
+  <!-- Decorative circles -->
+  <div class="position-absolute top-0 start-0 w-100 h-100" style="pointer-events: none;">
+    <div class="position-absolute rounded-circle"
+         style="width: 300px; height: 300px; background: rgba(255,255,255,0.05); top: -100px; right: -50px;"></div>
+    <div class="position-absolute rounded-circle"
+         style="width: 200px; height: 200px; background: rgba(255,255,255,0.04); bottom: -60px; left: 10%;"></div>
+  </div>
+
+  <div class="container mt-5 mb-3 position-relative">
+    <span class="badge rounded-pill border border-light border-opacity-25 text-white fw-normal px-3 py-2 mb-3"
+          style="background: rgba(255,255,255,0.12); backdrop-filter: blur(6px); letter-spacing: 1.5px; font-size: 0.7rem;">
+      <i class="bi bi-shield-check me-1"></i> LEGAL
     </span>
-    <h1 class="fw-bold mb-2 text-white">Términos y Condiciones</h1>
-    <p class="text-white-50 mb-0">Tu seguridad y confianza son nuestra prioridad en cada destino</p>
+    <h1 class="fw-bold mb-2 text-white display-5">Términos y Condiciones</h1>
+    <p class="text-white-50 mb-0 fs-6">Tu seguridad y confianza son nuestra prioridad en cada destino</p>
   </div>
 </section>
 
-<!-- CONTENIDO -->
-<div class="container py-5">
+<!-- Wave separator -->
+<div style="margin-top: -2px; line-height: 0;">
+  <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+       style="display: block; width: 100%;">
+    <path d="M0,0 C480,60 960,60 1440,0 L1440,60 L0,60 Z" fill="#f8f9fa"/>
+  </svg>
+</div>
+
+<!-- ============================================================ -->
+<!-- CONTENIDO                                                     -->
+<!-- ============================================================ -->
+<div class="container py-4" style="background: #f8f9fa;">
   <div class="row g-4">
 
-    <!-- Sidebar -->
+    <!-- ========== Sidebar de navegación ========== -->
     <div class="col-lg-3 d-none d-lg-block">
-      <div class="card border-0 shadow-sm rounded-3 p-3 u-style-be2d3229">
-        <p class="fw-semibold small text-uppercase text-muted mb-3 u-style-7cc76d3d">Contenido</p>
-        <nav class="nav flex-column gap-1">
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#introduccion">1. Introducción</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#reservas">2. Reservas y Pagos</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#cancelaciones">3. Cancelaciones</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#responsabilidades">4. Responsabilidades</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#privacidad">5. Protección de Datos</a>
+      <div class="card border-0 rounded-4 p-3 sticky-top"
+           style="top: 100px; background: white; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+        <p class="fw-bold small text-uppercase mb-3 ps-2"
+           style="color: #198754; letter-spacing: 1.2px; font-size: 0.68rem;">
+          <i class="bi bi-list-nested me-1"></i> Contenido
+        </p>
+        <nav id="terms-nav" class="nav flex-column gap-1">
+          <a class="nav-link rounded-3 px-3 py-2 d-flex align-items-center gap-2 text-secondary terms-nav-link active"
+             href="#introduccion"
+             style="font-size: 0.88rem; transition: all 0.2s ease;">
+            <span class="badge rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                  style="width: 24px; height: 24px; font-size: 0.7rem; background: #198754; color: white;">1</span>
+            Introducción
+          </a>
+          <a class="nav-link rounded-3 px-3 py-2 d-flex align-items-center gap-2 text-secondary terms-nav-link"
+             href="#reservas"
+             style="font-size: 0.88rem; transition: all 0.2s ease;">
+            <span class="badge rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                  style="width: 24px; height: 24px; font-size: 0.7rem; background: #198754; color: white;">2</span>
+            Reservas y Pagos
+          </a>
+          <a class="nav-link rounded-3 px-3 py-2 d-flex align-items-center gap-2 text-secondary terms-nav-link"
+             href="#cancelaciones"
+             style="font-size: 0.88rem; transition: all 0.2s ease;">
+            <span class="badge rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                  style="width: 24px; height: 24px; font-size: 0.7rem; background: #198754; color: white;">3</span>
+            Cancelaciones
+          </a>
+          <a class="nav-link rounded-3 px-3 py-2 d-flex align-items-center gap-2 text-secondary terms-nav-link"
+             href="#responsabilidades"
+             style="font-size: 0.88rem; transition: all 0.2s ease;">
+            <span class="badge rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                  style="width: 24px; height: 24px; font-size: 0.7rem; background: #198754; color: white;">4</span>
+            Responsabilidades
+          </a>
+          <a class="nav-link rounded-3 px-3 py-2 d-flex align-items-center gap-2 text-secondary terms-nav-link"
+             href="#privacidad"
+             style="font-size: 0.88rem; transition: all 0.2s ease;">
+            <span class="badge rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                  style="width: 24px; height: 24px; font-size: 0.7rem; background: #198754; color: white;">5</span>
+            Protección de Datos
+          </a>
         </nav>
       </div>
     </div>
 
-    <!-- Main -->
+    <!-- ========== Contenido Principal ========== -->
     <div class="col-lg-9">
-      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+      <div class="card border-0 rounded-4 p-4 p-md-5"
+           style="box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
 
+        <!-- Encabezado de la tarjeta -->
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
-          <div>
-            <div class="fw-semibold u-style-40db361c">Monagua Agencia de Viajes</div>
-            <small class="text-muted">Sogamoso, Boyacá — Colombia</small>
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center justify-content-center rounded-3"
+                 style="width: 48px; height: 48px; background: linear-gradient(135deg, #198754, #20c997);">
+              <i class="bi bi-building text-white fs-5"></i>
+            </div>
+            <div>
+              <div class="fw-bold text-dark">Monagua Agencia de Viajes</div>
+              <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Sogamoso, Boyacá — Colombia</small>
+            </div>
           </div>
-          <span class="badge bg-light text-muted border px-3 py-2">Actualizado: 26 de marzo, 2026</span>
+          <span class="badge border px-3 py-2 rounded-pill"
+                style="background: #f0fdf4; color: #198754; border-color: #bbf7d0 !important;">
+            <i class="bi bi-calendar-check me-1"></i>Actualizado: 26 de marzo, 2026
+          </span>
         </div>
 
-        <!-- 1 -->
-        <div id="introduccion" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">1</span>
+        <!-- ========== Sección 1: Introducción ========== -->
+        <div id="introduccion" class="mb-4" style="scroll-margin-top: 100px;">
+          <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width: 36px; height: 36px; font-size: 0.85rem; background: linear-gradient(135deg, #198754, #20c997);">1</span>
             Introducción
           </h4>
-          <p class="text-muted lh-lg">Bienvenido a <strong>Monagua Agencia de Viajes y Turismo</strong>. Al utilizar nuestros servicios y plataforma web, usted acepta cumplir con los términos detallados a continuación. Estos términos regulan la relación contractual entre el cliente y nuestra agencia radicada en Sogamoso, Boyacá.</p>
+          <p class="text-secondary lh-lg">Bienvenido a <strong class="text-dark">Monagua Agencia de Viajes y Turismo</strong>. Al utilizar nuestros servicios y plataforma web, usted acepta cumplir con los términos detallados a continuación. Estos términos regulan la relación contractual entre el cliente y nuestra agencia radicada en Sogamoso, Boyacá.</p>
         </div>
 
-        <hr class="my-4">
+        <hr class="my-4 opacity-10">
 
-        <!-- 2 -->
-        <div id="reservas" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">2</span>
+        <!-- ========== Sección 2: Reservas y Pagos ========== -->
+        <div id="reservas" class="mb-4" style="scroll-margin-top: 100px;">
+          <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width: 36px; height: 36px; font-size: 0.85rem; background: linear-gradient(135deg, #198754, #20c997);">2</span>
             Reservas y Pagos
           </h4>
-          <p class="text-muted lh-lg">Toda reserva se confirma tras el pago del anticipo mínimo del <strong>30%</strong> del valor total. Monagua se reserva el derecho de ajustar precios ante cambios en tasas gubernamentales o costos de proveedores.</p>
-          <ul class="text-muted small lh-lg">
-            <li>Pagos vía PSE, transferencia bancaria o en nuestros puntos físicos.</li>
-            <li>El saldo debe cancelarse <strong>48 horas antes</strong> de iniciar la experiencia.</li>
-          </ul>
+          <p class="text-secondary lh-lg">Toda reserva se confirma tras el pago del anticipo mínimo del <strong class="text-dark">30%</strong> del valor total. Monagua se reserva el derecho de ajustar precios ante cambios en tasas gubernamentales o costos de proveedores.</p>
+          <div class="rounded-3 p-3 mt-3" style="background: #f0fdf4; border-left: 4px solid #198754;">
+            <ul class="text-secondary mb-0 lh-lg ps-3">
+              <li class="mb-1">Pagos vía PSE, transferencia bancaria o en nuestros puntos físicos.</li>
+              <li>El saldo debe cancelarse <strong class="text-dark">48 horas antes</strong> de iniciar la experiencia.</li>
+            </ul>
+          </div>
         </div>
 
-        <hr class="my-4">
+        <hr class="my-4 opacity-10">
 
-        <!-- 3 -->
-        <div id="cancelaciones" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">3</span>
+        <!-- ========== Sección 3: Cancelaciones ========== -->
+        <div id="cancelaciones" class="mb-4" style="scroll-margin-top: 100px;">
+          <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width: 36px; height: 36px; font-size: 0.85rem; background: linear-gradient(135deg, #198754, #20c997);">3</span>
             Políticas de Cancelación
           </h4>
-          <p class="text-muted lh-lg">Para mantener la logística con nuestros guías y transportadores, aplicamos las siguientes condiciones:</p>
+          <p class="text-secondary lh-lg">Para mantener la logística con nuestros guías y transportadores, aplicamos las siguientes condiciones:</p>
           <div class="table-responsive mt-3">
-            <table class="table table-bordered table-sm text-center align-middle">
-              <thead class="table-light">
-                <tr>
-                  <th class="text-start">Antelación de cancelación</th>
-                  <th>Reembolso aplicable</th>
-                  <th>Estado</th>
+            <table class="table table-hover align-middle mb-0 rounded-3 overflow-hidden"
+                   style="border: 1px solid #e9ecef;">
+              <thead>
+                <tr style="background: linear-gradient(135deg, #198754, #20c997);">
+                  <th class="text-start text-white fw-semibold py-3 ps-4 border-0">Antelación de cancelación</th>
+                  <th class="text-center text-white fw-semibold py-3 border-0">Reembolso aplicable</th>
+                  <th class="text-center text-white fw-semibold py-3 pe-4 border-0">Estado</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td class="text-start">Más de 15 días</td>
-                  <td class="fw-semibold">90% del valor pagado</td>
-                  <td><span class="badge bg-success bg-opacity-10 text-success border border-success-subtle">Favorable</span></td>
+                  <td class="text-start ps-4 py-3 text-secondary">
+                    <i class="bi bi-clock-history me-2 text-success"></i>Más de 15 días
+                  </td>
+                  <td class="text-center fw-semibold text-dark py-3">90% del valor pagado</td>
+                  <td class="text-center py-3">
+                    <span class="badge rounded-pill px-3 py-2"
+                          style="background: #d1fae5; color: #065f46;">
+                      <i class="bi bi-check-circle me-1"></i>Favorable
+                    </span>
+                  </td>
                 </tr>
                 <tr>
-                  <td class="text-start">Entre 5 y 14 días</td>
-                  <td class="fw-semibold text-warning">50% del valor pagado</td>
-                  <td><span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle">Parcial</span></td>
+                  <td class="text-start ps-4 py-3 text-secondary">
+                    <i class="bi bi-clock-history me-2 text-warning"></i>Entre 5 y 14 días
+                  </td>
+                  <td class="text-center fw-semibold py-3" style="color: #b45309;">50% del valor pagado</td>
+                  <td class="text-center py-3">
+                    <span class="badge rounded-pill px-3 py-2"
+                          style="background: #fef3c7; color: #92400e;">
+                      <i class="bi bi-exclamation-circle me-1"></i>Parcial
+                    </span>
+                  </td>
                 </tr>
                 <tr>
-                  <td class="text-start">Menos de 48 horas</td>
-                  <td class="fw-semibold text-danger">Sin reembolso (No-Show)</td>
-                  <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle">Sin reembolso</span></td>
+                  <td class="text-start ps-4 py-3 text-secondary">
+                    <i class="bi bi-clock-history me-2 text-danger"></i>Menos de 48 horas
+                  </td>
+                  <td class="text-center fw-semibold text-danger py-3">Sin reembolso (No-Show)</td>
+                  <td class="text-center py-3">
+                    <span class="badge rounded-pill px-3 py-2"
+                          style="background: #fee2e2; color: #991b1b;">
+                      <i class="bi bi-x-circle me-1"></i>Sin reembolso
+                    </span>
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <hr class="my-4">
+        <hr class="my-4 opacity-10">
 
-        <!-- 4 -->
-        <div id="responsabilidades" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">4</span>
+        <!-- ========== Sección 4: Responsabilidades ========== -->
+        <div id="responsabilidades" class="mb-4" style="scroll-margin-top: 100px;">
+          <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width: 36px; height: 36px; font-size: 0.85rem; background: linear-gradient(135deg, #198754, #20c997);">4</span>
             Responsabilidades
           </h4>
-          <p class="text-muted lh-lg">Monagua actúa como intermediario entre el cliente y los prestadores de servicios (hoteles, transporte, guías). No nos hacemos responsables por retrasos climáticos, cierres viales o situaciones de fuerza mayor que alteren el itinerario original, aunque brindaremos asistencia total para reprogramaciones.</p>
+          <p class="text-secondary lh-lg">Monagua actúa como intermediario entre el cliente y los prestadores de servicios (hoteles, transporte, guías). No nos hacemos responsables por retrasos climáticos, cierres viales o situaciones de fuerza mayor que alteren el itinerario original, aunque brindaremos asistencia total para reprogramaciones.</p>
+          <div class="alert border-0 rounded-3 d-flex align-items-start gap-3 mt-3"
+               style="background: #fffbeb; border-left: 4px solid #f59e0b !important;">
+            <i class="bi bi-info-circle-fill fs-5" style="color: #f59e0b; margin-top: 2px;"></i>
+            <p class="mb-0 text-secondary small lh-lg">En caso de fuerza mayor, nuestro equipo coordinará alternativas o reprogramaciones sin costo adicional para el viajero.</p>
+          </div>
         </div>
 
-        <hr class="my-4">
+        <hr class="my-4 opacity-10">
 
-        <!-- 5 -->
-        <div id="privacidad" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">5</span>
+        <!-- ========== Sección 5: Protección de Datos ========== -->
+        <div id="privacidad" class="mb-4" style="scroll-margin-top: 100px;">
+          <h4 class="fw-bold mb-3 d-flex align-items-center gap-2 text-dark">
+            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0"
+                  style="width: 36px; height: 36px; font-size: 0.85rem; background: linear-gradient(135deg, #198754, #20c997);">5</span>
             Protección de Datos
           </h4>
-          <p class="text-muted lh-lg">Sus datos personales son tratados conforme a la Ley 1581 de 2012 de Colombia. No compartimos su información con terceros sin consentimiento previo. Puede solicitar acceso, corrección o eliminación escribiendo a <strong>contacto@monagua.com</strong>.</p>
+          <p class="text-secondary lh-lg">Sus datos personales son tratados conforme a la <strong class="text-dark">Ley 1581 de 2012</strong> de Colombia. No compartimos su información con terceros sin consentimiento previo. Puede solicitar acceso, corrección o eliminación escribiendo a <strong class="text-dark">contacto@monagua.com</strong>.</p>
+          <div class="row g-3 mt-2">
+            <div class="col-sm-4">
+              <div class="text-center p-3 rounded-3" style="background: #f0fdf4;">
+                <i class="bi bi-shield-lock fs-3 d-block mb-2" style="color: #198754;"></i>
+                <p class="mb-0 small fw-semibold text-dark">Datos cifrados</p>
+                <p class="mb-0 text-muted" style="font-size: 0.75rem;">Protección SSL/TLS</p>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="text-center p-3 rounded-3" style="background: #f0fdf4;">
+                <i class="bi bi-eye-slash fs-3 d-block mb-2" style="color: #198754;"></i>
+                <p class="mb-0 small fw-semibold text-dark">Sin terceros</p>
+                <p class="mb-0 text-muted" style="font-size: 0.75rem;">No vendemos datos</p>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="text-center p-3 rounded-3" style="background: #f0fdf4;">
+                <i class="bi bi-trash3 fs-3 d-block mb-2" style="color: #198754;"></i>
+                <p class="mb-0 small fw-semibold text-dark">Derecho al olvido</p>
+                <p class="mb-0 text-muted" style="font-size: 0.75rem;">Eliminación a solicitud</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="rounded-3 p-4 text-center mt-2 u-style-0300d8ca">
-          <p class="mb-2 text-muted small">¿Tiene dudas sobre nuestros términos?</p>
-          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vt74117@gmail.com&su=Dudas%20sobre%20los%20términos%20legales"
-             target="_blank"
-             class="btn btn-sm fw-semibold rounded-pill px-4 text-white u-style-96ada96c">
-            <i class="bi bi-envelope me-2"></i>Contactar soporte jurídico
-          </a>
+        <!-- ========== CTA Footer ========== -->
+        <div class="rounded-4 p-4 text-center mt-4 position-relative overflow-hidden"
+             style="background: linear-gradient(135deg, #198754, #20c997);">
+          <div class="position-relative">
+            <i class="bi bi-chat-dots text-white fs-3 d-block mb-2 opacity-75"></i>
+            <p class="mb-3 text-white small opacity-75">¿Tiene dudas sobre nuestros términos?</p>
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vt74117@gmail.com&su=Dudas%20sobre%20los%20términos%20legales"
+               target="_blank"
+               class="btn btn-light btn-sm fw-bold rounded-pill px-4 py-2 shadow-sm"
+               style="color: #198754; transition: all 0.3s ease;">
+              <i class="bi bi-envelope me-2"></i>Contactar soporte jurídico
+            </a>
+          </div>
         </div>
 
       </div>
     </div>
   </div>
 </div>
+
+<!-- Spacer para el fondo gris -->
+<div style="background: #f8f9fa; padding-bottom: 3rem;"></div>
+
+<!-- ============================================================ -->
+<!-- Estilos y script para el sidebar activo                       -->
+<!-- ============================================================ -->
+<style>
+  html { scroll-behavior: smooth; }
+
+  .terms-nav-link:hover,
+  .terms-nav-link.active {
+    background: #f0fdf4 !important;
+    color: #198754 !important;
+    font-weight: 600;
+  }
+  .terms-nav-link.active {
+    box-shadow: inset 3px 0 0 #198754;
+  }
+
+  /* Table row hover */
+  .table-hover tbody tr:hover { background: #f0fdf4 !important; }
+
+  /* CTA button hover */
+  .btn-light:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important; }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var sections = document.querySelectorAll('[id]');
+    var navLinks = document.querySelectorAll('.terms-nav-link');
+
+    function activateNav() {
+      var scrollPos = window.scrollY + 150;
+      sections.forEach(function(section) {
+        if (section.offsetTop <= scrollPos && (section.offsetTop + section.offsetHeight) > scrollPos) {
+          navLinks.forEach(function(link) {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + section.id) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }
+    window.addEventListener('scroll', activateNav);
+  });
+</script>
 
 {% endblock %}
