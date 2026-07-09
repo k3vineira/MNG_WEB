@@ -127,8 +127,11 @@
                         <div class="form-floating mb-3 position-relative">
                             <input type="password" id="pass1" name="password1" 
                                    class="form-control rounded-4 shadow-sm {% if form.password1.errors %}is-invalid{% endif %}" 
-                                   placeholder="Contraseña" required minlength="6" style="padding-right: 45px;">
+                                   placeholder="Contraseña" required minlength="6" style="padding-right: 80px;">
                             <label for="pass1" class="text-secondary small"><i class="bi bi-lock text-success me-1"></i>Contraseña</label>
+                            <span class="toggle-password position-absolute end-0 top-50 translate-middle-y me-5 text-secondary" style="z-index: 5; cursor: pointer;" data-target="pass1" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye fs-5 text-muted"></i>
+                            </span>
                             <span id="info-password-trigger" class="position-absolute end-0 top-50 translate-middle-y me-3 text-secondary cursor-pointer" style="z-index: 5; cursor: pointer;" title="Requisitos de contraseña">
                                 <i class="bi bi-info-circle fs-5 text-success"></i>
                             </span>
@@ -161,8 +164,11 @@
                         <div class="form-floating mb-3 position-relative">
                             <input type="password" id="pass2" name="password2" 
                                    class="form-control rounded-4 shadow-sm {% if form.password2.errors %}is-invalid{% endif %}" 
-                                   placeholder="Confirmar Contraseña" required minlength="6">
+                                   placeholder="Confirmar Contraseña" required minlength="6" style="padding-right: 45px;">
                             <label for="pass2" class="text-secondary small"><i class="bi bi-shield-lock text-success me-1"></i>Confirmar Contraseña</label>
+                            <span class="toggle-password position-absolute end-0 top-50 translate-middle-y me-3 text-secondary" style="z-index: 5; cursor: pointer;" data-target="pass2" title="Mostrar/ocultar contraseña">
+                                <i class="bi bi-eye fs-5 text-muted"></i>
+                            </span>
                             {% if form.password2.errors %}<div class="invalid-feedback ms-2">{{ form.password2.errors.0 }}</div>{% endif %}
                         </div>
                         
@@ -208,5 +214,23 @@
     <script src="{% static 'js/auth/paises_ciudades.js' %}"></script>
     <script src="{% static 'js/auth/realtime_validation.js' %}"></script>
     <script src="{% static 'js/auth/password_strength.js' %}"></script>
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                var targetId = this.getAttribute('data-target');
+                var input = document.getElementById(targetId);
+                var icon = this.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
