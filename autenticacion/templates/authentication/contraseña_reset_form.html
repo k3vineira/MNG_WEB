@@ -69,12 +69,38 @@
                   <i class="bi bi-lock text-success"></i>
                 </span>
                 <input type="password" id="pass1" name="new_password1" 
-                       class="form-control border-start-0 bg-light shadow-none py-3 {% if form.new_password1.errors %}is-invalid{% endif %}" 
+                       class="form-control border-start-0 border-end-0 bg-light shadow-none py-3 {% if form.new_password1.errors %}is-invalid{% endif %}" 
                        placeholder="Mínimo 6 caracteres" required minlength="6">
+                <span id="info-password-trigger" class="input-group-text bg-light border-start-0 rounded-end-3 cursor-pointer" style="cursor: pointer;" title="Requisitos de contraseña">
+                  <i class="bi bi-info-circle fs-5 text-success"></i>
+                </span>
               </div>
               {% if form.new_password1.errors %}
                 <div class="small text-danger mt-1 ms-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.new_password1.errors.0 }}</div>
               {% endif %}
+            </div>
+
+            <!-- Barra de fortaleza de contraseña -->
+            <div class="mb-3 px-1" id="strength-container" style="display: none;">
+                <div class="progress" style="height: 6px; background-color: #e9ecef;">
+                    <div id="strength-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-1">
+                    <span class="text-muted" style="font-size: 0.75rem;">Seguridad:</span>
+                    <span id="strength-text" class="fw-bold small text-secondary" style="font-size: 0.75rem;">Mala</span>
+                </div>
+            </div>
+
+            <!-- Tarjeta de requisitos de contraseña -->
+            <div id="password-requirements" class="card card-body p-3 mb-3 border border-success border-opacity-25 rounded-3 bg-light d-none shadow-sm" style="font-size: 0.82rem;">
+                <h6 class="fw-bold text-success mb-2 small"><i class="bi bi-shield-check me-1"></i>Requisitos de contraseña segura:</h6>
+                <ul class="mb-0 ps-3 text-secondary small" style="list-style-type: none;">
+                    <li id="req-length" class="mb-1"><i class="bi bi-circle me-1 text-muted"></i>Mínimo 8 caracteres</li>
+                    <li id="req-upper" class="mb-1"><i class="bi bi-circle me-1 text-muted"></i>Al menos una letra mayúscula</li>
+                    <li id="req-lower" class="mb-1"><i class="bi bi-circle me-1 text-muted"></i>Al menos una letra minúscula</li>
+                    <li id="req-number" class="mb-1"><i class="bi bi-circle me-1 text-muted"></i>Al menos un número</li>
+                    <li id="req-special" class="mb-0"><i class="bi bi-circle me-1 text-muted"></i>Al menos un carácter especial (ej: @, $, !, %, *, ?, &)</li>
+                </ul>
             </div>
 
             <!-- Input Confirmar Contraseña -->
@@ -164,4 +190,5 @@
 
 <script src="{% static 'js/auth/alertas.js' %}"></script>
 <script src="{% static 'js/auth/validar_passwords.js' %}"></script>
+<script src="{% static 'js/auth/password_strength.js' %}"></script>
 {% endblock %}
