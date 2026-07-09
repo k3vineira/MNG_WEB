@@ -74,9 +74,20 @@
 }
 
 /* Cuando la barra está en slim, ocultamos los textos de los submenús */
-body.sidebar-slim-active #sidebarWide {
+body.sidebar-slim-active .sidebar-wide {
   display: none !important;
 }
-body:not(.sidebar-slim-active) #sidebarSlim {
+body:not(.sidebar-slim-active) .sidebar-slim {
   display: none !important;
+}
+
+/* Forzar que los menús laterales y sus elementos aside tengan el ancho exacto */
+.sidebar-wide,
+.sidebar-wide > aside {
+  width: 280px !important;
+}
+
+.sidebar-slim,
+.sidebar-slim > aside {
+  width: 70px !important;
 }
