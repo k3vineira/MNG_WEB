@@ -31,6 +31,9 @@ def crear_datos_prueba():
     print("[INFO] Iniciando creacion de datos de prueba...")
 
     # 1. Obtener o crear usuario de prueba
+    # Limpiar posibles conflictos de email ocupados por otros usuarios
+    Usuario.objects.filter(email='vitococo@test.com').exclude(username='vitococo').delete()
+
     usuario, creado = Usuario.objects.get_or_create(
         username='vitococo',
         defaults={
@@ -45,6 +48,9 @@ def crear_datos_prueba():
         usuario.save()
         print(f"[OK] Usuario creado: {usuario.username}")
     else:
+        if usuario.email != 'vitococo@test.com':
+            usuario.email = 'vitococo@test.com'
+            usuario.save()
         print(f"[INFO] Usuario ya existe: {usuario.username}")
 
     # 2. Obtener o crear cliente asociado

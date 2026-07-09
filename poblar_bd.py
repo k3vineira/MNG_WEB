@@ -16,6 +16,22 @@ from datetime import timedelta, date
 from django.utils import timezone
 from decimal import Decimal
 
+def generar_documento_unico(prefijo):
+    while True:
+        doc = f"{prefijo}{random.randint(100000, 999999)}"
+        if not Usuario.objects.filter(numero_documento=doc).exists():
+            return doc
+
+
+def generar_email_unico(username):
+    email = f"{username}@ejemplo.com"
+    if not Usuario.objects.filter(email__iexact=email).exists():
+        return email
+    while True:
+        email = f"{username}_{random.randint(10, 99)}@ejemplo.com"
+        if not Usuario.objects.filter(email__iexact=email).exists():
+            return email
+
 
 def poblar_base_datos():
     """
@@ -25,6 +41,11 @@ def poblar_base_datos():
     """
     print("Iniciando el poblado de la base de datos...")
     print("0. Limpiando la base de datos...")
+    
+    # Limpiar posibles conflictos de superusuario que no se borran con objects.exclude(is_superuser=True).delete()
+    Usuario.objects.filter(email='a@b.com').exclude(username='a@b.com').delete()
+    Usuario.objects.filter(numero_documento='1000000001').exclude(username='a@b.com').delete()
+
     Notificacion.objects.all().delete()
     ComprobantePago.objects.all().delete()
     Promocion.objects.all().delete()
@@ -138,10 +159,10 @@ def poblar_base_datos():
             password='password123',
             first_name=nombres[i],
             last_name=apellidos[i],
-            email=f"{username}@ejemplo.com",
+            email=generar_email_unico(username),
             rol=Usuario.Roles.CLIENTE,
             tipo_documento=Usuario.TipoDocumento.CC,
-            numero_documento=f"1000{i}{random.randint(100, 999)}",
+            numero_documento=generar_documento_unico(f"1000{i}"),
             telefono=telefonos_clientes[i],
             residencia=f"{ciudades[i]}, {paises[i]}"
         )
@@ -169,10 +190,10 @@ def poblar_base_datos():
             password='password123',
             first_name=nombres[9 - i],
             last_name=apellidos[9 - i],
-            email=f"{username}@ejemplo.com",
+            email=generar_email_unico(username),
             rol=Usuario.Roles.GUIA,
             tipo_documento=Usuario.TipoDocumento.CC,
-            numero_documento=f"2000{i}{random.randint(100, 999)}",
+            numero_documento=generar_documento_unico(f"2000{i}"),
             telefono=f"+5731{random.randint(0,9)}{random.randint(1000000,9999999)}",
             residencia=f"{ciudades[i]}, Boyacá"
         )
