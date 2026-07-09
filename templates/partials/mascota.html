@@ -1,43 +1,43 @@
 {% load static %}
 <!-- ── Mascot: Cóndy El Cóndor ── -->
-<div id="condor-mascot-container" class="position-fixed">
+<div id="condor-mascot-container" class="position-fixed u-style-18bda3ad">
     <!-- Toggle Button (para colapsar/desplegar) -->
-    <button id="condor-toggle-btn" class="btn btn-success d-flex align-items-center justify-content-center shadow-sm border border-light">
-        <i id="condor-toggle-icon" class="bi bi-chevron-left"></i>
+    <button id="condor-toggle-btn" class="btn btn-success d-flex align-items-center justify-content-center shadow-sm border border-light u-style-564e6dec">
+        <i id="condor-toggle-icon" class="bi bi-chevron-left u-style-4d60b53b"></i>
     </button>
 
     <!-- Speech bubble -->
-    <div id="condor-speech-bubble" class="bg-dark text-white rounded-4 p-3 shadow-lg border border-success position-absolute d-none">
+    <div id="condor-speech-bubble" class="bg-dark text-white rounded-4 p-3 shadow-lg border border-success position-absolute d-none u-style-f3a952ae">
         <div class="fw-bold text-success mb-1">¡Cóndy dice! 🦅</div>
         <span id="condor-speech-text">¡Hola! Soy Cóndy, tu guía en {{ site_name|default:"Monagua" }}. ¡Cuidemos el páramo juntos!</span>
         <!-- Small arrow at the bottom of speech bubble -->
-        <div class="speech-arrow position-absolute"></div>
+        <div class="position-absolute u-style-e1a29e34"></div>
     </div>
     
     <!-- Condor Mascot Image -->
     <div class="condor-avatar-wrapper position-relative">
-        <img id="condor-img" src="{% static 'img/mascota/condor0.webp' %}" alt="Cóndor Mascot" width="100" height="100" class="transition-all" style="cursor: pointer;">
+        <img id="condor-img" src="{% static 'img/mascota/condor0.webp' %}" alt="Cóndor Mascot" width="100" height="100" class="transition-all u-style-3f1695a1">
         <!-- Label badge -->
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success border border-light shadow-sm" style="z-index: 2;">
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success border border-light shadow-sm u-style-e57d4d0e">
             Cóndy
         </span>
     </div>
 </div>
+<script src="{% static 'js/mascota.js' %}" defer></script>
 
 <style>
 #condor-mascot-container {
-    bottom: 20px;
-    left: 20px;
+    bottom: 30px;
+    left: 30px;
     z-index: 1060;
     transition: left 0.4s ease, opacity 0.4s ease !important;
 }
 
 #condor-img {
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
 }
 #condor-img:hover {
-    transform: scale(1.15) rotate(5deg);
+    transform: scale(1.2) rotate(8deg);
 }
 .condor-bounce {
     animation: condorBounce 2.5s infinite ease-in-out;
@@ -49,7 +49,7 @@
 
 #condor-mascot-container.collapsed {
     left: -80px !important;
-    opacity: 0.7;
+    opacity: 0.6;
 }
 
 #condor-mascot-container.collapsed #condor-toggle-icon {
@@ -62,51 +62,30 @@
 
 #condor-toggle-btn {
     position: absolute;
-    right: -20px;
+    right: -25px;
     top: 50%;
     transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     z-index: 10;
-    padding: 0;
 }
 
 #condor-speech-bubble {
-    bottom: 110px;
-    left: 0;
-    width: 260px;
-    max-width: calc(100vw - 40px);
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 250px;
     z-index: 11;
-    transform-origin: bottom left;
-    animation: bubblePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes bubblePop {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.speech-arrow {
+#condor-speech-bubble .position-absolute {
     bottom: -10px;
-    left: 40px;
+    left: 50%;
+    transform: translateX(-50%);
     border-width: 10px 10px 0;
     border-style: solid;
     border-color: #198754 transparent transparent transparent;
-}
-
-@media (max-width: 576px) {
-    #condor-mascot-container {
-        bottom: 15px;
-        left: 15px;
-    }
-    #condor-speech-bubble {
-        bottom: 105px;
-        width: 240px;
-    }
-    .speech-arrow {
-        left: 30px;
-    }
 }
 </style>
 
@@ -133,11 +112,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // Activate bouncing animation
     img.classList.add('condor-bounce');
     
-    // Start collapsed on mobile devices initially, but wait a moment
+    // Start collapsed on mobile devices
     if (window.innerWidth <= 768) {
-        setTimeout(() => {
-            mascot.classList.add('collapsed');
-        }, 3000); // Give user 3 seconds to see the mascot before hiding
+        mascot.classList.add('collapsed');
     }
 
     // Toggle button handler
@@ -148,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
         img.classList.add('condor-bounce');
     });
     
-    img.addEventListener('click', function(e) {
+    mascot.addEventListener('click', function(e) {
         e.stopPropagation();
         
         // If collapsed, clicking the mascot expands it instead of showing speech bubble
@@ -170,11 +147,9 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     
     // Close bubble when clicking anywhere else
-    document.addEventListener('click', function(e) {
-        if (!mascot.contains(e.target)) {
-            bubble.classList.add('d-none');
-            img.classList.add('condor-bounce');
-        }
+    document.addEventListener('click', function() {
+        bubble.classList.add('d-none');
+        img.classList.add('condor-bounce');
     });
 });
 </script>
