@@ -60,9 +60,8 @@
                       <img
                         src="{{ user_guia.imagen_perfil.url }}"
                         alt="Foto"
-                        class="rounded-circle shadow-sm me-3 border border-warning border-opacity-50 u-style-ca362336"
-                        width="45"
-                        height="45"
+                        class="rounded-circle shadow-sm me-3 border border-warning border-opacity-50"
+                        style="width: 45px; height: 45px; object-fit: cover;"
                       />
                       {% else %}
                       <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-dark fw-bold bg-warning u-style-55a6b999">
@@ -165,7 +164,7 @@
                               <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
                                   <div class="d-flex align-items-center gap-3">
                                       {% if user_guia.imagen_perfil %}
-                                          <img src="{{ user_guia.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border border-warning u-style-ca362336" width="50" height="50">
+                                          <img src="{{ user_guia.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border border-warning" style="width: 50px; height: 50px; object-fit: cover;">
                                       {% else %}
                                           <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-dark fw-bold bg-warning u-style-250a21b0">
                                               {{ user_guia.first_name|first|default:user_guia.username|first|upper }}

@@ -215,3 +215,63 @@ class AuthenticationAndEmailUniquenessTests(TestCase):
         
         # Verificar que el usuario quedó autenticado en la sesión
         self.assertTrue('_auth_user_id' in self.client.session)
+
+
+class AdminRoleRestrictionsTests(TestCase):
+    def setUp(self):
+        # 1. Crear el usuario Administrador logueado
+        self.admin_user = Usuario.objects.create_superuser(
+            username='admin_test',
+            email='admin@example.com',
+            password='adminpassword123',
+            rol=Usuario.Roles.ADMIN
+        )
+        # 2. Crear un usuario Cliente común
+        self.other_user = Usuario.objects.create_user(
+            username='client_test',
+            email='client@example.com',
+            password='clientpassword123',
+            rol=Usuario.Roles.CLIENTE
+        )
+
+    def test_admin_cannot_demote_self(self):
+        """Un administrador no puede cambiar su propio rol de ADMIN."""
+        self.client.login(username='admin_test', password='adminpassword123')
+        from django.urls import reverse
+        # Enviar POST para editar su propio rol a CLIENTE
+        response = self.client.post(reverse('usuarios_guardar'), {
+            'id': self.admin_user.id,
+            'email': 'admin@example.com',
+            'rol': 'CLIENTE'
+        })
+        self.assertEqual(response.status_code, 302) # Redirige
+        self.admin_user.refresh_from_db()
+        self.assertEqual(self.admin_user.rol, Usuario.Roles.ADMIN) # El rol permanece ADMIN
+
+    def test_admin_cannot_promote_other_to_admin(self):
+        """Un administrador no puede cambiar el rol de otro usuario a ADMIN."""
+        self.client.login(username='admin_test', password='adminpassword123')
+        from django.urls import reverse
+        # Enviar POST para cambiar el rol de client_test a ADMIN
+        response = self.client.post(reverse('usuarios_guardar'), {
+            'id': self.other_user.id,
+            'email': 'client@example.com',
+            'rol': 'ADMIN'
+        })
+        self.assertEqual(response.status_code, 302) # Redirige
+        self.other_user.refresh_from_db()
+        self.assertEqual(self.other_user.rol, Usuario.Roles.CLIENTE) # Sigue siendo CLIENTE
+
+    def test_admin_cannot_create_new_admin(self):
+        """Un administrador no puede crear un nuevo usuario con rol ADMIN."""
+        self.client.login(username='admin_test', password='adminpassword123')
+        from django.urls import reverse
+        # Enviar POST para crear nuevo usuario con rol ADMIN
+        response = self.client.post(reverse('usuarios_guardar'), {
+            'username': 'new_admin_test',
+            'email': 'new_admin@example.com',
+            'rol': 'ADMIN'
+        })
+        self.assertEqual(response.status_code, 302) # Redirige
+        exists = Usuario.objects.filter(username='new_admin_test').exists()
+        self.assertFalse(exists) # El usuario no se creó

@@ -274,6 +274,17 @@ def usuarios_guardar(request):
     if user_id:
         # --- MODO EDICIÓN ---
         user = get_object_or_404(Usuario, id=user_id)
+
+        # 1. No permitir modificar el propio rol de administrador
+        if user.id == request.user.id and rol != Usuario.Roles.ADMIN:
+            messages.error(request, 'No puedes modificar tu propio rol de administrador.')
+            return redirect('gestion_usuarios')
+
+        # 2. No permitir asignar el rol de administrador a otros usuarios si no lo eran ya
+        if user.id != request.user.id and rol == Usuario.Roles.ADMIN and user.rol != Usuario.Roles.ADMIN:
+            messages.error(request, 'No tienes permisos para asignar el rol de administrador a otros usuarios.')
+            return redirect('gestion_usuarios')
+
         email = request.POST.get('email', '').strip()
         if not email:
             messages.error(request, 'El email es obligatorio.')
@@ -302,6 +313,11 @@ def usuarios_guardar(request):
         user.save()
     else:
         # --- MODO CREACIÓN ---
+        # 3. No permitir crear nuevos administradores
+        if rol == Usuario.Roles.ADMIN:
+            messages.error(request, 'No tienes permisos para crear usuarios con el rol de administrador.')
+            return redirect('gestion_usuarios')
+
         username = request.POST.get('username', '').strip()
         email = request.POST.get('email', '').strip()
         if not username or not email:
