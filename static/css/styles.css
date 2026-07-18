@@ -33,23 +33,7 @@
     transition: all 0.3s ease;
 }
 
-.navbar-glass__brand {
-    font-weight: bold;
-}
 
-.navbar-glass__list {
-    display: flex;
-    justify-content: center;
-}
-
-.navbar-glass__item {
-    list-style: none;
-}
-
-.navbar-glass__actions {
-    display: flex;
-    align-items: center;
-}
 
 
 /* Efecto de Vidrio Verde al pasar el cursor */
@@ -62,8 +46,7 @@
 }
 
 .navbar-glass .nav-link:hover,
-.navbar-glass__link:hover,
-.navbar-glass__link--hovered:hover {
+.navbar-glass__link:hover {
     background: rgba(26, 38, 31, 0.15);
     /* Verde marca translúcido */
     backdrop-filter: blur(5px);
@@ -135,7 +118,6 @@
 
 /* ══════════════ MENÚ SECUNDARIO PREMIUM ══════════════ */
 
-.nav-secondary-link,
 .offcanvas-premium__secondary-link {
     color: #4a4a4a;
     text-decoration: none;
@@ -144,9 +126,7 @@
     display: inline-block;
 }
 
-.nav-secondary-link:hover,
-.offcanvas-premium__secondary-link:hover,
-.offcanvas-premium__secondary-link--hovered:hover {
+.offcanvas-premium__secondary-link:hover {
     color: #000;
     transform: translateX(8px);
 }
@@ -166,7 +146,6 @@
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav-main-link,
 .offcanvas-premium__main-link {
     color: #ffffff;
     /* Blanco para contraste sobre vidrio verde */
@@ -176,22 +155,14 @@
     display: block;
 }
 
-.nav-main-link:hover,
-.offcanvas-premium__main-link:hover,
-.offcanvas-premium__main-link--hovered:hover {
+.offcanvas-premium__main-link:hover {
     color: #000;
     opacity: 0.6;
 }
 
 
-/* Ajuste para que los links secundarios se vean más ligeros */
 
-.nav-secondary-menu,
-.offcanvas-premium__secondary-menu {
-    /* Contenedor */
-}
 
-.nav-secondary-menu .nav-secondary-link,
 .offcanvas-premium__secondary-menu .offcanvas-premium__secondary-link {
     color: rgba(255, 255, 255, 0.7);
     /* Blanco traslúcido */
@@ -199,81 +170,13 @@
     font-size: 1.1rem;
 }
 
-.nav-secondary-menu .nav-secondary-link:hover,
 .offcanvas-premium__secondary-menu .offcanvas-premium__secondary-link:hover {
     color: #ffffff !important;
 }
 
 
 
-/* ══════════════ ESPACIADO EDITORIAL (APPLE STYLE) ══════════════ */
 
-.py-editorial {
-    padding-top: 8rem !important;
-    padding-bottom: 8rem !important;
-}
-
-
-/* Alturas fijas para evitar que Chart.js dispare bucles de ResizeObserver INDEX-ADMIN.HTML*/
-
-.chart-container {
-    position: relative;
-    height: 300px;
-    width: 100%;
-}
-
-.chart-container-sm {
-    position: relative;
-    height: 200px;
-    width: 100%;
-}
-
-.table-responsive {
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-
-/* Diseño responsivo del sidebar → ver static/css/sidebar.css */
-
-#mainContent {
-    min-height: 100vh;
-}
-
-.font-playfair {
-    font-family: 'Playfair Display', serif;
-}
-
-.bg-verde {
-    background-color: var(--verde) !important;
-}
-
-.bg-verde-oscuro {
-    background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde) 100%) !important;
-}
-
-.bg-crema {
-    background-color: var(--crema) !important;
-}
-
-.text-verde {
-    color: var(--verde) !important;
-}
-
-.text-suave {
-    color: var(--verde-suave) !important;
-}
-
-.border-verde {
-    border-color: var(--verde) !important;
-}
-
-
-.foto-miembro {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-}
 
 
 /* Efecto de superposición con desenfoque para modales o tarjetas de reservas */
@@ -920,4 +823,3 @@
     transition: all .4s ease; 
     animation: flotar 3s ease-in-out infinite; 
 }
-/* ... resto de tus animaciones ... */
