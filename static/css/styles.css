@@ -44,27 +44,51 @@
 }
 
 .interface h1 {
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--verde-bosque);
+    color: #1c1c1a;
+    -webkit-text-stroke: 1.2px #000000;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: color 0.4s ease, -webkit-text-stroke 0.4s ease;
 }
 
-.interface h2 {
-    color: var(--verde-main);
+.interface p {
+    color: #1c1c1a;
+    transition: color 0.4s ease;
 }
 
 .interface .btn {
     pointer-events: auto;
+    color: #1c1c1a;
+    -webkit-text-stroke: 0.4px #000000;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1.5px solid #000000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s ease;
+}
+
+.interface.hero-text-light h1 {
+    color: #ffffff !important;
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.interface.hero-text-light p {
+    color: #ffffff !important;
+}
+
+.interface.hero-text-light .btn {
+    color: #ffffff !important;
+    -webkit-text-stroke: 0.4px rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* Logo de la empresa en el hero */
 .hero-logo {
-    width: 110px;
-    height: 110px;
+    max-height: 90px;
     object-fit: contain;
     display: block;
-    margin: 0 auto;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.20));
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
     transition: filter 0.4s ease, transform 0.4s ease;
 }
 
