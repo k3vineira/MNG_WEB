@@ -16,7 +16,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-p!+*=!t4f^dbv14nx*gk3
 
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 't', 'y', 'yes')
 
-ALLOWED_HOSTS = ['192.168.20.182', '192.168.1.149',
+ALLOWED_HOSTS = ['192.168.20.183', '192.168.1.149',
                  '192.168.1.112', '192.168.1.125', '192.168.1.128', '*']
 
 

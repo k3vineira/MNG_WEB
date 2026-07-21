@@ -20,6 +20,61 @@
     --primary-green: #1a261f;
 }
 
+/* ══════════════ HERO - PORTADA PRINCIPAL ══════════════ */
+
+/* Solo se mantiene lo que Bootstrap no puede cubrir con utilidades */
+
+.bg-image {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: 1;
+}
+
+.canvas-container {
+    z-index: 2;
+    background: #ffffff;
+    filter: blur(15px) contrast(38);
+    mix-blend-mode: screen;
+}
+
+.interface {
+    z-index: 3;
+    max-width: 800px;
+}
+
+.interface h1 {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--verde-bosque);
+}
+
+.interface h2 {
+    color: var(--verde-main);
+}
+
+.interface .btn {
+    pointer-events: auto;
+}
+
+/* Logo de la empresa en el hero */
+.hero-logo {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.20));
+    transition: filter 0.4s ease, transform 0.4s ease;
+}
+
+/* Cuando la burbuja pasa por encima, el logo resalta */
+.interface.hero-text-light .hero-logo {
+    filter: drop-shadow(0 4px 16px rgba(255, 255, 255, 0.60));
+    transform: scale(1.05);
+}
+
+
 
 
 /* ══════════════ NAVBAR GLASSMORPHISM (SNOW WHITE) ══════════════ */
@@ -101,6 +156,14 @@
 .footer-monagua__link--hovered:hover {
     color: #ffffff !important;
     transform: translateX(5px);
+}
+
+/* Animación de desplazamiento reutilizada del footer para la página de inicio */
+.hover-slide-right {
+    transition: transform 0.3s ease !important;
+}
+.hover-slide-right:hover {
+    transform: translateX(5px) !important;
 }
 
 .form-footer,
@@ -823,3 +886,246 @@
     transition: all .4s ease; 
     animation: flotar 3s ease-in-out infinite; 
 }
+
+/* ══════════════ EFECTO DESPLIEGUE PREMIUM SINCRONIZADO (PANELES) ══════════════ */
+
+.scroller-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 10%;
+    overflow: hidden;
+    background-color: #000000; 
+    will-change: transform;
+}
+
+/* ORDEN FÍSICO (Z-INDEX) */
+.panel:nth-child(1) { z-index: 5; }
+.panel:nth-child(2) { z-index: 4; }
+.panel:nth-child(3) { z-index: 3; }
+.panel:nth-child(4) { z-index: 2; }
+.panel:nth-child(5) { z-index: 1; }
+
+.panel-bg {
+    position: absolute;
+    top: -25%;
+    left: 0;
+    width: 100%;
+    height: 150%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    will-change: transform, opacity;
+    transform: scale(1) !important; 
+}
+
+.dark-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.35); 
+    z-index: 1;
+}
+
+.content-box {
+    position: relative;
+    z-index: 2;
+    max-width: 750px;
+    text-align: left;
+    will-change: transform, opacity;
+}
+
+.panel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ffffff;
+    color: #111111;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.panel-badge i { font-style: normal; }
+.panel-badge-urbano i { color: #e2583e; }
+.panel-badge-naturaleza i { color: #c9a067; }
+.panel-badge-replastic i { color: #4a7c59; }
+.panel-badge-golf i { color: #0077b6; }
+.panel-badge-detalles i { color: #8d5b4c; }
+
+.panel-title {
+    font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+    font-weight: 500;
+    line-height: 1.15;
+    margin-bottom: 35px;
+    letter-spacing: -1px;
+    color: #ffffff !important;
+}
+
+.panel-btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #ffffff;
+    color: #111111;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.panel-btn-action::after {
+    content: '→';
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.panel-btn-action:hover {
+    background-color: #111111;
+    color: #ffffff;
+    transform: translateX(5px);
+}
+
+.scroller-wrapper .scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    color: #ffffff;
+}
+
+.scroller-wrapper .scroll-line {
+    width: 50px;
+    height: 1px;
+    background-color: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+.scroller-wrapper .scroll-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: var(--verde-main, #5aba73);
+    animation: progressLine 2s infinite ease-in-out;
+}
+
+@keyframes progressLine {
+    0% { left: -100%; }
+    50% { left: 0; }
+    100% { left: 100%; }
+}
+
+/* ══════════════ OPTIMIZACIONES PARA DISPOSITIVOS MÓVILES ══════════════ */
+
+/* Soporte moderno para Dynamic Viewport Height (dvh) */
+.scroller-wrapper,
+.panel {
+    height: 100vh;
+    height: 100dvh;
+}
+
+@media (max-width: 768px) {
+    /* Hero Section: ajuste para evitar desbordamiento vertical */
+    .interface {
+        width: 90% !important;
+        max-width: 100%;
+        padding: 10px !important;
+    }
+    
+    .interface h1 {
+        font-size: 2.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .hero-logo {
+        width: 80px !important;
+        height: 80px !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .interface h2 {
+        font-size: 1.35rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .interface p.lead {
+        font-size: 0.9rem !important;
+        line-height: 1.4 !important;
+        margin-bottom: 1.2rem !important;
+    }
+    
+    .interface .btn {
+        padding: 10px 28px !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Sección interactiva de cartas (scroller) */
+    .panel {
+        padding: 0 6% !important; /* Más margen lateral en pantallas pequeñas */
+    }
+    
+    .panel-title {
+        font-size: 1.6rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .panel-badge {
+        padding: 6px 14px !important;
+        font-size: 0.75rem !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .panel-btn-action {
+        padding: 12px 25px !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .scroller-wrapper .scroll-indicator {
+        left: 20px !important;
+        bottom: 20px !important;
+        font-size: 0.65rem !important;
+    }
+    
+    .scroller-wrapper .scroll-line {
+        width: 30px !important;
+    }
+}
+

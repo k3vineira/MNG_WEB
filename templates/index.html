@@ -1,76 +1,364 @@
 {% extends "base.html" %}
 {% load static %}
 {% block titulo %}{{ block.super }} - Inicio{% endblock %}
+
 {% block content %}
-
-<section id="hero-reveal-section" class="bg-white w-100 min-vh-100 position-relative overflow-hidden d-flex flex-column justify-content-between pt-5 u-style-fe27a9d9">
-  
-  <!-- Efecto Linterna: Actúa como fondo (por debajo del texto) -->
-  <div id="flashlight-container" 
-       class="position-absolute top-0 start-0 w-100 h-100 d-none d-lg-block u-style-27b913bb">
-    <img id="flashlight-img" 
-         src="{% static 'img/Fondo.webp' %}" 
-         alt="Paisaje Monagua" 
-         class="w-100 h-100 u-style-c4dc4773" 
-         fetchpriority="high"
-         decoding="async">
+<section id="hero-reveal-section" class="position-relative w-100 vh-100 overflow-hidden bg-white">
+  <div class="bg-image position-absolute top-0 start-0 w-100 h-100"
+       style="background-image: url('{% static "img/Fondo.webp" %}');"></div>
+  <div class="canvas-container position-absolute top-0 start-0 w-100 h-100 pe-none">
+    <canvas id="waterCanvas" class="w-100 h-100 d-block"></canvas>
   </div>
 
-  <!-- Contenido de Texto: Flota sobre la imagen -->
-  <div class="container-fluid px-4 px-xl-5 position-relative u-style-2663af32">
-    <div class="row pt-4">
-      <div class="col-lg-9 col-xl-8 u-style-b37c4cac">
-        <h2 class="display-4 fw-bold text-dark mt-4 mb-4">Explora lo inexplorado</h2>
-        <p class="lead text-muted"><strong>Explora la magia de Mongua</strong> y déjate sorprender por los <strong>paisajes más auténticos de Boyacá</strong>. En <strong>Agencia de Viajes y Turismo Monagua</strong> te invitamos a vivir <strong>experiencias únicas</strong> 
-          entre montañas, senderos naturales, páramos, cascadas y la riqueza cultural de nuestra tierra. Conecta con la <strong>tranquilidad de la naturaleza</strong>, descubre tradiciones locales y crea <strong>recuerdos inolvidables</strong> en uno de los destinos más
-           encantadores de Colombia. Cada recorrido es una oportunidad para aventurarte, respirar aire puro y conocer la <strong>esencia de Mongua</strong> desde una perspectiva diferente.</p>
-        <div class="mt-4 mb-5">
-            <a href="{% url 'destinos' %}" class="btn btn-success bg-gradient btn-lg rounded-pill px-5 py-3 shadow-lg fw-bold d-inline-flex align-items-center gap-3 border border-2 border-white">
-              Ver Paquetes <i class="bi bi-arrow-right-circle-fill fs-4"></i>
-            </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    (function() {
-      const section = document.getElementById('hero-reveal-section');
-      const container = document.getElementById('flashlight-container');
-      const img = document.getElementById('flashlight-img');
-      
-      if (!section || !container || !img || window.getComputedStyle(container.parentElement).display === 'none') return;
-
-      let rafId = null;
-
-      const updateFlashlight = (e) => {
-        if (rafId) cancelAnimationFrame(rafId);
-
-        rafId = requestAnimationFrame(() => {
-          const rect = section.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          
-          const maskValue = `radial-gradient(circle 300px at ${x}px ${y}px, black 0%, rgba(0, 0, 0, 0.41) 50%, transparent 80%)`;
-          
-          img.style.webkitMaskImage = maskValue;
-          img.style.maskImage = maskValue;
-        });
-      };
-
-      section.addEventListener('mousemove', updateFlashlight);
-
-      section.addEventListener('mouseleave', () => {
-        if (rafId) cancelAnimationFrame(rafId);
-        img.style.webkitMaskImage = 'radial-gradient(circle 0px at 50% 50%, black, transparent)';
-        img.style.maskImage = 'radial-gradient(circle 0px at 50% 50%, black, transparent)';
-      });
-    })();
-  </script>
 </section>
 
+<!-- SECCIÓN DE CARRERAS (ESTILO PREMIUM - BOOTSTRAP 5) -->
+<section class="py-5" style="background-color: #1A261F; color: #1c1c1a;">
+    <div class="container py-5 d-flex flex-column justify-content-between" style="min-height: 500px;">
+        
+        <!-- Parte Superior: Etiqueta y Título -->
+        <div class="mb-5">
+            <!-- Etiqueta superior -->
+            <p class="mb-4" style="font-size: 0.85rem; font-weight: 500; color: #a3c9b1; letter-spacing: -0.1px;">
+                Descubre Mongua
+            </p>
+            
+            <!-- Título Principal -->
+            <h2 class="display-3 fw-normal lh-1" style="letter-spacing: -2.5px; max-width: 820px; color: #f5f5f5;">
+                Naturaleza, historia y cultura te esperan en un solo lugar.
+            </h2>
+        </div>
+
+        <!-- Parte Inferior: Separador y Posiciones -->
+        <div class="w-100 pt-4" style="border-top: 1px solid rgba(255, 255, 255, 0.15);">
+            <p class="mb-0" style="font-size: 0.85rem; font-weight: 500; color: #a3c9b1;">
+                Explora nuestros destinos ↓
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- SECCIÓN INTERACTIVA DE SCROLL VERTICAL (ESTILO FLOEMA - BOOTSTRAP 5) -->
+<section class="py-5" style="background-color: #ffffffff; color: #1c1c1a; overflow: visible;">
+    <div class="container-fluid px-3 px-md-5 py-5">
+        <div class="row position-relative g-4">
+            <!-- COLUMNA IZQUIERDA: Texto Principal Estático -->
+            <div class="col-12 col-md-3 sticky-md-top mb-4 mb-md-0 d-flex flex-column" 
+                 style="top: 15vh; height: fit-content; z-index: 5;">
+                <h2 class="display-6 fw-normal lh-sm pe-lg-3" style="letter-spacing: -1.5px; color: #1c1c1a;">
+                    Desde el imponente páramo hasta las huellas de nuestros ancestros, Mongua ofrece una experiencia inigualable.
+                </h2>
+            </div>
+
+            <!-- COLUMNA CENTRAL: Galería de Imágenes Desplazable -->
+            <!-- Esta columna dicta la altura total del scroll de la sección -->
+            <div class="col-12 col-md-6 d-flex flex-column gap-4 px-md-4">
+                
+                <!-- Imagen 1: Laguna Negra -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/lagunanegra.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Laguna Negra"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+                <!-- Imagen 2: Frailejones -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/frailejones.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Frailejones en el Páramo"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+                <!-- Imagen 3: Pictografías -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/pictografias.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Pictografías Ancestrales"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+                <!-- Imagen 4: Iglesia de Mongua -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/iglesia.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Iglesia de Mongua"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+                <!-- Imagen 5: Río -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/img_rio.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Río de Mongua"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+            </div>
+
+            <!-- COLUMNA DERECHA: Texto Secundario Estático -->
+            <!-- Se queda fijo más abajo en la pantalla (top: 55vh) simulando la asimetría del video -->
+            <div class="col-12 col-md-3 sticky-md-top mt-4 mt-md-0 d-flex flex-column" 
+                 style="top: 55vh; height: fit-content; z-index: 5;">
+                <div class="ps-lg-3 text-start">
+                    <p class="mb-0 lh-base" style="font-size: 0.9rem; color: #55534e; font-weight: 400; text-align: justify;">
+                        Monagua te guía a través de paisajes auténticos, fomentando el ecoturismo y el respeto por las tradiciones locales. Sumérgete en la riqueza natural y patrimonial de Boyacá con nosotros, descubriendo historias grabadas en piedra y valles que respiran vida.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+</section>
+
+<!-- SECCIÓN NUESTRO EQUIPO (ESTILO PREMIUM - BOOTSTRAP 5) -->
+<section class="py-5" style="background-color: #ffffffff; color: #1c1c1a;">
+    <div class="container py-5">
+        
+        <!-- PARTE SUPERIOR: Titular y Espacio para Imagen -->
+        <div class="row align-items-end mb-4 g-4">
+            
+            <!-- Headline y contador -->
+            <div class="col-12 col-md-7 mb-3 mb-md-0">
+                <h2 class="display-6 fw-normal mb-4" style="letter-spacing: -1.5px; line-height: 1.2; max-width: 680px;">
+                    Somos una comunidad apasionada por la conservación, guías locales y amantes de la cultura, dedicados a mostrarte lo mejor de Mongua.
+                </h2>
+                <p class="mb-0" style="font-size: 0.85rem; font-weight: 500; color: #1c1c1a;">
+                    Nuestros pilares ↓
+                </p>
+            </div>
+            
+            <!-- IMAGEN DEL PROYECTO MONAGUA -->
+            <div class="col-12 col-md-5 d-flex justify-content-md-end justify-content-start">
+                <div class="w-100 d-flex flex-column align-items-center justify-content-center p-4" 
+                     style="min-height: 200px; max-width: 420px;">
+                    <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="img-fluid" style="max-height: 180px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- LÍNEA DIVISORIA PRINCIPAL -->
+        <hr class="my-0" style="border-top: 1px solid rgba(28, 28, 26, 0.15); opacity: 1;">
+
+        <!-- PARTE INFERIOR: Grid de Áreas y Especialidades -->
+        <div class="row g-md-5">
+            
+            <!-- Columna de la Izquierda -->
+            <div class="col-12 col-md-6">
+                
+                <!-- Item 1 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Ecoturismo Sostenible</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Diseñamos rutas que respetan el medio ambiente y promueven la conservación del páramo.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 2 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Guías Locales</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Acompañamiento por expertos nativos que conocen cada sendero, historia y leyenda de Mongua.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 3 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Cultura y Tradición</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Sumérgete en las costumbres locales, la gastronomía y el invaluable legado ancestral.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 4 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Aventura y Naturaleza</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Desde caminatas tranquilas hasta expediciones desafiantes en la majestuosa geografía boyacense.</p>
+                </div>
+
+            </div>
+
+            <!-- Columna de la Derecha -->
+            <div class="col-12 col-md-6">
+                
+                <!-- Item 1 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Impacto Social</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Trabajamos de la mano con las familias campesinas para generar desarrollo económico en la región.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 2 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Atención Personalizada</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Experiencias adaptadas a tus intereses, asegurando un viaje seguro, cómodo e inolvidable.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 3 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Preservación del Patrimonio</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Valoramos y protegemos sitios históricos, arqueológicos y maravillas naturales únicas.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 4 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Logística Integral</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Nos encargamos de tu transporte, alojamiento y alimentación para que solo te preocupes por disfrutar.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- SECCIÓN DE EXPLORACIÓN DE DESTINOS (PANELES DESPLEGABLES PREMIUM) -->
+<div class="scroller-wrapper">
+    <div class="scroll-indicator">
+        <span>Desplázate para explorar</span>
+        <div class="scroll-line"></div>
+    </div>
+
+    <!-- Diapositiva 1: Laguna Negra -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/lagunanegra.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-naturaleza"><i>🌄</i> Aventura</div>
+            <h1 class="panel-title">Explora la majestuosidad de la Laguna Negra y sus leyendas sagradas</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Descubrir Laguna Negra</a>
+        </div>
+    </section>
+
+    <!-- Diapositiva 2: Páramo de Ocetá -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/paramo.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-replastic"><i>🌿</i> Páramo</div>
+            <h1 class="panel-title">Camina entre gigantes de agua en el místico Páramo de Ocetá</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Explorar Páramo</a>
+        </div>
+    </section>
+
+    <!-- Diapositiva 3: Pictografías -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/pictografias.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-urbano"><i>🎨</i> Historia</div>
+            <h1 class="panel-title">Descubre las pictografías ancestrales y el legado arqueológico</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Ver Pictografías</a>
+        </div>
+    </section>
+
+    <!-- Diapositiva 4: Templo de Mongua -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/iglesia.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-golf"><i>⛪</i> Cultura</div>
+            <h1 class="panel-title">Recorre las calles coloniales y la historia del Templo Parroquial</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Conocer Mongua</a>
+        </div>
+    </section>
+
+    <!-- Diapositiva 5: Artesanías -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/artesanias_1.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-detalles"><i>🏺</i> Tradición</div>
+            <h1 class="panel-title">Maravíllate con el arte del tejido en lana y las artesanías de Mongua</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Ver Artesanías</a>
+        </div>
+    </section>
+</div>
+
+<!-- SECCIÓN DE NOVEDADES (ESTILO PREMIUM - BOOTSTRAP 5) -->
+<section class="py-5" style="background-color: #ffffffff; color: #1c1c1a;">
+    <div class="container py-4">
+        
+        <!-- Título Principal -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <!-- fw-normal para un acabado más elegante -->
+                <h2 class="display-5 fw-normal mb-0" style="letter-spacing: -0.5px;">Últimas novedades en Monagua</h2>
+            </div>
+        </div>
+        <!-- Grid de Tarjetas -->
+        <div class="row g-4 justify-content-center">
+            
+            <!-- Tarjeta 1 (Sin fecha, tal como se ve en tu imagen) -->
+            <div class="col-12 col-md-4">
+                <!-- p-3 genera el "marco" de fondo alrededor de la imagen -->
+                <div class="p-3 d-flex flex-column h-100 hover-slide-right" style="background-color: #1A261F; cursor: pointer;">
+                    <!-- ratio-1x1 fuerza a que las imágenes siempre sean cuadradas simétricas -->
+                    <div class="ratio ratio-1x1 mb-3">
+                        <img src="{% static 'img/lagunanegra.webp' %}" 
+                             class="img-fluid" 
+                             alt="Ruta Laguna Negra" 
+                             style="object-fit: cover;">
+                    </div>
+                    <h3 class="fs-6 fw-normal mb-0" style="line-height: 1.4;">Nueva ruta guiada hacia la majestuosa Laguna Negra</h3>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2 -->
+            <div class="col-12 col-md-4">
+                <div class="p-3 d-flex flex-column h-100 hover-slide-right" style="background-color: #1A261F; cursor: pointer;">
+                    <div class="ratio ratio-1x1 mb-3">
+                        <img src="{% static 'img/paramo.webp' %}" 
+                             class="img-fluid" 
+                             alt="Páramo de Ocetá" 
+                             style="object-fit: cover;">
+                    </div>
+                    <h3 class="fs-6 fw-normal mb-3" style="line-height: 1.4;">Avistamiento de fauna endémica en el místico Páramo de Ocetá</h3>
+                    <!-- mt-auto empuja la fecha siempre al fondo de la tarjeta -->
+                    <div class="mt-auto">
+                        <p class="mb-0" style="font-size: 0.75rem; color: #87827a; letter-spacing: 0.2px;">15 de julio de 2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3 -->
+            <div class="col-12 col-md-4">
+                <div class="p-3 d-flex flex-column h-100 hover-slide-right" style="background-color: #1A261F; cursor: pointer;">
+                    <div class="ratio ratio-1x1 mb-3">
+                        <img src="{% static 'img/artesanias_1.webp' %}" 
+                             class="img-fluid" 
+                             alt="Artesanías Mongua" 
+                             style="object-fit: cover;">
+                    </div>
+                    <h3 class="fs-6 fw-normal mb-3" style="line-height: 1.4;">Inauguración de nuevos talleres de tejido artesanal en lana</h3>
+                    <div class="mt-auto">
+                        <p class="mb-0" style="font-size: 0.75rem; color: #87827a; letter-spacing: 0.2px;">02 de agosto de 2026</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Botón Inferior -->
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <a href="#" class="btn rounded-pill px-4 py-2 text-uppercase fw-normal hover-slide-right" 
+                   style="font-size: 0.7rem; letter-spacing: 1.2px; border: 1px solid #bcbbb4; color: #1c1c1a; background-color: transparent;">
+                    Más noticias <span class="ms-1" style="font-size: 0.85rem; vertical-align: middle;">→</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Scripts de animación y scroll suave (GSAP, ScrollTrigger) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="{% static 'js/inicio_cartas.js' %}"></script>
+
+<script src="{% static 'js/hero_water.js' %}"></script>
 {% endblock content %}
-
-
-    
-  
