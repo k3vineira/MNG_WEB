@@ -164,16 +164,16 @@
         <ul class="nav flex-column align-items-center w-100 gap-2">
           
           <li class="nav-item w-100 text-center">
-            <a href="/" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" title="Página Principal"><i class="bi bi-house-door-fill fs-5"></i></a>
+            <a href="/" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" data-bs-toggle="tooltip" title="Volver a la vista pública de Monagua"><i class="bi bi-house-door-fill fs-5"></i></a>
           </li>
           <li class="nav-item w-100 text-center">
-            <a href="{% url 'dashboard' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'dashboard' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Dashboard"><i class="bi bi-grid-1x2-fill fs-5"></i></a>
+            <a href="{% url 'dashboard' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'dashboard' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Panel general y estado del sistema"><i class="bi bi-grid-1x2-fill fs-5"></i></a>
           </li>
           <li class="nav-item w-100 text-center">
-            <a href="{% url 'estadisticas_admin' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'estadisticas_admin' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Estadísticas"><i class="bi bi-graph-up-arrow fs-5"></i></a>
+            <a href="{% url 'estadisticas_admin' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'estadisticas_admin' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Análisis de datos, finanzas y reportes"><i class="bi bi-graph-up-arrow fs-5"></i></a>
           </li>
           <li class="nav-item w-100 text-center">
-            <a href="{% url 'listar_comentarios' %}" class="btn w-100 py-2 border-0 rounded-0 {% if 'listar_comentarios' in request.resolver_match.url_name %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Comentarios"><i class="bi bi-chat-left-dots-fill fs-5"></i></a>
+            <a href="{% url 'listar_comentarios' %}" class="btn w-100 py-2 border-0 rounded-0 {% if 'listar_comentarios' in request.resolver_match.url_name %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Gestionar y moderar las reseñas de los usuarios"><i class="bi bi-chat-left-dots-fill fs-5"></i></a>
           </li>
 
           <!-- Separador -->
@@ -181,7 +181,7 @@
 
           <!-- Paquetes (Dropend) -->
           <li class="nav-item w-100 text-center dropend mt-2">
-            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_paquetes' in request.resolver_match.url_name or 'listar_actividades' in request.resolver_match.url_name or 'listar_tarifas' in request.resolver_match.url_name or 'listar_temporadas' in request.resolver_match.url_name or 'listar_categorias' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Paquetes">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_paquetes' in request.resolver_match.url_name or 'listar_actividades' in request.resolver_match.url_name or 'listar_tarifas' in request.resolver_match.url_name or 'listar_temporadas' in request.resolver_match.url_name or 'listar_categorias' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Administrar ofertas, tours y categorías">
               <i class="bi bi-box-seam-fill fs-5"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-dark shadow">
@@ -196,7 +196,7 @@
 
           <!-- Reservas & Pagos (Dropend) -->
           <li class="nav-item w-100 text-center dropend">
-            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Reservas &amp; Pagos">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Control de ventas, facturación y cancelaciones">
               <i class="bi bi-calendar-check-fill fs-5"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-dark shadow">
@@ -210,7 +210,7 @@
 
           <!-- Usuarios & Guías (Dropend) -->
           <li class="nav-item w-100 text-center dropend">
-            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Usuarios &amp; Guías">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Gestión de roles y perfiles de cuenta">
               <i class="bi bi-people-fill fs-5"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-dark shadow">
@@ -222,7 +222,7 @@
 
           <!-- Contenido (Dropend) -->
           <li class="nav-item w-100 text-center dropend">
-            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" title="Contenido">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Moderación de PQRS, blogs y promociones">
               <i class="bi bi-journal-text fs-5"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-dark shadow">
@@ -238,10 +238,10 @@
 
       <!-- Footer Slim -->
       <div class="p-2 w-100 text-center border-top border-secondary d-flex flex-column align-items-center gap-3">
-        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success u-style-a2bbb072" width="34" height="34" title="{{ user.first_name|default:'Administrador' }}">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success u-style-a2bbb072" width="34" height="34" data-bs-toggle="tooltip" title="Perfil de administrador: {{ user.first_name|default:'Administrador' }}">
         <form action="{% url 'logout' %}" method="post" class="w-100">
           {% csrf_token %}
-          <button type="submit" class="btn btn-sm btn-outline-danger border-0 w-100" title="Cerrar Sesión">
+          <button type="submit" class="btn btn-sm btn-outline-danger border-0 w-100" data-bs-toggle="tooltip" title="Cerrar la sesión de forma segura">
             <i class="bi bi-power fs-5"></i>
           </button>
         </form>

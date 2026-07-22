@@ -105,7 +105,10 @@
             
             if (tooltipText && !el.hasAttribute('data-bs-original-title')) {
                 if (!title) el.setAttribute('title', tooltipText);
-                el.setAttribute('data-bs-toggle', 'tooltip');
+                // Solo añadir data-bs-toggle="tooltip" si no tiene otro toggle como dropdown o modal
+                if (!el.hasAttribute('data-bs-toggle')) {
+                    el.setAttribute('data-bs-toggle', 'tooltip');
+                }
                 try {
                     if (!bootstrap.Tooltip.getInstance(el)) {
                         new bootstrap.Tooltip(el, { boundary: document.body });
