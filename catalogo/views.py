@@ -72,7 +72,7 @@ class PaqueteListView(ListView):
         if categoria_id:
             queryset = queryset.filter(categoria_id=categoria_id)
             
-        return queryset
+        return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
         """
@@ -239,7 +239,7 @@ class ActividadesListView(ListView):
         elif apto_menores_param == 'no':
             queryset = queryset.filter(apto_para_menores=False)
             
-        return queryset
+        return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
         """
@@ -386,6 +386,7 @@ class CategoriaListView(ListView):
     model = Categoria
     template_name = 'admin/categorias/categorias.html'
     context_object_name = 'categorias'
+    ordering = ['-id']
 
     def get_context_data(self, **kwargs):
         """
@@ -560,7 +561,7 @@ class TarifaListView(ListView):
         if paquete_id:
             queryset = queryset.filter(paquete_id=paquete_id)
             
-        return queryset
+        return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
         """
@@ -659,7 +660,7 @@ class TemporadaListView(ListView):
         if fecha_fin:
             queryset = queryset.filter(fecha_fin__lte=fecha_fin)
 
-        return queryset
+        return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
