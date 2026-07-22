@@ -28,28 +28,48 @@
 
 /* Clases utilitarias para la paleta de estadísticas */
 .text-esta-blue { color: var(--estadisticas-blue) !important; }
+.bg-esta-blue { background-color: var(--estadisticas-blue) !important; }
 .bg-esta-blue-soft { background-color: rgba(37, 99, 235, 0.12) !important; }
 
 .text-esta-green { color: var(--estadisticas-green) !important; }
+.bg-esta-green { background-color: var(--estadisticas-green) !important; }
 .bg-esta-green-soft { background-color: rgba(16, 185, 129, 0.12) !important; }
 
 .text-esta-yellow { color: var(--estadisticas-yellow) !important; }
+.bg-esta-yellow { background-color: var(--estadisticas-yellow) !important; }
 .bg-esta-yellow-soft { background-color: rgba(245, 158, 11, 0.12) !important; }
 
 .text-esta-red { color: var(--estadisticas-red) !important; }
+.bg-esta-red { background-color: var(--estadisticas-red) !important; }
 .bg-esta-red-soft { background-color: rgba(239, 68, 68, 0.12) !important; }
 
 .text-esta-cyan { color: var(--estadisticas-cyan) !important; }
+.bg-esta-cyan { background-color: var(--estadisticas-cyan) !important; }
 .bg-esta-cyan-soft { background-color: rgba(6, 182, 212, 0.12) !important; }
 
 .text-esta-purple { color: var(--estadisticas-purple) !important; }
+.bg-esta-purple { background-color: var(--estadisticas-purple) !important; }
 .bg-esta-purple-soft { background-color: rgba(139, 92, 246, 0.12) !important; }
 
 .text-esta-orange { color: var(--estadisticas-orange) !important; }
+.bg-esta-orange { background-color: var(--estadisticas-orange) !important; }
 .bg-esta-orange-soft { background-color: rgba(249, 115, 22, 0.12) !important; }
 
 .text-esta-teal { color: var(--estadisticas-teal) !important; }
+.bg-esta-teal { background-color: var(--estadisticas-teal) !important; }
 .bg-esta-teal-soft { background-color: rgba(20, 184, 166, 0.12) !important; }
+
+/* Colores para las pestañas (tabs) cuando están activas por defecto (neutro) */
+#vistasMatrizTab .nav-link {
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+#vistasMatrizTab .nav-link.active {
+    background-color: #ffffff;
+    color: #212529;
+    border-color: #dee2e6;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
 
 @media (max-width: 576px) {
     .btn-campana-movil {

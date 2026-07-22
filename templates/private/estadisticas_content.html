@@ -27,7 +27,7 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-transacciones')" title="Ver detalle de transacciones e inversión" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-transacciones', 'esta-green')" title="Revisa el balance general, historial de fondos y transacciones validadas" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-green small fw-bold text-uppercase">Inversión Total</span>
                     <div class="p-2 bg-esta-green-soft text-esta-green rounded-3">
@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual')" title="Ver detalle mensual de reservas" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual', 'esta-blue')" title="Accede a la matriz comparativa de ocupación y viajes mes a mes" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-blue small fw-bold text-uppercase">Volumen de Reservas</span>
                     <div class="p-2 bg-esta-blue-soft text-esta-blue rounded-3">
@@ -53,7 +53,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-anual')" title="Ver reporte anual detallado" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-anual', 'esta-cyan')" title="Consulta el margen de ganancias y el valor promedio anual por experiencia" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-cyan small fw-bold text-uppercase">Ticket Promedio</span>
                     <div class="p-2 bg-esta-cyan-soft text-esta-cyan rounded-3">
@@ -65,7 +65,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-destinos')" title="Ver análisis de rutas frecuentes" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-destinos', 'esta-yellow')" title="Analiza cuáles rutas ecológicas son las más frecuentadas" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-yellow small fw-bold text-uppercase">Índice del Destino</span>
                     <div class="p-2 bg-esta-yellow-soft text-esta-yellow rounded-3">
@@ -80,7 +80,7 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual')" title="Ver tasas de éxito en el reporte mensual" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual', 'esta-teal')" title="Mide el porcentaje de reservas confirmadas frente a las canceladas" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-teal small fw-bold text-uppercase">Tasa de Éxito</span>
                     <div class="p-2 bg-esta-teal-soft text-esta-teal rounded-3">
@@ -95,7 +95,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-soporte')" title="Ver trazabilidad de PQRS" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-soporte', 'esta-red')" title="Gestiona casos, reclamos y solicitudes que requieren tu atención urgente" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-red small fw-bold text-uppercase">PQRS Activas</span>
                     <div class="p-2 bg-esta-red-soft text-esta-red rounded-3">
@@ -108,7 +108,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-resenas')" title="Ver reseñas y calificaciones" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-resenas', 'esta-orange')" title="Lee y responde los comentarios de satisfacción de los viajeros" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-orange small fw-bold text-uppercase">Reseñas Publicadas</span>
                     <div class="p-2 bg-esta-orange-soft text-esta-orange rounded-3">
@@ -120,7 +120,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" title="Tiempo activo en la comunidad" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" title="Fidelidad y tiempo transcurrido desde tu registro en la plataforma" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-purple small fw-bold text-uppercase">Días como Miembro</span>
                     <div class="p-2 bg-esta-purple-soft text-esta-purple rounded-3">
@@ -354,37 +354,37 @@
 
         <ul class="nav nav-pills bg-light p-2 rounded-3 mb-4 gap-2 flex-wrap" id="vistasMatrizTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-mensual"
+                <button class="nav-link active rounded-3 fw-medium" id="tab-mensual" data-bs-toggle="tab" data-bs-target="#panel-mensual"
                     type="button" role="tab">
                     <i class="bi bi-calendar3 me-2"></i>Reporte Mensual
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-anual"
+                <button class="nav-link rounded-3 fw-medium" id="tab-anual" data-bs-toggle="tab" data-bs-target="#panel-anual"
                     type="button" role="tab">
                     <i class="bi bi-calendar-range me-2"></i>Reporte Anual
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-destinos"
+                <button class="nav-link rounded-3 fw-medium" id="tab-destinos" data-bs-toggle="tab" data-bs-target="#panel-destinos"
                     type="button" role="tab">
                     <i class="bi bi-compass me-2"></i>Análisis de Rutas Frecuentes
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-soporte"
+                <button class="nav-link rounded-3 fw-medium" id="tab-soporte" data-bs-toggle="tab" data-bs-target="#panel-soporte"
                     type="button" role="tab">
                     <i class="bi bi-headset me-2"></i>Trazabilidad de PQRS
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-transacciones"
+                <button class="nav-link rounded-3 fw-medium" id="tab-transacciones" data-bs-toggle="tab" data-bs-target="#panel-transacciones"
                     type="button" role="tab">
                     <i class="bi bi-credit-card me-2"></i>Historial de Pagos
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-3 fw-medium" data-bs-toggle="tab" data-bs-target="#panel-resenas"
+                <button class="nav-link rounded-3 fw-medium" id="tab-resenas" data-bs-toggle="tab" data-bs-target="#panel-resenas"
                     type="button" role="tab">
                     <i class="bi bi-star me-2"></i>Reseñas y Calificaciones
                 </button>
@@ -688,25 +688,25 @@
         <div class="row g-3">
             <div class="col-6 col-md-3">
                 <a href="{% url 'mis_reservas_usuario' %}"
-                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small">
+                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small" data-bs-toggle="tooltip" title="Consulta y gestiona tus reservas actuales">
                     <i class="bi bi-calendar-plus text-success me-2"></i>Mis Reservas
                 </a>
             </div>
             <div class="col-6 col-md-3">
                 <a href="{% url 'mis_comprobantes' %}"
-                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small">
+                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small" data-bs-toggle="tooltip" title="Descarga o revisa tus comprobantes de pago">
                     <i class="bi bi-receipt text-primary me-2"></i>Comprobantes
                 </a>
             </div>
             <div class="col-6 col-md-3">
                 <a href="{% url 'mis_resenas' %}"
-                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small">
+                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small" data-bs-toggle="tooltip" title="Deja tu opinión sobre tus experiencias de viaje">
                     <i class="bi bi-pencil-square text-warning me-2"></i>Escribir Reseña
                 </a>
             </div>
             <div class="col-6 col-md-3">
                 <a href="{% url 'mis_pqrs' %}"
-                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small">
+                    class="btn btn-light border-light text-dark w-100 py-2 text-start rounded-3 small" data-bs-toggle="tooltip" title="Abre un ticket de soporte para asistencia">
                     <i class="bi bi-chat-dots text-danger me-2"></i>Radicar PQRS
                 </a>
             </div>
@@ -719,7 +719,7 @@
 
 <script>
     // Navegación de paneles para las tarjetas superiores
-    function navegarPanel(panelId) {
+    function navegarPanel(panelId, colorClass) {
         const targetBtn = document.querySelector(`[data-bs-target='${panelId}']`);
         if (targetBtn) {
             // Activar tab
@@ -729,19 +729,26 @@
             if (tabContainer) {
                 tabContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-            // Resaltar visualmente el botón destino
-            targetBtn.classList.add('bg-warning', 'text-dark', 'shadow', 'border-warning');
+            
+            // Colores dinámicos basados en el parámetro
+            const bgClass = `bg-${colorClass}`;
+            const bgSoftClass = `bg-${colorClass}-soft`;
+            const textClass = `text-${colorClass}`;
+            
+            // Resaltar visualmente el botón destino con su color
+            targetBtn.classList.add(bgClass, 'text-white', 'shadow');
             setTimeout(() => {
-                targetBtn.classList.remove('bg-warning', 'text-dark', 'shadow', 'border-warning');
+                targetBtn.classList.remove(bgClass, 'text-white', 'shadow');
                 targetBtn.style.transition = "all 0.5s";
             }, 1500);
             
-            // Resaltar el contenedor del panel también
+            // Resaltar el contenedor del panel con un fondo suave del mismo color
             const panelEl = document.querySelector(panelId);
             if(panelEl) {
-                panelEl.classList.add('bg-warning', 'bg-opacity-10');
+                panelEl.classList.add(bgSoftClass);
                 setTimeout(() => {
-                    panelEl.classList.remove('bg-warning', 'bg-opacity-10');
+                    panelEl.classList.remove(bgSoftClass);
+                    panelEl.style.transition = "background-color 0.5s";
                 }, 1500);
             }
         }
