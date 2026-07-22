@@ -12,6 +12,17 @@
     --verde-claro: #96DCAA;
     --verde-menta: #CFFFE3;
     --verde-light: #d1e7dd;
+
+    /* Paleta Estadísticas */
+    --estadisticas-blue: #0d6efd;
+    --estadisticas-green: #198754;
+    --estadisticas-yellow: #ffc107;
+    --estadisticas-red: #dc3545;
+    --estadisticas-cyan: #0dcaf0;
+    --estadisticas-gray: #6c757d;
+    --estadisticas-purple: #6f42c1;
+    --estadisticas-orange: #fd7e14;
+    --estadisticas-grid-line: #f1f3f5;
 }
 
 :root {
