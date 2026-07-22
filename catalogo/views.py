@@ -386,7 +386,10 @@ class CategoriaListView(ListView):
     model = Categoria
     template_name = 'admin/categorias/categorias.html'
     context_object_name = 'categorias'
-    ordering = ['-id']
+    
+    def get_queryset(self):
+        return super().get_queryset().order_by('-id')
+
 
     def get_context_data(self, **kwargs):
         """
