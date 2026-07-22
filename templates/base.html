@@ -1,96 +1,69 @@
 {% load static %}
 <!doctype html>
 <html lang="{{ request.LANGUAGE_CODE|default:'es' }}">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <link rel="preload" as="image" href="{% static 'img/Fondo.webp' %}" fetchpriority="high">
+    <link
+      rel="preload"
+      as="image"
+      href="{% static 'img/Fondo.webp' %}"
+      fetchpriority="high"
+    />
 
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.4" />
     <link rel="stylesheet" href="{% static 'css/styles_generated.css' %}" />
-    
-    <link class="rounded-pill" rel="icon" type="image/webp" href="{% static 'img/monagua_log.webp' %}">
-    
+
+    <link
+      class="rounded-pill"
+      rel="icon"
+      type="image/webp"
+      href="{% static 'img/monagua_log.webp' %}"
+    />
+
     <title>{% block titulo %}Monagua{% endblock %}</title>
-</head>
-<body>
+  </head>
+  <body>
+    {% block navbar %} {% include 'partials/header.html' %} {% endblock %} {%
+    include 'partials/accesibilidad.html' %} {% include 'partials/mascota.html'
+    %}
 
-    {% block navbar %}
-        {% include 'partials/header.html' %}
-    {% endblock %}
-
-    {% include 'partials/accesibilidad.html' %}
-    {% include 'partials/mascota.html' %}
-
-    <main class="wrapper min-vh-100"> 
-        <div class="content-wrapper">
-            {% block content %}
-            {% endblock %}
-        </div>
+    <main class="wrapper min-vh-100">
+      <div class="content-wrapper">{% block content %} {% endblock %}</div>
     </main>
 
-    {% block footer %}
-        {% include 'partials/footer.html' %}
-    {% endblock %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+    {% block footer %} {% include 'partials/footer.html' %} {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     {% include 'partials/toast_messages.html' %}
 
     <script>
-        (function() {
-            function initTooltips() {
-                if (typeof bootstrap === 'undefined') return;
-                var elements = document.querySelectorAll('button, .btn, a, [title]:not([title=""]), [aria-label]:not([aria-label=""])');
-                
-                elements.forEach(function(el) {
-                    if (['SCRIPT','STYLE','IFRAME','META','HEAD','SVG','PATH','HTML','BODY'].includes(el.tagName.toUpperCase())) return;
-                    if (el.closest('.toast-container')) return; 
-                    
-                    var title = el.getAttribute('title');
-                    var aria = el.getAttribute('aria-label');
-                    var text = el.innerText ? el.innerText.trim() : '';
-                    var tooltipText = title || aria;
-                    
-                    if (!tooltipText && text && text.length > 0 && text.length < 50 && (el.tagName === 'BUTTON' || el.classList.contains('btn'))) {
-                        tooltipText = text;
-                    }
-                    
-                    if (tooltipText && !el.hasAttribute('data-bs-original-title')) {
-                        if (!title) el.setAttribute('title', tooltipText);
-                        el.setAttribute('data-bs-toggle', 'tooltip');
-                        try {
-                            if (!bootstrap.Tooltip.getInstance(el)) {
-                                new bootstrap.Tooltip(el, { boundary: document.body });
-                            }
-                        } catch(e) {}
-                    }
-                });
-            }
-
-            function startObserver() {
-                initTooltips();
-                var observer = new MutationObserver(function() { setTimeout(initTooltips, 200); });
-                observer.observe(document.body, { childList: true, subtree: true });
-            }
-
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', startObserver);
-            } else {
-                startObserver();
-                setTimeout(initTooltips, 500);
-            }
-        })();
+      // Inicialización global de tooltips para toda la página
+      document.addEventListener("DOMContentLoaded", function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+      });
     </script>
-</body>
+  </body>
 </html>

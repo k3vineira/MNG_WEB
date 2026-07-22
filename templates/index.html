@@ -1,393 +1,401 @@
 {% extends "base.html" %}
 {% load static %}
 {% block titulo %}{{ block.super }} - Inicio{% endblock %}
+
 {% block content %}
+<section id="hero-reveal-section" class="position-relative w-100 overflow-hidden bg-white d-flex align-items-center" style="height: 90vh;">
+  <!-- Imagen de Fondo con animación de Zoom -->
+  <div class="bg-image bg-zoom-anim position-absolute top-0 start-0 w-100 h-100"
+       style="background-image: url('{% static "img/20250326_093123.jpg" %}'); background-size: cover; background-position: center;"></div>
 
-<section id="hero-reveal-section" class="bg-white w-100 min-vh-100 position-relative overflow-hidden d-flex flex-column justify-content-between pt-5 u-style-fe27a9d9">
-  
-  <!-- Efecto Linterna: Actúa como fondo (por debajo del texto) -->
-  <div id="flashlight-container" 
-       class="position-absolute top-0 start-0 w-100 h-100 d-none d-lg-block u-style-27b913bb">
+  <!-- Overlay Oscuro más claro (para suavizar la imagen revelada) -->
+  <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0, 0, 0, 0.2); z-index: 1;"></div>
 
-
-    
-    <img id="flashlight-img" 
-         src="{% static 'img/Fondo.webp' %}" 
-         alt="Paisaje Monagua" 
-         class="w-100 h-100 u-style-c4dc4773" 
-         fetchpriority="high"
-         decoding="async">
+  <!-- Canvas Interactivo -->
+  <div class="canvas-container position-absolute top-0 start-0 w-100 h-100 pe-none">
+    <canvas id="waterCanvas" class="w-100 h-100 d-block"></canvas>
   </div>
 
-  <!-- Contenido de Texto: Flota sobre la imagen -->
-  <div class="container-fluid px-4 px-xl-5 position-relative u-style-2663af32">
-    <div class="row pt-4">
-      <div class="col-lg-9 col-xl-8 u-style-b37c4cac">
-        <h2 class="display-4 fw-bold text-dark mt-4 mb-4">Explora lo inexplorado</h2>
-        <p class="lead text-muted"><strong>Explora la magia de Mongua</strong> y déjate sorprender por los <strong>paisajes más auténticos de Boyacá</strong>. En <strong>Agencia de Viajes y Turismo Monagua</strong> te invitamos a vivir <strong>experiencias únicas</strong> 
-          entre montañas, senderos naturales, páramos, cascadas y la riqueza cultural de nuestra tierra. Conecta con la <strong>tranquilidad de la naturaleza</strong>, descubre tradiciones locales y crea <strong>recuerdos inolvidables</strong> en uno de los destinos más
-           encantadores de Colombia. Cada recorrido es una oportunidad para aventurarte, respirar aire puro y conocer la <strong>esencia de Mongua</strong> desde una perspectiva diferente.</p>
-        <div class="mt-4 mb-5">
-            <a href="{% url 'destinos' %}" class="btn btn-success bg-gradient btn-lg rounded-pill px-5 py-3 shadow-lg fw-bold d-inline-flex align-items-center gap-3 border border-2 border-white">
-              Ver Paquetes <i class="bi bi-arrow-right-circle-fill fs-4"></i>
-            </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Contenedor de cartas "Flotantes" -->
-  <div class="container-fluid px-0 mb-0 overflow-hidden marquee-container">
-    <div class="marquee-container__wrapper marquee-wrapper">
-      {# Generamos 16 cartas (un set de 4 repetido 4 veces) para lograr el bucle infinito suave #}
-      {% for i in "1234" %}
-      <!-- Laguna Negra -->
-      <div class="marquee-container__item marquee-item">
-        <div class="card text-bg-dark border-0 rounded-4 overflow-hidden shadow-lg h-100 marquee-container__card card-hover u-style-b072d86a">
-          {% if forloop.first %}
-          <img src="{% static 'img/Fondo3.webp' %}" class="marquee-container__card-img card-img w-100 h-100 u-style-ca362336" alt="Laguna Negra" fetchpriority="high">
-          {% else %}
-          <img src="{% static 'img/Fondo3.webp' %}" class="marquee-container__card-img card-img w-100 h-100 u-style-ca362336" alt="Laguna Negra" loading="lazy">
-          {% endif %}
-          <div class="card-img-overlay d-flex flex-column justify-content-between p-4 u-style-e8e92e4e">
-            <h3 class="card-title fw-bold text-white fs-4 mt-2">Laguna Negra</h3>
-            <div class="d-flex flex-wrap gap-2">
-              <span class="marquee-container__badge badge-tag">
-                <i class="bi bi-water"></i> El misterio natural
-              </span>
-              <!-- Enlace invisible que expande el área de clic a toda la tarjeta -->
-              <a href="{% url 'blog' %}" class="stretched-link"></a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Legado Ancestral -->
-      <div class="marquee-container__item marquee-item">
-        <div class="card text-bg-dark border-0 rounded-4 overflow-hidden shadow-lg h-100 marquee-container__card card-hover u-style-b072d86a">
-          {% if forloop.first %}
-          <img src="{% static 'img/img_pictogramas.webp' %}" class="marquee-container__card-img card-img w-100 h-100 u-style-ca362336" alt="Legado Ancestral" fetchpriority="high">
-          {% else %}
-          <img src="{% static 'img/img_pictogramas.webp' %}" class="marquee-container__card-img card-img w-100 h-100 u-style-ca362336" alt="Legado Ancestral" loading="lazy">
-          {% endif %}
-          <div class="card-img-overlay d-flex flex-column justify-content-between p-4 u-style-e8e92e4e">
-            <h3 class="card-title fw-bold text-white fs-4 mt-2">Legado Ancestral</h3>
-            <div class="d-flex flex-wrap gap-2">
-              <span class="marquee-container__badge badge-tag">
-                <i class="bi bi-feather"></i> Iconografía milenaria
-              </span>
-              <!-- Enlace invisible que expande el área de clic a toda la tarjeta -->
-              <a href="{% url 'blog' %}" class="stretched-link"></a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Rutas de Aventura -->
-      <div class="marquee-container__item marquee-item">
-        <div class="card text-bg-dark border-0 rounded-4 overflow-hidden shadow-lg h-100 marquee-container__card card-hover u-style-b072d86a">
-          {% if forloop.first %}
-          <img src="{% static 'img/img_rio.webp' %}" class="marquee-container__card-img card-img w-100 h-100 u-style-ca362336" alt="Rutas de Aventura" fetchpriority="high">
-          {% else %}
-          <img src="{% static 'img/img_rio.webp' %}" class="marquee-container__card-img card-img w-100 h-100 u-style-ca362336" alt="Rutas de Aventura" loading="lazy">
-          {% endif %}
-          <div class="card-img-overlay d-flex flex-column justify-content-between p-4 u-style-e8e92e4e">
-            <h3 class="card-title fw-bold text-white fs-4 mt-2">Rutas de Aventura</h3>
-            <div class="d-flex flex-wrap gap-2">
-              <span class="marquee-container__badge badge-tag">
-                <i class="bi bi-compass"></i> Senderismo
-              </span>
-              <span class="marquee-container__badge badge-tag">
-                <i class="bi bi-camera"></i> Fotografía
-              </span>
-              <!-- Enlace invisible que expande el área de clic a toda la tarjeta -->
-              <a href="{% url 'blog' %}" class="stretched-link"></a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vivencias -->
-      <div class="marquee-container__item marquee-item">
-        <div class="card text-bg-dark border-0 rounded-4 overflow-hidden shadow-lg h-100 marquee-container__card card-hover u-style-b072d86a">
-          {% if forloop.first %}
-          <img src="{% static 'img/img_museo.webp' %}" class="marquee-container__card-img card-img w-100 h-100 u-style-ca362336" alt="Vivencias" fetchpriority="high">
-          {% else %}
-          <img src="{% static 'img/img_museo.webp' %}" class="marquee-container__card-img card-img w-100 h-100 u-style-ca362336" alt="Vivencias" loading="lazy">
-          {% endif %}
-          <div class="card-img-overlay d-flex flex-column justify-content-between p-4 u-style-e8e92e4e">
-            <h3 class="card-title fw-bold text-white fs-4 mt-2">Vivencias</h3>
-            <div class="d-flex flex-column gap-3">
-              <div class="d-flex flex-wrap gap-2">
-                <span class="marquee-container__badge badge-tag">
-                  <i class="bi bi-cup-hot"></i> Gastronomía
-                </span>
-                <span class="marquee-container__badge badge-tag">
-                  <i class="bi bi-house-door"></i> Hospedaje
-                </span>
-              </div>
-              <div>
-                <a href="{% url 'blog' %}" class="btn btn-sm btn-outline-light rounded-pill px-3 stretched-link u-style-120fc1c0">Explorar Blog</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<!-- Sección de Sostenibilidad y Medio Ambiente -->
-<section class="bg-success text-white u-style-fee182ee">
-  <div class="container-fluid px-4 px-xl-5">
-    <div class="row mb-5">
-      <div class="col-lg-7">
-        <h2 class="display-6 fw-bold mb-3">Mongua, Boyacá</h2>
-        <p class="lead text-white-50 lh-base">
-          Es un destino rodeado de <strong>paisajes impresionantes</strong>, <strong>montañas majestuosas</strong> y una naturaleza que cautiva a cada visitante. Sus alrededores ofrecen <strong>experiencias únicas</strong>
-           entre senderos ecológicos, lagunas, páramos y rincones llenos de tranquilidad. Además de su riqueza natural, Mongua conserva tradiciones, cultura y la calidez de su gente, convirtiéndose en un lugar ideal para quienes
-            desean conectar con la auténtica <strong>belleza boyacense</strong>.
-        </p>
-        <p class="fw-semibold mt-4 mb-0">Es por esto que hemos creado:</p>
-      </div>
-    </div>
-
-    <!-- Cuadrícula de Tarjetas -->
-    <div class="row g-4">
-      <!-- Tarjeta 1 -->
-      <div class="col-lg-6">
-        <div class="card bg-success card-sustainability card-sustainability--base rounded-3 overflow-hidden position-relative shadow" style="background-image: url('{% static 'img/img_rutas.webp' %}');">
-          <div class="card-img-overlay card-sustainability__overlay d-flex flex-column justify-content-between p-4 p-md-5">
-            <div class="text-white">
-              <h3 class="display-5 fw-bold mb-3">Mongua<br>Rutas</h3>
-              <p class="fs-5 opacity-90 col-md-10"><strong>Rutas de Aventura</strong>, un lugar lleno de historia, cultura y paisajes únicos en el corazón de Mongua.</p>
-            </div>
-            <div class="mt-4">
-              <a href="{% url 'destinos' %}" class="btn btn-outline-light btn-lg px-4 fw-semibold rounded-pill">Conocer más</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tarjeta 2 -->
-      <div class="col-lg-6">
-        <div class="card bg-success card-sustainability card-sustainability--base rounded-3 overflow-hidden position-relative shadow" style="background-image: url('{% static 'img/img_cruz.webp' %}');">
-          <div class="card-img-overlay card-sustainability__overlay d-flex flex-column justify-content-between p-4 p-md-5">
-            <div class="text-white">
-              <h3 class="display-5 fw-bold mb-3">La cruz de la Laguna Negra<br>Laguna Negra</h3>
-              <p class="fs-5 opacity-90 col-md-10">Marca el inicio del sendero hacia uno de los paisajes más impresionantes de Mongua, rodeado de naturaleza, aventura y tranquilidad.</p>
-            </div>
-            <div class="mt-4">
-              <a href="{% url 'blog' %}" class="btn btn-outline-light btn-lg px-4 fw-semibold rounded-pill">Conocer más</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="hero-carousel" class="w-100">
-  <div id="carouselExampleFade" class="carousel slide carousel-fade vh-100 bg-black" data-bs-ride="carousel" data-bs-interval="10000">
-    
-    <div class="carousel-indicators">
-      <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-      <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="1" aria-label="Slide 2"></button>
-      <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="2" aria-label="Slide 3"></button>
-      <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="3" aria-label="Slide 4"></button>
-    </div>
-
-    <div class="carousel-inner h-100">
-      <div class="carousel-item active h-100">
-        <img src="{% static 'img/Fondo.webp' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 1">
-        <div class="position-absolute top-0 start-0 w-100 h-100 u-style-6b74e5cb"></div>
-        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
-          <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
-            <h1 class="display-3 fw-bold text-white">Bienvenidos a Mongua</h1>
-            <p class="lead text-white mb-0">Naturaleza y Tradición en el corazón de Boyacá</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="carousel-item h-100">
-        <img src="{% static 'img/Fondo3.webp' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 2">
-        <div class="position-absolute top-0 start-0 w-100 h-100 u-style-6b74e5cb"></div>
-        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
-          <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
-            <h2 class="display-4 fw-bold text-white">Páramo de Ocetá</h2>
-            <p class="lead text-white mb-0">Explora senderos ancestrales y paisajes únicos</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="carousel-item h-100">
-        <img src="{% static 'img/fondo4.webp' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 3">
-        <div class="position-absolute top-0 start-0 w-100 h-100 u-style-6b74e5cb"></div>
-        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
-          <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
-            <h2 class="display-4 fw-bold text-white">Cultura y Aventura</h2>
-            <p class="lead text-white mb-0">Vive experiencias que conectan con la tierra</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="carousel-item h-100">
-        <img src="{% static 'img/Fondo3.webp' %}" class="d-block w-100 h-100 object-fit-cover" alt="Paisaje Mongua 4">
-        <div class="position-absolute top-0 start-0 w-100 h-100 u-style-6b74e5cb"></div>
-        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100 top-0">
-          <div class="bg-dark bg-opacity-50 p-4 p-md-5 rounded-4 shadow">
-            <h2 class="display-4 fw-bold text-white">Páramo de Ocetá</h2>
-            <p class="lead text-white mb-0">Explora senderos y paisajes únicos</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-
-  </div>
-</section>
-
-
-
-
-<section id="location" class="bg-success container-fluid px-4 px-xl-5 u-style-fee182ee">
-  <div class="row g-0 align-items-stretch bg-white rounded-5 shadow-lg overflow-hidden border">
-    <!-- Columna de Texto -->
-    <div class="col-lg-6 p-4 p-md-5">
-      <div class="d-flex align-items-center gap-2 mb-3">
-        <i class="bi bi-geo-alt-fill text-success fs-4"></i>
-        <span class="text-success fw-bold small text-uppercase tracking-wider">Boyacá, Colombia</span>
+  <!-- Contenido Principal (Logo, Nombre, Descripción y Botón) -->
+  <div class="container position-relative px-4 px-md-5" style="z-index: 3;">
+    <div class="interface" style="max-width: 750px;">
+      <!-- Logo Monagua -->
+      <div class="mb-3">
+        <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="hero-logo img-fluid" style="max-height: 85px; object-fit: contain;">
       </div>
       
-      <h2 class="display-6 fw-bold text-dark mb-4">Encuéntranos en el corazón de las montañas</h2>
+      <!-- Nombre de la página -->
+      <h1 class="display-3 fw-bold mb-3" style="letter-spacing: -1.5px; line-height: 1.1;">
+        Monagua
+      </h1>
       
-      <p class="text-muted mb-4 lh-lg">
-        <strong>Mongua, Boyacá</strong> es un rincón lleno de <strong>naturaleza, historia y paisajes inolvidables</strong>. 
-        Rodeado de montañas, páramos y senderos ecológicos, este destino ofrece una experiencia única para quienes buscan aventura, 
-        tranquilidad y conexión con la esencia de la cultura boyacense.
+      <!-- Breve Descripción -->
+      <p class="lead mb-4" style="font-size: 1.15rem; max-width: 620px; font-weight: 400; line-height: 1.6;">
+        Monagua te guía a través de paisajes auténticos, fomentando el ecoturismo y el respeto por las tradiciones locales. Sumérgete en la riqueza natural y patrimonial de Boyacá.
       </p>
-      <div class="d-flex flex-column gap-3 mb-5">
-        <div class="d-flex align-items-center gap-3">
-          <div class="bg-success bg-opacity-10 p-2 rounded-3">
-            <i class="bi bi-map text-success"></i>
-          </div>
-          <span class="text-secondary small">Casco Urbano, Mongua - Boyacá</span>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-          <div class="bg-success bg-opacity-10 p-2 rounded-3">
-            <i class="bi bi-telephone text-success"></i>
-          </div>
-          <span class="text-secondary small">+57 322 346 5191</span>
-        </div>
-      </div>
-
-      <a href="https://www.google.com/maps/dir/?api=1&destination=5.7541536,-72.7998479" target="_blank" class="btn btn-success btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm transition-all">
-        <i class="bi bi-signpost-2-fill me-2"></i>Cómo llegar
-      </a>
-    </div>
-
-    <!-- Columna del Mapa -->
-    <div class="col-lg-6">
-      <div id="map-container" class="h-100 position-relative overflow-hidden u-style-bb5d7d13">
-        <!-- Marcador de posición premium del mapa -->
-        <div id="map-placeholder" class="w-100 h-100 d-flex flex-column justify-content-center align-items-center text-center p-4 u-style-b5357948">
-          <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex justify-content-center align-items-center mb-3 shadow-sm u-style-db7e6e31">
-            <i class="bi bi-map-fill fs-2 text-success"></i>
-          </div>
-          <h4 class="fw-bold text-dark mb-2">Mapa Interactivo de Mongua</h4>
-          <p class="text-muted small mb-4 mx-auto u-style-718a2951">Haz clic a continuación para cargar el mapa interactivo y ver nuestra ubicación en tiempo real.</p>
-          <button id="load-map-btn" class="btn btn-success rounded-pill px-4 py-2 fw-semibold shadow-sm transition-all u-style-a6d98b47">
-            <i class="bi bi-geo-alt-fill me-2"></i>Ver Mapa Interactivo
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<section class="py-4 text-center bg-white">
-  <div class="container py-4">
-    <h2 class="fw-bold mb-3 text-success u-style-4098ef5f">
-      ¿Listo para tu próxima aventura?
-    </h2>
-    <p class="fw-light mb-4 mx-auto text-muted u-style-ae18a06a">
-      Cuéntanos a dónde sueñas con ir y construimos juntos la experiencia perfecta.
-    </p>
-    <div class="d-flex flex-wrap justify-content-center gap-3">
-      <a href="{% url 'destinos' %}" class="btn btn-success fw-semibold rounded-pill px-4 py-2">
-        <i class="bi bi-map me-2"></i>Explorar destinos
-      </a>
-    </div>
-  </div>
-</section>
-
-  <script>
-    (function() {
-      const section = document.getElementById('hero-reveal-section');
-      const container = document.getElementById('flashlight-container');
-      const img = document.getElementById('flashlight-img');
       
-      if (!section || !container || !img || window.getComputedStyle(container.parentElement).display === 'none') return;
+      <!-- Botón de acción transparente y redondeado -->
+      <a href="#destinos" class="btn rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 hover-slide-right" 
+         style="font-size: 0.95rem; font-weight: 500; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+        Conocer más <span style="font-size: 1.1rem; vertical-align: middle;">→</span>
+      </a>
+    </div>
+  </div>
 
-      let rafId = null;
-
-      const updateFlashlight = (e) => {
-        if (rafId) cancelAnimationFrame(rafId);
-
-        rafId = requestAnimationFrame(() => {
-          const rect = section.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          
-          const maskValue = `radial-gradient(circle 300px at ${x}px ${y}px, black 0%, rgba(0, 0, 0, 0.41) 50%, transparent 80%)`;
-          
-          img.style.webkitMaskImage = maskValue;
-          img.style.maskImage = maskValue;
-        });
-      };
-
-      section.addEventListener('mousemove', updateFlashlight);
-
-      section.addEventListener('mouseleave', () => {
-        if (rafId) cancelAnimationFrame(rafId);
-        img.style.webkitMaskImage = 'radial-gradient(circle 0px at 50% 50%, black, transparent)';
-        img.style.maskImage = 'radial-gradient(circle 0px at 50% 50%, black, transparent)';
-      });
-    })();
-
-    // Carga de Mapa bajo demanda (Click-to-Load)
-    (function() {
-      const container = document.getElementById('map-container');
-      const loadBtn = document.getElementById('load-map-btn');
-      if (!container || !loadBtn) return;
-
-      loadBtn.addEventListener('click', () => {
-        const iframe = document.createElement('iframe');
-        iframe.src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7939.44689722954!2d-72.80508830970857!3d5.752890876917691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e6a4bd38f07ed2f%3A0x9f906e8745ffd73a!2zTW9uZ3VhLCBNb25nw7xhLCBCb3lhY8Oh!5e0!3m2!1ses-419!2sco!4v1773235132107!5m2!1ses-419!2sco";
-        iframe.style.border = "0";
-        iframe.style.width = "100%";
-        iframe.style.height = "100%";
-        iframe.allowFullscreen = "";
-        iframe.referrerPolicy = "no-referrer-when-downgrade";
-        
-        container.innerHTML = '';
-        container.appendChild(iframe);
-      });
-    })();
-  </script>
 </section>
 
+<!-- SECCIÓN DE CARRERAS (ESTILO PREMIUM - BOOTSTRAP 5) -->
+<section class="py-5" style="background-color: #1A261F; color: #1c1c1a;">
+    <div class="container py-5 d-flex flex-column justify-content-between" style="min-height: 500px;">
+        
+        <!-- Parte Superior: Etiqueta, Título e Imagen -->
+        <div class="row align-items-center mb-5">
+            <div class="col-12 col-lg-7">
+                <!-- Etiqueta superior -->
+                <p class="mb-4" style="font-size: 0.85rem; font-weight: 500; color: #a3c9b1; letter-spacing: -0.1px;">
+                    Descubre Mongua
+                </p>
+                
+                <!-- Título Principal -->
+                <h2 class="display-3 fw-normal lh-1 mb-0" style="letter-spacing: -2.5px; color: #f5f5f5;">
+                    Naturaleza, historia y cultura te esperan en un solo lugar.
+                </h2>
+            </div>
+            <div class="col-12 col-lg-5 mt-5 mt-lg-0 text-center text-lg-end">
+                <img src="{% static 'img/frailejon.png' %}" alt="Mongua" class="img-fluid" style="border-radius: 8px; max-height: 250px; object-fit: cover; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+            </div>
+        </div>
+
+        <!-- Parte Inferior: Separador y Posiciones -->
+        <div class="w-100 pt-4" style="border-top: 1px solid rgba(255, 255, 255, 0.15);">
+            <p class="mb-0" style="font-size: 0.85rem; font-weight: 500; color: #a3c9b1;">
+                Explora nuestros destinos ↓
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- SECCIÓN INTERACTIVA DE SCROLL VERTICAL (ESTILO FLOEMA - BOOTSTRAP 5) -->
+<section class="py-5" style="background-color: #ffffffff; color: #1c1c1a; overflow: visible;">
+    <div class="container-fluid px-3 px-md-5 py-5">
+        <div class="row position-relative g-4">
+            <!-- COLUMNA IZQUIERDA: Texto Principal Estático -->
+            <div class="col-12 col-md-3 sticky-md-top mb-4 mb-md-0 d-flex flex-column" 
+                 style="top: 15vh; height: fit-content; z-index: 5;">
+                <h2 class="display-6 fw-normal lh-sm pe-lg-3" style="letter-spacing: -1.5px; color: #1c1c1a;">
+                    Desde el imponente páramo hasta las huellas de nuestros ancestros, Mongua ofrece una experiencia inigualable.
+                </h2>
+            </div>
+
+            <!-- COLUMNA CENTRAL: Galería de Imágenes Desplazable -->
+            <!-- Esta columna dicta la altura total del scroll de la sección -->
+            <div class="col-12 col-md-6 d-flex flex-column gap-4 px-md-4">
+                
+                <!-- Imagen 1: Laguna Negra -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/lagunanegra.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Laguna Negra"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+                <!-- Imagen 2: Frailejones -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/frailejones.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Frailejones en el Páramo"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+                <!-- Imagen 3: Pictografías -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/pictografias.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Pictografías Ancestrales"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+                <!-- Imagen 4: Iglesia de Mongua -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/iglesia.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Iglesia de Mongua"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+                <!-- Imagen 5: Río -->
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
+                    <img src="{% static 'img/img_rio.webp' %}" 
+                         class="img-fluid w-100 d-block" 
+                         alt="Río de Mongua"
+                         style="object-fit: cover; aspect-ratio: 16/10;">
+                </div>
+
+            </div>
+
+            <!-- COLUMNA DERECHA: Texto Secundario Estático -->
+            <!-- Se queda fijo más abajo en la pantalla (top: 55vh) simulando la asimetría del video -->
+            <div class="col-12 col-md-3 sticky-md-top mt-4 mt-md-0 d-flex flex-column" 
+                 style="top: 55vh; height: fit-content; z-index: 5;">
+                <div class="ps-lg-3 text-start">
+                    <p class="mb-0 lh-base" style="font-size: 0.9rem; color: #55534e; font-weight: 400; text-align: justify;">
+                        Monagua te guía a través de paisajes auténticos, fomentando el ecoturismo y el respeto por las tradiciones locales. Sumérgete en la riqueza natural y patrimonial de Boyacá con nosotros, descubriendo historias grabadas en piedra y valles que respiran vida.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+</section>
+
+<!-- SECCIÓN NUESTRO EQUIPO (ESTILO PREMIUM - BOOTSTRAP 5) -->
+<section class="py-5" style="background-color: #ffffffff; color: #1c1c1a;">
+    <div class="container py-5">
+        
+        <!-- PARTE SUPERIOR: Titular y Espacio para Imagen -->
+        <div class="row align-items-end mb-4 g-4">
+            
+            <!-- Headline y contador -->
+            <div class="col-12 col-md-7 mb-3 mb-md-0">
+                <h2 class="display-6 fw-normal mb-4" style="letter-spacing: -1.5px; line-height: 1.2; max-width: 680px;">
+                    Somos una comunidad apasionada por la conservación, guías locales y amantes de la cultura, dedicados a mostrarte lo mejor de Mongua.
+                </h2>
+                <p class="mb-0" style="font-size: 0.85rem; font-weight: 500; color: #1c1c1a;">
+                    Nuestros pilares ↓
+                </p>
+            </div>
+            
+            <!-- IMAGEN DEL PROYECTO MONAGUA -->
+            <div class="col-12 col-md-5 d-flex justify-content-md-end justify-content-start">
+                <div class="w-100 d-flex flex-column align-items-center justify-content-center p-4" 
+                     style="min-height: 200px; max-width: 420px;">
+                    <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="img-fluid" style="max-height: 180px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- LÍNEA DIVISORIA PRINCIPAL -->
+        <hr class="my-0" style="border-top: 1px solid rgba(28, 28, 26, 0.15); opacity: 1;">
+
+        <!-- PARTE INFERIOR: Grid de Áreas y Especialidades -->
+        <div class="row g-md-5">
+            
+            <!-- Columna de la Izquierda -->
+            <div class="col-12 col-md-6">
+                
+                <!-- Item 1 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Ecoturismo Sostenible</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Diseñamos rutas que respetan el medio ambiente y promueven la conservación del páramo.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 2 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Guías Locales</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Acompañamiento por expertos nativos que conocen cada sendero, historia y leyenda de Mongua.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 3 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Cultura y Tradición</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Sumérgete en las costumbres locales, la gastronomía y el invaluable legado ancestral.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 4 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Aventura y Naturaleza</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Desde caminatas tranquilas hasta expediciones desafiantes en la majestuosa geografía boyacense.</p>
+                </div>
+
+            </div>
+
+            <!-- Columna de la Derecha -->
+            <div class="col-12 col-md-6">
+                
+                <!-- Item 1 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Impacto Social</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Trabajamos de la mano con las familias campesinas para generar desarrollo económico en la región.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 2 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Atención Personalizada</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Experiencias adaptadas a tus intereses, asegurando un viaje seguro, cómodo e inolvidable.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 3 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Preservación del Patrimonio</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Valoramos y protegemos sitios históricos, arqueológicos y maravillas naturales únicas.</p>
+                </div>
+                <div style="border-top: 1px solid rgba(28, 28, 26, 0.15);"></div>
+                
+                <!-- Item 4 -->
+                <div class="py-4">
+                    <h4 class="fs-6 fw-normal mb-1">Logística Integral</h4>
+                    <p class="mb-0" style="font-size: 0.85rem; color: #55534e;">Nos encargamos de tu transporte, alojamiento y alimentación para que solo te preocupes por disfrutar.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- SECCIÓN DE EXPLORACIÓN DE DESTINOS (PANELES DESPLEGABLES PREMIUM) -->
+<div class="scroller-wrapper">
+    <div class="scroll-indicator">
+        <span>Desplázate para explorar</span>
+        <div class="scroll-line"></div>
+    </div>
+
+    <!-- Diapositiva 1: Laguna Negra -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/lagunanegra.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-naturaleza"><i>🌄</i> Aventura</div>
+            <h1 class="panel-title">Explora la majestuosidad de la Laguna Negra y sus leyendas sagradas</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Descubrir Laguna Negra</a>
+        </div>
+    </section>
+
+    <!-- Diapositiva 2: Páramo de Ocetá -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/paramo.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-replastic"><i>🌿</i> Páramo</div>
+            <h1 class="panel-title">Camina entre gigantes de agua en el místico Páramo de Ocetá</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Explorar Páramo</a>
+        </div>
+    </section>
+
+    <!-- Diapositiva 3: Pictografías -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/pictografias.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-urbano"><i>🎨</i> Historia</div>
+            <h1 class="panel-title">Descubre las pictografías ancestrales y el legado arqueológico</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Ver Pictografías</a>
+        </div>
+    </section>
+
+    <!-- Diapositiva 4: Templo de Mongua -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/iglesia.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-golf"><i>⛪</i> Cultura</div>
+            <h1 class="panel-title">Recorre las calles coloniales y la historia del Templo Parroquial</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Conocer Mongua</a>
+        </div>
+    </section>
+
+    <!-- Diapositiva 5: Artesanías -->
+    <section class="panel">
+        <div class="panel-bg" style="background-image: url('{% static 'img/artesanias_1.webp' %}');"></div>
+        <div class="dark-overlay"></div>
+        <div class="content-box">
+            <div class="panel-badge panel-badge-detalles"><i>🏺</i> Tradición</div>
+            <h1 class="panel-title">Maravíllate con el arte del tejido en lana y las artesanías de Mongua</h1>
+            <a href="{% url 'destinos' %}" class="panel-btn-action">Ver Artesanías</a>
+        </div>
+    </section>
 </div>
-    {% endblock content %}
 
+<!-- SECCIÓN DE NOVEDADES (ESTILO PREMIUM - BOOTSTRAP 5) -->
+<section class="py-5" style="background-color: #ffffffff; color: #1c1c1a;">
+    <div class="container py-4">
+        
+        <!-- Título Principal -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <!-- fw-normal para un acabado más elegante -->
+                <h2 class="display-5 fw-normal mb-0" style="letter-spacing: -0.5px;">Últimas novedades en Monagua</h2>
+            </div>
+        </div>
+        <!-- Grid de Tarjetas -->
+        <div class="row g-4 justify-content-center">
+            
+            <!-- Tarjeta 1 (Sin fecha, tal como se ve en tu imagen) -->
+            <div class="col-12 col-md-4">
+                <!-- p-3 genera el "marco" de fondo alrededor de la imagen -->
+                <div class="p-3 d-flex flex-column h-100 hover-slide-right" style="background-color: #1A261F; cursor: pointer;">
+                    <!-- ratio-1x1 fuerza a que las imágenes siempre sean cuadradas simétricas -->
+                    <div class="ratio ratio-1x1 mb-3">
+                        <img src="{% static 'img/lagunanegra.webp' %}" 
+                             class="img-fluid" 
+                             alt="Ruta Laguna Negra" 
+                             style="object-fit: cover;">
+                    </div>
+                    <h3 class="fs-6 fw-normal mb-0" style="line-height: 1.4;">Nueva ruta guiada hacia la majestuosa Laguna Negra</h3>
+                </div>
+            </div>
 
-    
-  
+            <!-- Tarjeta 2 -->
+            <div class="col-12 col-md-4">
+                <div class="p-3 d-flex flex-column h-100 hover-slide-right" style="background-color: #1A261F; cursor: pointer;">
+                    <div class="ratio ratio-1x1 mb-3">
+                        <img src="{% static 'img/paramo.webp' %}" 
+                             class="img-fluid" 
+                             alt="Páramo de Ocetá" 
+                             style="object-fit: cover;">
+                    </div>
+                    <h3 class="fs-6 fw-normal mb-3" style="line-height: 1.4;">Avistamiento de fauna endémica en el místico Páramo de Ocetá</h3>
+                    <!-- mt-auto empuja la fecha siempre al fondo de la tarjeta -->
+                    <div class="mt-auto">
+                        <p class="mb-0" style="font-size: 0.75rem; color: #87827a; letter-spacing: 0.2px;">15 de julio de 2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3 -->
+            <div class="col-12 col-md-4">
+                <div class="p-3 d-flex flex-column h-100 hover-slide-right" style="background-color: #1A261F; cursor: pointer;">
+                    <div class="ratio ratio-1x1 mb-3">
+                        <img src="{% static 'img/artesanias_1.webp' %}" 
+                             class="img-fluid" 
+                             alt="Artesanías Mongua" 
+                             style="object-fit: cover;">
+                    </div>
+                    <h3 class="fs-6 fw-normal mb-3" style="line-height: 1.4;">Inauguración de nuevos talleres de tejido artesanal en lana</h3>
+                    <div class="mt-auto">
+                        <p class="mb-0" style="font-size: 0.75rem; color: #87827a; letter-spacing: 0.2px;">02 de agosto de 2026</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Botón Inferior -->
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <a href="#" class="btn rounded-pill px-4 py-2 text-uppercase fw-normal hover-slide-right" 
+                   style="font-size: 0.7rem; letter-spacing: 1.2px; border: 1px solid #bcbbb4; color: #1c1c1a; background-color: transparent;">
+                    Más noticias <span class="ms-1" style="font-size: 0.85rem; vertical-align: middle;">→</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Scripts de animación y scroll suave (GSAP, ScrollTrigger) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="{% static 'js/inicio_cartas.js' %}"></script>
+
+<script src="{% static 'js/hero_water.js' %}"></script>
+{% endblock content %}
