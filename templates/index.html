@@ -3,16 +3,6 @@
 {% block titulo %}{{ block.super }} - Inicio{% endblock %}
 
 {% block content %}
-<style>
-  @keyframes smoothZoom {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.1); }
-  }
-  .bg-zoom-anim {
-    animation: smoothZoom 12s ease-in-out infinite alternate;
-    will-change: transform;
-  }
-</style>
 <section id="hero-reveal-section" class="position-relative w-100 overflow-hidden bg-white d-flex align-items-center" style="height: 90vh;">
   <!-- Imagen de Fondo con animación de Zoom -->
   <div class="bg-image bg-zoom-anim position-absolute top-0 start-0 w-100 h-100"
