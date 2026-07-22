@@ -1,5 +1,5 @@
-<div class="dropdown d-flex align-items-center position-fixed" style="top: 20px; right: 20px; z-index: 1050;">
-    <button class="btn btn-success p-0 rounded-circle d-flex align-items-center justify-content-center position-relative shadow-lg" 
+<div id="contenedorCampanaNotif" class="dropdown d-flex align-items-center position-fixed" style="top: 20px; right: 20px; z-index: 1050; cursor: grab;">
+    <button class="btn btn-success p-0 rounded-circle d-flex align-items-center justify-content-center position-relative shadow-lg btn-campana-movil" 
             style="width: 50px; height: 50px;"
             type="button" 
             id="dropdownPanelNotif" 
@@ -56,50 +56,54 @@
         </div>
     </ul>
 </div>
+
 <script>
-// Make the bell movable
-const notifBtn = document.getElementById('dropdownPanelNotif');
-const notifContainer = notifBtn.parentElement;
-let isDragging = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+document.addEventListener('DOMContentLoaded', function() {
+    const notifBtn = document.getElementById('dropdownPanelNotif');
+    const notifContainer = document.getElementById('contenedorCampanaNotif');
+    let isDragging = false;
+    let isMoved = false;
 
-notifBtn.addEventListener('mousedown', dragStart);
-notifBtn.addEventListener('touchstart', dragStart, {passive: true});
-document.addEventListener('mouseup', dragEnd);
-document.addEventListener('touchend', dragEnd);
-document.addEventListener('mousemove', drag);
-document.addEventListener('touchmove', drag, {passive: true});
+    // Manejo de mouse
+    notifBtn.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        isMoved = false;
+        notifContainer.style.cursor = 'grabbing';
+        let shiftX = e.clientX - notifContainer.getBoundingClientRect().left;
+        let shiftY = e.clientY - notifContainer.getBoundingClientRect().top;
 
-function dragStart(e) {
-    if (e.type === 'touchstart') {
-        initialX = e.touches[0].clientX - xOffset;
-        initialY = e.touches[0].clientY - yOffset;
-    } else {
-        initialX = e.clientX - xOffset;
-        initialY = e.clientY - yOffset;
-    }
-    if (e.target.closest('#dropdownPanelNotif')) isDragging = true;
-}
-
-function dragEnd() {
-    initialX = currentX;
-    initialY = currentY;
-    isDragging = false;
-}
-
-function drag(e) {
-    if (isDragging) {
-        if (e.type === 'touchmove') {
-            currentX = e.touches[0].clientX - initialX;
-            currentY = e.touches[0].clientY - initialY;
-        } else {
-            e.preventDefault();
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
+        function moveAt(pageX, pageY) {
+            notifContainer.style.left = pageX - shiftX + 'px';
+            notifContainer.style.top = pageY - shiftY + 'px';
+            notifContainer.style.right = 'auto'; // Anular anclaje right
+            notifContainer.style.bottom = 'auto';
         }
-        xOffset = currentX;
-        yOffset = currentY;
-        setTranslate(currentX, currentY, notifContainer);
-    }
-}
-function setTranslate(xPos, yPos, el) { el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`; }
-</script>
+
+        function onMouseMove(event) {
+            isMoved = true;
+            moveAt(event.pageX, event.pageY);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        document.onmouseup = function() {
+            document.removeEventListener('mousemove', onMouseMove);
+            notifContainer.style.cursor = 'grab';
+            document.onmouseup = null;
+            setTimeout(() => { isDragging = false; }, 0);
+        };
+    });
+
+    notifBtn.ondragstart = function() {
+        return false;
+    };
+
+    // Prevenir el clic de apertura del menú de Bootstrap si se arrastró
+    notifBtn.addEventListener('click', function(e) {
+        if (isMoved) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+});
+</script>

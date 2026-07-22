@@ -9,7 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" >
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.1">
   <link rel="stylesheet" href="{% static 'css/styles_generated.css' %}">
   
   {% block extra_head %}{% endblock %}
@@ -83,5 +83,52 @@
 
 {% block scripts %}{% endblock %}
 {% include 'partials/toast_messages.html' %}
+
+<script>
+(function() {
+    function initTooltips() {
+        if (typeof bootstrap === 'undefined') return;
+        var elements = document.querySelectorAll('button, .btn, a, [title]:not([title=""]), [aria-label]:not([aria-label=""])');
+        
+        elements.forEach(function(el) {
+            if (['SCRIPT','STYLE','IFRAME','META','HEAD','SVG','PATH','HTML','BODY'].includes(el.tagName.toUpperCase())) return;
+            if (el.closest('.toast-container')) return; 
+            
+            var title = el.getAttribute('title');
+            var aria = el.getAttribute('aria-label');
+            var text = el.innerText ? el.innerText.trim() : '';
+            var tooltipText = title || aria;
+            
+            if (!tooltipText && text && text.length > 0 && text.length < 50 && (el.tagName === 'BUTTON' || el.classList.contains('btn'))) {
+                tooltipText = text;
+            }
+            
+            if (tooltipText && !el.hasAttribute('data-bs-original-title')) {
+                if (!title) el.setAttribute('title', tooltipText);
+                el.setAttribute('data-bs-toggle', 'tooltip');
+                try {
+                    if (!bootstrap.Tooltip.getInstance(el)) {
+                        new bootstrap.Tooltip(el, { boundary: document.body });
+                    }
+                } catch(e) {}
+            }
+        });
+    }
+
+    function startObserver() {
+        initTooltips();
+        var observer = new MutationObserver(function() { setTimeout(initTooltips, 200); });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startObserver);
+    } else {
+        startObserver();
+        setTimeout(initTooltips, 500);
+    }
+})();
+</script>
+
 </body>
 </html>
