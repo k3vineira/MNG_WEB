@@ -13,7 +13,7 @@
                 <i class="bi bi-bar-chart-line text-success me-2"></i>Panel de Estadísticas
                 {% endif %}
             </h1>
-            <p class="text-muted mb-0">{{ analitica_subtitulo|default:'Consolidado métrico avanzado e histórico de comportamiento de viajes, transacciones y soporte en Monagua.' }}</p>
+            <p class="opacity-75 mb-0">{{ analitica_subtitulo|default:'Consolidado métrico avanzado e histórico de comportamiento de viajes, transacciones y soporte en Monagua.' }}</p>
         </div>
         <div class="col-12 col-md-4 text-md-end">
             <span
@@ -27,108 +27,108 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-transacciones')" title="Ver detalle de transacciones e inversión" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase">Inversión Total</span>
-                    <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                    <span class="text-esta-green small fw-bold text-uppercase">Inversión Total</span>
+                    <div class="p-2 bg-esta-green-soft text-esta-green rounded-3">
                         <i class="bi bi-wallet2 fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">COP ${{ total_invertido|floatformat:0|intcomma|default:"0" }}</h2>
-                <div class="text-muted small"><i class="bi bi-check-circle-fill text-success me-1"></i>Solo fondos
+                <div class="text-esta-green small"><i class="bi bi-check-circle-fill text-esta-green me-1"></i>Solo fondos
                     validados</div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual')" title="Ver detalle mensual de reservas" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase">Volumen de Reservas</span>
-                    <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-3">
+                    <span class="text-esta-blue small fw-bold text-uppercase">Volumen de Reservas</span>
+                    <div class="p-2 bg-esta-blue-soft text-esta-blue rounded-3">
                         <i class="bi bi-journal-bookmark-fill fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">{{ total_reservas|default:"0" }}</h2>
-                <div class="text-muted small"><i class="bi bi-arrow-up-right text-primary me-1"></i>Historial completo
+                <div class="text-esta-blue small"><i class="bi bi-arrow-up-right text-esta-blue me-1"></i>Historial completo
                     activo</div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-anual')" title="Ver reporte anual detallado" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase">Ticket Promedio</span>
-                    <div class="p-2 bg-info bg-opacity-10 text-info rounded-3">
+                    <span class="text-esta-cyan small fw-bold text-uppercase">Ticket Promedio</span>
+                    <div class="p-2 bg-esta-cyan-soft text-esta-cyan rounded-3">
                         <i class="bi bi-calculator fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">COP ${{ promedio_por_reserva|floatformat:0|intcomma|default:"0" }}</h2>
-                <div class="text-muted small"><i class="bi bi-info-circle me-1"></i>Valor medio por experiencia</div>
+                <div class="text-esta-cyan small"><i class="bi bi-info-circle me-1"></i>Valor medio por experiencia</div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-destinos')" title="Ver análisis de rutas frecuentes" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase">Índice del Destino</span>
-                    <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3">
+                    <span class="text-esta-yellow small fw-bold text-uppercase">Índice del Destino</span>
+                    <div class="p-2 bg-esta-yellow-soft text-esta-yellow rounded-3">
                         <i class="bi bi-geo-alt-fill fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">{{ destinos_total|default:"0" }}</h2>
-                <div class="text-muted small"><i class="bi bi-map me-1"></i>Rutas ecológicas exploradas</div>
+                <div class="text-esta-yellow small"><i class="bi bi-map me-1"></i>Rutas ecológicas exploradas</div>
             </div>
         </div>
     </div>
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual')" title="Ver tasas de éxito en el reporte mensual" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase">Tasa de Éxito</span>
-                    <div class="p-2 bg-success bg-opacity-10 text-success rounded-3">
+                    <span class="text-esta-teal small fw-bold text-uppercase">Tasa de Éxito</span>
+                    <div class="p-2 bg-esta-teal-soft text-esta-teal rounded-3">
                         <i class="bi bi-graph-up-arrow fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">{{ tasa_exito|default:"0" }}%</h2>
                 <div class="progress rounded-pill mb-2">
-                    <div class="progress-bar bg-success" role="progressbar" id="barTasaExito"></div>
+                    <div class="progress-bar bg-esta-teal text-white" style="background-color: var(--estadisticas-teal);" role="progressbar" id="barTasaExito"></div>
                 </div>
-                <div class="text-muted small">Reservas confirmadas / total</div>
+                <div class="text-esta-teal small">Reservas confirmadas / total</div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-soporte')" title="Ver trazabilidad de PQRS" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase">PQRS Activas</span>
-                    <div class="p-2 bg-danger bg-opacity-10 text-danger rounded-3">
+                    <span class="text-esta-red small fw-bold text-uppercase">PQRS Activas</span>
+                    <div class="p-2 bg-esta-red-soft text-esta-red rounded-3">
                         <i class="bi bi-headset fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">{{ pqrs_abiertas|default:"0" }}</h2>
-                <div class="text-muted small"><i class="bi bi-exclamation-circle text-danger me-1"></i>Requieren
+                <div class="text-esta-red small"><i class="bi bi-exclamation-circle text-esta-red me-1"></i>Requieren
                     atención</div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-resenas')" title="Ver reseñas y calificaciones" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase">Reseñas Publicadas</span>
-                    <div class="p-2 bg-warning bg-opacity-10 text-warning rounded-3">
+                    <span class="text-esta-orange small fw-bold text-uppercase">Reseñas Publicadas</span>
+                    <div class="p-2 bg-esta-orange-soft text-esta-orange rounded-3">
                         <i class="bi bi-star-fill fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">{{ total_resenas|default:"0" }}</h2>
-                <div class="text-muted small"><i class="bi bi-pencil me-1"></i>Opiniones registradas</div>
+                <div class="text-esta-orange small"><i class="bi bi-pencil me-1"></i>Opiniones registradas</div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" title="Tiempo activo en la comunidad" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <span class="text-muted small fw-bold text-uppercase">Días como Miembro</span>
-                    <div class="p-2 bg-info bg-opacity-10 text-info rounded-3">
+                    <span class="text-esta-purple small fw-bold text-uppercase">Días como Miembro</span>
+                    <div class="p-2 bg-esta-purple-soft text-esta-purple rounded-3">
                         <i class="bi bi-person-check-fill fs-4"></i>
                     </div>
                 </div>
                 <h2 class="fw-bold text-dark mb-1">{{ dias_como_miembro|default:"0" }}</h2>
-                <div class="text-muted small"><i class="bi bi-calendar3 me-1"></i>Desde {{ user.date_joined|date:"d M Y" }}</div>
+                <div class="text-esta-purple small"><i class="bi bi-calendar3 me-1"></i>Desde {{ user.date_joined|date:"d M Y" }}</div>
             </div>
         </div>
     </div>
@@ -150,14 +150,14 @@
                             {% if nivel_viajero == "Explorador" %}🥉
                             {% elif nivel_viajero == "Aventurero" %}🥈
                             {% elif nivel_viajero == "Expedicionista" %}🥇
-                            {% else %}🌱{% endif %}
+                            {% else %}{% endif %}
                         </span>
                         <h6 class="fw-bold text-dark mb-0">{{ nivel_viajero|default:"Iniciando" }}</h6>
                     </div>
                     <div class="col-sm-9 ps-md-4">
-                        <p class="text-muted small mb-3">{{ descripcion_nivel|default:"Continúa recorriendo las rutas del Páramo de Mongua para desbloquear nuevos beneficios y reconocimientos." }}</p>
+                        <p class="opacity-75 small mb-3">{{ descripcion_nivel|default:"Continúa recorriendo las rutas del Páramo de Mongua para desbloquear nuevos beneficios y reconocimientos." }}</p>
                         {% if progreso_nivel is not None %}
-                        <div class="d-flex justify-content-between text-muted small mb-1">
+                        <div class="d-flex justify-content-between opacity-75 small mb-1">
                             <span>Progreso técnico al siguiente rango</span>
                             <span class="fw-bold">{{ progreso_nivel }}%</span>
                         </div>
@@ -167,18 +167,18 @@
                         {% endif %}
                     </div>
                 </div>
-                <hr class="my-4 text-muted opacity-25">
+                <hr class="my-4 opacity-75 opacity-25">
                 <div class="row g-2 text-center">
                     <div class="col-4">
-                        <small class="text-muted d-block">Comunidad desde</small>
+                        <small class="opacity-75 d-block">Comunidad desde</small>
                         <span class="fw-bold text-dark small">{{ user.date_joined|date:"M Y" }}</span>
                     </div>
                     <div class="col-4 border-start border-light">
-                        <small class="text-muted d-block">Último Acceso</small>
+                        <small class="opacity-75 d-block">Último Acceso</small>
                         <span class="fw-bold text-dark small">{{ user.last_login|date:"d M Y"|default:"—" }}</span>
                     </div>
                     <div class="col-4 border-start border-light">
-                        <small class="text-muted d-block">Promedio Mensual</small>
+                        <small class="opacity-75 d-block">Promedio Mensual</small>
                         <span class="fw-bold text-dark small">{{ promedio_mensual_reservas|default:"0" }}
                             reservas</span>
                     </div>
@@ -224,7 +224,7 @@
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="bi bi-activity text-primary me-2"></i>Evolución Mensual de Reservas e Inversión
                     </h5>
-                    <span class="text-muted small">Año en curso</span>
+                    <span class="opacity-75 small">Año en curso</span>
                 </div>
                 <canvas id="chartEvolucionMensual" class="w-100"></canvas>
             </div>
@@ -240,19 +240,19 @@
                 <div class="row g-2 text-center mt-3">
                     <div class="col-6">
                         <span class="d-block fw-bold text-success">{{ reservas_confirmadas|default:"0" }}</span>
-                        <small class="text-muted">Confirmadas</small>
+                        <small class="opacity-75">Confirmadas</small>
                     </div>
                     <div class="col-6">
                         <span class="d-block fw-bold text-warning">{{ reservas_pendientes|default:"0" }}</span>
-                        <small class="text-muted">Pendientes</small>
+                        <small class="opacity-75">Pendientes</small>
                     </div>
                     <div class="col-6">
                         <span class="d-block fw-bold text-danger">{{ reservas_canceladas|default:"0" }}</span>
-                        <small class="text-muted">Canceladas</small>
+                        <small class="opacity-75">Canceladas</small>
                     </div>
                     <div class="col-6">
-                        <span class="d-block fw-bold text-secondary">{{ reservas_completadas|default:"0" }}</span>
-                        <small class="text-muted">Completadas</small>
+                        <span class="d-block fw-bold text-esta-blue">{{ reservas_completadas|default:"0" }}</span>
+                        <small class="text-esta-blue opacity-75">Completadas</small>
                     </div>
                 </div>
             </div>
@@ -285,15 +285,15 @@
                 <div class="row g-2 text-center mt-3">
                     <div class="col-4">
                         <span class="d-block fw-bold text-primary">{{ pqrs_abiertas|default:"0" }}</span>
-                        <small class="text-muted">Abiertas</small>
+                        <small class="opacity-75">Abiertas</small>
                     </div>
                     <div class="col-4">
                         <span class="d-block fw-bold text-warning">{{ pqrs_en_gestion|default:"0" }}</span>
-                        <small class="text-muted">En gestión</small>
+                        <small class="opacity-75">En gestión</small>
                     </div>
                     <div class="col-4">
                         <span class="d-block fw-bold text-success">{{ pqrs_cerradas|default:"0" }}</span>
-                        <small class="text-muted">Resueltas</small>
+                        <small class="opacity-75">Resueltas</small>
                     </div>
                 </div>
             </div>
@@ -304,7 +304,7 @@
         <div class="col-12 col-md-6">
             <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
-                    <i class="bi bi-layers-fill text-secondary me-2"></i>Comparativa Anual: Reservas vs Cancelaciones
+                    <i class="bi bi-layers-fill text-esta-blue me-2"></i>Comparativa Anual: Reservas vs Cancelaciones
                 </h5>
                 <canvas id="chartComparativaAnual" class="w-100"></canvas>
             </div>
@@ -344,10 +344,10 @@
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-3">
             <div>
                 <h5 class="fw-bold text-dark mb-1">
-                    <i class="bi bi-file-earmark-bar-graph text-secondary me-2"></i>Módulos de Auditoría e Informes
+                    <i class="bi bi-file-earmark-bar-graph text-esta-blue me-2"></i>Módulos de Auditoría e Informes
                     Consolidados
                 </h5>
-                <p class="text-muted small mb-0">Selecciona las pestañas inferiores para desglosar la matriz de datos
+                <p class="opacity-75 small mb-0">Selecciona las pestañas inferiores para desglosar la matriz de datos
                     históricos.</p>
             </div>
         </div>
@@ -414,7 +414,7 @@
                                 <td class="text-center py-3"><span class="badge bg-light text-dark">{{ reporte.total_creadas }}</span></td>
                                 <td class="text-center py-3"><span class="badge bg-success bg-opacity-10 text-success">{{ reporte.total_confirmadas }}</span></td>
                                 <td class="text-center py-3"><span class="badge bg-danger bg-opacity-10 text-danger">{{ reporte.total_canceladas }}</span></td>
-                                <td class="text-center py-3"><span class="badge bg-secondary bg-opacity-10 text-secondary">{{ reporte.total_completadas|default:"0" }}</span></td>
+                                <td class="text-center py-3"><span class="badge bg-esta-blue bg-opacity-10 text-esta-blue">{{ reporte.total_completadas|default:"0" }}</span></td>
                                 <td class="text-center py-3">
                                     <div class="d-flex align-items-center gap-1 justify-content-center">
                                         <div class="progress rounded-pill bg-light u-style-6dda678a">
@@ -427,7 +427,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-5">
+                                <td colspan="7" class="text-center opacity-75 py-5">
                                     <i class="bi bi-folder-x fs-2 d-block mb-2"></i>Sin registros mensuales
                                     consolidados.
                                 </td>
@@ -460,8 +460,8 @@
                                 <td class="text-center py-3">{{ reporte.total_reservas }} viajes</td>
                                 <td class="text-center py-3"><span class="badge bg-success bg-opacity-10 text-success">{{ reporte.total_confirmadas|default:"—" }}</span></td>
                                 <td class="text-center py-3"><span class="badge bg-danger bg-opacity-10 text-danger">{{ reporte.total_canceladas|default:"—" }}</span></td>
-                                <td class="text-center py-3"><span class="badge bg-secondary bg-opacity-10 text-secondary">{{ reporte.total_completadas|default:"—" }}</span></td>
-                                <td class="text-center py-3 text-muted">COP ${{ reporte.ticket_promedio|floatformat:0|intcomma|default:"—" }}</td>
+                                <td class="text-center py-3"><span class="badge bg-esta-blue bg-opacity-10 text-esta-blue">{{ reporte.total_completadas|default:"—" }}</span></td>
+                                <td class="text-center py-3 opacity-75">COP ${{ reporte.ticket_promedio|floatformat:0|intcomma|default:"—" }}</td>
                                 <td class="text-center py-3">
                                     <div class="d-flex align-items-center gap-2 justify-content-center">
                                         <div class="progress rounded-pill bg-light u-style-7067ed35">
@@ -474,7 +474,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="8" class="text-center text-muted py-5">
+                                <td colspan="8" class="text-center opacity-75 py-5">
                                     <i class="bi bi-folder-x fs-2 d-block mb-2"></i>Sin registros anuales.
                                 </td>
                             </tr>
@@ -505,12 +505,12 @@
                                     </div>
                                 </td>
                                 <td class="text-center py-3"><span class="badge bg-primary px-3 py-1 rounded-pill">{{ destino.total_reservas }}</span></td>
-                                <td class="text-center py-3 text-muted">COP ${{ destino.inversion_total|floatformat:0|intcomma|default:"—" }}</td>
-                                <td class="text-end text-muted py-3">{{ destino.ultima_visita|date:"d M Y"|default:"—" }}</td>
+                                <td class="text-center py-3 opacity-75">COP ${{ destino.inversion_total|floatformat:0|intcomma|default:"—" }}</td>
+                                <td class="text-end opacity-75 py-3">{{ destino.ultima_visita|date:"d M Y"|default:"—" }}</td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" class="text-center text-muted py-5">
+                                <td colspan="4" class="text-center opacity-75 py-5">
                                     <i class="bi bi-geo fs-2 d-block mb-2"></i>Aún no se registran destinos
                                     geolocalizados en la cuenta.
                                 </td>
@@ -528,27 +528,27 @@
                             <h6 class="fw-bold text-dark mb-3">Balance Operativo de Casos</h6>
                             <div class="vstack gap-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted"><i
+                                    <span class="small opacity-75"><i
                                             class="bi bi-envelope-open text-primary me-2"></i>Casos Abiertos:</span>
                                     <span class="badge bg-primary text-white font-monospace">{{ pqrs_abiertas|default:"0" }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted"><i class="bi bi-gear-fill text-warning me-2"></i>En
+                                    <span class="small opacity-75"><i class="bi bi-gear-fill text-warning me-2"></i>En
                                         Procesamiento:</span>
                                     <span class="badge bg-warning text-dark font-monospace">{{ pqrs_en_gestion|default:"0" }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted"><i
+                                    <span class="small opacity-75"><i
                                             class="bi bi-check-all text-success me-2"></i>Cerrados / Resueltos:</span>
                                     <span class="badge bg-success text-white font-monospace">{{ pqrs_cerradas|default:"0" }}</span>
                                 </div>
                                 <hr class="my-1">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted fw-bold">Total de PQRS:</span>
+                                    <span class="small opacity-75 fw-bold">Total de PQRS:</span>
                                     <span class="badge bg-dark text-white font-monospace">{{ pqrs_total|default:"0" }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small text-muted">Tasa de resolución:</span>
+                                    <span class="small opacity-75">Tasa de resolución:</span>
                                     <span class="small fw-bold text-success">{{ pqrs_tasa_resolucion|default:"0" }}%</span>
                                 </div>
                             </div>
@@ -560,11 +560,11 @@
                             <div class="vstack gap-2">
                                 {% for evento in actividad_reciente|slice:":6" %}
                                 <div class="p-2 border-bottom border-light d-flex justify-content-between align-items-center small">
-                                    <span class="text-dark"><i class="bi bi-clock me-2 text-muted"></i>{{ evento.descripcion }}</span>
-                                    <span class="text-muted font-monospace">{{ evento.fecha|date:"d M Y" }}</span>
+                                    <span class="text-dark"><i class="bi bi-clock me-2 opacity-75"></i>{{ evento.descripcion }}</span>
+                                    <span class="opacity-75 font-monospace">{{ evento.fecha|date:"d M Y" }}</span>
                                 </div>
                                 {% empty %}
-                                <p class="text-muted small text-center py-4 mb-0">Sin trazas operativas recientes en la
+                                <p class="opacity-75 small text-center py-4 mb-0">Sin trazas operativas recientes en la
                                     cuenta.</p>
                                 {% endfor %}
                             </div>
@@ -590,7 +590,7 @@
                         <tbody>
                             {% for pago in historial_pagos %}
                             <tr class="border-bottom border-light">
-                                <td class="py-3 font-monospace text-muted small">{{ pago.codigo|default:"#—" }}</td>
+                                <td class="py-3 font-monospace opacity-75 small">{{ pago.codigo|default:"#—" }}</td>
                                 <td class="py-3 fw-semibold text-dark">{{ pago.reserva_nombre|default:"—" }}</td>
                                 <td class="text-center py-3">
                                     <span class="badge bg-light text-dark border border-light">
@@ -605,10 +605,10 @@
                                     {% elif pago.estado == "rechazado" %}
                                     <span class="badge bg-danger bg-opacity-10 text-danger">Rechazado</span>
                                     {% else %}
-                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">{{ pago.estado|default:"—" }}</span>
+                                    <span class="badge bg-esta-blue bg-opacity-10 text-esta-blue">{{ pago.estado|default:"—" }}</span>
                                     {% endif %}
                                 </td>
-                                <td class="text-center py-3 text-muted small">{{ pago.fecha|date:"d M Y"|default:"—" }}</td>
+                                <td class="text-center py-3 opacity-75 small">{{ pago.fecha|date:"d M Y"|default:"—" }}</td>
                                 <td class="text-end fw-bold text-dark py-3">
                                     {% if pago.monto %}
                                         COP ${{ pago.monto|floatformat:0|intcomma }}
@@ -621,7 +621,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-5">
+                                <td colspan="6" class="text-center opacity-75 py-5">
                                     <i class="bi bi-credit-card fs-2 d-block mb-2"></i>Sin transacciones registradas.
                                 </td>
                             </tr>
@@ -653,12 +653,12 @@
                                         {% if forloop.counter <= resena.calificacion %} <i
                                             class="bi bi-star-fill text-warning small"></i>
                                             {% else %}
-                                            <i class="bi bi-star text-muted small"></i>
+                                            <i class="bi bi-star opacity-75 small"></i>
                                             {% endif %}
                                             {% endfor %}
                                     </div>
                                 </td>
-                                <td class="py-3 text-muted small">{{ resena.comentario|truncatechars:80|default:"—" }}</td>
+                                <td class="py-3 opacity-75 small">{{ resena.comentario|truncatechars:80|default:"—" }}</td>
                                 <td class="text-center py-3">
                                     {% if resena.publicada %}
                                     <span class="badge bg-success bg-opacity-10 text-success">Publicada</span>
@@ -666,11 +666,11 @@
                                     <span class="badge bg-warning bg-opacity-10 text-warning">En revisión</span>
                                     {% endif %}
                                 </td>
-                                <td class="text-end text-muted py-3 small">{{ resena.fecha|date:"d M Y"|default:"—" }}</td>
+                                <td class="text-end opacity-75 py-3 small">{{ resena.fecha|date:"d M Y"|default:"—" }}</td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-5">
+                                <td colspan="5" class="text-center opacity-75 py-5">
                                     <i class="bi bi-star fs-2 d-block mb-2"></i>Aún no has publicado reseñas.
                                 </td>
                             </tr>
@@ -716,6 +716,37 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Navegación de paneles para las tarjetas superiores
+    function navegarPanel(panelId) {
+        const targetBtn = document.querySelector(`[data-bs-target='${panelId}']`);
+        if (targetBtn) {
+            // Activar tab
+            targetBtn.click();
+            // Hacer scroll
+            const tabContainer = document.getElementById('vistasMatrizTab');
+            if (tabContainer) {
+                tabContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Resaltar visualmente el botón destino
+            targetBtn.classList.add('bg-warning', 'text-dark', 'shadow', 'border-warning');
+            setTimeout(() => {
+                targetBtn.classList.remove('bg-warning', 'text-dark', 'shadow', 'border-warning');
+                targetBtn.style.transition = "all 0.5s";
+            }, 1500);
+            
+            // Resaltar el contenedor del panel también
+            const panelEl = document.querySelector(panelId);
+            if(panelEl) {
+                panelEl.classList.add('bg-warning', 'bg-opacity-10');
+                setTimeout(() => {
+                    panelEl.classList.remove('bg-warning', 'bg-opacity-10');
+                }, 1500);
+            }
+        }
+    }
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -789,16 +820,18 @@
     if (barProg) barProg.style.width = progreso + "%";
 
     // ── Colores reutilizables ─────────────────────────────────────────────────
+    const rootStyle = getComputedStyle(document.documentElement);
     const C = {
-        blue: "#0d6efd",
-        green: "#198754",
-        yellow: "#ffc107",
-        red: "#dc3545",
-        cyan: "#0dcaf0",
-        gray: "#6c757d",
-        purple: "#6f42c1",
-        orange: "#fd7e14",
-        gridLine: "#f1f3f5",
+        blue: rootStyle.getPropertyValue('--estadisticas-blue').trim() || "#2563eb",
+        green: rootStyle.getPropertyValue('--estadisticas-green').trim() || "#10b981",
+        yellow: rootStyle.getPropertyValue('--estadisticas-yellow').trim() || "#f59e0b",
+        red: rootStyle.getPropertyValue('--estadisticas-red').trim() || "#ef4444",
+        cyan: rootStyle.getPropertyValue('--estadisticas-cyan').trim() || "#06b6d4",
+        purple: rootStyle.getPropertyValue('--estadisticas-purple').trim() || "#8b5cf6",
+        orange: rootStyle.getPropertyValue('--estadisticas-orange').trim() || "#f97316",
+        pink: rootStyle.getPropertyValue('--estadisticas-pink').trim() || "#ec4899",
+        teal: rootStyle.getPropertyValue('--estadisticas-teal').trim() || "#14b8a6",
+        gridLine: rootStyle.getPropertyValue('--estadisticas-grid-line').trim() || "#f1f5f9",
     };
 
     function alphaColor(hex, a) {
@@ -871,7 +904,7 @@
             labels: ["Confirmadas", "Pendientes", "Canceladas", "Completadas"],
             datasets: [{
                 data: [reservasConf, reservasPend, reservasCan, reservasComp],
-                backgroundColor: [C.green, C.yellow, C.red, C.gray],
+                backgroundColor: [C.green, C.yellow, C.red, C.blue],
                 borderWidth: 4,
                 borderColor: "#ffffff"
             }]
