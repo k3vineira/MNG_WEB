@@ -1,5 +1,6 @@
 $(document).ready(function() {
     $('#tablaPaquetes').DataTable({
+         order: [],
        // 1. ESTRUCTURA VISUAL: Mantiene botones y buscador alineados en la misma fila
         dom: "<'row mb-3 align-items-center'<'col-md-6'B><'col-md-6 d-flex justify-content-end'f>>" +
              "<'row'<'col-sm-12'tr>>" +
@@ -8,32 +9,32 @@ $(document).ready(function() {
       
 // 2. BOTONES DE EXPORTACIÓN CON LOGOS OFICIALES (COMO LA IMAGEN)
 
-buttons: [
+  buttons: [
     {
         extend: 'excelHtml5',
-        text: '<i class="bi bi-file-earmark-excel-fill text-success fs-4"></i>',
+        text: '<i class="bi bi-file-earmark-excel-fill text-success fs-5"></i>',
         titleAttr: 'Exportar a Excel',
-        className: 'btn btn-light rounded-circle shadow-sm border-0 mx-1 d-flex align-items-center justify-content-center',
+        className: 'btn btn-light rounded-circle shadow-sm border-0 mx-1 d-flex align-items-center justify-content-center p-0',
         attr: {
-            style: 'width:48px;height:48px;'
+            style: 'width:48px;height:48px;flex-shrink: 0;'
         }
     },
     {
         extend: 'pdfHtml5',
         text: '<i class="bi bi-file-earmark-pdf-fill text-dark fs-5"></i>',
         titleAttr: 'Exportar a PDF',
-        className: 'btn btn-light rounded-circle shadow-sm border-0 mx-1 d-flex align-items-center justify-content-center',
+        className: 'btn btn-light rounded-circle shadow-sm border-0 mx-1 d-flex align-items-center justify-content-center p-0',
         attr: {
-            style: 'width:48px;height:48px;'
+            style: 'width:48px;height:48px; flex-shrink: 0;'
         }
     },
     {
         extend: 'print',
         text: '<i class="bi bi-printer-fill text-dark fs-5"></i>',
         titleAttr: 'Imprimir',
-        className: 'btn btn-light rounded-circle shadow-sm border-0 mx-1 d-flex align-items-center justify-content-center',
+        className: 'btn btn-light rounded-circle shadow-sm border-0 mx-1 d-flex align-items-center justify-content-center p-0',
         attr: {
-            style: 'width:48px;height:48px;'
+            style: 'width:48px;height:48px; flex-shrink: 0;'
         }
     }
 ],

@@ -103,21 +103,24 @@
                     {% for paquete in paquetes %}
                     <tr>
                         <td>
-                            <div class="d-flex align-items-center gap-3">
-                                {% if paquete.imagen %}
-                                    <img src="{{ paquete.imagen.url }}" alt="{{ paquete.nombre }}" class="rounded shadow-sm u-style-aa43df9a">
-                                {% else %}
-                                    <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center text-muted u-style-93c7e9a4">
-                                        <i class="bi bi-image fs-4"></i>
-                                    </div>
-                                {% endif %}
+    <div class="d-flex align-items-center gap-3">
+        {% if paquete.imagen %}
+            <img src="{{ paquete.imagen.url }}" alt="{{ paquete.nombre }}" 
+                 class="rounded shadow-sm" 
+                 style="width: 100px; height: 100px; object-fit: cover; flex-shrink: 0;">
+        {% else %}
+            <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center text-muted" 
+                 style="width: 100px; height: 100px; flex-shrink: 0;">
+                <i class="bi bi-image fs-4"></i>
+            </div>
+        {% endif %}
 
-                                <div>
-                                    <h6 class="fw-bold text-dark mb-0">{{ paquete.nombre }}</h6>
-                                    <small class="text-muted"><i class="bi bi-tag-fill text-success me-1"></i>{{ paquete.categoria.nombre|default:"Sin categoría" }}</small>
-                                </div>
-                            </div>
-                        </td>
+        <div>
+            <h6 class="fw-bold text-dark mb-0">{{ paquete.nombre }}</h6>
+            <small class="text-muted"><i class="bi bi-tag-fill text-success me-1"></i>{{ paquete.categoria.nombre|default:"Sin categoría" }}</small>
+        </div>
+    </div>
+</td>
                         <td class="text-center">
                             <span class="badge bg-light text-dark border shadow-sm px-3 py-2 rounded-pill">
                                 <i class="bi bi-moon-stars me-1 text-secondary"></i> {{ paquete.noches_duracion }} Noches / {{ paquete.dias_duracion }} Días
