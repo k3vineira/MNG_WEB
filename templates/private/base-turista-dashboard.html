@@ -106,7 +106,7 @@
                 el.setAttribute('data-bs-toggle', 'tooltip');
                 try {
                     if (!bootstrap.Tooltip.getInstance(el)) {
-                        new bootstrap.Tooltip(el, { boundary: document.body });
+                        new bootstrap.Tooltip(el, { boundary: document.body, trigger: 'hover' });
                     }
                 } catch(e) {}
             }
