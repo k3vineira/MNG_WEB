@@ -29,7 +29,7 @@
 <!-- ── KPI Cards ── -->
 <div class="row g-3 mb-4">
   <!-- Inversión Total -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-lg-3">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -44,7 +44,7 @@
     </div>
   </div>
   <!-- Reservas Totales -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-lg-3">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -63,7 +63,7 @@
     </div>
   </div>
   <!-- Reseñas -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-lg-3">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -82,7 +82,7 @@
     </div>
   </div>
   <!-- PQRS -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-lg-3">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -129,27 +129,27 @@
   </div>
   <!-- Mini stats -->
   <div class="col-12 col-lg-7 d-flex flex-column gap-3">
-    <div class="row g-2">
-      <div class="col-6">
-        <div class="card border-0 shadow-sm text-center py-3">
+    <div class="row g-2 flex-grow-1">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm text-center py-3 h-100 justify-content-center">
           <div class="fw-bold fs-5 text-success">{{ reservas_confirmadas|default:"0" }}</div>
           <div class="text-muted small">Confirmadas</div>
         </div>
       </div>
-      <div class="col-6">
-        <div class="card border-0 shadow-sm text-center py-3">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm text-center py-3 h-100 justify-content-center">
           <div class="fw-bold fs-5 text-warning">{{ reservas_pendientes|default:"0" }}</div>
           <div class="text-muted small">Pendientes</div>
         </div>
       </div>
-      <div class="col-6">
-        <div class="card border-0 shadow-sm text-center py-3">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm text-center py-3 h-100 justify-content-center">
           <div class="fw-bold fs-5 text-danger">{{ reservas_canceladas|default:"0" }}</div>
           <div class="text-muted small">Canceladas</div>
         </div>
       </div>
-      <div class="col-6">
-        <div class="card border-0 shadow-sm text-center py-3">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm text-center py-3 h-100 justify-content-center">
           {% if total_reservas > 0 %}
             <div class="fw-bold fs-5 text-primary">{{ tasa_confirmacion|default:"0" }}%</div>
           {% else %}
