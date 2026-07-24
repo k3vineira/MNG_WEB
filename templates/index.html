@@ -77,12 +77,16 @@
 </section>
 
 <!-- SECCIÓN INTERACTIVA DE SCROLL VERTICAL (ESTILO FLOEMA - BOOTSTRAP 5) -->
-<section class="py-5 overflow-hidden" style="background-color: #ffffffff; color: #1c1c1a;">
-    <div class="container-fluid px-3 px-md-5 py-5 overflow-hidden">
+<section class="py-5" style="background-color: #ffffffff; color: #1c1c1a; overflow: visible;">
+    <div class="container-fluid px-3 px-md-5 py-5">
+        
+        <!-- row con position-relative para que el sticky funcione correctamente -->
         <div class="row position-relative g-4">
+            
             <!-- COLUMNA IZQUIERDA: Texto Principal Estático -->
+            <!-- Se mantiene fijo cerca de la parte superior (top: 15vh) al hacer scroll en escritorio -->
             <div class="col-12 col-md-3 sticky-md-top mb-4 mb-md-0 d-flex flex-column" 
-                 style="top: 15vh; height: fit-content; z-index: 5;" data-aos="fade-right">
+                 style="top: 15vh; height: fit-content; z-index: 5;">
                 <h2 class="display-6 fw-normal lh-sm pe-lg-3" style="letter-spacing: -1.5px; color: #1c1c1a;">
                     Desde el imponente páramo hasta las huellas de nuestros ancestros, Mongua ofrece una experiencia inigualable.
                 </h2>
@@ -93,7 +97,7 @@
             <div class="col-12 col-md-6 d-flex flex-column gap-4 px-md-4">
                 
                 <!-- Imagen 1: Laguna Negra -->
-                <div class="w-100 overflow-hidden" style="border-radius: 2px;" data-aos="fade-up">
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
                     <img src="{% static 'img/lagunanegra.webp' %}" 
                          class="img-fluid w-100 d-block" 
                          alt="Laguna Negra"
@@ -101,7 +105,7 @@
                 </div>
 
                 <!-- Imagen 2: Frailejones -->
-                <div class="w-100 overflow-hidden" style="border-radius: 2px;" data-aos="fade-up">
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
                     <img src="{% static 'img/frailejones.jpg' %}" 
                          class="img-fluid w-100 d-block" 
                          alt="Frailejones en el Páramo"
@@ -109,7 +113,7 @@
                 </div>
 
                 <!-- Imagen 3: Pictografías -->
-                <div class="w-100 overflow-hidden" style="border-radius: 2px;" data-aos="fade-up">
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
                     <img src="{% static 'img/pictografias.webp' %}" 
                          class="img-fluid w-100 d-block" 
                          alt="Pictografías Ancestrales"
@@ -117,7 +121,7 @@
                 </div>
 
                 <!-- Imagen 4: Iglesia de Mongua -->
-                <div class="w-100 overflow-hidden" style="border-radius: 2px;" data-aos="fade-up">
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
                     <img src="{% static 'img/iglesia.webp' %}" 
                          class="img-fluid w-100 d-block" 
                          alt="Iglesia de Mongua"
@@ -125,7 +129,7 @@
                 </div>
 
                 <!-- Imagen 5: Río -->
-                <div class="w-100 overflow-hidden" style="border-radius: 2px;" data-aos="fade-up">
+                <div class="w-100 overflow-hidden" style="border-radius: 2px;">
                     <img src="{% static 'img/img_rio.webp' %}" 
                          class="img-fluid w-100 d-block" 
                          alt="Río de Mongua"
@@ -137,7 +141,7 @@
             <!-- COLUMNA DERECHA: Texto Secundario Estático -->
             <!-- Se queda fijo más abajo en la pantalla (top: 55vh) simulando la asimetría del video -->
             <div class="col-12 col-md-3 sticky-md-top mt-4 mt-md-0 d-flex flex-column" 
-                 style="top: 55vh; height: fit-content; z-index: 5;" data-aos="fade-left">
+                 style="top: 55vh; height: fit-content; z-index: 5;">
                 <div class="ps-lg-3 text-start">
                     <p class="mb-0 lh-base" style="font-size: 0.9rem; color: #55534e; font-weight: 400; text-align: justify;">
                         Monagua te guía a través de paisajes auténticos, fomentando el ecoturismo y el respeto por las tradiciones locales. Sumérgete en la riqueza natural y patrimonial de Boyacá con nosotros, descubriendo historias grabadas en piedra y valles que respiran vida.
