@@ -41,7 +41,7 @@
 <!-- ── KPI Cards ── -->
 <div class="row g-3 mb-4">
   <!-- Ingresos -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -56,7 +56,7 @@
     </div>
   </div>
   <!-- Usuarios -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -71,7 +71,7 @@
     </div>
   </div>
   <!-- Reservas -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -86,7 +86,7 @@
     </div>
   </div>
   <!-- Tours -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -101,7 +101,7 @@
     </div>
   </div>
   <!-- Pagos Rechazados -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -120,7 +120,7 @@
     </div>
   </div>
   <!-- Banners -->
-  <div class="col-6 col-md-4 col-xl">
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body">
         <div class="d-flex align-items-center gap-2 mb-2">
@@ -219,37 +219,37 @@
   <div class="col-12 col-lg-6 d-flex flex-column gap-3">
     <!-- Mini stats -->
     <div class="row g-2">
-      <div class="col-6">
+      <div class="col-12 col-sm-6 col-md-4">
         <div class="card border-0 shadow-sm text-center py-3">
           <div class="fw-bold fs-5 text-success">{{ tasa_confirmacion|default:"0" }}%</div>
           <div class="text-muted small">Tasa de confirmación</div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-12 col-sm-6 col-md-4">
         <div class="card border-0 shadow-sm text-center py-3">
           <div class="fw-bold fs-5 text-primary">{{ valoracion_promedio|default:"0.0" }}★</div>
           <div class="text-muted small">Valoración promedio</div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-12 col-sm-6 col-md-4">
         <div class="card border-0 shadow-sm text-center py-3">
           <div class="fw-bold fs-5 text-warning">COP ${{ ingreso_por_reserva|floatformat:0|intcomma|default:"0" }}</div>
           <div class="text-muted small">Ingreso por reserva</div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-12 col-sm-6 col-md-4">
         <div class="card border-0 shadow-sm text-center py-3">
           <div class="fw-bold fs-5 text-danger">{{ cancelaciones_hoy|default:"0" }}</div>
           <div class="text-muted small">Cancelaciones hoy</div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-12 col-sm-6 col-md-4">
         <div class="card border-0 shadow-sm text-center py-3">
           <div class="fw-bold fs-5 text-danger">{{ cancelaciones_rechazadas|default:"0" }}</div>
           <div class="text-muted small">Cancelaciones Rechazadas</div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-12 col-sm-6 col-md-4">
         <div class="card border-0 shadow-sm text-center py-3">
           <div class="fw-bold fs-5 text-warning">{{ cancelaciones_pendientes|default:"0" }}</div>
           <div class="text-muted small">Cancelaciones Pendientes</div>

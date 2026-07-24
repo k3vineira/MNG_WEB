@@ -1,7 +1,7 @@
 {% load static %}
 {% load humanize %}
 
-<div class="container-fluid py-4 px-md-5">
+<div class="container-fluid py-4 px-3 px-md-5">
 
 
     <div class="row align-items-center mb-5 g-3">
@@ -27,7 +27,7 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-transacciones', 'esta-green')" title="Revisa el balance general, historial de fondos y transacciones validadas" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-transacciones', 'esta-green')" title="Revisa el balance general, historial de fondos y transacciones validadas" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-green small fw-bold text-uppercase">Inversión Total</span>
                     <div class="p-2 bg-esta-green-soft text-esta-green rounded-3">
@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual', 'esta-blue')" title="Accede a la matriz comparativa de ocupación y viajes mes a mes" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual', 'esta-blue')" title="Accede a la matriz comparativa de ocupación y viajes mes a mes" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-blue small fw-bold text-uppercase">Volumen de Reservas</span>
                     <div class="p-2 bg-esta-blue-soft text-esta-blue rounded-3">
@@ -53,7 +53,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-anual', 'esta-cyan')" title="Consulta el margen de ganancias y el valor promedio anual por experiencia" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-anual', 'esta-cyan')" title="Consulta el margen de ganancias y el valor promedio anual por experiencia" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-cyan small fw-bold text-uppercase">Ticket Promedio</span>
                     <div class="p-2 bg-esta-cyan-soft text-esta-cyan rounded-3">
@@ -65,7 +65,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-destinos', 'esta-yellow')" title="Analiza cuáles rutas ecológicas son las más frecuentadas" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-destinos', 'esta-yellow')" title="Analiza cuáles rutas ecológicas son las más frecuentadas" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-yellow small fw-bold text-uppercase">Índice del Destino</span>
                     <div class="p-2 bg-esta-yellow-soft text-esta-yellow rounded-3">
@@ -80,7 +80,7 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual', 'esta-teal')" title="Mide el porcentaje de reservas confirmadas frente a las canceladas" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-mensual', 'esta-teal')" title="Mide el porcentaje de reservas confirmadas frente a las canceladas" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-teal small fw-bold text-uppercase">Tasa de Éxito</span>
                     <div class="p-2 bg-esta-teal-soft text-esta-teal rounded-3">
@@ -89,13 +89,13 @@
                 </div>
                 <h3 class="fw-bold text-dark mb-1 fs-4 fs-xl-3">{{ tasa_exito|default:"0" }}%</h3>
                 <div class="progress rounded-pill mb-2">
-                    <div class="progress-bar bg-esta-teal text-white" style="background-color: var(--estadisticas-teal);" role="progressbar" id="barTasaExito"></div>
+                    <div class="progress-bar bg-esta-teal text-white" style="background-color: var(--estadisticas-teal); width: {{ tasa_exito|default:'0' }}%;" role="progressbar"></div>
                 </div>
                 <div class="text-esta-teal small">Reservas confirmadas / total</div>
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-soporte', 'esta-red')" title="Gestiona casos, reclamos y solicitudes que requieren tu atención urgente" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-soporte', 'esta-red')" title="Gestiona casos, reclamos y solicitudes que requieren tu atención urgente" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-red small fw-bold text-uppercase">PQRS Activas</span>
                     <div class="p-2 bg-esta-red-soft text-esta-red rounded-3">
@@ -108,7 +108,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-resenas', 'esta-orange')" title="Lee y responde los comentarios de satisfacción de los viajeros" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white card-hover-lift" style="cursor: pointer;" onclick="navegarPanel('#panel-resenas', 'esta-orange')" title="Lee y responde los comentarios de satisfacción de los viajeros" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-orange small fw-bold text-uppercase">Reseñas Publicadas</span>
                     <div class="p-2 bg-esta-orange-soft text-esta-orange rounded-3">
@@ -120,7 +120,7 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white card-hover-lift" title="Fidelidad y tiempo transcurrido desde tu registro en la plataforma" data-bs-toggle="tooltip">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white card-hover-lift" title="Fidelidad y tiempo transcurrido desde tu registro en la plataforma" data-bs-toggle="tooltip">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="text-esta-purple small fw-bold text-uppercase">Días como Miembro</span>
                     <div class="p-2 bg-esta-purple-soft text-esta-purple rounded-3">
@@ -135,7 +135,7 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-lg-7">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="bi bi-award text-warning me-2"></i>Estatus de Fidelización y Nivel de Experiencia
@@ -162,7 +162,7 @@
                             <span class="fw-bold">{{ progreso_nivel }}%</span>
                         </div>
                         <div class="progress rounded-pill mb-0">
-                            <div class="progress-bar bg-warning" role="progressbar" id="barProgreso"></div>
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ progreso_nivel|default:'0' }}%;"></div>
                         </div>
                         {% endif %}
                     </div>
@@ -187,7 +187,7 @@
         </div>
 
         <div class="col-12 col-lg-5">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 text-white bg-success bg-gradient">
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-xl-4 h-100 text-white bg-success bg-gradient">
                 <h5 class="fw-bold mb-3"><i class="bi bi-tree-fill me-2"></i>Impacto Ecológico Estimado</h5>
                 <p class="small mb-4 text-white text-opacity-75">Tu interacción con nuestra plataforma apoya de forma
                     directa a la conservación ambiental del Páramo de Mongua y los guías nativos locales.</p>
@@ -219,7 +219,7 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-xl-8">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="fw-bold text-dark mb-0">
                         <i class="bi bi-activity text-primary me-2"></i>Evolución Mensual de Reservas e Inversión
@@ -230,7 +230,7 @@
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
                     <i class="bi bi-pie-chart-fill text-success me-2"></i>Distribución de Estados de Reserva
                 </h5>
@@ -261,7 +261,7 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
                     <i class="bi bi-bar-chart-steps text-warning me-2"></i>Inversión Anualizada
                 </h5>
@@ -269,7 +269,7 @@
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
                     <i class="bi bi-calendar-week text-info me-2"></i>Preferencia por Día de la Semana
                 </h5>
@@ -277,7 +277,7 @@
             </div>
         </div>
         <div class="col-12 col-xl-4">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
                     <i class="bi bi-headset text-danger me-2"></i>Estado de PQRS
                 </h5>
@@ -302,7 +302,7 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-md-6">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
                     <i class="bi bi-layers-fill text-esta-blue me-2"></i>Comparativa Anual: Reservas vs Cancelaciones
                 </h5>
@@ -310,7 +310,7 @@
             </div>
         </div>
         <div class="col-12 col-md-6">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
                     <i class="bi bi-geo-fill text-success me-2"></i>Top Destinos por Frecuencia de Reserva
                 </h5>
@@ -321,7 +321,7 @@
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-md-5">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
                     <i class="bi bi-radar text-primary me-2"></i>Perfil de Comportamiento del Viajero
                 </h5>
@@ -331,7 +331,7 @@
             </div>
         </div>
         <div class="col-12 col-md-7">
-            <div class="card border border-light shadow-sm rounded-4 p-4 h-100 bg-white">
+            <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
                     <i class="bi bi-graph-up text-info me-2"></i>Tendencia Acumulada de Inversión (Mensual)
                 </h5>
@@ -418,7 +418,7 @@
                                 <td class="text-center py-3">
                                     <div class="d-flex align-items-center gap-1 justify-content-center">
                                         <div class="progress rounded-pill bg-light" style="width: 100px;">
-                                            <div class="progress-bar bg-success" role="progressbar" id="barMensual{{ forloop.counter }}"></div>
+                                            <div class="progress-bar" style="background-color: #10b981 !important; width: {{ reporte.porcentaje_exito|default:'0' }}%;" role="progressbar"></div>
                                         </div>
                                         <small class="text-success fw-semibold">{{ reporte.porcentaje_exito|default:"0" }}%</small>
                                     </div>
@@ -465,7 +465,7 @@
                                 <td class="text-center py-3">
                                     <div class="d-flex align-items-center gap-2 justify-content-center">
                                         <div class="progress rounded-pill bg-light" style="width: 100px;">
-                                            <div class="progress-bar bg-success" role="progressbar" id="barAnual{{ forloop.counter }}"></div>
+                                            <div class="progress-bar" style="background-color: #10b981 !important; width: {{ reporte.porcentaje_exito|default:'0' }}%;" role="progressbar"></div>
                                         </div>
                                         <span class="small fw-semibold text-success">{{ reporte.porcentaje_exito }}%</span>
                                     </div>
@@ -683,7 +683,7 @@
         </div>
     </div>
 
-    <div class="card border border-light shadow-sm rounded-4 p-4 bg-white mb-4">
+    <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 bg-white mb-4">
         <h6 class="fw-bold text-dark mb-3 text-uppercase small">Accesos Rápidos de Gestión y Operaciones</h6>
         <div class="row g-3">
             <div class="col-6 col-md-3">
@@ -826,11 +826,7 @@
         const tasaExito = {{ tasa_exito|default:0 }};
         const progreso = {{ progreso_nivel|default:0 }};
 
-    // ── Progress bars Django-driven ───────────────────────────────────────────
-    const barTasa = document.getElementById("barTasaExito");
-    if (barTasa) barTasa.style.width = tasaExito + "%";
-    const barProg = document.getElementById("barProgreso");
-    if (barProg) barProg.style.width = progreso + "%";
+
 
     // ── Colores reutilizables ─────────────────────────────────────────────────
     const rootStyle = getComputedStyle(document.documentElement);
@@ -1132,29 +1128,7 @@
         }
     });
 
-    // ── Progress bars de tabla mensual ────────────────────────────────────────
-    document.querySelectorAll('[id^="barMensual"]').forEach(bar => {
-        const row = bar.closest('tr');
-        if (row) {
-            const small = row.querySelector('.text-success.fw-semibold');
-            if (small) {
-                const pct = parseInt(small.textContent) || 0;
-                bar.style.width = pct + '%';
-            }
-        }
-    });
 
-    // ── Progress bars de tabla anual ──────────────────────────────────────────
-    document.querySelectorAll('[id^="barAnual"]').forEach(bar => {
-        const row = bar.closest('tr');
-        if (row) {
-            const small = row.querySelector('.text-success.fw-semibold');
-            if (small) {
-                const pct = parseInt(small.textContent) || 0;
-                bar.style.width = pct + '%';
-            }
-        }
-    });
 
     });
 

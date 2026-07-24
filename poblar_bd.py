@@ -12,7 +12,7 @@ from pagos.models import ComprobantePago
 from promociones.models import Promocion
 from notificaciones.models import Notificacion
 import random
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 from django.utils import timezone
 from decimal import Decimal
 
@@ -405,10 +405,17 @@ def poblar_base_datos():
             numero_menores=random.randint(0, 3),
             estado=estado
         )
+        
+        # Asignar fecha realista (auto_now_add no deja hacerlo en create)
+        dias_antes = random.randint(5, 60)
+        fake_registro_date = fecha_reserva - timedelta(days=dias_antes)
+        fake_registro = timezone.make_aware(datetime.combine(fake_registro_date, datetime.min.time())) + timedelta(hours=random.randint(8, 20))
+        Reserva.objects.filter(id=r.id).update(fecha_registro=fake_registro)
+        r.fecha_registro = fake_registro
         reservas_creadas.append(r)
 
         if estado == 'cancelada':
-            Cancelacion.objects.create(
+            c = Cancelacion.objects.create(
                 reserva=r,
                 motivo=random.choice([
                     "Imprevisto de última hora, no podré asistir al viaje.",
@@ -419,6 +426,12 @@ def poblar_base_datos():
                 ]),
                 penalidad=Decimal(str(random.randint(0, 50000)))
             )
+            dias_diff = (fecha_reserva - fake_registro_date).days
+            if dias_diff > 1:
+                fake_solicitud = fake_registro + timedelta(days=random.randint(1, dias_diff - 1))
+            else:
+                fake_solicitud = fake_registro + timedelta(hours=5)
+            Cancelacion.objects.filter(id=c.id).update(fecha_solicitud=fake_solicitud)
 
     print(f"  -> {len(reservas_creadas)} reservas creadas.")
 
@@ -436,7 +449,7 @@ def poblar_base_datos():
 
     for r in reservas_con_comprobante:
         estado_comprobante = random.choice(['pendiente', 'aprobado', 'rechazado'])
-        ComprobantePago.objects.create(
+        cp = ComprobantePago.objects.create(
             usuario=r.usuario,
             reserva=r,
             referencia=f"REF-{random.randint(100000, 999999)}",
@@ -452,6 +465,8 @@ def poblar_base_datos():
             estado=estado_comprobante,
             nota_admin="Revisado por administración." if estado_comprobante != 'pendiente' else "",
         )
+        fake_envio = r.fecha_registro + timedelta(hours=random.randint(1, 48))
+        ComprobantePago.objects.filter(id=cp.id).update(fecha_envio=fake_envio)
         comprobantes_creados += 1
 
     print(f"  -> {comprobantes_creados} comprobantes de pago creados.")
