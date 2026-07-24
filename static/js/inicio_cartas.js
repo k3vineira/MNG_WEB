@@ -5,6 +5,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 const wrapper = document.querySelector(".scroller-wrapper");
 const panels = gsap.utils.toArray(".panel");
+const scrollIndicator = document.querySelector(".scroll-indicator");
+const scrollLine = document.querySelector(".scroll-line");
 
 // PREPARACIÓN DE LAS CAPAS (ESTADOS INICIALES)
 panels.forEach((panel, index) => {
@@ -24,6 +26,10 @@ panels.forEach((panel, index) => {
         // El primer panel inicia perfectamente centrado
         gsap.set(bg, { yPercent: 0, opacity: 1 });
         gsap.set(content, { y: 0, opacity: 1 });
+        // Establecer color inicial si existe el atributo data-color
+        const initialColor = panel.dataset.color || "#ffffff";
+        if (scrollIndicator) gsap.set(scrollIndicator, { color: initialColor });
+        if (scrollLine) gsap.set(scrollLine, { backgroundColor: initialColor });
     }
 });
 
@@ -47,6 +53,7 @@ panels.forEach((panel, index) => {
         const nextBg = nextPanel.querySelector('.panel-bg');
         const currentContent = panel.querySelector('.content-box');
         const nextContent = nextPanel.querySelector('.content-box');
+        const nextColor = nextPanel.dataset.color || "#ffffff";
 
         // 1. La diapositiva actual sube por completo hacia arriba para salir de la pantalla
         tl.to(panel, {
@@ -85,7 +92,26 @@ panels.forEach((panel, index) => {
             opacity: 1,
             y: 0,
             ease: "power2.out"
-        }, "<+=0.25"); 
+        }, "<+=0.25");
+
+        // 5. TRANSICIÓN DE COLOR EN EL INDICADOR "DESPLÁZATE PARA EXPLORAR":
+        if (scrollIndicator) {
+            tl.to(scrollIndicator, {
+                color: nextColor,
+                ease: "none"
+            }, "<");
+        }
+        if (scrollLine) {
+            tl.to(scrollLine, {
+                backgroundColor: nextColor,
+                ease: "none"
+            }, "<");
+        }
     }
+});
+
+// Sincronizar AOS con GSAP ScrollTrigger
+ScrollTrigger.addEventListener("refresh", () => {
+    if (typeof AOS !== "undefined") AOS.refresh();
 });
 

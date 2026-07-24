@@ -31,7 +31,6 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.4" />
-    <link rel="stylesheet" href="{% static 'css/styles_generated.css' %}" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
     <link
@@ -67,7 +66,8 @@
         });
         AOS.init({
           duration: 800,
-          once: true,
+          once: false,
+          mirror: true,
           offset: 100,
         });
       });

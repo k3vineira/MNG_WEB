@@ -96,31 +96,40 @@ class Paquete(models.Model):
     @property
     def precio_minimo(self):
         fecha_hoy = timezone.now().date()
+        all_tarifas = list(self.tarifas.all())
 
-        tarifas_validas = self.tarifas.filter(
-            estado='activa',
-            temporada__estado='activa',
-            temporada__fecha_inicio__lte=fecha_hoy,
-            temporada__fecha_fin__gte=fecha_hoy
+        validas = [
+            t for t in all_tarifas
+            if getattr(t, 'estado', '') == 'activa'
+            and getattr(t, 'temporada', None)
+            and t.temporada.estado == 'activa'
+            and t.temporada.fecha_inicio <= fecha_hoy <= t.temporada.fecha_fin
+        ]
+
+        if validas:
+            return min(t.precio_adulto for t in validas)
+
+        estandar = next(
+            (
+                t for t in all_tarifas
+                if getattr(t, 'estado', '') == 'activa'
+                and t.temporada
+                and "estándar" in (t.temporada.nombre.lower() if t.temporada.nombre else "")
+            ),
+            None
         )
 
-        if tarifas_validas.exists():
-            return min(t.precio_adulto for t in tarifas_validas)
-
-        tarifa_estandar = self.tarifas.filter(
-            estado='activa',
-            temporada__nombre__icontains="Estándar"
-        ).first()
-
-        if tarifa_estandar:
-            return tarifa_estandar.precio_adulto
+        if estandar:
+            return estandar.precio_adulto
 
         return 0
 
     @property
     def apto_para_menores(self):
-        # Si tiene al menos una actividad no apta, el paquete no es apto para menores
-        return not self.actividades.filter(apto_para_menores=False).exists()
+        all_actividades = list(self.actividades.all())
+        if all_actividades:
+            return not any(not getattr(a, 'apto_para_menores', True) for a in all_actividades)
+        return True
 
 
 class Tarifa(models.Model):

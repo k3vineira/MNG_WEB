@@ -275,44 +275,27 @@ def poblar_base_datos():
     # ─────────────────────────────────────────────
     print("3. Creando Paquetes, Temporadas y Tarifas...")
     paquetes_creados = []
-    nombres_paquetes = [
-        "Mongua Mágico", "Ruta del Páramo", "Aventura Laguna Negra",
-        "Senderos Ancestrales", "Eco-Aventura Boyacense", "Caminata del Amanecer",
-        "Tour Gastronómico Mongua", "Explorador de Montaña", "Relajación en la Naturaleza",
-        "Mongua en Familia"
+    
+    # Paquetes mapeados exactamente con sus imágenes correspondientes
+    paquetes_config = [
+        ("Mongua Mágico", "Un recorrido completo por los sitios más emblemáticos de Mongua, ideal para conocer la esencia del pueblo.", "img_Iglesia.webp"),
+        ("Ruta del Páramo", "Expedición al páramo de Mongua con vistas panorámicas y flora endémica única en el mundo.", "paramo.webp"),
+        ("Aventura Laguna Negra", "Aventura hacia la misteriosa Laguna Negra, un ecosistema único rodeado de leyendas y biodiversidad.", "lagunanegra.webp"),
+        ("Senderos Ancestrales", "Caminata por los caminos reales que conectaban pueblos ancestrales, cargados de historia y misterio.", "img_rutas.webp"),
+        ("Eco-Aventura Boyacense", "Experiencia de ecoturismo con actividades de bajo impacto ambiental en los bosques de Boyacá.", "paramo_oseta.webp"),
+        ("Caminata del Amanecer", "Salida temprana para contemplar el amanecer desde los miradores naturales del páramo.", "miradorcumbre.webp"),
+        ("Tour Gastronómico Mongua", "Descubre los sabores típicos de Mongua: arepas boyacenses, cuchuco, mazamorra y más.", "artesanias.webp"),
+        ("Explorador de Montaña", "Programa de escalada y rappel en las formaciones rocosas naturales de la región.", "estatua_piedra.webp"),
+        ("Relajación en la Naturaleza", "Jornada de bienestar y meditación en medio de los paisajes naturales más tranquilos.", "img_rio.webp"),
+        ("Mongua en Familia", "Plan diseñado para familias con actividades recreativas, educativas y culturales para todos.", "iglesia.webp"),
     ]
-    descripciones_paquetes = [
-        "Un recorrido completo por los sitios más emblemáticos de Mongua, ideal para conocer la esencia del pueblo.",
-        "Expedición al páramo de Mongua con vistas panorámicas y flora endémica única en el mundo.",
-        "Aventura hacia la misteriosa Laguna Negra, un ecosistema único rodeado de leyendas y biodiversidad.",
-        "Caminata por los caminos reales que conectaban pueblos ancestrales, cargados de historia y misterio.",
-        "Experiencia de ecoturismo con actividades de bajo impacto ambiental en los bosques de Boyacá.",
-        "Salida temprana para contemplar el amanecer desde los miradores naturales del páramo.",
-        "Descubre los sabores típicos de Mongua: arepas boyacenses, cuchuco, mazamorra y más.",
-        "Programa de escalada y rappel en las formaciones rocosas naturales de la región.",
-        "Jornada de bienestar y meditación en medio de los paisajes naturales más tranquilos.",
-        "Plan diseñado para familias con actividades recreativas, educativas y culturales para todos."
-    ]
+
     import shutil
     from django.conf import settings
     destinos_media_dir = os.path.join(settings.MEDIA_ROOT, 'destinos')
     os.makedirs(destinos_media_dir, exist_ok=True)
-    
-    imagenes_disponibles = [
-        'lagunanegra.webp',
-        'paramo.webp',
-        'museo.webp',
-        'iglesia.webp',
-        'miradorcumbre.webp',
-        'frailejones.webp',
-        'artesanias.webp',
-        'pictografias.webp',
-        'img_rio.webp',
-        'img_cruz.webp'
-    ]
 
-    for i in range(10):
-        img_name = imagenes_disponibles[i % len(imagenes_disponibles)]
+    for nombre, descripcion, img_name in paquetes_config:
         src_path = os.path.join(settings.BASE_DIR, 'static', 'img', img_name)
         dst_path = os.path.join(destinos_media_dir, img_name)
         imagen_path = None
@@ -324,8 +307,8 @@ def poblar_base_datos():
                 print(f"Error al copiar imagen: {e}")
 
         p = Paquete.objects.create(
-            nombre=nombres_paquetes[i],
-            descripcion=descripciones_paquetes[i],
+            nombre=nombre,
+            descripcion=descripcion,
             dias_duracion=random.randint(2, 7),
             noches_duracion=random.randint(1, 6),
             punto_encuentro="Plaza principal de Mongua",

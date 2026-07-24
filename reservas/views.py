@@ -51,7 +51,7 @@ class ReservaListView(ListView):
             # 3. POR DEFECTO (SIN FILTRO): Mantiene tu vista limpia ocultando las canceladas
             queryset = Reserva.objects.exclude(estado='cancelada')
             
-        return queryset.order_by('-id')
+        return queryset.select_related('usuario', 'paquete').order_by('-id')
 
     def get_context_data(self, **kwargs):
         """

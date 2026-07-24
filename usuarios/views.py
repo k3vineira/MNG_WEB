@@ -48,14 +48,21 @@ def dashboard_turista(request):
     from django.db.models import Sum
 
     # Calculate stats for the dashboard
+    from django.db.models import Count, Q
     total_invertido = ComprobantePago.objects.filter(usuario=request.user, estado='aprobado').aggregate(Sum('monto'))['monto__sum'] or 0
-    total_reservas = Reserva.objects.filter(usuario=request.user).count()
     total_comentarios = Comentario.objects.filter(usuario=request.user).count()
     total_pqrs = PQRS.objects.filter(cliente__usuario=request.user).count()
 
-    reservas_confirmadas = Reserva.objects.filter(usuario=request.user, estado='confirmada').count()
-    reservas_pendientes = Reserva.objects.filter(usuario=request.user, estado='pendiente').count()
-    reservas_canceladas = Reserva.objects.filter(usuario=request.user, estado='cancelada').count()
+    res_stats = Reserva.objects.filter(usuario=request.user).aggregate(
+        total=Count('id'),
+        confirmadas=Count('id', filter=Q(estado='confirmada')),
+        pendientes=Count('id', filter=Q(estado='pendiente')),
+        canceladas=Count('id', filter=Q(estado='cancelada'))
+    )
+    total_reservas = res_stats['total']
+    reservas_confirmadas = res_stats['confirmadas']
+    reservas_pendientes = res_stats['pendientes']
+    reservas_canceladas = res_stats['canceladas']
 
     tasa_confirmacion = int(reservas_confirmadas / total_reservas * 100) if total_reservas > 0 else 0
     ultimas_reservas = Reserva.objects.filter(usuario=request.user).select_related('paquete').order_by('-fecha_registro')[:5]
@@ -87,7 +94,17 @@ def dashboard_admin(request):
 
     hoy = timezone.now().date()
     total_usuarios = Usuario.objects.count()
-    total_reservas = Reserva.objects.count()
+
+    res_stats = Reserva.objects.aggregate(
+        total=Count('id'),
+        confirmadas=Count('id', filter=Q(estado='confirmada')),
+        pendientes=Count('id', filter=Q(estado='pendiente')),
+        canceladas=Count('id', filter=Q(estado='cancelada'))
+    )
+    total_reservas = res_stats['total']
+    reservas_confirmadas = res_stats['confirmadas']
+    reservas_pendientes = res_stats['pendientes']
+    reservas_canceladas = res_stats['canceladas']
 
     total_ventas = ComprobantePago.objects.filter(estado='aprobado').aggregate(Sum('monto'))['monto__sum'] or 0
     total_tours = Paquete.objects.filter(estado=True).count()
@@ -103,10 +120,6 @@ def dashboard_admin(request):
         monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
         ingresos_mensuales[m] += float(monto_valor)
 
-    reservas_confirmadas = Reserva.objects.filter(estado='confirmada').count()
-    reservas_pendientes = Reserva.objects.filter(estado='pendiente').count()
-    reservas_canceladas = Reserva.objects.filter(estado='cancelada').count()
-
     # Reservas de la semana actual (Lunes a Domingo)
     start_of_week = hoy - datetime.timedelta(days=hoy.weekday())
     end_of_week = start_of_week + datetime.timedelta(days=6)
@@ -121,11 +134,16 @@ def dashboard_admin(request):
 
     ingreso_por_reserva = total_ventas / total_reservas if total_reservas > 0 else 0
 
-    cancelaciones_hoy = Cancelacion.objects.filter(fecha_solicitud__date=hoy).count()
-    cancelaciones_rechazadas = Cancelacion.objects.filter(estado='rechazada').count()
-    cancelaciones_pendientes = Cancelacion.objects.filter(estado__in=['pendiente', 'revision']).count()
+    canc_stats = Cancelacion.objects.aggregate(
+        hoy=Count('id', filter=Q(fecha_solicitud__date=hoy)),
+        rechazadas=Count('id', filter=Q(estado='rechazada')),
+        pendientes=Count('id', filter=Q(estado__in=['pendiente', 'revision']))
+    )
+    cancelaciones_hoy = canc_stats['hoy']
+    cancelaciones_rechazadas = canc_stats['rechazadas']
+    cancelaciones_pendientes = canc_stats['pendientes']
 
-    packages = Paquete.objects.filter(estado=True).annotate(
+    packages = Paquete.objects.filter(estado=True).prefetch_related('tarifas__temporada').annotate(
         numero_reservas=Count('reserva')
     ).order_by('-numero_reservas')[:5]
     

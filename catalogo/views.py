@@ -20,7 +20,6 @@ def destinos(request):
 
     destinos_list = Paquete.objects.filter(estado=True)
 
-
     destinos_sugerencias = Paquete.objects.filter(estado=True).values('nombre').distinct()
 
     busqueda = request.GET.get('q', '').strip()
@@ -36,7 +35,6 @@ def destinos(request):
             tarifas__precio_adulto__lte=precio_max
         ).distinct()
 
-   
     if apto_menores == 'si':
         destinos_list = destinos_list.exclude(actividades__apto_para_menores=False).distinct()
     elif apto_menores == 'no':
@@ -44,6 +42,9 @@ def destinos(request):
 
     if categoria_id:
         destinos_list = destinos_list.filter(categoria_id=categoria_id)
+
+    # Carga optimizada en lote (evita N+1 consultas a la base de datos)
+    destinos_list = destinos_list.select_related('categoria').prefetch_related('actividades', 'tarifas__temporada')
         
     categorias_list = Categoria.objects.all()
 

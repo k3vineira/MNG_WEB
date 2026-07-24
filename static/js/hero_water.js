@@ -25,7 +25,7 @@ let currentMainScaleFactor = 1.0;
 let currentTrailScaleFactor = 1.0;
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
+  canvas.width = document.documentElement.clientWidth || window.innerWidth;
   canvas.height = window.innerHeight;
   initMainFluidBlob();
 }
