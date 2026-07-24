@@ -42,10 +42,6 @@ def poblar_base_datos():
     print("Iniciando el poblado de la base de datos...")
     print("0. Limpiando la base de datos...")
     
-    # Limpiar posibles conflictos de superusuario que no se borran con objects.exclude(is_superuser=True).delete()
-    Usuario.objects.filter(email='a@b.com').exclude(username='a@b.com').delete()
-    Usuario.objects.filter(numero_documento='1000000001').exclude(username='a@b.com').delete()
-
     Notificacion.objects.all().delete()
     ComprobantePago.objects.all().delete()
     Promocion.objects.all().delete()
@@ -62,7 +58,7 @@ def poblar_base_datos():
     Categoria.objects.all().delete()
     GuiaTuristico.objects.all().delete()
     Cliente.objects.all().delete()
-    Usuario.objects.exclude(is_superuser=True).delete()
+    Usuario.objects.all().delete()
 
     # Listas de datos falsos
     nombres = ['Carlos', 'Ana', 'Luis', 'Marta', 'Pedro',
@@ -112,37 +108,6 @@ def poblar_base_datos():
     # 1. USUARIOS, CLIENTES Y GUÍAS
     # ─────────────────────────────────────────────
     print("1. Creando Usuarios, Clientes y Guías...")
-
-    # Crear usuario administrador
-    try:
-        user, created = Usuario.objects.get_or_create(
-            username='a@b.com',
-            defaults={
-                'email': 'a@b.com',
-                'first_name': 'Administrador',
-                'last_name': 'Monagua',
-                'is_staff': True,
-                'is_superuser': True,
-                'rol': Usuario.Roles.ADMIN,
-                'tipo_documento': Usuario.TipoDocumento.CC,
-                'numero_documento': '1000000001',
-                'telefono': '+573100000001',
-                'residencia': 'Mongua, Boyacá',
-            }
-        )
-        if created:
-            user.set_password('@dmin123')
-            user.save()
-            print("  [OK] Administrador a@b.com creado con exito.")
-        else:
-            user.set_password('@dmin123')
-            user.is_staff = True
-            user.is_superuser = True
-            user.rol = Usuario.Roles.ADMIN
-            user.save()
-            print("  [OK] Administrador a@b.com actualizado con exito.")
-    except Exception as e:
-        print(f"  [ERROR] Error al crear/actualizar administrador: {e}")
 
     clientes_creados = []
     guias_creados = []
@@ -642,7 +607,6 @@ def poblar_base_datos():
     # ─────────────────────────────────────────────
     print("\n" + "=" * 60)
     print("[OK] Poblado de base de datos finalizado con exito!")
-    print(f"   • 1 Administrador")
     print(f"   • {len(clientes_creados)} Clientes")
     print(f"   • {len(guias_creados)} Guías Turísticos")
     print(f"   • {len(categorias_creadas)} Categorías")

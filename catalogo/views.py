@@ -65,8 +65,7 @@ class PaqueteListView(ListView):
         """
         Filtra los paquetes según la categoría seleccionada en el formulario superior.
         """
-        queryset = super().get_queryset()
-        
+        queryset = super().get_queryset().select_related('categoria').prefetch_related('actividades', 'tarifas')
         
         categoria_id = self.request.GET.get('categoria')
         
@@ -557,9 +556,8 @@ class TarifaListView(ListView):
         """
         Filtra las tarifas en base al paquete turístico seleccionado.
         """
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().select_related('paquete', 'temporada')
         
-       
         paquete_id = self.request.GET.get('paquete')
         
         if paquete_id:

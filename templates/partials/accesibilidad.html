@@ -1,52 +1,99 @@
 {% load static %}
 <!-- Accesibilidad: {{ a11y_mode|default:"activo" }} -->
 <!-- ── Botón flotante de Accesibilidad ── -->
-<button id="a11y-btn" onclick="A11y.toggle()" aria-label="Opciones de accesibilidad" aria-expanded="false"
+<button
+  id="a11y-btn"
+  onclick="A11y.toggle()"
+  aria-label="Opciones de accesibilidad"
+  aria-expanded="false"
   class="btn btn-success a11y-btn-main position-fixed shadow-lg p-0 d-flex align-items-center justify-content-center rounded-circle"
-  style="bottom: 20px; right: 20px; width: 50px; height: 50px; z-index: 1050;">
+  style="
+    bottom: 25px !important;
+    right: 25px !important;
+    width: 50px !important;
+    height: 50px !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    visibility: visible !important;
+  "
+>
   <i class="bi bi-universal-access fs-4"></i>
 </button>
 
 <style>
-/* Edge panel para móviles */
-@media (max-width: 768px) {
+  /* Edge panel para móviles */
+  @media (max-width: 768px) {
     #a11y-btn {
-        transform: translateX(45px);
-        opacity: 0.5;
-        border-radius: 30px 0 0 30px !important;
-        transition: transform 0.3s ease, opacity 0.3s ease, border-radius 0.3s ease !important;
+      bottom: 20px !important;
+      right: 15px !important;
+      transform: translateX(35px);
+      opacity: 0.7;
+      border-radius: 30px 0 0 30px !important;
+      transition:
+        transform 0.3s ease,
+        opacity 0.3s ease,
+        border-radius 0.3s ease !important;
     }
     #a11y-btn[aria-expanded="true"] {
-        transform: translateX(-4px); /* Moves it slightly to match 1.5rem ~ 24px visually from the original right: 20px base */
-        opacity: 1;
-        border-radius: 50% !important;
+      transform: translateX(0);
+      opacity: 1;
+      border-radius: 50% !important;
     }
-}
+  }
 </style>
 
 <!-- ── Panel de Accesibilidad ── -->
-<div id="a11y-panel" class="card a11y-panel position-fixed d-none shadow-lg"
-  role="dialog" aria-modal="true" aria-label="Panel de accesibilidad"
-  style="bottom: 80px; right: 20px; width: 320px; max-width: 90vw; z-index: 1050;">
-
+<div
+  id="a11y-panel"
+  class="card a11y-panel position-fixed d-none shadow-lg"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Panel de accesibilidad"
+  style="
+    bottom: 85px;
+    right: 25px;
+    width: 320px;
+    max-width: 90vw;
+    z-index: 99999 !important;
+  "
+>
   <!-- Header del Panel con Botón Reset -->
-  <div class="a11y-panel-header d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+  <div
+    class="a11y-panel-header d-flex justify-content-between align-items-center px-3 py-2 border-bottom"
+  >
     <span class="small fw-semibold d-flex align-items-center gap-2">
-      <i class="bi bi-universal-access fs-5"></i> 
+      <i class="bi bi-universal-access fs-5"></i>
       <span class="d-none d-sm-inline">Accesibilidad</span>
     </span>
-    <button class="btn btn-sm py-0 px-2 u-style-bc9efe64" id="btn-reset" title="Restablecer todas las opciones">
-      <i class="bi bi-arrow-counterclockwise me-1"></i><span class="d-none d-sm-inline">Restablecer</span>
+    <button
+      class="btn btn-sm py-0 px-2 u-style-bc9efe64"
+      id="btn-reset"
+      title="Restablecer todas las opciones"
+    >
+      <i class="bi bi-arrow-counterclockwise me-1"></i
+      ><span class="d-none d-sm-inline">Restablecer</span>
     </button>
   </div>
 
   <!-- Barra de Navegación (Tabs) - PROTEGIDA DE CAMBIOS -->
   <div class="a11y-tabs-nav border-bottom d-flex" role="tablist">
-    <button class="a11y-tab-btn a11y-tab-active" id="tab-tamaño" role="tab" aria-selected="true" aria-controls="panel-tamaño">
+    <button
+      class="a11y-tab-btn a11y-tab-active"
+      id="tab-tamaño"
+      role="tab"
+      aria-selected="true"
+      aria-controls="panel-tamaño"
+    >
       <i class="bi bi-fonts"></i>
       <span class="d-none d-sm-inline">Tamaño</span>
     </button>
-    <button class="a11y-tab-btn" id="tab-visualización" role="tab" aria-selected="false" aria-controls="panel-visualización">
+    <button
+      class="a11y-tab-btn"
+      id="tab-visualización"
+      role="tab"
+      aria-selected="false"
+      aria-controls="panel-visualización"
+    >
       <i class="bi bi-eye"></i>
       <span class="d-none d-sm-inline">Color</span>
     </button>
@@ -54,35 +101,64 @@
 
   <!-- Contenido del Panel - PROTEGIDO DE CAMBIOS -->
   <div class="a11y-panel-content p-3 d-flex flex-column gap-3">
-
     <!-- TAB 1: Tamaño -->
-    <div id="panel-tamaño" class="a11y-tab-panel a11y-tab-panel-active" role="tabpanel" aria-labelledby="tab-tamaño">
-      
+    <div
+      id="panel-tamaño"
+      class="a11y-tab-panel a11y-tab-panel-active"
+      role="tabpanel"
+      aria-labelledby="tab-tamaño"
+    >
       <!-- Brillo -->
       <div class="mb-2">
         <div class="d-flex justify-content-between align-items-center mb-1">
-          <label for="sl-bright" class="form-label small mb-0"><i class="bi bi-brightness-high text-warning"></i> Brillo</label>
+          <label for="sl-bright" class="form-label small mb-0"
+            ><i class="bi bi-brightness-high text-warning"></i> Brillo</label
+          >
           <span class="small fw-bold" id="val-bright">100%</span>
         </div>
-        <input type="range" class="form-range form-range-sm" id="sl-bright" min="50" max="120" value="100" step="1">
+        <input
+          type="range"
+          class="form-range form-range-sm"
+          id="sl-bright"
+          min="50"
+          max="120"
+          value="100"
+          step="1"
+        />
       </div>
 
       <!-- Tamaño de texto -->
       <div class="mb-2">
         <div class="d-flex justify-content-between align-items-center mb-1">
-          <label for="sl-font" class="form-label small mb-0"><i class="bi bi-textbox text-info"></i> Texto</label>
+          <label for="sl-font" class="form-label small mb-0"
+            ><i class="bi bi-textbox text-info"></i> Texto</label
+          >
           <span class="small fw-bold" id="val-font">85%</span>
         </div>
-        <input type="range" class="form-range form-range-sm" id="sl-font" min="80" max="160" value="85" step="1">
+        <input
+          type="range"
+          class="form-range form-range-sm"
+          id="sl-font"
+          min="80"
+          max="160"
+          value="85"
+          step="1"
+        />
       </div>
     </div>
 
     <!-- TAB 2: Visualización -->
-    <div id="panel-visualización" class="a11y-tab-panel u-style-cb458930" role="tabpanel" aria-labelledby="tab-visualización">
-      
+    <div
+      id="panel-visualización"
+      class="a11y-tab-panel u-style-cb458930"
+      role="tabpanel"
+      aria-labelledby="tab-visualización"
+    >
       <!-- Tema de Colores -->
       <div class="mb-2">
-        <label for="sel-theme" class="form-label small mb-1"><i class="bi bi-palette text-primary"></i> Tema</label>
+        <label for="sel-theme" class="form-label small mb-1"
+          ><i class="bi bi-palette text-primary"></i> Tema</label
+        >
         <select id="sel-theme" class="form-select form-select-sm">
           <option value="auto">Automático</option>
           <option value="light">Claro</option>
@@ -94,15 +170,30 @@
       <!-- Saturación -->
       <div class="mb-2">
         <div class="d-flex justify-content-between align-items-center mb-1">
-          <label for="sl-saturate" class="form-label small mb-0"><i class="bi bi-circle-fill text-success"></i> Saturación</label>
+          <label for="sl-saturate" class="form-label small mb-0"
+            ><i class="bi bi-circle-fill text-success"></i> Saturación</label
+          >
           <span class="small fw-bold" id="val-saturate">100%</span>
         </div>
-        <input type="range" class="form-range form-range-sm" id="sl-saturate" min="30" max="100" value="100" step="5">
+        <input
+          type="range"
+          class="form-range form-range-sm"
+          id="sl-saturate"
+          min="30"
+          max="100"
+          value="100"
+          step="5"
+        />
       </div>
 
       <!-- Cursor grande -->
       <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="tog-cursor">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="tog-cursor"
+        />
         <label class="form-check-label small" for="tog-cursor">
           <i class="bi bi-cursor"></i> Cursor grande
         </label>
@@ -110,322 +201,488 @@
 
       <!-- Resaltar enlaces -->
       <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="tog-links">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="tog-links"
+        />
         <label class="form-check-label small" for="tog-links">
           <i class="bi bi-link-45deg"></i> Resaltar enlaces
         </label>
       </div>
     </div>
-
   </div>
 
   <!-- Footer del Panel -->
-  <div class="a11y-panel-footer border-top d-flex align-items-center justify-content-between px-3 py-2 u-style-8cba01a2">
+  <div
+    class="a11y-panel-footer border-top d-flex align-items-center justify-content-between px-3 py-2 u-style-8cba01a2"
+  >
     <div class="d-flex align-items-center gap-2">
       <span class="badge rounded-circle p-1 u-style-3fa034ce"></span>
       <span>Guardado automáticamente</span>
     </div>
-    <div class="d-none d-sm-block">
-      <kbd>Alt</kbd>+<kbd>A</kbd>
-    </div>
+    <div class="d-none d-sm-block"><kbd>Alt</kbd>+<kbd>A</kbd></div>
   </div>
 </div>
 
 <!-- ── Toast de confirmación ── -->
-<div id="a11y-toast" class="toast position-fixed border-0 u-style-d67f9080" role="status" aria-live="polite">
+<div
+  id="a11y-toast"
+  class="toast position-fixed border-0 u-style-d67f9080"
+  role="status"
+  aria-live="polite"
+>
   <div class="d-flex">
     <div class="toast-body small fw-semibold" id="a11y-toast-msg"></div>
-    <button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <button
+      class="btn-close btn-close-white me-2 m-auto"
+      data-bs-dismiss="toast"
+    ></button>
   </div>
 </div>
 
 <script>
-/* ── Widget Avanzado de Accesibilidad ── */
-(function () {
-  // Valores por defecto
-  var D = { 
-    bright: 100, font: 85,
-    theme: 'auto', saturate: 100, bigCursor: false, hlLinks: false
-  };
-  var s = Object.assign({}, D);
-  var _toast = null;
-  var currentTab = 'tamaño';
+  /* ── Widget Avanzado de Accesibilidad ── */
+  (function () {
+    // Valores por defecto
+    var D = {
+      bright: 100,
+      font: 100,
+      theme: "auto",
+      saturate: 100,
+      bigCursor: false,
+      hlLinks: false,
+    };
+    var s = Object.assign({}, D);
+    var _toast = null;
+    var currentTab = "tamaño";
 
-  function save() { try { localStorage.setItem('a11y', JSON.stringify(s)); } catch (_) {} }
-  function load() {
-    try {
-      var r = localStorage.getItem('a11y');
-      if (r) s = Object.assign({}, D, JSON.parse(r));
-    } catch (_) {}
-  }
-
-  // Paletas de colores para diferentes esquemas
-  var colorSchemes = {
-    'auto': {},
-    'light': {
-      bg: '#ffffff', text: '#000000', accent: '#0066cc', 
-      secondary: '#333333', border: '#cccccc'
-    },
-    'dark': {
-      bg: '#1a1a1a', text: '#e0e0e0', accent: '#58a6ff',
-      secondary: '#b0b0b0', border: '#444444'
-    },
-    'high-contrast': {
-      bg: '#000000', text: '#ffffff', accent: '#ffff00',
-      secondary: '#ffffff', border: '#ffffff'
+    function save() {
+      try {
+        localStorage.setItem("a11y", JSON.stringify(s));
+      } catch (_) {}
     }
-  };
-
-  // ═══ FUNCIONES DE TABS ═══
-  function switchTab(tabName) {
-    // Ocultar todos los tabs
-    var panels = document.querySelectorAll('.a11y-tab-panel');
-    panels.forEach(function(p) { p.style.display = 'none'; p.classList.remove('a11y-tab-panel-active'); });
-    
-    // Desactivar todos los botones
-    var btns = document.querySelectorAll('.a11y-tab-btn');
-    btns.forEach(function(b) { b.classList.remove('a11y-tab-active'); b.setAttribute('aria-selected', 'false'); });
-    
-    // Activar tab seleccionado
-    var activePanel = document.getElementById('panel-' + tabName);
-    var activeBtn = document.getElementById('tab-' + tabName);
-    
-    if (activePanel) { activePanel.style.display = 'block'; activePanel.classList.add('a11y-tab-panel-active'); }
-    if (activeBtn) { activeBtn.classList.add('a11y-tab-active'); activeBtn.setAttribute('aria-selected', 'true'); }
-    
-    currentTab = tabName;
-  }
-
-  function applyBright(v) {
-    var el = document.getElementById('a11y-bright-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-bright-style'; document.head.appendChild(el); }
-    el.textContent = +v === 100 ? '' : 'html{filter:brightness(' + v + '%)!important}';
-  }
-
-  function applyFont(v) { 
-    var baseSize = 16;
-    if (window.innerWidth <= 768) {
-      baseSize = 16 * 0.8; // 80% base font size for tablets/mobile (<= 768px)
-    }
-    document.documentElement.style.fontSize = (v / 100 * baseSize) + 'px'; 
-  }
-
-
-  function applySaturate(v) {
-    var el = document.getElementById('a11y-saturate-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-saturate-style'; document.head.appendChild(el); }
-    el.textContent = +v === 100 ? '' : 'html{filter:saturate(' + v + '%)!important}';
-  }
-
-  function applyTheme(theme) {
-    var el = document.getElementById('a11y-theme-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-theme-style'; document.head.appendChild(el); }
-
-    document.documentElement.classList.remove('a11y-theme-light', 'a11y-theme-dark', 'a11y-theme-high-contrast');
-    document.body.classList.remove('a11y-theme-light', 'a11y-theme-dark', 'a11y-theme-high-contrast');
-    if (theme === 'auto') {
-      el.textContent = '';
-      return;
+    function load() {
+      try {
+        var r = localStorage.getItem("a11y");
+        if (r) {
+          s = Object.assign({}, D, JSON.parse(r));
+          if (s.font === 85) {
+            s.font = 100;
+            save();
+          }
+        }
+      } catch (_) {}
     }
 
-    document.documentElement.classList.add('a11y-theme-' + theme);
-    document.body.classList.add('a11y-theme-' + theme);
-    var scheme = colorSchemes[theme] || colorSchemes['dark'];
-    var css = 'html, body { background-color: ' + scheme.bg + '!important; color: ' + scheme.text + '!important; }' +
-      'a, .nav-link, .btn, .form-label, .form-check-label, .badge, .text-muted, .text-secondary { color: ' + scheme.text + ' !important; }' +
-      'a, .nav-link { color: ' + scheme.accent + ' !important; }' +
-      '.card, .modal-content, .offcanvas, .dropdown-menu, .navbar, .footer-monagua, .a11y-panel, .a11y-toast, .alert, .table { background-color: ' + scheme.bg + ' !important; color: ' + scheme.text + ' !important; border-color: ' + scheme.border + ' !important; }' +
-      '.btn, .btn-outline-primary, .btn-outline-success, .btn-outline-dark, .btn-outline-secondary, .btn-outline-info { background-color: transparent !important; color: ' + scheme.accent + ' !important; border-color: ' + scheme.accent + ' !important; }' +
-      'input, textarea, select, .form-control, .form-select { background-color: ' + scheme.bg + ' !important; color: ' + scheme.text + ' !important; border-color: ' + scheme.border + ' !important; }';
-    el.textContent = css;
-  }
+    // Paletas de colores para diferentes esquemas
+    var colorSchemes = {
+      auto: {},
+      light: {
+        bg: "#ffffff",
+        text: "#000000",
+        accent: "#0066cc",
+        secondary: "#333333",
+        border: "#cccccc",
+      },
+      dark: {
+        bg: "#1a1a1a",
+        text: "#e0e0e0",
+        accent: "#58a6ff",
+        secondary: "#b0b0b0",
+        border: "#444444",
+      },
+      "high-contrast": {
+        bg: "#000000",
+        text: "#ffffff",
+        accent: "#ffff00",
+        secondary: "#ffffff",
+        border: "#ffffff",
+      },
+    };
 
-  function applyBigCursor(on) {
-    var el = document.getElementById('a11y-cursor-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-cursor-style'; document.head.appendChild(el); }
-    el.textContent = on
-      ? 'body,body *{cursor:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2760%27 height=%2760%27%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2728%27 fill=%27%2322c55e%27 opacity=%27.3%27/%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2712%27 fill=%27%2322c55e%27/%3E%3C/svg%3E") 30 30,crosshair!important}'
-      : '';
-  }
-
-  function applyLinks(on) {
-    var el = document.getElementById('a11y-links-style');
-    if (!el) { el = document.createElement('style'); el.id = 'a11y-links-style'; document.head.appendChild(el); }
-    el.textContent = on ? 'a, .nav-link { text-decoration: underline!important; color: #0066cc!important; font-weight: 600!important; } a:visited { color: #6600cc!important; }' : '';
-  }
-
-  function syncUI() {
-    ['sl-bright', 'sl-font', 'sl-saturate'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      var key = id.replace('sl-', '');
-      var abbr = { 'bright': 'bright', 'font': 'font', 'saturate': 'saturate' };
-      el.value = s[abbr[key]];
-    });
-    
-    var vb = document.getElementById('val-bright'); if (vb) vb.textContent = s.bright + '%';
-    var vf = document.getElementById('val-font'); if (vf) vf.textContent = s.font + '%';
-    var vsat = document.getElementById('val-saturate'); if (vsat) vsat.textContent = s.saturate + '%';
-    
-    var selTheme = document.getElementById('sel-theme'); if (selTheme) selTheme.value = s.theme;
-    
-    ['tog-cursor', 'tog-links'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      var key = { 'tog-cursor': 'bigCursor', 'tog-links': 'hlLinks' }[id];
-      el.checked = s[key];
-    });
-  }
-
-  function showToast(msg) {
-    var el = document.getElementById('a11y-toast');
-    var me = document.getElementById('a11y-toast-msg');
-    if (!el || !me) return;
-    me.textContent = msg;
-    try {
-      if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
-        if (!_toast) _toast = new bootstrap.Toast(el, { delay: 2000 });
-        _toast.show();
-      } else {
-        el.classList.add('show');
-        setTimeout(function() { el.classList.remove('show'); }, 2000);
-      }
-    } catch(e) {
-      el.classList.add('show');
-      setTimeout(function() { el.classList.remove('show'); }, 2000);
-    }
-  }
-
-  function toggle() {
-    var p = document.getElementById('a11y-panel');
-    var b = document.getElementById('a11y-btn');
-    if (!p || !b) return;
-    var open = p.classList.contains('d-none');
-    p.classList.toggle('d-none', !open);
-    b.setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (open) setTimeout(function() { var f = p.querySelector('button,input,select'); if (f) f.focus(); }, 50);
-  }
-
-  function reset() {
-    s = Object.assign({}, D);
-    try { localStorage.removeItem('a11y'); } catch (_) {}
-    applyBright(100); applyFont(100);
-    applyTheme('auto'); applySaturate(100); applyBigCursor(false); applyLinks(false);
-    syncUI();
-    showToast('Todas las opciones restablecidas ✓');
-  }
-
-  function isMobileView() {
-    return window.innerWidth <= 768;
-  }
-
-  function init() {
-    load();
-    if (!localStorage.getItem('a11y')) {
-      s.font = 85;
-    }
-    applyBright(s.bright); applyFont(s.font);
-    applyTheme(s.theme); applySaturate(s.saturate); applyBigCursor(s.bigCursor);
-    applyLinks(s.hlLinks);
-    syncUI();
-
-    // ═══ INICIALIZAR TABS ═══
-    var tabBtns = document.querySelectorAll('.a11y-tab-btn');
-    tabBtns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var tabName = this.id.replace('tab-', '');
-        switchTab(tabName);
+    // ═══ FUNCIONES DE TABS ═══
+    function switchTab(tabName) {
+      // Ocultar todos los tabs
+      var panels = document.querySelectorAll(".a11y-tab-panel");
+      panels.forEach(function (p) {
+        p.style.display = "none";
+        p.classList.remove("a11y-tab-panel-active");
       });
-      btn.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-          e.preventDefault();
-          var allBtns = Array.from(document.querySelectorAll('.a11y-tab-btn'));
-          var currentIndex = allBtns.indexOf(this);
-          var nextIndex = e.key === 'ArrowRight' ? (currentIndex + 1) % allBtns.length : (currentIndex - 1 + allBtns.length) % allBtns.length;
-          var nextBtn = allBtns[nextIndex];
-          nextBtn.focus();
-          nextBtn.click();
+
+      // Desactivar todos los botones
+      var btns = document.querySelectorAll(".a11y-tab-btn");
+      btns.forEach(function (b) {
+        b.classList.remove("a11y-tab-active");
+        b.setAttribute("aria-selected", "false");
+      });
+
+      // Activar tab seleccionado
+      var activePanel = document.getElementById("panel-" + tabName);
+      var activeBtn = document.getElementById("tab-" + tabName);
+
+      if (activePanel) {
+        activePanel.style.display = "block";
+        activePanel.classList.add("a11y-tab-panel-active");
+      }
+      if (activeBtn) {
+        activeBtn.classList.add("a11y-tab-active");
+        activeBtn.setAttribute("aria-selected", "true");
+      }
+
+      currentTab = tabName;
+    }
+
+    function applyBright(v) {
+      var el = document.getElementById("a11y-bright-style");
+      if (!el) {
+        el = document.createElement("style");
+        el.id = "a11y-bright-style";
+        document.head.appendChild(el);
+      }
+      el.textContent =
+        +v === 100 ? "" : "html{filter:brightness(" + v + "%)!important}";
+    }
+
+    function applyFont(v) {
+      var baseSize = 16;
+      document.documentElement.style.fontSize = (v / 100) * baseSize + "px";
+      
+      // Inmunizar el menú desplegable hamburguesa para que accesibilidad no altere sus proporciones
+      var a11yOffcanvas = document.getElementById("a11y-offcanvas-fix");
+      if (!a11yOffcanvas) {
+        a11yOffcanvas = document.createElement("style");
+        a11yOffcanvas.id = "a11y-offcanvas-fix";
+        document.head.appendChild(a11yOffcanvas);
+      }
+      a11yOffcanvas.textContent = "#menuPremium { font-size: 16px !important; }";
+    }
+
+    function applySaturate(v) {
+      var el = document.getElementById("a11y-saturate-style");
+      if (!el) {
+        el = document.createElement("style");
+        el.id = "a11y-saturate-style";
+        document.head.appendChild(el);
+      }
+      el.textContent =
+        +v === 100 ? "" : "html{filter:saturate(" + v + "%)!important}";
+    }
+
+    function applyTheme(theme) {
+      var el = document.getElementById("a11y-theme-style");
+      if (!el) {
+        el = document.createElement("style");
+        el.id = "a11y-theme-style";
+        document.head.appendChild(el);
+      }
+
+      document.documentElement.classList.remove(
+        "a11y-theme-light",
+        "a11y-theme-dark",
+        "a11y-theme-high-contrast",
+      );
+      document.body.classList.remove(
+        "a11y-theme-light",
+        "a11y-theme-dark",
+        "a11y-theme-high-contrast",
+      );
+      if (theme === "auto") {
+        el.textContent = "";
+        return;
+      }
+
+      document.documentElement.classList.add("a11y-theme-" + theme);
+      document.body.classList.add("a11y-theme-" + theme);
+      var scheme = colorSchemes[theme] || colorSchemes["dark"];
+      var css =
+        "html, body { background-color: " +
+        scheme.bg +
+        "!important; color: " +
+        scheme.text +
+        "!important; }" +
+        "a, .nav-link, .btn, .form-label, .form-check-label, .badge, .text-muted, .text-secondary { color: " +
+        scheme.text +
+        " !important; }" +
+        "a, .nav-link { color: " +
+        scheme.accent +
+        " !important; }" +
+        ".card, .modal-content, .offcanvas, .dropdown-menu, .navbar, .footer-monagua, .a11y-panel, .a11y-toast, .alert, .table { background-color: " +
+        scheme.bg +
+        " !important; color: " +
+        scheme.text +
+        " !important; border-color: " +
+        scheme.border +
+        " !important; }" +
+        ".btn, .btn-outline-primary, .btn-outline-success, .btn-outline-dark, .btn-outline-secondary, .btn-outline-info { background-color: transparent !important; color: " +
+        scheme.accent +
+        " !important; border-color: " +
+        scheme.accent +
+        " !important; }" +
+        "input, textarea, select, .form-control, .form-select { background-color: " +
+        scheme.bg +
+        " !important; color: " +
+        scheme.text +
+        " !important; border-color: " +
+        scheme.border +
+        " !important; }";
+      el.textContent = css;
+    }
+
+    function applyBigCursor(on) {
+      var el = document.getElementById("a11y-cursor-style");
+      if (!el) {
+        el = document.createElement("style");
+        el.id = "a11y-cursor-style";
+        document.head.appendChild(el);
+      }
+      el.textContent = on
+        ? 'body,body *{cursor:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2760%27 height=%2760%27%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2728%27 fill=%27%2322c55e%27 opacity=%27.3%27/%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2712%27 fill=%27%2322c55e%27/%3E%3C/svg%3E") 30 30,crosshair!important}'
+        : "";
+    }
+
+    function applyLinks(on) {
+      var el = document.getElementById("a11y-links-style");
+      if (!el) {
+        el = document.createElement("style");
+        el.id = "a11y-links-style";
+        document.head.appendChild(el);
+      }
+      el.textContent = on
+        ? "a, .nav-link { text-decoration: underline!important; color: #0066cc!important; font-weight: 600!important; } a:visited { color: #6600cc!important; }"
+        : "";
+    }
+
+    function syncUI() {
+      ["sl-bright", "sl-font", "sl-saturate"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var key = id.replace("sl-", "");
+        var abbr = { bright: "bright", font: "font", saturate: "saturate" };
+        el.value = s[abbr[key]];
+      });
+
+      var vb = document.getElementById("val-bright");
+      if (vb) vb.textContent = s.bright + "%";
+      var vf = document.getElementById("val-font");
+      if (vf) vf.textContent = s.font + "%";
+      var vsat = document.getElementById("val-saturate");
+      if (vsat) vsat.textContent = s.saturate + "%";
+
+      var selTheme = document.getElementById("sel-theme");
+      if (selTheme) selTheme.value = s.theme;
+
+      ["tog-cursor", "tog-links"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var key = { "tog-cursor": "bigCursor", "tog-links": "hlLinks" }[id];
+        el.checked = s[key];
+      });
+    }
+
+    function showToast(msg) {
+      var el = document.getElementById("a11y-toast");
+      var me = document.getElementById("a11y-toast-msg");
+      if (!el || !me) return;
+      me.textContent = msg;
+      try {
+        if (typeof bootstrap !== "undefined" && bootstrap.Toast) {
+          if (!_toast) _toast = new bootstrap.Toast(el, { delay: 2000 });
+          _toast.show();
+        } else {
+          el.classList.add("show");
+          setTimeout(function () {
+            el.classList.remove("show");
+          }, 2000);
+        }
+      } catch (e) {
+        el.classList.add("show");
+        setTimeout(function () {
+          el.classList.remove("show");
+        }, 2000);
+      }
+    }
+
+    function toggle() {
+      var p = document.getElementById("a11y-panel");
+      var b = document.getElementById("a11y-btn");
+      if (!p || !b) return;
+      var open = p.classList.contains("d-none");
+      p.classList.toggle("d-none", !open);
+      b.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open)
+        setTimeout(function () {
+          var f = p.querySelector("button,input,select");
+          if (f) f.focus();
+        }, 50);
+    }
+
+    function reset() {
+      s = Object.assign({}, D);
+      try {
+        localStorage.removeItem("a11y");
+      } catch (_) {}
+      applyBright(100);
+      applyFont(100);
+      applyTheme("auto");
+      applySaturate(100);
+      applyBigCursor(false);
+      applyLinks(false);
+      syncUI();
+      showToast("Todas las opciones restablecidas ✓");
+    }
+
+    function isMobileView() {
+      return window.innerWidth <= 768;
+    }
+
+    function init() {
+      load();
+      applyBright(s.bright);
+      applyFont(s.font);
+      applyTheme(s.theme);
+      applySaturate(s.saturate);
+      applyBigCursor(s.bigCursor);
+      applyLinks(s.hlLinks);
+      syncUI();
+
+      // ═══ INICIALIZAR TABS ═══
+      var tabBtns = document.querySelectorAll(".a11y-tab-btn");
+      tabBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var tabName = this.id.replace("tab-", "");
+          switchTab(tabName);
+        });
+        btn.addEventListener("keydown", function (e) {
+          if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+            e.preventDefault();
+            var allBtns = Array.from(
+              document.querySelectorAll(".a11y-tab-btn"),
+            );
+            var currentIndex = allBtns.indexOf(this);
+            var nextIndex =
+              e.key === "ArrowRight"
+                ? (currentIndex + 1) % allBtns.length
+                : (currentIndex - 1 + allBtns.length) % allBtns.length;
+            var nextBtn = allBtns[nextIndex];
+            nextBtn.focus();
+            nextBtn.click();
+          }
+        });
+      });
+
+      // Brillo
+      var slBright = document.getElementById("sl-bright");
+      if (slBright)
+        slBright.addEventListener("input", function (e) {
+          s.bright = +e.target.value;
+          applyBright(s.bright);
+          var v = document.getElementById("val-bright");
+          if (v) v.textContent = s.bright + "%";
+          save();
+        });
+
+      // Tamaño de fuente
+      var slFont = document.getElementById("sl-font");
+      if (slFont)
+        slFont.addEventListener("input", function (e) {
+          s.font = +e.target.value;
+          applyFont(s.font);
+          var v = document.getElementById("val-font");
+          if (v) v.textContent = s.font + "%";
+          save();
+        });
+
+      // Tema
+      var selTheme = document.getElementById("sel-theme");
+      if (selTheme)
+        selTheme.addEventListener("change", function (e) {
+          s.theme = e.target.value;
+          applyTheme(s.theme);
+          save();
+          showToast("Tema: " + e.target.options[e.target.selectedIndex].text);
+        });
+
+      // Saturación
+      var slSaturate = document.getElementById("sl-saturate");
+      if (slSaturate)
+        slSaturate.addEventListener("input", function (e) {
+          s.saturate = +e.target.value;
+          applySaturate(s.saturate);
+          var v = document.getElementById("val-saturate");
+          if (v) v.textContent = s.saturate + "%";
+          save();
+        });
+
+      // Cursor grande
+      var togCursor = document.getElementById("tog-cursor");
+      if (togCursor)
+        togCursor.addEventListener("change", function (e) {
+          s.bigCursor = e.target.checked;
+          applyBigCursor(s.bigCursor);
+          save();
+          showToast(
+            s.bigCursor ? "🔍 Cursor grande activado" : "🔍 Cursor normal",
+          );
+        });
+
+      // Enlaces resaltados
+      var togLinks = document.getElementById("tog-links");
+      if (togLinks)
+        togLinks.addEventListener("change", function (e) {
+          s.hlLinks = e.target.checked;
+          applyLinks(s.hlLinks);
+          save();
+          showToast(
+            s.hlLinks ? "🔗 Enlaces resaltados" : "🔗 Enlaces normales",
+          );
+        });
+
+      // Botón reset
+      var btnReset = document.getElementById("btn-reset");
+      if (btnReset) btnReset.addEventListener("click", reset);
+
+      // Cerrar panel al hacer clic fuera
+      document.addEventListener("click", function (e) {
+        var p = document.getElementById("a11y-panel");
+        var b = document.getElementById("a11y-btn");
+        if (
+          p &&
+          b &&
+          !p.classList.contains("d-none") &&
+          !p.contains(e.target) &&
+          !b.contains(e.target)
+        ) {
+          p.classList.add("d-none");
+          b.setAttribute("aria-expanded", "false");
         }
       });
-    });
 
-    // Brillo
-    var slBright = document.getElementById('sl-bright');
-    if (slBright) slBright.addEventListener('input', function(e) {
-      s.bright = +e.target.value; applyBright(s.bright);
-      var v = document.getElementById('val-bright'); if (v) v.textContent = s.bright + '%';
-      save();
-    });
+      // Atajos de teclado
+      document.addEventListener("keydown", function (e) {
+        if (e.altKey && e.key.toLowerCase() === "a") {
+          e.preventDefault();
+          toggle();
+        }
+        if (e.altKey && e.key.toLowerCase() === "r") {
+          e.preventDefault();
+          reset();
+        }
+      });
 
-    // Tamaño de fuente
-    var slFont = document.getElementById('sl-font');
-    if (slFont) slFont.addEventListener('input', function(e) {
-      s.font = +e.target.value; applyFont(s.font);
-      var v = document.getElementById('val-font'); if (v) v.textContent = s.font + '%';
-      save();
-    });
+      // Escuchar redimensionado para recalcular tamaño base
+      window.addEventListener("resize", function () {
+        applyFont(s.font);
+      });
+    }
 
-    // Tema
-    var selTheme = document.getElementById('sel-theme');
-    if (selTheme) selTheme.addEventListener('change', function(e) {
-      s.theme = e.target.value; applyTheme(s.theme); save();
-      showToast('Tema: ' + e.target.options[e.target.selectedIndex].text);
-    });
+    window.A11y = { toggle: toggle, reset: reset };
 
-    // Saturación
-    var slSaturate = document.getElementById('sl-saturate');
-    if (slSaturate) slSaturate.addEventListener('input', function(e) {
-      s.saturate = +e.target.value; applySaturate(s.saturate);
-      var v = document.getElementById('val-saturate'); if (v) v.textContent = s.saturate + '%';
-      save();
-    });
-
-    // Cursor grande
-    var togCursor = document.getElementById('tog-cursor');
-    if (togCursor) togCursor.addEventListener('change', function(e) {
-      s.bigCursor = e.target.checked; applyBigCursor(s.bigCursor); save();
-      showToast(s.bigCursor ? '🔍 Cursor grande activado' : '🔍 Cursor normal');
-    });
-
-    // Enlaces resaltados
-    var togLinks = document.getElementById('tog-links');
-    if (togLinks) togLinks.addEventListener('change', function(e) {
-      s.hlLinks = e.target.checked; applyLinks(s.hlLinks); save();
-      showToast(s.hlLinks ? '🔗 Enlaces resaltados' : '🔗 Enlaces normales');
-    });
-
-    // Botón reset
-    var btnReset = document.getElementById('btn-reset');
-    if (btnReset) btnReset.addEventListener('click', reset);
-
-    // Cerrar panel al hacer clic fuera
-    document.addEventListener('click', function(e) {
-      var p = document.getElementById('a11y-panel');
-      var b = document.getElementById('a11y-btn');
-      if (p && b && !p.classList.contains('d-none') && !p.contains(e.target) && !b.contains(e.target)) {
-        p.classList.add('d-none');
-        b.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    // Atajos de teclado
-    document.addEventListener('keydown', function(e) {
-      if (e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); toggle(); }
-      if (e.altKey && e.key.toLowerCase() === 'r') { e.preventDefault(); reset(); }
-    });
-
-    // Escuchar redimensionado para recalcular tamaño base
-    window.addEventListener('resize', function() {
-      applyFont(s.font);
-    });
-  }
-
-  window.A11y = { toggle: toggle, reset: reset };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
 </script>

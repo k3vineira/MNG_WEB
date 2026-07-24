@@ -215,6 +215,17 @@
     <script src="{% static 'js/auth/realtime_validation.js' %}"></script>
     <script src="{% static 'js/auth/password_strength.js' %}"></script>
     <script>
+        // Limpiar inmediatamente alertas e is-invalid en cualquier campo al escribir
+        document.querySelectorAll('#formularioRegistro input, #formularioRegistro select').forEach(function(input) {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                var feedback = this.parentElement ? this.parentElement.querySelector('.invalid-feedback') : null;
+                if (feedback) {
+                    feedback.style.display = 'none';
+                }
+            });
+        });
+
         document.querySelectorAll('.toggle-password').forEach(function(toggle) {
             toggle.addEventListener('click', function() {
                 var targetId = this.getAttribute('data-target');

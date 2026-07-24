@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
 from core.decoradores import requiere_autenticacion, requiere_administrador
-from django.db.models import Avg
+from django.db.models import Avg, Count, Sum, Q
 from .models import Usuario, Cliente, GuiaTuristico
 from comunidad.models import Comentario
 from .forms import PerfilUsuarioForm
@@ -114,18 +114,32 @@ def dashboard_admin(request):
     total_promociones = Promocion.objects.count() + Banner.objects.count()
 
     current_year = timezone.now().year
-    ingresos_mensuales = [0] * 12
-    for p in ComprobantePago.objects.filter(estado='aprobado', fecha_envio__year=current_year).select_related('reserva'):
-        m = p.fecha_envio.month - 1
-        monto_valor = p.monto or (p.reserva.monto_total if p.reserva else 0)
-        ingresos_mensuales[m] += float(monto_valor)
+    from django.db.models.functions import ExtractMonth, ExtractWeekDay
 
-    # Reservas de la semana actual (Lunes a Domingo)
+    # Agregación directa de ingresos por mes en BD (evita iterar objetos)
+    ingresos_qs = ComprobantePago.objects.filter(
+        estado='aprobado',
+        fecha_envio__year=current_year
+    ).annotate(mes=ExtractMonth('fecha_envio')).values('mes').annotate(total=Sum('monto')).order_by('mes')
+
+    ingresos_mensuales = [0.0] * 12
+    for item in ingresos_qs:
+        m = item['mes'] - 1
+        ingresos_mensuales[m] = float(item['total'] or 0)
+
+    # Reservas de la semana actual (Lunes a Domingo) mediante DB ExtractWeekDay
     start_of_week = hoy - datetime.timedelta(days=hoy.weekday())
     end_of_week = start_of_week + datetime.timedelta(days=6)
+    
+    reservas_qs = Reserva.objects.filter(
+        fecha_registro__date__range=[start_of_week, end_of_week]
+    ).annotate(dia=ExtractWeekDay('fecha_registro')).values('dia').annotate(total=Count('id'))
+
     reservas_semana = [0] * 7
-    for r in Reserva.objects.filter(fecha_registro__date__range=[start_of_week, end_of_week]):
-        reservas_semana[r.fecha_registro.weekday()] += 1
+    for item in reservas_qs:
+        # Django ExtractWeekDay: 1=Domingo, 2=Lunes, ..., 7=Sábado -> mapear a 0=Lunes, 6=Domingo
+        w = (item['dia'] - 2) % 7
+        reservas_semana[w] = item['total']
 
     tasa_confirmacion = int(reservas_confirmadas / total_reservas * 100) if total_reservas > 0 else 0
 

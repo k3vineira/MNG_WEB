@@ -56,9 +56,9 @@
                         <td>
                             <div class="d-flex align-items-center">
                                 {% if u.imagen_perfil %}
-                                <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm me-3 border {% if u.rol == 'ADMIN' %}border-primary{% elif u.rol == 'GUIA' %}border-warning{% else %}border-info{% endif %} border-opacity-50" style="width: 45px; height: 45px; object-fit: cover;">
+                                <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm me-3 border flex-shrink-0 {% if u.rol == 'ADMIN' %}border-primary{% elif u.rol == 'GUIA' %}border-warning{% else %}border-info{% endif %} border-opacity-50" style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; object-fit: cover;">
                                 {% else %}
-                                <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-white fw-bold {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %} u-style-55a6b999">
+                                <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; font-size: 1.1rem;">
                                     {{ u.first_name|first|default:u.username|first|upper }}
                                 </div>
                                 {% endif %}
@@ -124,9 +124,9 @@
                             <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
                                 <div class="d-flex align-items-center gap-3">
                                     {% if u.imagen_perfil %}
-                                        <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border flex-shrink-0" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; object-fit: cover;">
                                     {% else %}
-                                        <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-white fw-bold {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %} u-style-250a21b0">
+                                        <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; font-size: 1.2rem;">
                                             {{ u.first_name|first|default:u.username|first|upper }}
                                         </div>
                                     {% endif %}
@@ -198,9 +198,9 @@
         <div class="offcanvas-header {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning{% else %}bg-info{% endif %} bg-opacity-10 border-bottom p-4">
             <div class="d-flex align-items-center gap-3">
                 {% if u.imagen_perfil %}
-                    <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow border border-white" style="width: 55px; height: 55px; object-fit: cover;">
+                    <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow border border-white flex-shrink-0" style="width: 55px; height: 55px; min-width: 55px; min-height: 55px; object-fit: cover;">
                 {% else %}
-                    <div class="rounded-circle shadow d-flex align-items-center justify-content-center text-white fw-bold fs-4 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %} u-style-92a91487">
+                    <div class="rounded-circle shadow d-flex align-items-center justify-content-center text-white fw-bold fs-4 flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 55px; height: 55px; min-width: 55px; min-height: 55px;">
                         {{ u.first_name|first|default:u.username|first|upper }}
                     </div>
                 {% endif %}

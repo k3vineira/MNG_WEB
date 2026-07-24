@@ -60,11 +60,11 @@
                       <img
                         src="{{ user_guia.imagen_perfil.url }}"
                         alt="Foto"
-                        class="rounded-circle shadow-sm me-3 border border-warning border-opacity-50"
-                        style="width: 45px; height: 45px; object-fit: cover;"
+                        class="rounded-circle shadow-sm me-3 border border-warning border-opacity-50 flex-shrink-0"
+                        style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; object-fit: cover;"
                       />
                       {% else %}
-                      <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-dark fw-bold bg-warning u-style-55a6b999">
+                      <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-dark fw-bold bg-warning flex-shrink-0" style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; font-size: 1.1rem;">
                           {{ user_guia.first_name|first|default:user_guia.username|first|upper }}
                       </div>
                       {% endif %}
@@ -164,9 +164,9 @@
                               <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
                                   <div class="d-flex align-items-center gap-3">
                                       {% if user_guia.imagen_perfil %}
-                                          <img src="{{ user_guia.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border border-warning" style="width: 50px; height: 50px; object-fit: cover;">
+                                          <img src="{{ user_guia.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border border-warning flex-shrink-0" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; object-fit: cover;">
                                       {% else %}
-                                          <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-dark fw-bold bg-warning u-style-250a21b0">
+                                          <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-dark fw-bold bg-warning flex-shrink-0" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; font-size: 1.2rem;">
                                               {{ user_guia.first_name|first|default:user_guia.username|first|upper }}
                                           </div>
                                       {% endif %}

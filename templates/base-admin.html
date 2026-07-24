@@ -74,9 +74,13 @@
   ov.addEventListener('click', () => toggleSidebar(true));
 
   if (sb) {
-    sb.querySelectorAll('a').forEach(link =>
-      link.addEventListener('click', () => { if (window.innerWidth < 992) toggleSidebar(true); })
-    );
+    sb.querySelectorAll('a, button[data-bs-toggle="dropdown"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        if (window.innerWidth < 992 && link.tagName === 'A' && !link.hasAttribute('data-bs-toggle')) {
+          toggleSidebar(true);
+        }
+      });
+    });
   }
 })();
 </script>

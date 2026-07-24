@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
       clearTimeout(debounceTimeout);
       const value = input.value.trim();
 
+      // Al empezar a modificar/corregir, quitar temporalmente la marca is-invalid para que no quede bloqueado
+      input.classList.remove('is-invalid');
+      let feedback = input.parentElement.querySelector('.invalid-feedback');
+      if (feedback) {
+        feedback.style.display = 'none';
+      }
+
       if (value === '') {
         resetField(input);
         return;
@@ -94,10 +101,15 @@ document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('formularioRegistro');
   if (form) {
     form.addEventListener('submit', function (e) {
-      const invalidFields = form.querySelectorAll('.is-invalid');
+      // Re-verificar solo los inputs que sigan teniendo de forma explicita e inequívoca la clase is-invalid activa y visible
+      const invalidFields = Array.from(form.querySelectorAll('.is-invalid')).filter(el => {
+        const fb = el.parentElement.querySelector('.invalid-feedback');
+        return fb && fb.style.display !== 'none';
+      });
+
       if (invalidFields.length > 0) {
         e.preventDefault();
-        alert('Por favor corrige los campos con errores antes de continuar.');
+        invalidFields[0].focus();
       }
     });
   }

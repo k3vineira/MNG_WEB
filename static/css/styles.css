@@ -1292,4 +1292,108 @@ main.wrapper,
     }
 }
 
+/* ══════════════ OPTIMIZACIÓN RESPONSIVE PARA EL MENÚ HAMBURGUESA ORIGINAL ══════════════ */
+.offcanvas-premium {
+    background: rgba(26, 38, 31, 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    color: #ffffff;
+}
+
+.offcanvas-premium__main-link {
+    font-size: 3.8rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    line-height: 1.15 !important;
+    letter-spacing: -1px !important;
+    transition: transform 0.25s ease, opacity 0.25s ease, color 0.25s ease !important;
+    display: inline-block;
+    width: fit-content;
+}
+
+.offcanvas-premium__main-link:hover {
+    color: var(--verde-medio, #5aba73) !important;
+    transform: translateX(8px);
+    opacity: 1;
+}
+
+.offcanvas-premium__secondary-link {
+    color: rgba(255, 255, 255, 0.75) !important;
+    text-decoration: none !important;
+    font-size: 1.25rem !important;
+    transition: color 0.2s ease, transform 0.2s ease !important;
+    display: inline-block;
+}
+
+.offcanvas-premium__secondary-link:hover {
+    color: #ffffff !important;
+    transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+    .offcanvas-premium .offcanvas-body {
+        align-items: flex-start !important;
+        padding-top: 1.5rem !important;
+        padding-bottom: 2rem !important;
+    }
+
+    .offcanvas-premium__main-link {
+        font-size: 2.8rem !important;
+    }
+
+    .offcanvas-premium__secondary-link {
+        font-size: 1.2rem !important;
+    }
+}
+
+/* ══════════════ BOTÓN SIDEBAR ADMIN MÓVIL ══════════════ */
+#sidebar-toggle {
+    position: fixed !important;
+    top: 15px !important;
+    left: 15px !important;
+    z-index: 1060 !important;
+    border-radius: 50% !important;
+    width: 45px !important;
+    height: 45px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+#sidebar-overlay {
+    z-index: 1040 !important;
+}
+
+@media (max-width: 991.98px) {
+    #mainSidebar {
+        z-index: 1050 !important;
+    }
+
+    #mainContent {
+        padding-top: 4.5rem !important; /* Dejar espacio libre arriba para el botón flotante de menú en móviles */
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        overflow-x: hidden !important;
+    }
+}
+
+/* ══════════════ DASHBOARD ADMIN - CORRECCIÓN DE LAYOUT EN MÓVILES ══════════════ */
+@media (max-width: 576px) {
+    .chart-container {
+        position: relative;
+        width: 100% !important;
+        height: 250px !important;
+    }
+    
+    .table-responsive {
+        border: 0;
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
 
