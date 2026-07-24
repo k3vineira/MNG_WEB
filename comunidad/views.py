@@ -43,7 +43,7 @@ class PQRSListView(ListView):
 
     def get_queryset(self):
 
-        return PQRS.objects.all().order_by('-fecha')
+       return PQRS.objects.all().order_by('-fecha')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -130,11 +130,12 @@ class BlogListView(ListView):
     model = Blog
     template_name = 'admin/blog/blog.html'
     context_object_name = 'blogs'
+    ordering = ['-id']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Conteo de publicados vs borradores
+     
         stats = Blog.objects.aggregate(
             total=Count('id'),
             publicados=Count('id', filter=Q(publicado=True)),

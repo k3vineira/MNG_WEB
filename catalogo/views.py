@@ -8,6 +8,7 @@ from django import forms
 from notificaciones.utils import crear_notificacion_sistema
 
  
+
 def destinos(request):
     """
     Vista que filtra y devuelve la lista de paquetes turísticos disponibles
@@ -16,7 +17,12 @@ def destinos(request):
     :param request: El objeto de la solicitud HTTP.
     :return: Una respuesta HTTP con la lista de destinos filtrados.
     """
+
     destinos_list = Paquete.objects.filter(estado=True)
+
+
+    destinos_sugerencias = Paquete.objects.filter(estado=True).values('nombre').distinct()
+
     busqueda = request.GET.get('q', '').strip()
     precio_max = request.GET.get('precio_max')
     apto_menores = request.GET.get('apto_menores')
@@ -27,9 +33,10 @@ def destinos(request):
 
     if precio_max:
         destinos_list = destinos_list.filter(
-            tarifas__precio_adulto__lte=precio_max).distinct()
+            tarifas__precio_adulto__lte=precio_max
+        ).distinct()
 
-    # Filtro estricto bilateral
+   
     if apto_menores == 'si':
         destinos_list = destinos_list.exclude(actividades__apto_para_menores=False).distinct()
     elif apto_menores == 'no':
@@ -41,7 +48,8 @@ def destinos(request):
     categorias_list = Categoria.objects.all()
 
     context = {
-        'destinos': destinos_list,
+        'destinos': destinos_list,                 
+        'destinos_sugerencias': destinos_sugerencias,
         'categorias': categorias_list
     }
     return render(request, 'usuario/destinos.html', context)
@@ -64,7 +72,7 @@ class PaqueteListView(ListView):
         if categoria_id:
             queryset = queryset.filter(categoria_id=categoria_id)
             
-        return queryset
+        return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
         """
@@ -231,7 +239,7 @@ class ActividadesListView(ListView):
         elif apto_menores_param == 'no':
             queryset = queryset.filter(apto_para_menores=False)
             
-        return queryset
+        return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
         """
@@ -378,6 +386,10 @@ class CategoriaListView(ListView):
     model = Categoria
     template_name = 'admin/categorias/categorias.html'
     context_object_name = 'categorias'
+    
+    def get_queryset(self):
+        return super().get_queryset().order_by('-id')
+
 
     def get_context_data(self, **kwargs):
         """
@@ -552,7 +564,7 @@ class TarifaListView(ListView):
         if paquete_id:
             queryset = queryset.filter(paquete_id=paquete_id)
             
-        return queryset
+        return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
         """
@@ -651,7 +663,7 @@ class TemporadaListView(ListView):
         if fecha_fin:
             queryset = queryset.filter(fecha_fin__lte=fecha_fin)
 
-        return queryset
+        return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
