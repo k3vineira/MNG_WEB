@@ -270,7 +270,31 @@ function animate() {
     interfaceEl.classList.remove('hero-text-light');
   }
 
-  requestAnimationFrame(animate);
+  if (isCanvasVisible) {
+    animationFrameId = requestAnimationFrame(animate);
+  }
+}
+
+let isCanvasVisible = true;
+let animationFrameId = null;
+
+if ('IntersectionObserver' in window && canvas) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      isCanvasVisible = entry.isIntersecting;
+      if (isCanvasVisible) {
+        if (!animationFrameId) {
+          animationFrameId = requestAnimationFrame(animate);
+        }
+      } else {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+      }
+    });
+  }, { threshold: 0.05 });
+  observer.observe(canvas);
 }
 
 window.addEventListener('mousemove', (e) => {
