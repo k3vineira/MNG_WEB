@@ -91,3 +91,25 @@ body:not(.sidebar-slim-active) .sidebar-slim {
 .sidebar-slim > aside {
   width: 70px !important;
 }
+
+/* ── 5. SCROLLBAR (MODERNO Y SIMPLE) ───────────────────────── */
+/* Para navegadores WebKit (Chrome, Safari, Edge) */
+#mainSidebar nav.overflow-auto::-webkit-scrollbar {
+  width: 6px;
+}
+#mainSidebar nav.overflow-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+#mainSidebar nav.overflow-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+#mainSidebar nav.overflow-auto::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Para Firefox */
+#mainSidebar nav.overflow-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}

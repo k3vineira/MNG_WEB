@@ -37,9 +37,11 @@
       <a class="btn btn-outline-light rounded-pill px-3 px-md-4 py-1.5" href="{% url 'login' %}">Acceder</a>
       {% endif %}
 
+      {% if not user.is_authenticated or user.rol != 'ADMIN' %}
       <a class="nav-link text-white" href="{% url 'carrito' %}">
         <i class="bi bi-cart3 fs-5"></i>
       </a>
+      {% endif %}
       <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
   </div>
