@@ -861,48 +861,55 @@ class Promocion(models.Model):
 
 
 
-class Poliza(models.Model):
+class PolizaViaje(models.Model):
     """
-    Define los tipos de planes de seguros disponibles (ej: Plan Básico, Plan Premium).
-    Equivale a la entidad 'poliza' del MER de draw.io.
+    Catálogo de seguros ofrecidos.
     """
     id = models.AutoField(primary_key=True)
-    nombre_aseguradora = models.CharField(max_length=100, verbose_name='Nombre de la Aseguradora / Plan')
+    nombre_poliza = models.CharField(max_length=150, verbose_name='Nombre de la Póliza')
     descripcion = models.TextField(verbose_name='Descripción de Coberturas')
+    cobertura_medica_max = models.DecimalField(max_digits=12, decimal_places=2, default=0.0, verbose_name='Monto máximo de cobertura médica')
+    cubre_perdida_equipaje = models.BooleanField(default=False, verbose_name='¿Cubre pérdida de equipaje?')
+    cubre_cancelacion_vuelo = models.BooleanField(default=False, verbose_name='¿Cubre cancelación de vuelo?')
     precio_diario = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Precio por Día')
+    condiciones_generales = models.TextField(blank=True, null=True, verbose_name='Condiciones Generales')
     estado = models.BooleanField(default=True, verbose_name='¿Póliza Activa?')
 
     class Meta:
-        verbose_name = 'Póliza / Plan de Seguro'
-        verbose_name_plural = 'Pólizas / Planes de Seguro'
+        verbose_name = 'Póliza de Viaje'
+        verbose_name_plural = 'Pólizas de Viaje'
 
     def __str__(self):
-        return f'{self.nombre_aseguradora} (${self.precio_diario}/día)'
+        return f'{self.nombre_poliza} (${self.precio_diario}/día)'
 
-class SeguroViaje(models.Model):
+class Aseguradora(models.Model):
     """
-    Representa la adquisición de un seguro por parte de un usuario para una reserva específica.
-    Equivale a la entidad 'seguro_viaje' del MER de draw.io.
+    Representa la adquisición de un seguro para una reserva. (Anteriormente SeguroViaje)
     """
     id = models.AutoField(primary_key=True)
-    reserva = models.OneToOneField(Reserva, on_delete=models.CASCADE, related_name='seguro_viaje', verbose_name='Reserva Asociada', null=True, blank=True)
-    poliza = models.ForeignKey(Poliza, on_delete=models.PROTECT, related_name='seguros_viaje', verbose_name='Póliza Asociada')
-    numero_poliza = models.CharField(max_length=50, unique=True, verbose_name='Número de Póliza')
+    reserva = models.OneToOneField(Reserva, on_delete=models.CASCADE, related_name='aseguradora', verbose_name='Reserva Asociada', null=True, blank=True)
+    poliza_viaje = models.ForeignKey(PolizaViaje, on_delete=models.PROTECT, related_name='aseguradoras', verbose_name='Póliza de Viaje Asociada')
+    nombre_empresa = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nombre de la Empresa Aseguradora')
+    numero_poliza = models.CharField(max_length=100, unique=True, verbose_name='Número de Póliza Emitida')
     fecha_emision = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Emisión')
+    fecha_inicio_cobertura = models.DateField(null=True, blank=True, verbose_name='Fecha de Inicio de Cobertura')
+    fecha_fin_cobertura = models.DateField(null=True, blank=True, verbose_name='Fecha de Fin de Cobertura')
     costo_seguro = models.DecimalField(max_digits=12, decimal_places=2, editable=False, verbose_name='Costo de Seguro')
+    telefono_emergencia = models.CharField(max_length=50, blank=True, null=True, verbose_name='Teléfono de Emergencia')
+    estado_emision = models.CharField(max_length=20, default='Pendiente', verbose_name='Estado de Emisión')
 
     class Meta:
-        verbose_name = 'Seguro de Viaje Emitido'
-        verbose_name_plural = 'Seguros de Viaje Emitidos'
+        verbose_name = 'Seguro Emitido (Aseguradora)'
+        verbose_name_plural = 'Seguros Emitidos (Aseguradoras)'
 
     def save(self, *args, **kwargs):
-        if self.reserva and self.poliza:
+        if self.reserva and self.poliza_viaje:
             dias = self.reserva.paquete.dias_duracion
-            self.costo_seguro = self.poliza.precio_diario * dias
+            self.costo_seguro = self.poliza_viaje.precio_diario * dias
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Seguro {self.poliza.nombre_aseguradora} para Reserva {(self.reserva.id if self.reserva else 'N/A')}"
+        return f"Seguro {self.numero_poliza} para Reserva {(self.reserva.id if self.reserva else 'N/A')}"
 
 
 # ==============================================================================
