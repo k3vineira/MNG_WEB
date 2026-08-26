@@ -327,6 +327,14 @@ class Paquete(models.Model):
     categoria = models.ForeignKey(Categoria, models.CASCADE, related_name='paquetes')
     actividades = models.ManyToManyField('Actividades', through='PaqueteActividad')
     estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
+    promocion = models.ForeignKey(
+        'Promocion', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='paquetes',
+        verbose_name='Promoción'
+    )
 
     def __str__(self):
         return self.nombre
