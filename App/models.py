@@ -727,8 +727,7 @@ class Calificacion(models.Model):
     def __str__(self):
         """Retorna el título de la calificación y el puntaje en estrellas."""
         return f'{self.titulo} - {self.puntaje_estrellas} estrellas'
-Resena = Calificacion
-Comentario = Calificacion
+
 
 
 # ==============================================================================
@@ -748,7 +747,7 @@ class PlanGuia(models.Model):
     fecha_inicio_plan = models.DateField(verbose_name='Fecha de Inicio')
     fecha_fin_plan = models.DateField(verbose_name='Fecha de Fin')
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='activo', verbose_name='Estado')
-    guia = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='planes_guia', db_column='codigo_guia_turistico', verbose_name='Guía Turístico', limit_choices_to={'rol': 'GUIA'})
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='planes_guia', verbose_name='Usuario / Guía')
     paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='planes_guia', db_column='codigo_paquete', verbose_name='Paquete')
 
     class Meta:
@@ -757,8 +756,8 @@ class PlanGuia(models.Model):
         verbose_name_plural = 'Planes Guía'
 
     def __str__(self):
-        nombre_guia = self.guia.nombre_completo
-        return f'Guía: {nombre_guia} - Paquete: {self.paquete.nombre} ({self.fecha_inicio_plan} a {self.fecha_fin_plan})'
+        nombre_guia = self.usuario.get_full_name()
+        return f'Plan Guía #{self.pk} — {nombre_guia} — {self.paquete.nombre}'
 
 
 # ==============================================================================
