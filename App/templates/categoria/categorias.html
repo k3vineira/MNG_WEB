@@ -1,0 +1,147 @@
+{% extends 'admin/base-admin.html' %}
+{% load static %}
+
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    
+    <!-- 1. Encabezado -->
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
+                    <i class="bi bi-tags-fill me-3"></i>Administración de Categorías
+                </h1>
+                <p class="text-muted mb-0">Gestiona las agrupaciones temáticas (aventura, cultura, etc.) de los paquetes turísticos.</p>
+            </div>
+            <a href="{% url 'crear_categoria' %}" class="btn btn-success fw-bold rounded-pill shadow-sm px-4 py-2">
+                <i class="bi bi-plus-circle me-2"></i>Nueva Categoría
+            </a>
+        </div>
+    </div>
+
+    <!-- 2. Tarjetas de Estadísticas -->
+    <div class="row g-4 mb-4">
+        {% for label, count, color in stats_list %}
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm
+                        {% if color == 'text-success' %} bg-success bg-opacity-10 text-success
+                        {% elif color == 'text-danger' %} bg-danger bg-opacity-10 text-danger
+                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} u-style-c5b9e7ac">
+                        {% if color == 'text-dark' %}
+                            <i class="bi bi-tag-fill"></i>
+                        {% elif color == 'text-success' %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-x-circle-fill"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 u-style-75b54407">{{ label }}</h6>
+                        <h3 class="fw-black mb-0 {{ color }}">{{ count|default:0 }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 3. Lista de Categorías -->
+    <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
+        <!-- Tabla Desktop -->
+        <div class="table-responsive d-none d-lg-block">
+            <table id="tablaCategorias" class="table table-hover align-middle mb-0 u-style-6d567387">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th scope="col" class="fw-bold">Categoría</th>
+                        <th scope="col" class="fw-bold text-center">Estado</th>
+                        <th scope="col" class="fw-bold text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cat in categorias %}
+                    <tr>
+                        <td>
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">{{ cat.nombre }}</h6>
+                                <p class="text-muted small mb-0 text-truncate u-style-1357bbd5" title="{{ cat.descripcion }}">{{ cat.descripcion }}</p>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            {% if cat.estado %}
+                                <span class="badge bg-success bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-check-circle-fill me-1"></i> Activa</span>
+                            {% else %}
+                                <span class="badge bg-danger bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-x-circle-fill me-1"></i> Inactiva</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group shadow-sm">
+                                <a href="{% url 'editar_categoria' cat.pk %}" class="btn btn-sm btn-outline-secondary" title="Editar Categoría">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'eliminar_categoria' cat.pk %}" class="btn btn-sm btn-outline-danger" title="Eliminar Categoría">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center py-5 text-muted">Aún no hay categorías registradas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Vista Móvil -->
+        <div class="d-lg-none">
+            <div class="row g-3">
+                {% for cat in categorias %}
+                <div class="col-12">
+                    <div class="card border border-light shadow-sm rounded-4 p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2 border-bottom pb-2">
+                            <div>
+                                <h5 class="fw-bold text-dark mb-0">{{ cat.nombre }}</h5>
+                                <small class="text-muted d-block mt-1">{{ cat.descripcion|truncatewords:15 }}</small>
+                            </div>
+                            <div>
+                                {% if cat.estado %}
+                                    <span class="badge bg-success bg-opacity-75 rounded-pill shadow-sm">Activa</span>
+                                {% else %}
+                                    <span class="badge bg-danger bg-opacity-75 rounded-pill shadow-sm">Inactiva</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-2">
+                            <a href="{% url 'editar_categoria' cat.pk %}" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill">
+                                <i class="bi bi-pencil me-1"></i> Editar
+                            </a>
+                            <a href="{% url 'eliminar_categoria' cat.pk %}" class="btn btn-sm btn-outline-danger flex-fill fw-bold rounded-pill">
+                                <i class="bi bi-trash me-1"></i> Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center p-4 text-muted border rounded shadow-sm bg-light">
+                    Aún no hay categorías registradas.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
+<script src="{% static 'js/tconf/tconf-tablaCategorias.js' %}"></script>
+{% endblock %}

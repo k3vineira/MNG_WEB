@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid pt-1 pb-2 px-4" style="margin-top: 60px !important; position: relative; z-index: 1000;">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item fs-5 fw-semibold">
+                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none" style="color: #000000af !important;">Inicio</a>
+            </li>
+            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color: #000000af !important;">
+                PQRS
+            </li>
+        </ol>
+    </nav>
+</div>
+<div class="container-fluid pt-2 pb-5 mt-0 min-vh-100 d-flex align-items-center bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-6">
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+                    <div class="card-header text-white py-4 border-0" style="background-color: #2c6e3c;"    >
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-pencil-square fs-3"></i> <h3 class="mb-0 fw-bolder text-uppercase tracking-tight ">Radicar PQRS</h3>
+                        </div>
+                        <p class="text-center mb-0 small opacity-75">Tu opinión nos ayuda a crecer como comunidad</p>
+                    </div>
+                    
+                    <div class="card-body p-4 p-md-5 bg-white">
+                        <form action="{% url 'guardar_pqrs' %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3 custom-form-style">
+                                {{ form|crispy }}
+                            </div>
+                            
+                            <div class="alert alert-info border-0 rounded-3 small mb-4">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                Todos los campos marcados con asterisco (*) son obligatorios.
+                            </div>
+
+                            <hr class="my-4 text-secondary opacity-25">
+
+                            <div class="d-grid d-md-flex justify-content-md-end gap-3">
+                                <a href="{% url 'pqrs' %}" class="btn btn-light btn-lg px-4 fw-semibold text-secondary border">
+                                    Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-success btn-lg px-5 fw-bold shadow-sm">
+                                    Enviar Solicitud <i class="bi bi-send-fill ms-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer bg-white py-3 border-0 text-center">
+                        <small class="text-muted">Mongua, Boyacá - Corazón verde de Colombia</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
