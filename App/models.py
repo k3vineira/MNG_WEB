@@ -67,6 +67,49 @@ class Usuario(AbstractUser):
         verbose_name='Imagen de Perfil'
     )
 
+    # --- CAMPOS DE CLIENTE (FUSIONADOS) ---
+    pais = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='País'
+    )
+    departamento = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='Departamento'
+    )
+    ciudad = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name='Ciudad'
+    )
+
+    # --- CAMPOS DE GUÍA TURÍSTICO (FUSIONADOS) ---
+    numero_tarjeta_profesional = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name='Licencia de Turismo'
+    )
+    experiencia_anos = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Años de Experiencia'
+    )
+    experiencia_fecha = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name='Fecha de Inicio de Experiencia'
+    )
+    descripcion_experiencia = models.TextField(
+        blank=True,
+        verbose_name='Descripción de la Experiencia'
+    )
+    entidad_salud = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name='Entidad de Salud'
+    )
+
     def clean(self):
         """Validación limpia del modelo."""
         super().clean()
@@ -721,7 +764,7 @@ class PlanGuia(models.Model):
     fecha_inicio_plan = models.DateField(verbose_name='Fecha de Inicio')
     fecha_fin_plan = models.DateField(verbose_name='Fecha de Fin')
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='activo', verbose_name='Estado')
-    guia = models.ForeignKey('GuiaTuristico', on_delete=models.CASCADE, related_name='planes_guia', db_column='codigo_guia_turistico', verbose_name='Guía Turístico')
+    guia = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='planes_guia', db_column='codigo_guia_turistico', verbose_name='Guía Turístico', limit_choices_to={'rol': 'GUIA'})
     paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='planes_guia', db_column='codigo_paquete', verbose_name='Paquete')
 
     class Meta:
@@ -730,7 +773,7 @@ class PlanGuia(models.Model):
         verbose_name_plural = 'Planes Guía'
 
     def __str__(self):
-        nombre_guia = self.guia.usuario.nombre_completo
+        nombre_guia = self.guia.nombre_completo
         return f'Guía: {nombre_guia} - Paquete: {self.paquete.nombre} ({self.fecha_inicio_plan} a {self.fecha_fin_plan})'
 
 
@@ -777,9 +820,15 @@ class Pago(models.Model):
         verbose_name_plural = 'Pagos'
         ordering = ['-fecha_envio']
 
+    @property
+    def usuario(self):
+        """Retorna el usuario de la reserva asociada."""
+        return self.reserva.usuario if self.reserva else None
+
     def __str__(self):
         """Retorna el ID, usuario y estado del pago como representación textual."""
-        return f'Pago #{self.pk} — {self.usuario.username} — {self.get_estado_transaccion_display()}'
+        username = self.usuario.username if self.usuario else "N/A"
+        return f'Pago #{self.pk} — {username} — {self.get_estado_transaccion_display()}'
 
     def clean(self):
         super().clean()
@@ -1003,49 +1052,7 @@ class SeguroViaje(models.Model):
 # USUARIOS
 # ==============================================================================
 """
-Modelos de datos para la gestión de usuarios: Usuario personalizado, Cliente y Guía Turístico.
+Modelos de datos para la gestión de usuarios: Usuario personalizado.
+(Los perfiles de Cliente y Guía Turístico fueron consolidados directamente en el modelo de Usuario).
 """
-from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.conf import settings
-
-class Cliente(models.Model):
-    """
-    Perfil extendido para usuarios con rol de Cliente/Turista.
-    Asociado mediante una relación uno-a-uno con el modelo Usuario.
-    """
-    id = models.AutoField(primary_key=True)
-    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='cliente', verbose_name='Cuenta de Usuario')
-    pais = models.CharField(max_length=100, blank=True, verbose_name='País')
-    departamento = models.CharField(max_length=100, blank=True, verbose_name='Departamento')
-    ciudad = models.CharField(max_length=100, blank=True, verbose_name='Ciudad')
-
-    class Meta:
-        verbose_name = 'Cliente'
-        verbose_name_plural = 'Clientes'
-
-    def __str__(self):
-        """Retorna el nombre completo del cliente como representación textual."""
-        return self.usuario.nombre_completo
-
-class GuiaTuristico(models.Model):
-    """
-    Perfil extendido para usuarios con rol de Guía Turístico.
-    Asociado mediante una relación uno-a-uno con el modelo Usuario.
-    """
-    id = models.AutoField(primary_key=True)
-    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='guia', verbose_name='Cuenta de Usuario')
-    numero_tarjeta_profesional = models.CharField(max_length=50, blank=True, verbose_name='Licencia de Turismo')
-    experiencia_anos = models.PositiveIntegerField(default=0, verbose_name='Años de Experiencia')
-    experiencia_fecha = models.DateField(null=True, blank=True, verbose_name='Fecha de Inicio de Experiencia')
-    descripcion_experiencia = models.TextField(blank=True, verbose_name='Descripción de la Experiencia')
-    entidad_salud = models.CharField(max_length=100, blank=True, null=True, verbose_name='Entidad de Salud')
-
-    class Meta:
-        verbose_name = 'Guía Turístico'
-        verbose_name_plural = 'Guías Turísticos'
-
-    def __str__(self):
-        """Retorna 'Guía:' seguido del nombre completo del usuario."""
-        return f'Guía: {self.usuario.nombre_completo}'
 

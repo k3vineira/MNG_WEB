@@ -2,7 +2,7 @@
 -- SCRIPT SQL GENERADO PARA MYSQL WORKBENCH
 -- Proyecto: MNG_WEB
 -- Base de Datos: monagua_turismo_db
--- Total Tablas de la Aplicación: 23
+-- Total Tablas de la Aplicación: 21
 -- (Excluidas todas las tablas internas/predeterminadas de Django)
 -- ============================================================================
 
@@ -96,40 +96,6 @@ CREATE TABLE IF NOT EXISTS `App_categoria` (
     `estado` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '¿Está Activa?',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Categoría que agrupa paquetes turísticos similares (ej. Aventura, Cultura).';
-
--- -----------------------------------------------------
--- Tabla `App_cliente` (Cliente)
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `App_cliente`;
-CREATE TABLE IF NOT EXISTS `App_cliente` (
-    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
-    `usuario_id` BIGINT NOT NULL COMMENT 'Cuenta de Usuario',
-    `pais` VARCHAR(100) NOT NULL COMMENT 'País',
-    `departamento` VARCHAR(100) NOT NULL COMMENT 'Departamento',
-    `ciudad` VARCHAR(100) NOT NULL COMMENT 'Ciudad',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_App_cliente_usuario_id` (`usuario_id`),
-    KEY `idx_App_cliente_usuario_id` (`usuario_id`),
-    CONSTRAINT `fk_App_cliente_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `App_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Perfil extendido para usuarios con rol de Cliente/Turista. Asociado mediante una relación uno-a-uno con el modelo Usuario.';
-
--- -----------------------------------------------------
--- Tabla `App_guiaturistico` (GuiaTuristico)
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `App_guiaturistico`;
-CREATE TABLE IF NOT EXISTS `App_guiaturistico` (
-    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
-    `usuario_id` BIGINT NOT NULL COMMENT 'Cuenta de Usuario',
-    `numero_tarjeta_profesional` VARCHAR(50) NOT NULL COMMENT 'Licencia de Turismo',
-    `experiencia_anos` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Años de Experiencia',
-    `experiencia_fecha` DATE NULL COMMENT 'Fecha de Inicio de Experiencia',
-    `descripcion_experiencia` LONGTEXT NOT NULL COMMENT 'Descripción de la Experiencia',
-    `entidad_salud` VARCHAR(100) NULL COMMENT 'Entidad de Salud',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_App_guiaturistico_usuario_id` (`usuario_id`),
-    KEY `idx_App_guiaturistico_usuario_id` (`usuario_id`),
-    CONSTRAINT `fk_App_guiaturistico_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `App_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Perfil extendido para usuarios con rol de Guía Turístico. Asociado mediante una relación uno-a-uno con el modelo Usuario.';
 
 -- -----------------------------------------------------
 -- Tabla `App_paquete` (Paquete)
@@ -299,6 +265,14 @@ CREATE TABLE IF NOT EXISTS `App_usuario` (
     `telefono` VARCHAR(15) NOT NULL COMMENT 'Teléfono',
     `residencia` VARCHAR(100) NOT NULL COMMENT 'Residencia de Origen',
     `imagen_perfil` VARCHAR(100) NULL COMMENT 'Imagen de Perfil',
+    `pais` VARCHAR(100) NOT NULL COMMENT 'País',
+    `departamento` VARCHAR(100) NOT NULL COMMENT 'Departamento',
+    `ciudad` VARCHAR(100) NOT NULL COMMENT 'Ciudad',
+    `numero_tarjeta_profesional` VARCHAR(50) NOT NULL COMMENT 'Licencia de Turismo',
+    `experiencia_anos` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Años de Experiencia',
+    `experiencia_fecha` DATE NULL COMMENT 'Fecha de Inicio de Experiencia',
+    `descripcion_experiencia` LONGTEXT NOT NULL COMMENT 'Descripción de la Experiencia',
+    `entidad_salud` VARCHAR(100) NULL COMMENT 'Entidad de Salud',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_App_usuario_username` (`username`),
     UNIQUE KEY `uk_App_usuario_email` (`email`),
@@ -409,12 +383,12 @@ CREATE TABLE IF NOT EXISTS `plan_guia` (
     `fecha_inicio_plan` DATE NOT NULL COMMENT 'Fecha de Inicio',
     `fecha_fin_plan` DATE NOT NULL COMMENT 'Fecha de Fin',
     `estado` VARCHAR(20) NOT NULL DEFAULT 'activo' COMMENT 'Estado',
-    `codigo_guia_turistico` INT NOT NULL COMMENT 'Guía Turístico',
+    `codigo_guia_turistico` BIGINT NOT NULL COMMENT 'Guía Turístico',
     `codigo_paquete` INT NOT NULL COMMENT 'Paquete',
     PRIMARY KEY (`id`),
     KEY `idx_plan_guia_codigo_guia_turistico` (`codigo_guia_turistico`),
     KEY `idx_plan_guia_codigo_paquete` (`codigo_paquete`),
-    CONSTRAINT `fk_plan_guia_codigo_guia_turistico` FOREIGN KEY (`codigo_guia_turistico`) REFERENCES `App_guiaturistico` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_plan_guia_codigo_guia_turistico` FOREIGN KEY (`codigo_guia_turistico`) REFERENCES `App_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_plan_guia_codigo_paquete` FOREIGN KEY (`codigo_paquete`) REFERENCES `App_paquete` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Modelo que representa la entidad ''plan_guia'' del MER. Permite asignar un guía turístico a un paquete específico con fechas e idioma de servicio.';
 
