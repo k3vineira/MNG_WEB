@@ -2,7 +2,7 @@
 -- SCRIPT SQL GENERADO PARA MYSQL WORKBENCH
 -- Proyecto: MNG_WEB
 -- Base de Datos: monagua_turismo_db
--- Total Tablas de la Aplicación: 20
+-- Total Tablas de la Aplicación: 18
 -- (Excluidas todas las tablas internas/predeterminadas de Django)
 -- ============================================================================
 
@@ -98,26 +98,6 @@ CREATE TABLE IF NOT EXISTS `comunidad_calificacion` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Calificación y reseña de una experiencia o reserva de un paquete turístico realizada por un cliente o usuario registrado.';
 
 -- -----------------------------------------------------
--- Tabla `factura` (Factura)
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `factura`;
-CREATE TABLE IF NOT EXISTS `factura` (
-    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
-    `fecha_emision` DATETIME NOT NULL COMMENT 'Fecha de Emisión',
-    `estado` VARCHAR(20) NOT NULL DEFAULT 'emitida' COMMENT 'Estado',
-    `valor_subtotal` DECIMAL(12, 2) NOT NULL COMMENT 'Valor Subtotal',
-    `valor_total` DECIMAL(12, 2) NOT NULL COMMENT 'Valor Total',
-    `codigo_reserva` INT NOT NULL COMMENT 'Reserva',
-    `codigo_pago` INT NULL COMMENT 'Pago',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_factura_codigo_reserva` (`codigo_reserva`),
-    KEY `idx_factura_codigo_reserva` (`codigo_reserva`),
-    KEY `idx_factura_codigo_pago` (`codigo_pago`),
-    CONSTRAINT `fk_factura_codigo_reserva` FOREIGN KEY (`codigo_reserva`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_factura_codigo_pago` FOREIGN KEY (`codigo_pago`) REFERENCES `pago` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Modelo que representa la entidad ''factura'' del MER. Registra los datos de facturación formal vinculados a una reserva y a su respectivo pago.';
-
--- -----------------------------------------------------
 -- Tabla `pago` (Pago)
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `pago`;
@@ -175,21 +155,6 @@ CREATE TABLE IF NOT EXISTS `paquete_actividades` (
     CONSTRAINT `fk_paquete_actividades_paquete_id` FOREIGN KEY (`paquete_id`) REFERENCES `paquete` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_paquete_actividades_actividad_id` FOREIGN KEY (`actividad_id`) REFERENCES `actividades` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Relación intermedia entre Paquete y Actividades (tabla many-to-many explícita).';
-
--- -----------------------------------------------------
--- Tabla `paquete_promociones` (PaquetePromocion)
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `paquete_promociones`;
-CREATE TABLE IF NOT EXISTS `paquete_promociones` (
-    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
-    `paquete_id` INT NOT NULL COMMENT 'Paquete',
-    `promocion_id` INT NOT NULL COMMENT 'Promoción',
-    PRIMARY KEY (`id`),
-    KEY `idx_paquete_promociones_paquete_id` (`paquete_id`),
-    KEY `idx_paquete_promociones_promocion_id` (`promocion_id`),
-    CONSTRAINT `fk_paquete_promociones_paquete_id` FOREIGN KEY (`paquete_id`) REFERENCES `paquete` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_paquete_promociones_promocion_id` FOREIGN KEY (`promocion_id`) REFERENCES `promocion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Entidad intermedia que asocia un Paquete, una Promocion y una Tarifa. Equivale a la tabla intermedia ''paquete_promociones'' del MER.';
 
 -- -----------------------------------------------------
 -- Tabla `plan_guia` (PlanGuia)
