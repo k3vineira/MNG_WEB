@@ -654,11 +654,6 @@ class Reserva(models.Model):
 # ==============================================================================
 # AUDITORIA
 # ==============================================================================
-"""
-Modelo de datos para la auditoría del sistema registrada para los usuarios.
-"""
-from django.conf import settings
-from django.db import models
 
 class Auditoria(models.Model):
     """
@@ -683,47 +678,7 @@ class Auditoria(models.Model):
         return f'{self.acciones_realizada} - {self.codigo_usuario.username}'
 
 
-# ==============================================================================
-# AUTENTICACION
-# ==============================================================================
-"""
-Modelos de datos para la aplicación de autenticación.
-Actualmente no define modelos propios, ya que utiliza el modelo de usuario personalizado de la aplicación 'usuarios'.
-"""
-from django.db import models
 
-
-# ==============================================================================
-# CATALOGO
-# ==============================================================================
-"""
-Modelos de datos para el catálogo de paquetes turísticos.
-Incluye Temporada, Categoría, Actividades, Paquete, Tarifa y PaqueteActividad.
-"""
-from django.db import models
-from django.conf import settings
-from django.utils import timezone
-from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
-import re
-
-def validar_punto_encuentro(value):
-    val_str = str(value).strip()
-    if val_str.isdigit():
-        raise ValidationError('El punto de encuentro no puede ser solo números. Ingresa un lugar o dirección válida.')
-    if not re.search('[a-zA-ZáéíóúÁÉÍÓÚñÑ]', val_str):
-        raise ValidationError('El punto de encuentro debe incluir texto o el nombre de un lugar.')
-
-
-# ==============================================================================
-# COMUNIDAD
-# ==============================================================================
-"""
-Modelos de datos para la comunidad: Calificaciones, Blog, PQRS y Seguimiento.
-"""
-from django.db import models
-from django.urls import reverse
-from django.conf import settings
 
 class Calificacion(models.Model):
     """
@@ -779,7 +734,7 @@ Comentario = Calificacion
 # ==============================================================================
 # GUIAS
 # ==============================================================================
-from django.db import models
+
 
 class PlanGuia(models.Model):
     """
@@ -807,22 +762,8 @@ class PlanGuia(models.Model):
 
 
 # ==============================================================================
-# IA
-# ==============================================================================
-from django.db import models
-
-
-# ==============================================================================
 # PAGOS
 # ==============================================================================
-"""
-Modelo de datos para los comprobantes de pago enviados por los usuarios.
-"""
-import os
-from django.db import models
-from django.utils import timezone
-from django.conf import settings
-from django.core.exceptions import ValidationError
 
 class Pago(models.Model):
     """
@@ -916,10 +857,7 @@ class Factura(models.Model):
 # ==============================================================================
 # PROMOCIONES
 # ==============================================================================
-"""
-Modelos de datos para las promociones y banners publicitarios del sitio.
-"""
-from django.db import models
+
 
 class Promocion(models.Model):
     """Promoción o descuento aplicado a un paquete turístico durante un período determinado."""
@@ -960,78 +898,7 @@ class PaquetePromocion(models.Model):
         return f'{self.paquete.nombre} - {self.promocion.nombre}'
 
 
-# ==============================================================================
-# RESERVAS
-# ==============================================================================
-"""
-Modelos de datos para reservas y cancelaciones de paquetes turísticos.
-"""
-from django.db import models
-from django.conf import settings
-from django.core.exceptions import ValidationError
-from django.utils import timezone
 
-class Cancelacion(models.Model):
-    """
-    Solicitud de cancelación de una reserva realizada por un usuario.
-    Calcula automáticamente la penalidad según los días de antelación.
-    """
-    id = models.AutoField(primary_key=True)
-    ESTADOS_CANCELACION = [('pendiente', 'Pendiente'), ('aceptada', 'Aceptada'), ('rechazada', 'Rechazada')]
-    reserva = models.ForeignKey('Reserva', on_delete=models.CASCADE, related_name='cancelaciones')
-    motivo = models.TextField()
-    penalidad = models.IntegerField(default=0, verbose_name='Penalidad Aplicada')
-    estado = models.CharField(max_length=20, choices=ESTADOS_CANCELACION, default='pendiente', verbose_name='Estado')
-    fecha = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Solicitud')
-    fecha_reembolso = models.DateField(null=True, blank=True, verbose_name='Fecha de Reembolso')
-    valor_reembolsado = models.IntegerField(null=True, blank=True, default=0, verbose_name='Valor Reembolsado')
-    imagen_comprobante = models.ImageField(upload_to='cancelaciones/', null=True, blank=True, verbose_name='Imagen del Comprobante')
-
-    class Meta:
-        verbose_name = 'Cancelación'
-        verbose_name_plural = 'Cancelaciones'
-
-    def save(self, *args, **kwargs):
-        """
-        Calcula la penalidad económica y actualiza el estado de la reserva al guardar.
-
-        La penalidad es del 10% si se cancela con más de 15 días, del 50% entre 5-15 días,
-        y del 100% si quedan menos de 5 días para el viaje.
-
-        Args:
-            *args: Argumentos posicionales adicionales.
-            **kwargs: Argumentos de clave-valor adicionales.
-        """
-        if not self.pk:
-            fecha_viaje = self.reserva.fecha
-            fecha_actual = timezone.now().date()
-            diferencia = fecha_viaje - fecha_actual
-            dias_antelacion = diferencia.days
-            valor_reserva = self.reserva.monto_total
-            if dias_antelacion > 15:
-                self.penalidad = int(valor_reserva * 0.1)
-            elif 5 <= dias_antelacion <= 15:
-                self.penalidad = int(valor_reserva * 0.5)
-            else:
-                self.penalidad = valor_reserva
-        if self.estado == 'aceptada':
-            self.reserva.estado = 'cancelada'
-            self.reserva.save()
-        elif self.estado == 'rechazada':
-            self.reserva.estado = 'confirmada'
-            self.reserva.save()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        """Retorna el ID de la reserva cancelada y el estado de la cancelación."""
-        return f'Cancelación de Reserva #{self.reserva.id} - {self.get_estado_display()}'
-
-
-# ==============================================================================
-# SEGUROS
-# ==============================================================================
-from django.db import models
-from django.conf import settings
 
 class Poliza(models.Model):
     """
