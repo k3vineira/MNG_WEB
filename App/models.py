@@ -624,15 +624,6 @@ class Reserva(models.Model):
                         base_monto = (tarifa.precio_adulto * num_adultos) + (tarifa.precio_menor * num_menores)
 
                         descuento = 0
-                        try:
-                            paquete_promo = self.paquete.paquetepromociones_set.filter(
-                                promocion__estado=True
-                            ).first()
-
-                            if paquete_promo and paquete_promo.promocion:
-                                descuento = getattr(paquete_promo.promocion, 'porcentaje_descuento', 0) or getattr(paquete_promo.promocion, 'descuento', 0)
-                        except Exception:
-                            descuento = 0
 
                         if descuento > 0:
                             self.monto_total = int(base_monto * (100 - descuento) / 100)
@@ -830,27 +821,6 @@ class Pago(models.Model):
         """
         return os.path.basename(self.imagen_comprobante.name) if self.imagen_comprobante else '—'
 
-class Factura(models.Model):
-    """
-    Modelo que representa la entidad 'factura' del MER.
-    Registra los datos de facturación formal vinculados a una reserva y a su respectivo pago.
-    """
-    id = models.AutoField(primary_key=True)
-    ESTADO_CHOICES = [('emitida', 'Emitida'), ('anulada', 'Anulada'), ('pagada', 'Pagada')]
-    fecha_emision = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Emisión')
-    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='emitida', verbose_name='Estado')
-    valor_subtotal = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Valor Subtotal')
-    valor_total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Valor Total')
-    reserva = models.OneToOneField('Reserva', on_delete=models.CASCADE, related_name='factura', db_column='codigo_reserva', verbose_name='Reserva')
-    pago = models.ForeignKey(Pago, on_delete=models.SET_NULL, null=True, blank=True, related_name='facturas', db_column='codigo_pago', verbose_name='Pago')
-
-    class Meta:
-        db_table = 'factura'
-        verbose_name = 'Factura'
-        verbose_name_plural = 'Facturas'
-
-    def __str__(self):
-        return f'Factura #{self.pk} — Reserva #{self.reserva.id} — Total: ${self.valor_total}'
 
 
 # ==============================================================================
@@ -879,22 +849,6 @@ class Promocion(models.Model):
         """Retorna el nombre y porcentaje de descuento de la promoción."""
         return f'{self.nombre} ({self.descuento}%)'
 
-class PaquetePromocion(models.Model):
-    """
-    Entidad intermedia que asocia un Paquete, una Promocion y una Tarifa.
-    Equivale a la tabla intermedia 'paquete_promociones' del MER.
-    """
-    id = models.AutoField(primary_key=True)
-    paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='paquete_promociones', verbose_name='Paquete')
-    promocion = models.ForeignKey(Promocion, on_delete=models.CASCADE, related_name='paquete_promociones', verbose_name='Promoción')
-
-    class Meta:
-        db_table = 'paquete_promociones'
-        verbose_name = 'Paquete Promoción'
-        verbose_name_plural = 'Paquetes Promociones'
-
-    def __str__(self):
-        return f'{self.paquete.nombre} - {self.promocion.nombre}'
 
 
 
