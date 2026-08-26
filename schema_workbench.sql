@@ -30,6 +30,31 @@ CREATE TABLE IF NOT EXISTS `actividades` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Actividad turística que puede ser incluida en uno o varios paquetes.';
 
 -- -----------------------------------------------------
+-- Tabla `aseguradora` (Aseguradora)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `aseguradora`;
+CREATE TABLE IF NOT EXISTS `aseguradora` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `reserva_id` INT NULL COMMENT 'Reserva Asociada',
+    `poliza_viaje_id` INT NOT NULL COMMENT 'Póliza de Viaje Asociada',
+    `nombre_empresa` VARCHAR(100) NULL COMMENT 'Nombre de la Empresa Aseguradora',
+    `numero_poliza` VARCHAR(100) NOT NULL COMMENT 'Número de Póliza Emitida',
+    `fecha_emision` DATETIME NOT NULL COMMENT 'Fecha de Emisión',
+    `fecha_inicio_cobertura` DATE NULL COMMENT 'Fecha de Inicio de Cobertura',
+    `fecha_fin_cobertura` DATE NULL COMMENT 'Fecha de Fin de Cobertura',
+    `costo_seguro` DECIMAL(12, 2) NOT NULL COMMENT 'Costo de Seguro',
+    `telefono_emergencia` VARCHAR(50) NULL COMMENT 'Teléfono de Emergencia',
+    `estado_emision` VARCHAR(20) NOT NULL DEFAULT 'Pendiente' COMMENT 'Estado de Emisión',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_aseguradora_reserva_id` (`reserva_id`),
+    UNIQUE KEY `uk_aseguradora_numero_poliza` (`numero_poliza`),
+    KEY `idx_aseguradora_reserva_id` (`reserva_id`),
+    KEY `idx_aseguradora_poliza_viaje_id` (`poliza_viaje_id`),
+    CONSTRAINT `fk_aseguradora_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_aseguradora_poliza_viaje_id` FOREIGN KEY (`poliza_viaje_id`) REFERENCES `polizaviaje` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Representa la adquisición de un seguro para una reserva. (Anteriormente SeguroViaje)';
+
+-- -----------------------------------------------------
 -- Tabla `auditoria` (Auditoria)
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `auditoria`;
@@ -135,9 +160,12 @@ CREATE TABLE IF NOT EXISTS `paquete` (
     `hora_encuentro` TIME NOT NULL COMMENT 'hora encuentro',
     `categoria_id` INT NOT NULL COMMENT 'categoria',
     `estado` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '¿Está Activo?',
+    `promocion_id` INT NULL COMMENT 'Promoción',
     PRIMARY KEY (`id`),
     KEY `idx_paquete_categoria_id` (`categoria_id`),
-    CONSTRAINT `fk_paquete_categoria_id` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    KEY `idx_paquete_promocion_id` (`promocion_id`),
+    CONSTRAINT `fk_paquete_categoria_id` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_paquete_promocion_id` FOREIGN KEY (`promocion_id`) REFERENCES `promocion` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Paquete turístico ofrecido por Monagua, conformado por actividades y con tarifas por temporada.';
 
 -- -----------------------------------------------------
@@ -177,17 +205,21 @@ CREATE TABLE IF NOT EXISTS `plan_guia` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Modelo que representa la entidad ''plan_guia'' del MER. Permite asignar un guía turístico a un paquete específico con fechas e idioma de servicio.';
 
 -- -----------------------------------------------------
--- Tabla `poliza` (Poliza)
+-- Tabla `polizaviaje` (PolizaViaje)
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `poliza`;
-CREATE TABLE IF NOT EXISTS `poliza` (
+DROP TABLE IF EXISTS `polizaviaje`;
+CREATE TABLE IF NOT EXISTS `polizaviaje` (
     `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
-    `nombre_aseguradora` VARCHAR(100) NOT NULL COMMENT 'Nombre de la Aseguradora / Plan',
+    `nombre_poliza` VARCHAR(150) NOT NULL COMMENT 'Nombre de la Póliza',
     `descripcion` LONGTEXT NOT NULL COMMENT 'Descripción de Coberturas',
+    `cobertura_medica_max` DECIMAL(12, 2) NOT NULL DEFAULT 0.0 COMMENT 'Monto máximo de cobertura médica',
+    `cubre_perdida_equipaje` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '¿Cubre pérdida de equipaje?',
+    `cubre_cancelacion_vuelo` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '¿Cubre cancelación de vuelo?',
     `precio_diario` DECIMAL(10, 2) NOT NULL COMMENT 'Precio por Día',
+    `condiciones_generales` LONGTEXT NULL COMMENT 'Condiciones Generales',
     `estado` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '¿Póliza Activa?',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Define los tipos de planes de seguros disponibles (ej: Plan Básico, Plan Premium). Equivale a la entidad ''poliza'' del MER de draw.io.';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Catálogo de seguros ofrecidos.';
 
 -- -----------------------------------------------------
 -- Tabla `pqrs` (PQRS)
@@ -265,26 +297,6 @@ CREATE TABLE IF NOT EXISTS `seguimiento` (
     CONSTRAINT `fk_seguimiento_pqrs_id` FOREIGN KEY (`pqrs_id`) REFERENCES `pqrs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_seguimiento_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de seguimiento y respuestas a una solicitud PQRS por parte de un usuario o administrador.';
-
--- -----------------------------------------------------
--- Tabla `seguroviaje` (SeguroViaje)
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `seguroviaje`;
-CREATE TABLE IF NOT EXISTS `seguroviaje` (
-    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
-    `reserva_id` INT NULL COMMENT 'Reserva Asociada',
-    `poliza_id` INT NOT NULL COMMENT 'Póliza Asociada',
-    `numero_poliza` VARCHAR(50) NOT NULL COMMENT 'Número de Póliza',
-    `fecha_emision` DATETIME NOT NULL COMMENT 'Fecha de Emisión',
-    `costo_seguro` DECIMAL(12, 2) NOT NULL COMMENT 'Costo de Seguro',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_seguroviaje_reserva_id` (`reserva_id`),
-    UNIQUE KEY `uk_seguroviaje_numero_poliza` (`numero_poliza`),
-    KEY `idx_seguroviaje_reserva_id` (`reserva_id`),
-    KEY `idx_seguroviaje_poliza_id` (`poliza_id`),
-    CONSTRAINT `fk_seguroviaje_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_seguroviaje_poliza_id` FOREIGN KEY (`poliza_id`) REFERENCES `poliza` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Representa la adquisición de un seguro por parte de un usuario para una reserva específica. Equivale a la entidad ''seguro_viaje'' del MER de draw.io.';
 
 -- -----------------------------------------------------
 -- Tabla `tarifa` (Tarifa)
