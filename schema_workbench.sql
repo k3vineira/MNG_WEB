@@ -2,7 +2,7 @@
 -- SCRIPT SQL GENERADO PARA MYSQL WORKBENCH
 -- Proyecto: MNG_WEB
 -- Base de Datos: monagua_turismo_db
--- Total Tablas de la Aplicación: 11
+-- Total Tablas de la Aplicación: 23
 -- (Excluidas todas las tablas internas/predeterminadas de Django)
 -- ============================================================================
 
@@ -30,6 +30,25 @@ CREATE TABLE IF NOT EXISTS `App_actividades` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Actividad turística que puede ser incluida en uno o varios paquetes.';
 
 -- -----------------------------------------------------
+-- Tabla `App_auditoria` (Auditoria)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `App_auditoria`;
+CREATE TABLE IF NOT EXISTS `App_auditoria` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `acciones_realizada` VARCHAR(255) NOT NULL COMMENT 'acciones realizada',
+    `tabla_afectada` VARCHAR(100) NOT NULL COMMENT 'tabla afectada',
+    `fecha` DATE NOT NULL COMMENT 'fecha',
+    `hora` TIME NOT NULL COMMENT 'hora',
+    `observacion` LONGTEXT NULL COMMENT 'observacion',
+    `valor_anterior` LONGTEXT NULL COMMENT 'valor anterior',
+    `nuevo_valor` LONGTEXT NULL COMMENT 'nuevo valor',
+    `codigo_usuario_id` BIGINT NOT NULL COMMENT 'codigo usuario',
+    PRIMARY KEY (`id`),
+    KEY `idx_App_auditoria_codigo_usuario_id` (`codigo_usuario_id`),
+    CONSTRAINT `fk_App_auditoria_codigo_usuario_id` FOREIGN KEY (`codigo_usuario_id`) REFERENCES `App_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de auditoría del sistema sobre acciones realizadas por los usuarios.';
+
+-- -----------------------------------------------------
 -- Tabla `App_blog` (Blog)
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `App_blog`;
@@ -48,6 +67,25 @@ CREATE TABLE IF NOT EXISTS `App_blog` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Entrada de blog publicada por un administrador o autor en Mongua Turismo.';
 
 -- -----------------------------------------------------
+-- Tabla `App_cancelacion` (Cancelacion)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `App_cancelacion`;
+CREATE TABLE IF NOT EXISTS `App_cancelacion` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `reserva_id` INT NOT NULL COMMENT 'reserva',
+    `motivo` LONGTEXT NOT NULL COMMENT 'motivo',
+    `penalidad` INT NOT NULL DEFAULT 0 COMMENT 'Penalidad Aplicada',
+    `estado` VARCHAR(20) NOT NULL DEFAULT 'pendiente' COMMENT 'Estado',
+    `fecha` DATETIME NOT NULL COMMENT 'Fecha de Solicitud',
+    `fecha_reembolso` DATE NULL COMMENT 'Fecha de Reembolso',
+    `valor_reembolsado` INT NULL DEFAULT 0 COMMENT 'Valor Reembolsado',
+    `imagen_comprobante` VARCHAR(100) NULL COMMENT 'Imagen del Comprobante',
+    PRIMARY KEY (`id`),
+    KEY `idx_App_cancelacion_reserva_id` (`reserva_id`),
+    CONSTRAINT `fk_App_cancelacion_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `App_reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Solicitud de cancelación de una reserva realizada por un usuario. Calcula automáticamente la penalidad según los días de antelación.';
+
+-- -----------------------------------------------------
 -- Tabla `App_categoria` (Categoria)
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `App_categoria`;
@@ -58,6 +96,40 @@ CREATE TABLE IF NOT EXISTS `App_categoria` (
     `estado` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '¿Está Activa?',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Categoría que agrupa paquetes turísticos similares (ej. Aventura, Cultura).';
+
+-- -----------------------------------------------------
+-- Tabla `App_cliente` (Cliente)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `App_cliente`;
+CREATE TABLE IF NOT EXISTS `App_cliente` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `usuario_id` BIGINT NOT NULL COMMENT 'Cuenta de Usuario',
+    `pais` VARCHAR(100) NOT NULL COMMENT 'País',
+    `departamento` VARCHAR(100) NOT NULL COMMENT 'Departamento',
+    `ciudad` VARCHAR(100) NOT NULL COMMENT 'Ciudad',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_App_cliente_usuario_id` (`usuario_id`),
+    KEY `idx_App_cliente_usuario_id` (`usuario_id`),
+    CONSTRAINT `fk_App_cliente_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `App_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Perfil extendido para usuarios con rol de Cliente/Turista. Asociado mediante una relación uno-a-uno con el modelo Usuario.';
+
+-- -----------------------------------------------------
+-- Tabla `App_guiaturistico` (GuiaTuristico)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `App_guiaturistico`;
+CREATE TABLE IF NOT EXISTS `App_guiaturistico` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `usuario_id` BIGINT NOT NULL COMMENT 'Cuenta de Usuario',
+    `numero_tarjeta_profesional` VARCHAR(50) NOT NULL COMMENT 'Licencia de Turismo',
+    `experiencia_anos` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Años de Experiencia',
+    `experiencia_fecha` DATE NULL COMMENT 'Fecha de Inicio de Experiencia',
+    `descripcion_experiencia` LONGTEXT NOT NULL COMMENT 'Descripción de la Experiencia',
+    `entidad_salud` VARCHAR(100) NULL COMMENT 'Entidad de Salud',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_App_guiaturistico_usuario_id` (`usuario_id`),
+    KEY `idx_App_guiaturistico_usuario_id` (`usuario_id`),
+    CONSTRAINT `fk_App_guiaturistico_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `App_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Perfil extendido para usuarios con rol de Guía Turístico. Asociado mediante una relación uno-a-uno con el modelo Usuario.';
 
 -- -----------------------------------------------------
 -- Tabla `App_paquete` (Paquete)
@@ -80,6 +152,19 @@ CREATE TABLE IF NOT EXISTS `App_paquete` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Paquete turístico ofrecido por Monagua, conformado por actividades y con tarifas por temporada.';
 
 -- -----------------------------------------------------
+-- Tabla `App_poliza` (Poliza)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `App_poliza`;
+CREATE TABLE IF NOT EXISTS `App_poliza` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `nombre_aseguradora` VARCHAR(100) NOT NULL COMMENT 'Nombre de la Aseguradora / Plan',
+    `descripcion` LONGTEXT NOT NULL COMMENT 'Descripción de Coberturas',
+    `precio_diario` DECIMAL(10, 2) NOT NULL COMMENT 'Precio por Día',
+    `estado` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '¿Póliza Activa?',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Define los tipos de planes de seguros disponibles (ej: Plan Básico, Plan Premium). Equivale a la entidad ''poliza'' del MER de draw.io.';
+
+-- -----------------------------------------------------
 -- Tabla `App_pqrs` (PQRS)
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `App_pqrs`;
@@ -95,6 +180,25 @@ CREATE TABLE IF NOT EXISTS `App_pqrs` (
     KEY `idx_App_pqrs_usuario_id` (`usuario_id`),
     CONSTRAINT `fk_App_pqrs_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `App_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Solicitud de Petición, Queja, Reclamo o Sugerencia enviada por un usuario.';
+
+-- -----------------------------------------------------
+-- Tabla `App_promocion` (Promocion)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `App_promocion`;
+CREATE TABLE IF NOT EXISTS `App_promocion` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `nombre` VARCHAR(150) NOT NULL COMMENT 'Nombre de la promoción',
+    `descripcion` LONGTEXT NOT NULL COMMENT 'Descripción',
+    `descuento` INT UNSIGNED NOT NULL COMMENT 'Porcentaje de descuento',
+    `fecha_fin` DATE NOT NULL COMMENT 'Fecha de fin',
+    `fecha_inicio` DATE NOT NULL COMMENT 'Fecha de inicio',
+    `codigo_promocion` VARCHAR(20) NOT NULL COMMENT 'Código de promoción',
+    `condiciones` LONGTEXT NULL COMMENT 'Condiciones',
+    `codigo_cupon` VARCHAR(30) NULL COMMENT 'Código de cupón',
+    `activa` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '¿Activa?',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_App_promocion_codigo_promocion` (`codigo_promocion`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Promoción o descuento aplicado a un paquete turístico durante un período determinado.';
 
 -- -----------------------------------------------------
 -- Tabla `App_reserva` (Reserva)
@@ -119,6 +223,26 @@ CREATE TABLE IF NOT EXISTS `App_reserva` (
     CONSTRAINT `fk_App_reserva_paquete_id` FOREIGN KEY (`paquete_id`) REFERENCES `App_paquete` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT `fk_App_reserva_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `App_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Reserva(id, paquete, usuario, fecha, fecha_inicio, numero_adultos, numero_menores, estado, motivo_cancelacion, monto_total, fecha_registro)';
+
+-- -----------------------------------------------------
+-- Tabla `App_seguroviaje` (SeguroViaje)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `App_seguroviaje`;
+CREATE TABLE IF NOT EXISTS `App_seguroviaje` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `reserva_id` INT NULL COMMENT 'Reserva Asociada',
+    `poliza_id` INT NOT NULL COMMENT 'Póliza Asociada',
+    `numero_poliza` VARCHAR(50) NOT NULL COMMENT 'Número de Póliza',
+    `fecha_emision` DATETIME NOT NULL COMMENT 'Fecha de Emisión',
+    `costo_seguro` DECIMAL(12, 2) NOT NULL COMMENT 'Costo de Seguro',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_App_seguroviaje_reserva_id` (`reserva_id`),
+    UNIQUE KEY `uk_App_seguroviaje_numero_poliza` (`numero_poliza`),
+    KEY `idx_App_seguroviaje_reserva_id` (`reserva_id`),
+    KEY `idx_App_seguroviaje_poliza_id` (`poliza_id`),
+    CONSTRAINT `fk_App_seguroviaje_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `App_reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_App_seguroviaje_poliza_id` FOREIGN KEY (`poliza_id`) REFERENCES `App_poliza` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Representa la adquisición de un seguro por parte de un usuario para una reserva específica. Equivale a la entidad ''seguro_viaje'' del MER de draw.io.';
 
 -- -----------------------------------------------------
 -- Tabla `App_tarifa` (Tarifa)
@@ -182,6 +306,68 @@ CREATE TABLE IF NOT EXISTS `App_usuario` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Modelo de usuario personalizado que extiende AbstractUser con campos adicionales como rol, tipo de documento, teléfono e imagen de perfil.';
 
 -- -----------------------------------------------------
+-- Tabla `comunidad_calificacion` (Calificacion)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `comunidad_calificacion`;
+CREATE TABLE IF NOT EXISTS `comunidad_calificacion` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `reserva_id` INT NULL COMMENT 'Reserva Calificada',
+    `tipo` VARCHAR(20) NOT NULL DEFAULT 'experiencia' COMMENT 'Tipo - Tipo de reseña: experiencia, pregunta, etc.',
+    `titulo` VARCHAR(255) NOT NULL COMMENT 'Título',
+    `puntaje_estrellas` SMALLINT UNSIGNED NOT NULL DEFAULT 5 COMMENT 'Puntaje / Estrellas',
+    `comentario` LONGTEXT NOT NULL COMMENT 'Comentario / Reseña',
+    `visible` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '¿Visible?',
+    `admin_respuesta` LONGTEXT NULL COMMENT 'Respuesta del Admin',
+    `fecha_calificacion` DATETIME NOT NULL COMMENT 'Fecha de Calificación',
+    PRIMARY KEY (`id`),
+    KEY `idx_comunidad_calificacion_reserva_id` (`reserva_id`),
+    CONSTRAINT `fk_comunidad_calificacion_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `App_reserva` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Calificación y reseña de una experiencia o reserva de un paquete turístico realizada por un cliente o usuario registrado.';
+
+-- -----------------------------------------------------
+-- Tabla `factura` (Factura)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `factura`;
+CREATE TABLE IF NOT EXISTS `factura` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `fecha_emision` DATETIME NOT NULL COMMENT 'Fecha de Emisión',
+    `estado` VARCHAR(20) NOT NULL DEFAULT 'emitida' COMMENT 'Estado',
+    `valor_subtotal` DECIMAL(12, 2) NOT NULL COMMENT 'Valor Subtotal',
+    `valor_total` DECIMAL(12, 2) NOT NULL COMMENT 'Valor Total',
+    `codigo_reserva` INT NOT NULL COMMENT 'Reserva',
+    `codigo_pago` INT NULL COMMENT 'Pago',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_factura_codigo_reserva` (`codigo_reserva`),
+    KEY `idx_factura_codigo_reserva` (`codigo_reserva`),
+    KEY `idx_factura_codigo_pago` (`codigo_pago`),
+    CONSTRAINT `fk_factura_codigo_reserva` FOREIGN KEY (`codigo_reserva`) REFERENCES `App_reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_factura_codigo_pago` FOREIGN KEY (`codigo_pago`) REFERENCES `pago` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Modelo que representa la entidad ''factura'' del MER. Registra los datos de facturación formal vinculados a una reserva y a su respectivo pago.';
+
+-- -----------------------------------------------------
+-- Tabla `pago` (Pago)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `pago`;
+CREATE TABLE IF NOT EXISTS `pago` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `reserva_id` INT NULL COMMENT 'Reserva',
+    `referencia` VARCHAR(100) NOT NULL COMMENT 'Número de referencia / transacción - Número de comprobante, transacción o referencia bancaria',
+    `banco_origen` VARCHAR(100) NOT NULL COMMENT 'Banco / medio de pago',
+    `monto` DECIMAL(12, 2) NOT NULL DEFAULT 0.0 COMMENT 'Monto pagado',
+    `imagen_comprobante` VARCHAR(100) NOT NULL COMMENT 'Imagen del comprobante',
+    `descripcion` LONGTEXT NOT NULL COMMENT 'Descripción / nota adicional',
+    `estado_transaccion` VARCHAR(20) NOT NULL DEFAULT 'pendiente' COMMENT 'Estado',
+    `nota_admin` LONGTEXT NOT NULL COMMENT 'Nota del administrador',
+    `fecha_pago` DATETIME NOT NULL COMMENT 'Fecha exacta del pago bancario',
+    `fecha_envio` DATETIME NOT NULL COMMENT 'Fecha de envío',
+    `fecha_revision` DATETIME NULL COMMENT 'Fecha de revisión',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_pago_reserva_id` (`reserva_id`),
+    KEY `idx_pago_reserva_id` (`reserva_id`),
+    CONSTRAINT `fk_pago_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `App_reserva` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Pago subido por un usuario para verificar el pago de una reserva o multa. El administrador puede aprobarlo o rechazarlo.';
+
+-- -----------------------------------------------------
 -- Tabla `paquete_actividades` (PaqueteActividad)
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `paquete_actividades`;
@@ -196,6 +382,41 @@ CREATE TABLE IF NOT EXISTS `paquete_actividades` (
     CONSTRAINT `fk_paquete_actividades_paquete_id` FOREIGN KEY (`paquete_id`) REFERENCES `App_paquete` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_paquete_actividades_actividad_id` FOREIGN KEY (`actividad_id`) REFERENCES `App_actividades` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Relación intermedia entre Paquete y Actividades (tabla many-to-many explícita).';
+
+-- -----------------------------------------------------
+-- Tabla `paquete_promociones` (PaquetePromocion)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `paquete_promociones`;
+CREATE TABLE IF NOT EXISTS `paquete_promociones` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `paquete_id` INT NOT NULL COMMENT 'Paquete',
+    `promocion_id` INT NOT NULL COMMENT 'Promoción',
+    PRIMARY KEY (`id`),
+    KEY `idx_paquete_promociones_paquete_id` (`paquete_id`),
+    KEY `idx_paquete_promociones_promocion_id` (`promocion_id`),
+    CONSTRAINT `fk_paquete_promociones_paquete_id` FOREIGN KEY (`paquete_id`) REFERENCES `App_paquete` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_paquete_promociones_promocion_id` FOREIGN KEY (`promocion_id`) REFERENCES `App_promocion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Entidad intermedia que asocia un Paquete, una Promocion y una Tarifa. Equivale a la tabla intermedia ''paquete_promociones'' del MER.';
+
+-- -----------------------------------------------------
+-- Tabla `plan_guia` (PlanGuia)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `plan_guia`;
+CREATE TABLE IF NOT EXISTS `plan_guia` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `idioma_servicio` VARCHAR(50) NOT NULL COMMENT 'Idioma del Servicio',
+    `fecha_creacion` DATETIME NOT NULL COMMENT 'Fecha de Creación',
+    `fecha_inicio_plan` DATE NOT NULL COMMENT 'Fecha de Inicio',
+    `fecha_fin_plan` DATE NOT NULL COMMENT 'Fecha de Fin',
+    `estado` VARCHAR(20) NOT NULL DEFAULT 'activo' COMMENT 'Estado',
+    `codigo_guia_turistico` INT NOT NULL COMMENT 'Guía Turístico',
+    `codigo_paquete` INT NOT NULL COMMENT 'Paquete',
+    PRIMARY KEY (`id`),
+    KEY `idx_plan_guia_codigo_guia_turistico` (`codigo_guia_turistico`),
+    KEY `idx_plan_guia_codigo_paquete` (`codigo_paquete`),
+    CONSTRAINT `fk_plan_guia_codigo_guia_turistico` FOREIGN KEY (`codigo_guia_turistico`) REFERENCES `App_guiaturistico` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_plan_guia_codigo_paquete` FOREIGN KEY (`codigo_paquete`) REFERENCES `App_paquete` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Modelo que representa la entidad ''plan_guia'' del MER. Permite asignar un guía turístico a un paquete específico con fechas e idioma de servicio.';
 
 -- -----------------------------------------------------
 -- Tabla `seguimiento` (Seguimiento)

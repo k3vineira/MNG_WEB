@@ -79,6 +79,8 @@ def get_column_type(field):
     if isinstance(field, (ForeignKey, OneToOneField)):
         target_model = field.remote_field.model
         if isinstance(target_model, str):
+            if '.' not in target_model:
+                target_model = f"{field.model._meta.app_label}.{target_model}"
             target_model = apps.get_model(target_model)
         target_pk = target_model._meta.pk
         pk_internal_type = target_pk.get_internal_type()
@@ -164,6 +166,8 @@ def generate_sql_for_model(model):
         if isinstance(field, (ForeignKey, OneToOneField)):
             target_model = field.remote_field.model
             if isinstance(target_model, str):
+                if '.' not in target_model:
+                    target_model = f"{field.model._meta.app_label}.{target_model}"
                 target_model = apps.get_model(target_model)
             
             target_table = target_model._meta.db_table
