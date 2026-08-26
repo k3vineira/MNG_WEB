@@ -327,6 +327,7 @@ class Paquete(models.Model):
     categoria = models.ForeignKey(Categoria, models.CASCADE, related_name='paquetes')
     actividades = models.ManyToManyField('Actividades', through='PaqueteActividad')
     estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
+    promocion = models.ForeignKey('Promocion',  on_delete=models.SET_NULL,  null=True, blank=True, related_name='paquetes', verbose_name='Promoción')
 
     def __str__(self):
         return self.nombre
@@ -878,24 +879,6 @@ class Promocion(models.Model):
     def __str__(self):
         """Retorna el nombre y porcentaje de descuento de la promoción."""
         return f'{self.nombre} ({self.descuento}%)'
-
-class PaquetePromocion(models.Model):
-    """
-    Entidad intermedia que asocia un Paquete, una Promocion y una Tarifa.
-    Equivale a la tabla intermedia 'paquete_promociones' del MER.
-    """
-    id = models.AutoField(primary_key=True)
-    paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='paquete_promociones', verbose_name='Paquete')
-    promocion = models.ForeignKey(Promocion, on_delete=models.CASCADE, related_name='paquete_promociones', verbose_name='Promoción')
-
-    class Meta:
-        db_table = 'paquete_promociones'
-        verbose_name = 'Paquete Promoción'
-        verbose_name_plural = 'Paquetes Promociones'
-
-    def __str__(self):
-        return f'{self.paquete.nombre} - {self.promocion.nombre}'
-
 
 
 
