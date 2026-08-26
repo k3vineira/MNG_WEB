@@ -111,9 +111,16 @@ def sanitize_comment(text):
     return text[:1024]
 
 
+def clean_table_name(name):
+    """Remueve el prefijo predeterminado 'app_' o 'App_' del nombre de la tabla."""
+    if name and name.lower().startswith('app_'):
+        return name[4:]
+    return name
+
+
 def generate_sql_for_model(model):
     """Genera las sentencias SQL de CREATE TABLE, campos, llaves y restricciones para un modelo."""
-    table_name = model._meta.db_table
+    table_name = clean_table_name(model._meta.db_table)
     columns_sql = []
     pk_cols = []
     fks_sql = []
@@ -170,7 +177,7 @@ def generate_sql_for_model(model):
                     target_model = f"{field.model._meta.app_label}.{target_model}"
                 target_model = apps.get_model(target_model)
             
-            target_table = target_model._meta.db_table
+            target_table = clean_table_name(target_model._meta.db_table)
             target_col = field.target_field.column
 
             on_delete = ON_DELETE_MAP.get(field.remote_field.on_delete, 'CASCADE')
@@ -265,7 +272,7 @@ def build_full_sql(app_label='App', include_django_auth=False, db_name="monagua_
 
     for app_config in target_apps:
         for model in app_config.get_models():
-            table_name = model._meta.db_table
+            table_name = clean_table_name(model._meta.db_table)
             # Ignorar si es una tabla interna predeterminada de django
             if table_name.startswith(('django_', 'auth_')) and not include_django_auth:
                 continue
@@ -274,7 +281,7 @@ def build_full_sql(app_label='App', include_django_auth=False, db_name="monagua_
                 models_list.append(model)
 
     # Ordenar alfabéticamente por nombre de tabla
-    models_list.sort(key=lambda m: m._meta.db_table)
+    models_list.sort(key=lambda m: clean_table_name(m._meta.db_table))
 
     lines = [
         "-- ============================================================================",
@@ -297,7 +304,7 @@ def build_full_sql(app_label='App', include_django_auth=False, db_name="monagua_
     exported_tables = set()
 
     for model in models_list:
-        table_name = model._meta.db_table
+        table_name = clean_table_name(model._meta.db_table)
         if table_name not in exported_tables:
             lines.append(generate_sql_for_model(model))
             exported_tables.add(table_name)
@@ -309,7 +316,7 @@ def build_full_sql(app_label='App', include_django_auth=False, db_name="monagua_
                 continue
             if field.remote_field.through and field.remote_field.through._meta.auto_created:
                 through_model = field.remote_field.through
-                through_table = through_model._meta.db_table
+                through_table = clean_table_name(through_model._meta.db_table)
                 if through_table not in exported_tables:
                     lines.append(generate_sql_for_model(through_model))
                     exported_tables.add(through_table)
