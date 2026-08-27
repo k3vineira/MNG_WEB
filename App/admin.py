@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Usuario, Temporada, Categoria, Actividades, Paquete, Tarifa, PaqueteActividad, Blog, PQRS, Seguimiento, Reserva, Auditoria, Calificacion, PlanGuia, Pago, Promocion, Poliza, SeguroViaje
+from .models import Usuario, Temporada, Categoria, Actividades, Paquete, Tarifa, PaqueteActividad, Blog, PQRS, Seguimiento, Reserva, Auditoria, Calificacion, PlanGuia, Pago, Promocion, PolizaViaje, Aseguradora
 
 # Registros simples de modelos de la aplicación en el panel de administración
 admin.site.register(Usuario)
@@ -18,5 +18,5 @@ admin.site.register(Calificacion)
 admin.site.register(PlanGuia)
 admin.site.register(Pago)
 admin.site.register(Promocion)
-admin.site.register(Poliza)
-admin.site.register(SeguroViaje)
+admin.site.register(PolizaViaje)
+admin.site.register(Aseguradora)
