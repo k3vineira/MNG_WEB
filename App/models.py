@@ -17,10 +17,10 @@ class Usuario(AbstractUser):
     Modelo de usuario personalizado que extiende AbstractUser con campos adicionales
     como rol, tipo de documento, teléfono e imagen de perfil.
     """
-    class Roles(models.TextChoices):
-        ADMIN = 'ADMIN', 'Administrador'
-        CLIENTE = 'CLIENTE', 'Cliente'
-        GUIA = 'GUIA', 'Guía Turístico'
+    class Roles(models.IntegerChoices):
+        ADMIN = 1, 'Administrador'
+        CLIENTE = 2, 'Cliente'
+        GUIA = 3, 'Guía Turístico'
 
     class TipoDocumento(models.TextChoices):
         CC = 'CC', 'Cédula de Ciudadanía'
@@ -35,8 +35,7 @@ class Usuario(AbstractUser):
         verbose_name='Correo Electrónico'
     )
 
-    rol = models.CharField(
-        max_length=20,
+    rol = models.PositiveSmallIntegerField(
         choices=Roles.choices,
         default=Roles.CLIENTE,
         verbose_name='Rol'
@@ -88,10 +87,12 @@ class Usuario(AbstractUser):
     numero_tarjeta_profesional = models.CharField(
         max_length=50,
         blank=True,
+        null=True,
         verbose_name='Licencia de Turismo'
     )
     experiencia_anos = models.PositiveIntegerField(
-        default=0,
+        null=True,
+        blank=True,
         verbose_name='Años de Experiencia'
     )
     experiencia_fecha = models.DateField(
@@ -101,6 +102,7 @@ class Usuario(AbstractUser):
     )
     descripcion_experiencia = models.TextField(
         blank=True,
+        null=True,
         verbose_name='Descripción de la Experiencia'
     )
     entidad_salud = models.CharField(
@@ -479,19 +481,15 @@ class Auditoria(models.Model):
     id = models.AutoField(primary_key=True)
     acciones_realizada = models.CharField(max_length=255)
     tabla_afectada = models.CharField(max_length=100)
-    fecha = models.DateField(auto_now_add=True)
-    hora = models.TimeField(auto_now_add=True)
+    fecha_accion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha y Hora de Acción')
     observacion = models.TextField(blank=True, null=True)
     valor_anterior = models.TextField(blank=True, null=True)
     nuevo_valor = models.TextField(blank=True, null=True)
-    codigo_usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='auditorias',
-    )
+    registro_afectado_id = models.IntegerField(blank=True, null=True, verbose_name='ID del Registro Afectado', help_text='ID del registro que fue modificado, creado o eliminado')
+    codigo_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='auditorias')
 
     class Meta:
-        ordering = ['-fecha', '-hora']
+        ordering = ['-fecha_accion']
         verbose_name = 'Notificación'
         verbose_name_plural = 'Notificaciones'
 
@@ -650,9 +648,9 @@ class Reserva(models.Model):
 
         super().save(*args, **kwargs)
         
-# ==============================================================================
-# CALIFICACION
-# ==============================================================================
+
+
+
 class Calificacion(models.Model):
     """
     Calificación y reseña de una experiencia o reserva de un paquete turístico
@@ -856,10 +854,6 @@ class PolizaViaje(models.Model):
     def __str__(self):
         return f'{self.nombre_poliza} (${self.precio_diario}/día)'
 
-# ==============================================================================
-# ASEGURADORAS
-# ==============================================================================
-
 class Aseguradora(models.Model):
     """
     Representa la adquisición de un seguro para una reserva. (Anteriormente SeguroViaje)
@@ -890,5 +884,11 @@ class Aseguradora(models.Model):
         return f"Seguro {self.numero_poliza} para Reserva {(self.reserva.id if self.reserva else 'N/A')}"
 
 
-
+# ==============================================================================
+# USUARIOS
+# ==============================================================================
+"""
+Modelos de datos para la gestión de usuarios: Usuario personalizado.
+(Los perfiles de Cliente y Guía Turístico fueron consolidados directamente en el modelo de Usuario).
+"""
 
