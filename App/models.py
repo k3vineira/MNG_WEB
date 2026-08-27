@@ -650,7 +650,9 @@ class Reserva(models.Model):
 
         super().save(*args, **kwargs)
         
-
+# ==============================================================================
+# CALIFICACION
+# ==============================================================================
 class Calificacion(models.Model):
     """
     Calificación y reseña de una experiencia o reserva de un paquete turístico
@@ -854,6 +856,10 @@ class PolizaViaje(models.Model):
     def __str__(self):
         return f'{self.nombre_poliza} (${self.precio_diario}/día)'
 
+# ==============================================================================
+# ASEGURADORAS
+# ==============================================================================
+
 class Aseguradora(models.Model):
     """
     Representa la adquisición de un seguro para una reserva. (Anteriormente SeguroViaje)
@@ -884,11 +890,5 @@ class Aseguradora(models.Model):
         return f"Seguro {self.numero_poliza} para Reserva {(self.reserva.id if self.reserva else 'N/A')}"
 
 
-# ==============================================================================
-# USUARIOS
-# ==============================================================================
-"""
-Modelos de datos para la gestión de usuarios: Usuario personalizado.
-(Los perfiles de Cliente y Guía Turístico fueron consolidados directamente en el modelo de Usuario).
-"""
+
 
