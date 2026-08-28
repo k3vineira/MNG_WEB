@@ -2,7 +2,7 @@
 -- SCRIPT SQL GENERADO PARA MYSQL WORKBENCH
 -- Proyecto: MNG_WEB
 -- Base de Datos: monagua_turismo_db
--- Total Tablas de la Aplicación: 19
+-- Total Tablas de la Aplicación: 18
 -- (Excluidas todas las tablas internas/predeterminadas de Django)
 -- ============================================================================
 
@@ -52,25 +52,6 @@ CREATE TABLE IF NOT EXISTS `aseguradora` (
     CONSTRAINT `fk_aseguradora_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_aseguradora_poliza_viaje_id` FOREIGN KEY (`poliza_viaje_id`) REFERENCES `polizaviaje` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Representa la adquisición de un seguro para una reserva. (Anteriormente SeguroViaje)';
-
--- -----------------------------------------------------
--- Tabla `auditoria` (Auditoria)
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `auditoria`;
-CREATE TABLE IF NOT EXISTS `auditoria` (
-    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
-    `acciones_realizada` VARCHAR(255) NOT NULL COMMENT 'acciones realizada',
-    `tabla_afectada` VARCHAR(100) NOT NULL COMMENT 'tabla afectada',
-    `fecha_accion` DATETIME NOT NULL COMMENT 'Fecha y Hora de Acción',
-    `observacion` LONGTEXT NULL COMMENT 'observacion',
-    `valor_anterior` LONGTEXT NULL COMMENT 'valor anterior',
-    `nuevo_valor` LONGTEXT NULL COMMENT 'nuevo valor',
-    `registro_afectado_id` INT NULL COMMENT 'ID del Registro Afectado - ID del registro que fue modificado, creado o eliminado',
-    `codigo_usuario_id` BIGINT NOT NULL COMMENT 'codigo usuario',
-    PRIMARY KEY (`id`),
-    KEY `idx_auditoria_codigo_usuario_id` (`codigo_usuario_id`),
-    CONSTRAINT `fk_auditoria_codigo_usuario_id` FOREIGN KEY (`codigo_usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de auditoría del sistema sobre acciones realizadas por los usuarios.';
 
 -- -----------------------------------------------------
 -- Tabla `blog` (Blog)

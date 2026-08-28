@@ -643,30 +643,7 @@ class Blog(models.Model):
         """Retorna el título y el autor del blog."""
         return f"{self.titulo} - Por: {self.usuario.get_full_name() or self.usuario.username}"
 
-# ==============================================================================
-# AUDITORIA
-# ==============================================================================
-class Auditoria(models.Model):
-    """
-    Registro de auditoría del sistema sobre acciones realizadas por los usuarios.
-    """
-    id = models.AutoField(primary_key=True)
-    acciones_realizada = models.CharField(max_length=255)
-    tabla_afectada = models.CharField(max_length=100)
-    fecha_accion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha y Hora de Acción')
-    observacion = models.TextField(blank=True, null=True)
-    valor_anterior = models.TextField(blank=True, null=True)
-    nuevo_valor = models.TextField(blank=True, null=True)
-    registro_afectado_id = models.IntegerField(blank=True, null=True, verbose_name='ID del Registro Afectado', help_text='ID del registro que fue modificado, creado o eliminado')
-    codigo_usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='auditorias')
 
-    class Meta:
-        ordering = ['-fecha_accion']
-        verbose_name = 'Notificación'
-        verbose_name_plural = 'Notificaciones'
-
-    def __str__(self):
-        return f'{self.acciones_realizada} - {self.codigo_usuario.username}'
 
 # ==============================================================================
 # PQRS
