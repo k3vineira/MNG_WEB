@@ -89,7 +89,6 @@
                 <thead class="table-light text-muted">
                     <tr>
                         <th scope="col" class="fw-bold">Actividad</th>
-                        <th scope="col" class="fw-bold text-center">Dificultad</th>
                         <th scope="col" class="fw-bold text-center">Apto Menores</th>
                         <th scope="col" class="fw-bold text-center">Estado</th>
                         <th scope="col" class="fw-bold text-center">Acciones</th>
@@ -104,15 +103,7 @@
                                 <p class="text-muted small mb-0 text-truncate u-style-6bdce2a0" title="{{ actividad.descripcion }}">{{ actividad.descripcion }}</p>
                             </div>
                         </td>
-                        <td class="text-center">
-                            {% if actividad.nivel_dificultad|lower == 'alta' %}
-                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-2 rounded-pill fw-semibold">Alta</span>
-                            {% elif actividad.nivel_dificultad|lower == 'media' %}
-                                <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 px-3 py-2 rounded-pill fw-semibold">Media</span>
-                            {% else %}
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill fw-semibold">Baja</span>
-                            {% endif %}
-                        </td>
+
                         <td class="text-center">
                             {% if actividad.apto_menores %}
                                 <span class="badge bg-success bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-emoji-smile me-1"></i> Sí</span>
@@ -168,17 +159,7 @@
                         </div>
                         
                         <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <small class="text-muted d-block">Dificultad</small>
-                                {% if actividad.nivel_dificultad|lower == 'alta' %}
-                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 w-100 py-2 rounded-pill fw-semibold">Alta</span>
-                                {% elif actividad.nivel_dificultad|lower == 'media' %}
-                                    <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 w-100 py-2 rounded-pill fw-semibold">Media</span>
-                                {% else %}
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 w-100 py-2 rounded-pill fw-semibold">Baja</span>
-                                {% endif %}
-                            </div>
-                            <div class="col-6">
+                            <div class="col-12">
                                 <small class="text-muted d-block">Apto Menores</small>
                                 {% if actividad.apto_menores %}
                                     <span class="badge bg-success bg-opacity-75 w-100 py-2 rounded-pill"><i class="bi bi-emoji-smile me-1"></i> Sí</span>

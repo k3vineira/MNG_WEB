@@ -25,26 +25,14 @@
 
                        
                         <div class="row g-3 mb-3">
-                            <div class="col-md-6">
+
+
+                            <div class="col-md-12">
                                 <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold text-dark">
                                     {{ form.nombre.label }}{% if form.nombre.field.required %}<span class="text-danger">*</span>{% endif %}
                                 </label>
                                 <input type="text" name="{{ form.nombre.name }}" id="{{ form.nombre.id_for_label }}" class="form-control {% if form.nombre.errors %}is-invalid{% endif %}" value="{{ form.nombre.value|default:'' }}">
                                 {% for error in form.nombre.errors %}
-                                    <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.nivel_dificultad.id_for_label }}" class="form-label fw-semibold text-dark">
-                                    {{ form.nivel_dificultad.label }}{% if form.nivel_dificultad.field.required %}<span class="text-danger">*</span>{% endif %}
-                                </label>
-                                <select name="{{ form.nivel_dificultad.name }}" id="{{ form.nivel_dificultad.id_for_label }}" class="form-select {% if form.nivel_dificultad.errors %}is-invalid{% endif %}">
-                                    {% for widget in form.nivel_dificultad %}
-                                        {{ widget }}
-                                    {% endfor %}
-                                </select>
-                                {% for error in form.nivel_dificultad.errors %}
                                     <div class="invalid-feedback">{{ error }}</div>
                                 {% endfor %}
                             </div>

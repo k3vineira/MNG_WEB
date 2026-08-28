@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import re
@@ -12,6 +12,15 @@ import ssl
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+
+class PositiveTinyIntegerField(models.PositiveSmallIntegerField):
+    def get_internal_type(self):
+        return 'PositiveTinyIntegerField'
+
+    def db_type(self, connection):
+        if connection.settings_dict['ENGINE'] == 'django.db.backends.mysql':
+            return 'tinyint unsigned'
+        return 'integer'
 
 logger = logging.getLogger(__name__)
 
@@ -440,16 +449,10 @@ class Actividades(models.Model):
     Actividad turística que puede ser incluida en uno o varios paquetes.
     """
     id = models.AutoField(primary_key=True)
-    NIVEL_CHOICES = [
-        ('Alta', 'Alta'),
-        ('Media', 'Media'),
-        ('Baja', 'Baja'),
-    ]
     nombre = models.CharField(max_length=100, verbose_name='Nombre de la Actividad')
-    descripcion = models.TextField(verbose_name='Descripción')
-    nivel_dificultad = models.CharField(max_length=10, choices=NIVEL_CHOICES, verbose_name='Nivel de Dificultad')
-    equipo_requerimiento = models.TextField(verbose_name='Equipo Requerido')
-    recomendaciones = models.TextField(verbose_name='Recomendaciones')
+    descripcion = models.TextField(verbose_name='Descripción', null=True, blank=True)
+    equipo_requerimiento = models.TextField(verbose_name='Equipo Requerido', null=True, blank=True)
+    recomendaciones = models.TextField(verbose_name='Recomendaciones', null=True, blank=True)
     estado = models.BooleanField(default=True, blank=True, verbose_name='¿Está Activa?')
     apto_menores = models.BooleanField(default=True, verbose_name='¿Apto para menores?')
 
@@ -481,19 +484,12 @@ class Paquete(models.Model):
     descripcion = models.TextField(verbose_name='Descripción')
     dias_duracion = models.PositiveIntegerField(verbose_name='Días de Duración', default=1,validators=[MinValueValidator(1, message="Los días de duración deben ser al menos 1.")])
     noches_duracion = models.PositiveIntegerField(verbose_name='Noches de Duración', default=1,validators=[MinValueValidator(1, message="Las noches de duración deben ser al menos 1.")])
-    punto_encuentro = models.CharField(max_length=200, validators=[validar_punto_encuentro])
+    punto_encuentro = models.CharField(max_length=150, validators=[validar_punto_encuentro], verbose_name='Punto de Encuentro')
     hora_encuentro = models.TimeField()
     categoria = models.ForeignKey(Categoria, models.CASCADE, related_name='paquetes')
     actividades = models.ManyToManyField('Actividades', through='PaqueteActividad')
     estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
-    promocion = models.ForeignKey(
-        'Promocion', 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True, 
-        related_name='paquetes',
-        verbose_name='Promoción'
-    )
+    promociones = models.ManyToManyField('Promocion', through='PaquetePromocion', blank=True, verbose_name='Promociones')
 
     def __str__(self):
         return self.nombre
@@ -505,7 +501,7 @@ class Paquete(models.Model):
 
         validas = [
             t for t in all_tarifas
-            if getattr(t, 'estado', '') == 'activa'
+            if getattr(t, 'estado', False)
             and getattr(t, 'temporada', None)
             and t.temporada.estado
             and t.temporada.fecha_inicio <= fecha_hoy <= t.temporada.fecha_fin
@@ -517,7 +513,7 @@ class Paquete(models.Model):
         estandar = next(
             (
                 t for t in all_tarifas
-                if getattr(t, 'estado', '') == 'activa'
+                if getattr(t, 'estado', False)
                 and t.temporada
                 and "estándar" in (t.temporada.nombre.lower() if t.temporada.nombre else "")
             ),
@@ -547,13 +543,9 @@ class Tarifa(models.Model):
     id = models.AutoField(primary_key=True)
     paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='tarifas')
     temporada = models.ForeignKey(Temporada, on_delete=models.CASCADE, related_name='tarifas')
-    precio_adulto = models.IntegerField(verbose_name='Precio por Adulto')
-    precio_menor = models.IntegerField(verbose_name='Precio por Menor')
-    ESTADOS = [
-        ('activa', 'Activa'),
-        ('inactiva', 'Inactiva'),
-    ]
-    estado = models.CharField(max_length=10, choices=ESTADOS, default='activa')
+    precio_adulto = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Precio por Adulto')
+    precio_menor = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Precio por Menor')
+    estado = models.BooleanField(default=True, verbose_name='¿Está Activa?')
 
     class Meta:
         verbose_name = 'Tarifa'
@@ -590,9 +582,32 @@ class PaqueteActividad(models.Model):
         db_table = 'paquete_actividades'
         verbose_name = 'Actividad del Paquete'
         verbose_name_plural = 'Actividades del Paquete'
+        unique_together = ('paquete', 'actividad')
 
     def __str__(self):
         return f"{self.paquete.nombre} - {self.actividad.nombre}"
+
+# ==============================================================================
+# PAQUETE PROMOCION
+# ==============================================================================
+class PaquetePromocion(models.Model):
+    """
+    Relación intermedia entre Paquete y Promocion (tabla many-to-many explícita).
+    """
+    id = models.AutoField(primary_key=True)
+    paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE)
+    promocion = models.ForeignKey('Promocion', on_delete=models.CASCADE)
+    valor_adulto_condescuento = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name='Valor Adulto con Descuento')
+    valor_menor_condescuento = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name='Valor Menor con Descuento')
+
+    class Meta:
+        db_table = 'paquete_promocion'
+        verbose_name = 'Promoción del Paquete'
+        verbose_name_plural = 'Promociones del Paquete'
+        unique_together = ('paquete', 'promocion')
+
+    def __str__(self):
+        return f"{self.paquete.nombre} - {self.promocion}"
 
 # ==============================================================================
 # BLOG
@@ -608,7 +623,7 @@ class Blog(models.Model):
     )
     titulo = models.CharField(max_length=200)
     contenido = models.TextField()
-    informacion_adicional = models.TextField(blank=True)
+    informacion_adicional = models.TextField(blank=True, null=True, verbose_name='Información Adicional')
     imagen_destacada = models.ImageField(upload_to="blog/", blank=True, null=True)
     fecha_publicacion = models.DateTimeField(auto_now_add=True)
     estado = models.BooleanField(
@@ -674,15 +689,13 @@ class PQRS(models.Model):
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='pqrs',
-        null=True,
-        blank=True
+        related_name='pqrs'
     )
     tipo = models.CharField(max_length=15, choices=TIPO_CHOICES)
-    asunto = models.CharField(max_length=200)
+    asunto = models.CharField(max_length=150)
     descripcion = models.TextField()
     estado = models.CharField(
-        max_length=15, choices=ESTADO_CHOICES, default='abierto'
+        max_length=20, choices=ESTADO_CHOICES, default='abierto'
     )
     fecha = models.DateTimeField(auto_now_add=True)
 
@@ -705,8 +718,6 @@ class Seguimiento(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='seguimientos',
-        null=True,
-        blank=True,
         verbose_name='Usuario / Administrador'
     )
     respuesta = models.TextField(verbose_name='Mensaje / Respuesta')
@@ -750,7 +761,7 @@ class Reserva(models.Model):
     fecha_inicio = models.DateField(null=True, blank=True, verbose_name='Fecha de inicio')
     numero_adultos = models.PositiveSmallIntegerField(verbose_name='Número de Adultos', default=1)
     numero_menores = models.PositiveSmallIntegerField(verbose_name='Número de Menores', default=0)
-    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente', verbose_name='Estado')
+    estado_reserva = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente', verbose_name='Estado')
     motivo_cancelacion = models.TextField(null=True, blank=True, verbose_name='Motivo de Cancelación')
     monto_total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Monto Total', editable=False)
     fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Registro')
@@ -815,7 +826,7 @@ class Calificacion(models.Model):
     reserva = models.ForeignKey('Reserva', on_delete=models.SET_NULL, related_name='calificaciones', verbose_name='Reserva Calificada', null=True, blank=True)
     tipo = models.CharField(max_length=20, default='experiencia', verbose_name='Tipo', help_text='Tipo de reseña: experiencia, pregunta, etc.')
     titulo = models.CharField(max_length=255, verbose_name='Título')
-    puntaje_estrellas = models.PositiveSmallIntegerField(default=5, verbose_name='Puntaje / Estrellas')
+    puntaje_estrellas = PositiveTinyIntegerField(default=5, validators=[MinValueValidator(1, message="La calificación mínima es 1 estrella."), MaxValueValidator(5, message="La calificación máxima es 5 estrellas.")], verbose_name='Puntaje / Estrellas')
     comentario = models.TextField(verbose_name='Comentario / Reseña')
     visible = models.BooleanField(default=True, verbose_name='¿Visible?')
     admin_respuesta = models.TextField(blank=True, null=True, verbose_name='Respuesta del Admin')
@@ -867,14 +878,13 @@ class PlanGuia(models.Model):
     Permite asignar un guía turístico a un paquete específico con fechas e idioma de servicio.
     """
     id = models.AutoField(primary_key=True)
-    ESTADO_CHOICES = [('activo', 'Activo'), ('inactivo', 'Inactivo'), ('completado', 'Completado')]
     idioma_servicio = models.CharField(max_length=50, verbose_name='Idioma del Servicio')
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creación')
     fecha_inicio_plan = models.DateField(verbose_name='Fecha de Inicio')
     fecha_fin_plan = models.DateField(verbose_name='Fecha de Fin')
-    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='activo', verbose_name='Estado')
+    estado = models.BooleanField(default=True, verbose_name='¿Está Activo?')
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='planes_guia', verbose_name='Usuario / Guía')
-    paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='planes_guia', db_column='codigo_paquete', verbose_name='Paquete')
+    paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='planes_guia', verbose_name='Paquete')
 
     class Meta:
         db_table = 'plan_guia'
@@ -897,9 +907,10 @@ class Pago(models.Model):
     """
     id = models.AutoField(primary_key=True)
     ESTADO_CHOICES = [('pendiente', 'Pendiente de revisión'), ('aprobado', 'Aprobado'), ('rechazado', 'Rechazado')]
-    reserva = models.OneToOneField('Reserva', on_delete=models.SET_NULL, null=True, blank=True, related_name='pago', verbose_name='Reserva')
+    reserva = models.OneToOneField('Reserva', on_delete=models.CASCADE, related_name='pago', verbose_name='Reserva')
     referencia = models.CharField(max_length=100, verbose_name='Número de referencia / transacción', help_text='Número de comprobante, transacción o referencia bancaria')
     banco_origen = models.CharField(max_length=100, verbose_name='Banco / medio de pago')
+    metodo_pago = models.CharField(max_length=50, verbose_name='Método de Pago')
     monto = models.DecimalField(max_digits=12, decimal_places=2, default=0.0, verbose_name='Monto pagado')
     imagen_comprobante = models.ImageField(upload_to='comprobantes/%Y/%m/', verbose_name='Imagen del comprobante')
     descripcion = models.TextField(blank=True, verbose_name='Descripción / nota adicional')
@@ -941,9 +952,9 @@ class Pago(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         if self.estado_transaccion == 'aprobado' and self.reserva:
-            self.reserva.estado = 'confirmada'
+            self.reserva.estado_reserva = 'confirmada'
             self.reserva.save()
-        elif self.estado_transaccion == 'rechazado' and self.reserva and (self.reserva.estado == 'pendiente'):
+        elif self.estado_transaccion == 'rechazado' and self.reserva and (self.reserva.estado_reserva == 'pendiente'):
             pass
         super().save(*args, **kwargs)
 
@@ -968,12 +979,12 @@ class Promocion(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=150, verbose_name='Nombre de la promoción')
     descripcion = models.TextField(verbose_name='Descripción')
-    descuento = models.PositiveIntegerField(verbose_name='Porcentaje de descuento')
+    porcentaje_descuento = models.PositiveIntegerField(verbose_name='Porcentaje de descuento')
     fecha_fin = models.DateField(verbose_name='Fecha de fin')
     fecha_inicio = models.DateField(verbose_name='Fecha de inicio')
     codigo_promocion = models.CharField(max_length=20, unique=True, verbose_name='Código de promoción')
     condiciones = models.TextField(blank=True, null=True, verbose_name='Condiciones')
-    codigo_cupon = models.CharField(max_length=30, blank=True, null=True, verbose_name='Código de cupón')
+    codigo_cupon = models.CharField(max_length=30, unique=True, blank=True, null=True, verbose_name='Código de cupón')
     activa = models.BooleanField(default=True, verbose_name='¿Activa?')
 
     class Meta:
@@ -982,7 +993,7 @@ class Promocion(models.Model):
 
     def __str__(self):
         """Retorna el nombre y porcentaje de descuento de la promoción."""
-        return f'{self.nombre} ({self.descuento}%)'
+        return f'{self.nombre} ({self.porcentaje_descuento}%)'
 
 
 
