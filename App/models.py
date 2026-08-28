@@ -4,9 +4,133 @@ from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 import re
+import os
+import json
+import urllib.request
+import logging
+import ssl
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+
+logger = logging.getLogger(__name__)
+
+# ==============================================================================
+# RESOLVEDOR DE UBICACIONES
+# ==============================================================================
+class LocationResolver:
+    _cache_file = None
+    _countries = {}
+    _departments = {}
+    _cities = {}
+    _loaded = False
+
+    @classmethod
+    def _get_cache_path(cls):
+        if cls._cache_file is None:
+            cls._cache_file = os.path.join(settings.BASE_DIR, 'location_cache.json')
+        return cls._cache_file
+
+    @classmethod
+    def load_data(cls):
+        if cls._loaded:
+            return
+
+        cache_path = cls._get_cache_path()
+        if os.path.exists(cache_path):
+            try:
+                with open(cache_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    cls._countries = data.get('countries', {})
+                    cls._departments = data.get('departments', {})
+                    cls._cities = data.get('cities', {})
+                    cls._loaded = True
+                    return
+            except Exception:
+                pass
+
+        cls._fetch_and_cache()
+
+    @classmethod
+    def _fetch_and_cache(cls):
+        # 1. Fetch countries
+        try:
+            context = ssl._create_unverified_context()
+            req = urllib.request.Request(
+                'https://countriesnow.space/api/v0.1/countries',
+                headers={'User-Agent': 'Mozilla/5.0'}
+            )
+            with urllib.request.urlopen(req, timeout=5, context=context) as response:
+                res_data = json.loads(response.read().decode('utf-8'))
+                cls._countries = {}
+                for item in res_data.get('data', []):
+                    iso3 = item.get('iso3')
+                    country = item.get('country')
+                    if iso3 and country:
+                        cls._countries[str(iso3).upper()] = country
+        except Exception as e:
+            logger.error("Error loading countries: %s", e)
+            cls._countries = {'COL': 'Colombia'}
+
+        # 2. Fetch Colombia departments and municipalities
+        try:
+            context = ssl._create_unverified_context()
+            req = urllib.request.Request(
+                'https://www.datos.gov.co/resource/gdxc-w37w.json?$limit=1500',
+                headers={'User-Agent': 'Mozilla/5.0'}
+            )
+            with urllib.request.urlopen(req, timeout=5, context=context) as response:
+                res_data = json.loads(response.read().decode('utf-8'))
+                cls._departments = {}
+                cls._cities = {}
+                for item in res_data:
+                    dept_code = item.get('cod_dpto')
+                    dept_name = item.get('dpto')
+                    muni_code = item.get('cod_mpio')
+                    muni_name = item.get('nom_mpio')
+                    if dept_code and dept_name:
+                        cls._departments[str(dept_code)] = dept_name.title().strip()
+                    if muni_code and muni_name:
+                        cls._cities[str(muni_code)] = muni_name.title().strip()
+        except Exception as e:
+            logger.error("Error loading Colombia DANE data: %s", e)
+            cls._departments = {}
+            cls._cities = {}
+
+        # Save to cache file
+        cache_path = cls._get_cache_path()
+        try:
+            with open(cache_path, 'w', encoding='utf-8') as f:
+                json.dump({
+                    'countries': cls._countries,
+                    'departments': cls._departments,
+                    'cities': cls._cities
+                }, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            logger.error("Error writing location cache file: %s", e)
+
+        cls._loaded = True
+
+    @classmethod
+    def resolve_country(cls, iso3):
+        if not iso3:
+            return ""
+        cls.load_data()
+        return cls._countries.get(str(iso3).upper(), str(iso3))
+
+    @classmethod
+    def resolve_department(cls, code):
+        if code is None or code == "":
+            return ""
+        cls.load_data()
+        return cls._departments.get(str(code), str(code))
+
+    @classmethod
+    def resolve_city(cls, code):
+        if code is None or code == "":
+            return ""
+        cls.load_data()
+        return cls._cities.get(str(code), str(code))
 
 # ==============================================================================
 # USUARIO
@@ -26,6 +150,12 @@ class Usuario(AbstractUser):
         CC = 'CC', 'Cédula de Ciudadanía'
         CE = 'CE', 'Cédula de Extranjería'
         PASAPORTE = 'PASAPORTE', 'Pasaporte'
+
+    username = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name='Nombre de Usuario'
+    )
 
     email = models.EmailField(
         unique=True,
@@ -68,17 +198,17 @@ class Usuario(AbstractUser):
 
     # --- CAMPOS DE CLIENTE (FUSIONADOS) ---
     pais = models.CharField(
-        max_length=100,
+        max_length=3,
         blank=True,
         verbose_name='País'
     )
-    departamento = models.CharField(
-        max_length=100,
+    departamento = models.IntegerField(
+        null=True,
         blank=True,
         verbose_name='Departamento'
     )
-    ciudad = models.CharField(
-        max_length=100,
+    ciudad = models.IntegerField(
+        null=True,
         blank=True,
         verbose_name='Ciudad'
     )
@@ -194,6 +324,21 @@ class Usuario(AbstractUser):
     def ultimo_login(self):
         """Alias en español LATAM para last_login."""
         return self.last_login
+
+    @property
+    def pais_nombre(self):
+        """Retorna el nombre completo del país."""
+        return LocationResolver.resolve_country(self.pais)
+
+    @property
+    def departamento_nombre(self):
+        """Retorna el nombre completo del departamento."""
+        return LocationResolver.resolve_department(self.departamento)
+
+    @property
+    def ciudad_nombre(self):
+        """Retorna el nombre completo de la ciudad/municipio."""
+        return LocationResolver.resolve_city(self.ciudad)
 
     @property
     def nombre_completo(self):
@@ -590,13 +735,12 @@ class Reserva(models.Model):
         null=True,
         blank=True,
     )
-    fecha = models.DateField(verbose_name='Fecha de Reserva')
     fecha_inicio = models.DateField(null=True, blank=True, verbose_name='Fecha de inicio')
-    numero_adultos = models.PositiveIntegerField(verbose_name='Número de Adultos', default=1)
-    numero_menores = models.PositiveIntegerField(verbose_name='Número de Menores', default=0)
+    numero_adultos = models.PositiveSmallIntegerField(verbose_name='Número de Adultos', default=1)
+    numero_menores = models.PositiveSmallIntegerField(verbose_name='Número de Menores', default=0)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente', verbose_name='Estado')
     motivo_cancelacion = models.TextField(null=True, blank=True, verbose_name='Motivo de Cancelación')
-    monto_total = models.IntegerField(verbose_name='Monto Total', editable=False)
+    monto_total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Monto Total', editable=False)
     fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Registro')
 
     class Meta:
@@ -604,18 +748,18 @@ class Reserva(models.Model):
         verbose_name_plural = 'Reservas'
         constraints = [
             models.UniqueConstraint(
-                fields=['usuario', 'paquete', 'fecha'],
-                name='unique_usuario_paquete_fecha'
+                fields=['usuario', 'paquete', 'fecha_inicio'],
+                name='unique_usuario_paquete_fecha_inicio'
             )
         ]
 
     def save(self, *args, **kwargs):
-        if self.paquete and self.fecha:
+        if self.paquete and self.fecha_inicio:
             try:
                 # Búsqueda directa sin imports
                 temporada = Temporada.objects.filter(
-                    fecha_inicio__lte=self.fecha, 
-                    fecha_fin__gte=self.fecha
+                    fecha_inicio__lte=self.fecha_inicio, 
+                    fecha_fin__gte=self.fecha_inicio
                 ).first()
 
                 if temporada:
@@ -628,23 +772,22 @@ class Reserva(models.Model):
                         num_adultos = self.numero_adultos or 0
                         num_menores = self.numero_menores or 0
                         base_monto = (tarifa.precio_adulto * num_adultos) + (tarifa.precio_menor * num_menores)
-
                         descuento = 0
 
                         if descuento > 0:
-                            self.monto_total = int(base_monto * (100 - descuento) / 100)
+                            self.monto_total = base_monto * (100 - descuento) / 100
                         else:
-                            self.monto_total = int(base_monto)
+                            self.monto_total = base_monto
                     else:
-                        self.monto_total = 0
+                        self.monto_total = 0.00
                 else:
-                    self.monto_total = 0
+                    self.monto_total = 0.00
 
             except Exception:
-                self.monto_total = 0
+                self.monto_total = 0.00
 
         elif not getattr(self, 'monto_total', None):
-            self.monto_total = 0
+            self.monto_total = 0.00
 
         super().save(*args, **kwargs)
         
