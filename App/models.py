@@ -13,6 +13,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
+
 class PositiveTinyIntegerField(models.PositiveSmallIntegerField):
     def get_internal_type(self):
         return 'PositiveTinyIntegerField'
@@ -643,72 +644,6 @@ class Blog(models.Model):
         """Retorna el título y el autor del blog."""
         return f"{self.titulo} - Por: {self.usuario.get_full_name() or self.usuario.username}"
 
-
-
-# ==============================================================================
-# PQRS
-# ==============================================================================
-
-class PQRS(models.Model):
-    """Solicitud de Petición, Queja, Reclamo o Sugerencia enviada por un usuario."""
-    id = models.AutoField(primary_key=True)
-    TIPO_CHOICES = [
-        ('peticion', 'Petición'),
-        ('queja', 'Queja'),
-        ('reclamo', 'Reclamo'),
-        ('sugerencia', 'Sugerencia'),
-    ]
-    ESTADO_CHOICES = [
-        ('abierto', 'Abierto'),
-        ('en_proceso', 'En Proceso'),
-        ('cerrado', 'Cerrado'),
-    ]
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='pqrs'
-    )
-    tipo = models.CharField(max_length=15, choices=TIPO_CHOICES)
-    asunto = models.CharField(max_length=150)
-    descripcion = models.TextField()
-    estado = models.CharField(
-        max_length=20, choices=ESTADO_CHOICES, default='abierto'
-    )
-    fecha = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural = 'PQRS'
-
-    def __str__(self):
-        return f'{self.get_tipo_display()} - {self.asunto}'
-
-# ==============================================================================
-# SEGUIMIENTO
-# ==============================================================================
-
-class Seguimiento(models.Model):
-    """Registro de seguimiento y respuestas a una solicitud PQRS por parte de un usuario o administrador."""
-    
-    id = models.AutoField(primary_key=True)
-    pqrs = models.ForeignKey(PQRS, on_delete=models.CASCADE, related_name='seguimientos')
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='seguimientos',
-        verbose_name='Usuario / Administrador'
-    )
-    respuesta = models.TextField(verbose_name='Mensaje / Respuesta')
-    fecha_respuesta = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Respuesta')
-
-    class Meta:
-        db_table = 'seguimiento'
-        ordering = ['fecha_respuesta']
-        verbose_name = 'Seguimiento'
-        verbose_name_plural = 'Seguimientos'
-
-    def __str__(self):
-        return f'Seguimiento de {self.pqrs} - {self.fecha_respuesta.strftime("%Y-%m-%d %H:%M:%S")}'
-
 # ==============================================================================
 # RESERVA
 # ==============================================================================
@@ -791,6 +726,74 @@ class Reserva(models.Model):
 
         super().save(*args, **kwargs)
         
+
+
+
+# ==============================================================================
+# PQRS
+# ==============================================================================
+
+class PQRS(models.Model):
+    """Solicitud de Petición, Queja, Reclamo o Sugerencia enviada por un usuario."""
+    id = models.AutoField(primary_key=True)
+    TIPO_CHOICES = [
+        ('peticion', 'Petición'),
+        ('queja', 'Queja'),
+        ('reclamo', 'Reclamo'),
+        ('sugerencia', 'Sugerencia'),
+    ]
+    ESTADO_CHOICES = [
+        ('abierto', 'Abierto'),
+        ('en_proceso', 'En Proceso'),
+        ('cerrado', 'Cerrado'),
+    ]
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='pqrs'
+    )
+    tipo = models.CharField(max_length=15, choices=TIPO_CHOICES)
+    asunto = models.CharField(max_length=150)
+    descripcion = models.TextField()
+    estado = models.CharField(
+        max_length=20, choices=ESTADO_CHOICES, default='abierto'
+    )
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = 'PQRS'
+
+    def __str__(self):
+        return f'{self.get_tipo_display()} - {self.asunto}'
+
+# ==============================================================================
+# SEGUIMIENTO
+# ==============================================================================
+
+class Seguimiento(models.Model):
+    """Registro de seguimiento y respuestas a una solicitud PQRS por parte de un usuario o administrador."""
+    
+    id = models.AutoField(primary_key=True)
+    pqrs = models.ForeignKey(PQRS, on_delete=models.CASCADE, related_name='seguimientos')
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='seguimientos',
+        verbose_name='Usuario / Administrador'
+    )
+    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='seguimientos')
+    respuesta = models.TextField(verbose_name='Mensaje / Respuesta')
+    fecha_respuesta = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Respuesta')
+
+    class Meta:
+        db_table = 'seguimiento'
+        ordering = ['fecha_respuesta']
+        verbose_name = 'Seguimiento'
+        verbose_name_plural = 'Seguimientos'
+
+    def __str__(self):
+        return f'Seguimiento de {self.pqrs} - {self.fecha_respuesta.strftime("%Y-%m-%d %H:%M:%S")}'
+
 
 
 
