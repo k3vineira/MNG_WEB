@@ -646,69 +646,6 @@ class Blog(models.Model):
 
 
 
-# ==============================================================================
-# PQRS
-# ==============================================================================
-
-class PQRS(models.Model):
-    """Solicitud de Petición, Queja, Reclamo o Sugerencia enviada por un usuario."""
-    id = models.AutoField(primary_key=True)
-    TIPO_CHOICES = [
-        ('peticion', 'Petición'),
-        ('queja', 'Queja'),
-        ('reclamo', 'Reclamo'),
-        ('sugerencia', 'Sugerencia'),
-    ]
-    ESTADO_CHOICES = [
-        ('abierto', 'Abierto'),
-        ('en_proceso', 'En Proceso'),
-        ('cerrado', 'Cerrado'),
-    ]
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='pqrs'
-    )
-    tipo = models.CharField(max_length=15, choices=TIPO_CHOICES)
-    asunto = models.CharField(max_length=150)
-    descripcion = models.TextField()
-    estado = models.CharField(
-        max_length=20, choices=ESTADO_CHOICES, default='abierto'
-    )
-    fecha = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural = 'PQRS'
-
-    def __str__(self):
-        return f'{self.get_tipo_display()} - {self.asunto}'
-
-# ==============================================================================
-# SEGUIMIENTO
-# ==============================================================================
-
-class Seguimiento(models.Model):
-    """Registro de seguimiento y respuestas a una solicitud PQRS por parte de un usuario o administrador."""
-    
-    id = models.AutoField(primary_key=True)
-    pqrs = models.ForeignKey(PQRS, on_delete=models.CASCADE, related_name='seguimientos')
-    reserva = models.ForeignKey(
-        'Reserva',
-        on_delete=models.CASCADE,
-        related_name='seguimientos',
-        verbose_name='Reserva'
-    )
-    respuesta = models.TextField(verbose_name='Mensaje / Respuesta')
-    fecha_respuesta = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Respuesta')
-
-    class Meta:
-        db_table = 'seguimiento'
-        ordering = ['fecha_respuesta']
-        verbose_name = 'Seguimiento'
-        verbose_name_plural = 'Seguimientos'
-
-    def __str__(self):
-        return f'Seguimiento de {self.pqrs} - {self.fecha_respuesta.strftime("%Y-%m-%d %H:%M:%S")}'
 
 # ==============================================================================
 # RESERVA
@@ -840,14 +777,28 @@ class Seguimiento(models.Model):
     """Registro de seguimiento y respuestas a una solicitud PQRS por parte de un usuario o administrador."""
     
     id = models.AutoField(primary_key=True)
-    pqrs = models.ForeignKey(PQRS, on_delete=models.CASCADE, related_name='seguimientos')
+    pqrs = models.ForeignKey(
+        PQRS,
+        on_delete=models.CASCADE,
+        related_name='seguimientos',
+        verbose_name='PQRS'
+    )
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='seguimientos',
-        verbose_name='Usuario / Administrador'
+        verbose_name='Usuario / Administrador',
+        null=True,
+        blank=True
     )
-    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='seguimientos')
+    reserva = models.ForeignKey(
+        Reserva,
+        on_delete=models.CASCADE,
+        related_name='seguimientos',
+        verbose_name='Reserva Asociada',
+        null=True,
+        blank=True
+    )
     respuesta = models.TextField(verbose_name='Mensaje / Respuesta')
     fecha_respuesta = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Respuesta')
 
@@ -1125,7 +1076,8 @@ class Aseguradora(models.Model):
 class Bitacora(models.Model):
     """
     Bitácora del sistema para trazabilidad de acciones, seguridad web y monitoreo
-    de cambios en los registros de la base de datos.
+    de cambios en los registros de la base de datos con conexiones a Seguimiento,
+    Reserva, PQRS, Pago y Usuario.
     """
     ACCION_CHOICES = [
         ('INSERT', 'Creación / Registro'),
@@ -1134,6 +1086,8 @@ class Bitacora(models.Model):
         ('LOGIN', 'Inicio de Sesión'),
         ('LOGOUT', 'Cierre de Sesión'),
         ('ACCESO', 'Acceso / Consulta'),
+        ('RESPUESTA', 'Respuesta / Seguimiento'),
+        ('NOTIFICACION', 'Notificación de Sistema'),
     ]
 
     id = models.BigAutoField(primary_key=True)
@@ -1145,66 +1099,141 @@ class Bitacora(models.Model):
         related_name='bitacoras',
         verbose_name='Usuario Responsable'
     )
-    accion_realizada = models.CharField(
+    seguimiento = models.ForeignKey(
+        Seguimiento,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='bitacoras',
+        verbose_name='Seguimiento Asociado'
+    )
+    reserva = models.ForeignKey(
+        Reserva,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='bitacoras',
+        verbose_name='Reserva Asociada'
+    )
+    pqrs = models.ForeignKey(
+        PQRS,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='bitacoras',
+        verbose_name='PQRS Asociada'
+    )
+    pago = models.ForeignKey(
+        Pago,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='bitacoras',
+        verbose_name='Pago Asociado'
+    )
+    accion = models.CharField(
         max_length=50,
         choices=ACCION_CHOICES,
         default='UPDATE',
         verbose_name='Acción Realizada'
     )
-    tabla_afectada = models.CharField(
+    modulo = models.CharField(
         max_length=100,
+        default='General',
         db_index=True,
-        verbose_name='Tabla Afectada'
+        verbose_name='Módulo / Tabla Afectada'
     )
-    registro_afectado_id = models.BigIntegerField(
+    registro_id = models.BigIntegerField(
         null=True,
         blank=True,
         db_index=True,
-        verbose_name='ID de Registro Afectado',
+        verbose_name='ID del Registro',
         help_text='Identificador numérico del registro modificado en la tabla.'
     )
-    fecha_accion = models.DateTimeField(
+    fecha_registro = models.DateTimeField(
         default=timezone.now,
         db_index=True,
-        verbose_name='Fecha y Hora de la Acción'
+        verbose_name='Fecha y Hora del Registro'
     )
-    direccion_ip = models.GenericIPAddressField(
+    ip_origen = models.GenericIPAddressField(
         null=True,
         blank=True,
-        verbose_name='Dirección IP',
+        verbose_name='Dirección IP de Origen',
         help_text='Dirección IPv4 o IPv6 desde donde se ejecutó la acción.'
     )
-    observacion = models.TextField(
+    descripcion = models.TextField(
         blank=True,
         null=True,
-        verbose_name='Observaciones / Detalle'
+        verbose_name='Descripción / Observaciones'
     )
-    valor_anterior = models.JSONField(
-        null=True,
-        blank=True,
-        verbose_name='Valor Anterior (JSON)',
-        help_text='Estado previo del registro antes del cambio (NULL en creaciones).'
-    )
-    nuevo_valor = models.JSONField(
-        null=True,
-        blank=True,
-        verbose_name='Nuevo Valor (JSON)',
-        help_text='Estado posterior del registro tras el cambio (NULL en eliminaciones).'
-    )
+
+    # --- PROPIEDADES DE RETROCOMPATIBILIDAD CON NOMBRES ANTERIORES ---
+    @property
+    def accion_realizada(self):
+        return self.accion
+
+    @accion_realizada.setter
+    def accion_realizada(self, value):
+        self.accion = value
+
+    @property
+    def tabla_afectada(self):
+        return self.modulo
+
+    @tabla_afectada.setter
+    def tabla_afectada(self, value):
+        self.modulo = value
+
+    @property
+    def registro_afectado_id(self):
+        return self.registro_id
+
+    @registro_afectado_id.setter
+    def registro_afectado_id(self, value):
+        self.registro_id = value
+
+    @property
+    def fecha_accion(self):
+        return self.fecha_registro
+
+    @fecha_accion.setter
+    def fecha_accion(self, value):
+        self.fecha_registro = value
+
+    @property
+    def direccion_ip(self):
+        return self.ip_origen
+
+    @direccion_ip.setter
+    def direccion_ip(self, value):
+        self.ip_origen = value
+
+    @property
+    def observacion(self):
+        return self.descripcion
+
+    @observacion.setter
+    def observacion(self, value):
+        self.descripcion = value
 
     class Meta:
         db_table = 'bitacora'
         verbose_name = 'Bitácora'
         verbose_name_plural = 'Bitácoras'
-        ordering = ['-fecha_accion']
+        ordering = ['-fecha_registro']
         indexes = [
-            models.Index(fields=['tabla_afectada', 'registro_afectado_id'], name='idx_bitacora_tabla_reg'),
-            models.Index(fields=['usuario', '-fecha_accion'], name='idx_bitacora_usr_fecha'),
+            models.Index(fields=['modulo', 'registro_id'], name='idx_bitacora_modulo_reg'),
+            models.Index(fields=['usuario', '-fecha_registro'], name='idx_bitacora_usr_fecha'),
+            models.Index(fields=['seguimiento'], name='idx_bitacora_seguimiento'),
+            models.Index(fields=['reserva'], name='idx_bitacora_reserva'),
+            models.Index(fields=['pqrs'], name='idx_bitacora_pqrs'),
+            models.Index(fields=['pago'], name='idx_bitacora_pago'),
         ]
 
     def __str__(self):
         usuario_str = self.usuario.username if self.usuario else 'Anónimo/Sistema'
-        return f"[{self.fecha_accion.strftime('%Y-%m-%d %H:%M:%S')}] {self.accion_realizada} en {self.tabla_afectada} (ID: {self.registro_afectado_id}) por {usuario_str}"
+        ref_id = f" (ID: {self.registro_id})" if self.registro_id else ""
+        return f"[{self.fecha_registro.strftime('%Y-%m-%d %H:%M:%S')}] {self.accion} en {self.modulo}{ref_id} por {usuario_str}"
 
 
 # ==============================================================================

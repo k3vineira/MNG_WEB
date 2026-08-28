@@ -17,12 +17,22 @@ class UsuarioAdmin(admin.ModelAdmin):
     get_ciudad.short_description = 'Ciudad'
 
 
+class SeguimientoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'pqrs', 'usuario', 'reserva', 'fecha_respuesta')
+    list_filter = ('fecha_respuesta',)
+    search_fields = ('pqrs__asunto', 'usuario__username', 'respuesta')
+    ordering = ('-fecha_respuesta',)
+
+
 class BitacoraAdmin(admin.ModelAdmin):
-    list_display = ('fecha_accion', 'usuario', 'accion_realizada', 'tabla_afectada', 'registro_afectado_id', 'direccion_ip')
-    list_filter = ('accion_realizada', 'tabla_afectada', 'fecha_accion')
-    search_fields = ('tabla_afectada', 'registro_afectado_id', 'usuario__username', 'direccion_ip', 'observacion')
-    readonly_fields = ('fecha_accion', 'usuario', 'accion_realizada', 'tabla_afectada', 'registro_afectado_id', 'direccion_ip', 'observacion', 'valor_anterior', 'nuevo_valor')
-    ordering = ('-fecha_accion',)
+    list_display = ('fecha_registro', 'usuario', 'accion', 'modulo', 'registro_id', 'seguimiento', 'reserva', 'pago', 'pqrs', 'ip_origen')
+    list_filter = ('accion', 'modulo', 'fecha_registro')
+    search_fields = ('modulo', 'registro_id', 'usuario__username', 'ip_origen', 'descripcion')
+    readonly_fields = (
+        'fecha_registro', 'usuario', 'seguimiento', 'reserva', 'pqrs', 'pago',
+        'accion', 'modulo', 'registro_id', 'ip_origen', 'descripcion'
+    )
+    ordering = ('-fecha_registro',)
 
     def has_add_permission(self, request):
         return False
@@ -39,7 +49,7 @@ admin.site.register(Tarifa)
 admin.site.register(PaqueteActividad)
 admin.site.register(Blog)
 admin.site.register(PQRS)
-admin.site.register(Seguimiento)
+admin.site.register(Seguimiento, SeguimientoAdmin)
 admin.site.register(Reserva)
 
 admin.site.register(Calificacion)

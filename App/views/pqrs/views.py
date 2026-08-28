@@ -55,7 +55,7 @@ def contestar_pqrs(request, pqrs_id):
         respuesta_texto = request.POST.get('respuesta')
         
         if respuesta_texto:
-            Seguimiento.objects.create(
+            seguimiento_creado = Seguimiento.objects.create(
                 pqrs=pqr,
                 usuario=request.user,
                 respuesta=respuesta_texto
@@ -63,6 +63,18 @@ def contestar_pqrs(request, pqrs_id):
             
             pqr.estado = 'cerrado'
             pqr.save()
+
+            from App.utils import registrar_bitacora
+            registrar_bitacora(
+                usuario=request.user,
+                accion='RESPUESTA',
+                modulo='Seguimiento',
+                registro_id=seguimiento_creado.id,
+                seguimiento=seguimiento_creado,
+                pqrs=pqr,
+                descripcion=f"Respuesta registrada para la PQRS #{pqr.id} ('{pqr.asunto}').",
+                ip_origen=request.META.get('REMOTE_ADDR')
+            )
             
             messages.success(request, "Respuesta enviada y solicitud cerrada con éxito.")
             return redirect('listar_pqrs')

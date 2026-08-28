@@ -361,3 +361,79 @@ def enviar_correo_confirmacion_con_factura(reserva, request=None):
     
     email.send(fail_silently=False)
 
+
+def registrar_bitacora(
+    usuario=None,
+    accion='UPDATE',
+    modulo='',
+    registro_id=None,
+    descripcion='',
+    seguimiento=None,
+    reserva=None,
+    pqrs=None,
+    pago=None,
+    ip_origen=None,
+    **kwargs
+):
+    """
+    Crea una entrada en el registro de Bitácora del sistema vinculando entidades
+    relevantes (Seguimiento, Reserva, PQRS, Pago, Usuario).
+    """
+    from App.models import Bitacora
+    try:
+        return Bitacora.objects.create(
+            usuario=usuario,
+            seguimiento=seguimiento,
+            reserva=reserva,
+            pqrs=pqrs,
+            pago=pago,
+            accion=accion,
+            modulo=modulo,
+            registro_id=registro_id,
+            ip_origen=ip_origen,
+            descripcion=descripcion
+        )
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Error registrando en Bitacora: {e}")
+        return None
+
+
+def crear_notificacion_sistema(
+    usuario=None,
+    accion="NOTIFICACION",
+    tabla_afectada="",
+    observacion="",
+    valor_anterior=None,
+    nuevo_valor=None,
+    titulo=None,
+    mensaje=None,
+    tipo=None,
+    seguimiento=None,
+    reserva=None,
+    pqrs=None,
+    pago=None,
+    registro_id=None,
+    ip_origen=None,
+    **kwargs
+):
+    """
+    Wrapper compatible para registrar notificaciones y eventos del sistema en Bitácora.
+    Acepta tanto la firma por parámetros de módulo/tabla como la firma título/mensaje.
+    """
+    detalle = observacion or mensaje or titulo or ""
+    modulo_final = tabla_afectada or tipo or "Sistema"
+
+    return registrar_bitacora(
+        usuario=usuario,
+        accion=accion,
+        modulo=modulo_final,
+        registro_id=registro_id,
+        descripcion=detalle,
+        seguimiento=seguimiento,
+        reserva=reserva,
+        pqrs=pqrs,
+        pago=pago,
+        ip_origen=ip_origen
+    )
+

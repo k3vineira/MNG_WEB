@@ -8,7 +8,7 @@ def lista_notificaciones_global(request):
         # Trae las últimas 5 notificaciones/bitácoras para la campanita
         alertas = Bitacora.objects.filter(
             usuario=request.user
-        ).order_by('-fecha_accion', '-id')[:5]
+        ).order_by('-fecha_registro', '-id')[:5]
 
         # Conteo total de registros del usuario
         contador = Bitacora.objects.filter(

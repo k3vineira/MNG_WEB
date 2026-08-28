@@ -60,21 +60,31 @@ DROP TABLE IF EXISTS `bitacora`;
 CREATE TABLE IF NOT EXISTS `bitacora` (
     `id` BIGINT AUTO_INCREMENT NOT NULL COMMENT 'id',
     `usuario_id` BIGINT NULL COMMENT 'Usuario Responsable',
-    `accion_realizada` VARCHAR(50) NOT NULL DEFAULT 'UPDATE' COMMENT 'Acción Realizada',
-    `tabla_afectada` VARCHAR(100) NOT NULL COMMENT 'Tabla Afectada',
-    `registro_afectado_id` BIGINT NULL COMMENT 'ID de Registro Afectado - Identificador numérico del registro modificado en la tabla.',
-    `fecha_accion` DATETIME NOT NULL COMMENT 'Fecha y Hora de la Acción',
-    `direccion_ip` VARCHAR(45) NULL COMMENT 'Dirección IP - Dirección IPv4 o IPv6 desde donde se ejecutó la acción.',
-    `observacion` LONGTEXT NULL COMMENT 'Observaciones / Detalle',
-    `valor_anterior` JSON NULL COMMENT 'Valor Anterior (JSON) - Estado previo del registro antes del cambio (NULL en creaciones).',
-    `nuevo_valor` JSON NULL COMMENT 'Nuevo Valor (JSON) - Estado posterior del registro tras el cambio (NULL en eliminaciones).',
+    `seguimiento_id` INT NULL COMMENT 'Seguimiento Asociado',
+    `reserva_id` INT NULL COMMENT 'Reserva Asociada',
+    `pqrs_id` INT NULL COMMENT 'PQRS Asociada',
+    `pago_id` INT NULL COMMENT 'Pago Asociado',
+    `accion` VARCHAR(50) NOT NULL DEFAULT 'UPDATE' COMMENT 'Acción Realizada',
+    `modulo` VARCHAR(100) NOT NULL DEFAULT 'General' COMMENT 'Módulo / Tabla Afectada',
+    `registro_id` BIGINT NULL COMMENT 'ID del Registro - Identificador numérico del registro modificado en la tabla.',
+    `fecha_registro` DATETIME NOT NULL COMMENT 'Fecha y Hora del Registro',
+    `ip_origen` VARCHAR(45) NULL COMMENT 'Dirección IP de Origen - Dirección IPv4 o IPv6 desde donde se ejecutó la acción.',
+    `descripcion` LONGTEXT NULL COMMENT 'Descripción / Observaciones',
     PRIMARY KEY (`id`),
     KEY `idx_bitacora_usuario_id` (`usuario_id`),
-    KEY `idx_bitacora_tabla_afectada` (`tabla_afectada`),
-    KEY `idx_bitacora_registro_afectado_id` (`registro_afectado_id`),
-    KEY `idx_bitacora_fecha_accion` (`fecha_accion`),
-    CONSTRAINT `fk_bitacora_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Bitácora del sistema para trazabilidad de acciones, seguridad web y monitoreo de cambios en los registros de la base de datos.';
+    KEY `idx_bitacora_seguimiento_id` (`seguimiento_id`),
+    KEY `idx_bitacora_reserva_id` (`reserva_id`),
+    KEY `idx_bitacora_pqrs_id` (`pqrs_id`),
+    KEY `idx_bitacora_pago_id` (`pago_id`),
+    KEY `idx_bitacora_modulo` (`modulo`),
+    KEY `idx_bitacora_registro_id` (`registro_id`),
+    KEY `idx_bitacora_fecha_registro` (`fecha_registro`),
+    CONSTRAINT `fk_bitacora_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT `fk_bitacora_seguimiento_id` FOREIGN KEY (`seguimiento_id`) REFERENCES `seguimiento` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT `fk_bitacora_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT `fk_bitacora_pqrs_id` FOREIGN KEY (`pqrs_id`) REFERENCES `pqrs` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT `fk_bitacora_pago_id` FOREIGN KEY (`pago_id`) REFERENCES `pago` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Bitácora del sistema para trazabilidad de acciones, seguridad web y monitoreo de cambios en los registros de la base de datos con conexiones a Seguimiento, Reserva, PQRS, Pago y Usuario.';
 
 -- -----------------------------------------------------
 -- Tabla `blog` (Blog)
@@ -137,13 +147,14 @@ CREATE TABLE IF NOT EXISTS `notificacion` (
     `mensaje` LONGTEXT NOT NULL COMMENT 'Mensaje de la Notificación',
     `leido` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '¿Leído?',
     `tipo` VARCHAR(50) NOT NULL COMMENT 'Tipo de Notificación',
+    `prioridad` VARCHAR(20) NOT NULL DEFAULT 'media' COMMENT 'Prioridad',
     `fecha_creacion` DATETIME NOT NULL COMMENT 'Fecha de Creación',
     PRIMARY KEY (`id`),
     KEY `idx_notificacion_reserva_id` (`reserva_id`),
     KEY `idx_notificacion_usuario_id` (`usuario_id`),
     CONSTRAINT `fk_notificacion_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_notificacion_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Notificacion(id, reserva, usuario, mensaje, leido, tipo, fecha_creacion)';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Notificacion(id, reserva, usuario, mensaje, leido, tipo, prioridad, fecha_creacion)';
 
 -- -----------------------------------------------------
 -- Tabla `pago` (Pago)
@@ -327,14 +338,17 @@ CREATE TABLE IF NOT EXISTS `reserva` (
 DROP TABLE IF EXISTS `seguimiento`;
 CREATE TABLE IF NOT EXISTS `seguimiento` (
     `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
-    `pqrs_id` INT NOT NULL COMMENT 'pqrs',
-    `reserva_id` INT NOT NULL COMMENT 'Reserva',
+    `pqrs_id` INT NOT NULL COMMENT 'PQRS',
+    `usuario_id` BIGINT NULL COMMENT 'Usuario / Administrador',
+    `reserva_id` INT NULL COMMENT 'Reserva Asociada',
     `respuesta` LONGTEXT NOT NULL COMMENT 'Mensaje / Respuesta',
     `fecha_respuesta` DATETIME NOT NULL COMMENT 'Fecha de Respuesta',
     PRIMARY KEY (`id`),
     KEY `idx_seguimiento_pqrs_id` (`pqrs_id`),
+    KEY `idx_seguimiento_usuario_id` (`usuario_id`),
     KEY `idx_seguimiento_reserva_id` (`reserva_id`),
     CONSTRAINT `fk_seguimiento_pqrs_id` FOREIGN KEY (`pqrs_id`) REFERENCES `pqrs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_seguimiento_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_seguimiento_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de seguimiento y respuestas a una solicitud PQRS por parte de un usuario o administrador.';
 
