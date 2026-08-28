@@ -119,7 +119,7 @@
                             COP ${{ tarifa.precio_menor|floatformat:0|intcomma }}
                         </td>
                         <td class="text-center">
-                            {% if tarifa.estado == 'activa' %}
+                            {% if tarifa.estado %}
                                 <span class="badge bg-success bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-check-circle-fill me-1"></i> Activa</span>
                             {% else %}
                                 <span class="badge bg-danger bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-x-circle-fill me-1"></i> Inactiva</span>
@@ -152,7 +152,7 @@
                                 <small class="text-muted d-block mt-1"><i class="bi bi-calendar-event text-success me-1"></i>{{ tarifa.temporada.nombre }}</small>
                             </div>
                             <div>
-                                {% if tarifa.estado == 'activa' %}
+                                {% if tarifa.estado %}
                                     <span class="badge bg-success bg-opacity-75 rounded-pill shadow-sm">Activa</span>
                                 {% else %}
                                     <span class="badge bg-danger bg-opacity-75 rounded-pill shadow-sm">Inactiva</span>
