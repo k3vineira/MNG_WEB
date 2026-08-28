@@ -376,6 +376,7 @@ CREATE TABLE IF NOT EXISTS `notificacion` (
     `mensaje` LONGTEXT NOT NULL COMMENT 'Mensaje de la Notificación',
     `leido` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '¿Leído?',
     `tipo` VARCHAR(50) NOT NULL COMMENT 'Tipo de Notificación',
+    `prioridad` VARCHAR(20) NOT NULL DEFAULT 'media' COMMENT 'Prioridad',
     `fecha_creacion` DATETIME NOT NULL COMMENT 'Fecha de Creación',
     PRIMARY KEY (`id`),
     KEY `idx_notificacion_reserva_id` (`reserva_id`),

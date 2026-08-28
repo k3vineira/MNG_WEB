@@ -806,6 +806,7 @@ class Notificacion(models.Model):
     mensaje = models.TextField(verbose_name='Mensaje de la Notificación')
     leido = models.BooleanField(default=False, verbose_name='¿Leído?')
     tipo = models.CharField(max_length=50, verbose_name='Tipo de Notificación')
+    prioridad = models.CharField(max_length=20, choices=[('alta', 'Alta'), ('media', 'Media'), ('baja', 'Baja')], default='media', verbose_name='Prioridad')
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creación')
 
     class Meta:
