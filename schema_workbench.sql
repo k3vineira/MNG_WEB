@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `aseguradora` (
     `fecha_inicio_cobertura` DATE NULL COMMENT 'Fecha de Inicio de Cobertura',
     `fecha_fin_cobertura` DATE NULL COMMENT 'Fecha de Fin de Cobertura',
     `costo_seguro` DECIMAL(12, 2) NOT NULL COMMENT 'Costo de Seguro',
-    `telefono_emergencia` VARCHAR(50) NULL COMMENT 'Teléfono de Emergencia',
+    `telefono_emergencia` VARCHAR(20) NULL COMMENT 'Teléfono de Emergencia',
     `estado_emision` VARCHAR(20) NOT NULL DEFAULT 'Pendiente' COMMENT 'Estado de Emisión',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_aseguradora_reserva_id` (`reserva_id`),

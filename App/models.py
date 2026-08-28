@@ -1033,7 +1033,7 @@ class Aseguradora(models.Model):
     fecha_inicio_cobertura = models.DateField(null=True, blank=True, verbose_name='Fecha de Inicio de Cobertura')
     fecha_fin_cobertura = models.DateField(null=True, blank=True, verbose_name='Fecha de Fin de Cobertura')
     costo_seguro = models.DecimalField(max_digits=12, decimal_places=2, editable=False, verbose_name='Costo de Seguro')
-    telefono_emergencia = models.CharField(max_length=50, blank=True, null=True, verbose_name='Teléfono de Emergencia')
+    telefono_emergencia = models.CharField(max_length=20, blank=True, null=True, verbose_name='Teléfono de Emergencia')
     estado_emision = models.CharField(max_length=20, default='Pendiente', verbose_name='Estado de Emisión')
 
     class Meta:
