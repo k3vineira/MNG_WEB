@@ -691,11 +691,11 @@ class Seguimiento(models.Model):
     
     id = models.AutoField(primary_key=True)
     pqrs = models.ForeignKey(PQRS, on_delete=models.CASCADE, related_name='seguimientos')
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+    reserva = models.ForeignKey(
+        'Reserva',
         on_delete=models.CASCADE,
         related_name='seguimientos',
-        verbose_name='Usuario / Administrador'
+        verbose_name='Reserva'
     )
     respuesta = models.TextField(verbose_name='Mensaje / Respuesta')
     fecha_respuesta = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Respuesta')
@@ -792,6 +792,29 @@ class Reserva(models.Model):
         super().save(*args, **kwargs)
         
 
+
+
+class Notificacion(models.Model):
+    id = models.AutoField(primary_key=True)
+    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='notificaciones', verbose_name='Reserva')
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='notificaciones',
+        verbose_name='Usuario'
+    )
+    mensaje = models.TextField(verbose_name='Mensaje de la Notificación')
+    leido = models.BooleanField(default=False, verbose_name='¿Leído?')
+    tipo = models.CharField(max_length=50, verbose_name='Tipo de Notificación')
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Creación')
+
+    class Meta:
+        db_table = 'notificacion'
+        verbose_name = 'Notificación'
+        verbose_name_plural = 'Notificaciones'
+
+    def __str__(self):
+        return f'Notificación {self.id} - {self.usuario}'
 
 
 class Calificacion(models.Model):
