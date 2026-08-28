@@ -286,15 +286,15 @@ DROP TABLE IF EXISTS `seguimiento`;
 CREATE TABLE IF NOT EXISTS `seguimiento` (
     `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
     `pqrs_id` INT NOT NULL COMMENT 'pqrs',
-    `usuario_id` BIGINT NOT NULL COMMENT 'Usuario / Administrador',
+    `reserva_id` INT NOT NULL COMMENT 'Reserva',
     `respuesta` LONGTEXT NOT NULL COMMENT 'Mensaje / Respuesta',
     `fecha_respuesta` DATETIME NOT NULL COMMENT 'Fecha de Respuesta',
     PRIMARY KEY (`id`),
     KEY `idx_seguimiento_pqrs_id` (`pqrs_id`),
-    KEY `idx_seguimiento_usuario_id` (`usuario_id`),
+    KEY `idx_seguimiento_reserva_id` (`reserva_id`),
     CONSTRAINT `fk_seguimiento_pqrs_id` FOREIGN KEY (`pqrs_id`) REFERENCES `pqrs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_seguimiento_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de seguimiento y respuestas a una solicitud PQRS por parte de un usuario o administrador.';
+    CONSTRAINT `fk_seguimiento_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de seguimiento y respuestas a una solicitud PQRS asociada a una reserva.';
 
 -- -----------------------------------------------------
 -- Tabla `tarifa` (Tarifa)
@@ -364,6 +364,26 @@ CREATE TABLE IF NOT EXISTS `usuario` (
     UNIQUE KEY `uk_usuario_email` (`email`),
     UNIQUE KEY `uk_usuario_numero_documento` (`numero_documento`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Modelo de usuario personalizado que extiende AbstractUser con campos adicionales como rol, tipo de documento, teléfono e imagen de perfil.';
+
+-- -----------------------------------------------------
+-- Tabla `notificacion` (Notificacion)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `notificacion`;
+CREATE TABLE IF NOT EXISTS `notificacion` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `reserva_id` INT NOT NULL COMMENT 'Reserva',
+    `usuario_id` BIGINT NOT NULL COMMENT 'Usuario',
+    `mensaje` LONGTEXT NOT NULL COMMENT 'Mensaje de la Notificación',
+    `leido` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '¿Leído?',
+    `tipo` VARCHAR(50) NOT NULL COMMENT 'Tipo de Notificación',
+    `prioridad` VARCHAR(20) NOT NULL DEFAULT 'media' COMMENT 'Prioridad',
+    `fecha_creacion` DATETIME NOT NULL COMMENT 'Fecha de Creación',
+    PRIMARY KEY (`id`),
+    KEY `idx_notificacion_reserva_id` (`reserva_id`),
+    KEY `idx_notificacion_usuario_id` (`usuario_id`),
+    CONSTRAINT `fk_notificacion_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_notificacion_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de notificaciones para los usuarios sobre sus reservas.';
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
