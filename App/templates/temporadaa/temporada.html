@@ -127,14 +127,10 @@
                             <span class="text-secondary fw-semibold">{{ t.fecha_fin|date:"d \d\e M, Y" }}</span>
                         </td>
                         <td class="text-center">
-                            {% if t.estado == 'activa' %}
+                            {% if t.estado %}
                                 <span class="badge bg-success bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-play-circle-fill me-1"></i> Activa</span>
-                            {% elif t.estado == 'programada' %}
-                                <span class="badge bg-warning text-dark bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-clock-fill me-1"></i> Programada</span>
-                            {% elif t.estado == 'finalizada' %}
-                                <span class="badge bg-info text-white bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-stop-circle-fill me-1"></i> Finalizada</span>
                             {% else %}
-                                <span class="badge bg-secondary bg-opacity-75 px-3 py-2 rounded-pill shadow-sm">{{ t.estado|capfirst }}</span>
+                                <span class="badge bg-secondary bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-stop-circle-fill me-1"></i> Inactiva</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
@@ -163,14 +159,10 @@
                                 <h5 class="fw-bold text-dark mb-0">{{ t.nombre }}</h5>
                             </div>
                             <div>
-                                {% if t.estado == 'activa' %}
+                                {% if t.estado %}
                                     <span class="badge bg-success bg-opacity-75 rounded-pill shadow-sm">Activa</span>
-                                {% elif t.estado == 'programada' %}
-                                    <span class="badge bg-warning text-dark bg-opacity-75 rounded-pill shadow-sm">Programada</span>
-                                {% elif t.estado == 'finalizada' %}
-                                    <span class="badge bg-info text-white bg-opacity-75 rounded-pill shadow-sm">Finalizada</span>
                                 {% else %}
-                                    <span class="badge bg-secondary bg-opacity-75 rounded-pill shadow-sm">{{ t.estado|capfirst }}</span>
+                                    <span class="badge bg-secondary bg-opacity-75 rounded-pill shadow-sm">Inactiva</span>
                                 {% endif %}
                             </div>
                         </div>

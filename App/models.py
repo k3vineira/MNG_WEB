@@ -141,6 +141,8 @@ class Usuario(AbstractUser):
     Modelo de usuario personalizado que extiende AbstractUser con campos adicionales
     como rol, tipo de documento, teléfono e imagen de perfil.
     """
+    id = models.BigAutoField(primary_key=True)
+
     class Roles(models.IntegerChoices):
         ADMIN = 1, 'Administrador'
         CLIENTE = 2, 'Cliente'
@@ -158,11 +160,18 @@ class Usuario(AbstractUser):
     )
 
     email = models.EmailField(
+        max_length=254,
         unique=True,
         error_messages={
             'unique': 'Ya existe un usuario registrado con este correo electrónico.',
         },
         verbose_name='Correo Electrónico'
+    )
+
+    last_login = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name='Último inicio de sesión'
     )
 
     rol = models.PositiveSmallIntegerField(
@@ -378,21 +387,24 @@ class Temporada(models.Model):
     Representa una temporada turística con fechas de inicio y fin.
     """
     id = models.AutoField(primary_key=True)
-    ESTADOS = [
-        ('programada', 'Programada'),
-        ('activa', 'Activa'),
-        ('finalizada', 'Finalizada'),
-    ]
 
     nombre = models.CharField(max_length=50, verbose_name='Nombre de la Temporada')
-    descripcion = models.TextField(verbose_name='Descripción de la Temporada')
+    descripcion = models.TextField(verbose_name='Descripción de la Temporada', null=True, blank=True)
     fecha_inicio = models.DateField(verbose_name='Fecha de Inicio')
     fecha_fin = models.DateField(verbose_name='Fecha de Fin')
-    estado = models.CharField(max_length=20, choices=ESTADOS, default='programada', verbose_name='Estado')
+    estado = models.BooleanField(default=True, verbose_name='¿Está Activa?')
 
     class Meta:
         verbose_name = 'Temporada'
         verbose_name_plural = 'Temporadas'
+
+    def clean(self):
+        super().clean()
+        if self.fecha_inicio and self.fecha_fin:
+            if self.fecha_fin < self.fecha_inicio:
+                raise ValidationError({
+                    'fecha_fin': 'La fecha de fin no puede ser anterior a la fecha de inicio.'
+                })
 
     def __str__(self):
         """Retorna el nombre de la temporada como representación textual."""
@@ -408,8 +420,8 @@ class Categoria(models.Model):
     Categoría que agrupa paquetes turísticos similares (ej. Aventura, Cultura).
     """
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100, verbose_name='Nombre de la Categoría')
-    descripcion = models.TextField(verbose_name='Descripción')
+    nombre = models.CharField(max_length=100, unique=True, verbose_name='Nombre de la Categoría')
+    descripcion = models.TextField(verbose_name='Descripción', null=True, blank=True)
     estado = models.BooleanField(default=True, verbose_name='¿Está Activa?')
 
     class Meta:
@@ -495,7 +507,7 @@ class Paquete(models.Model):
             t for t in all_tarifas
             if getattr(t, 'estado', '') == 'activa'
             and getattr(t, 'temporada', None)
-            and t.temporada.estado == 'activa'
+            and t.temporada.estado
             and t.temporada.fecha_inicio <= fecha_hoy <= t.temporada.fecha_fin
         ]
 

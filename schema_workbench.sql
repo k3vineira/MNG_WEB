@@ -98,9 +98,10 @@ DROP TABLE IF EXISTS `categoria`;
 CREATE TABLE IF NOT EXISTS `categoria` (
     `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
     `nombre` VARCHAR(100) NOT NULL COMMENT 'Nombre de la Categoría',
-    `descripcion` LONGTEXT NOT NULL COMMENT 'Descripción',
+    `descripcion` LONGTEXT NULL COMMENT 'Descripción',
     `estado` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '¿Está Activa?',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_categoria_nombre` (`nombre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Categoría que agrupa paquetes turísticos similares (ej. Aventura, Cultura).';
 
 -- -----------------------------------------------------
@@ -265,21 +266,20 @@ CREATE TABLE IF NOT EXISTS `reserva` (
     `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
     `paquete_id` INT NOT NULL COMMENT 'Paquete Reservado',
     `usuario_id` BIGINT NULL COMMENT 'Usuario',
-    `fecha` DATE NOT NULL COMMENT 'Fecha de Reserva',
     `fecha_inicio` DATE NULL COMMENT 'Fecha de inicio',
-    `numero_adultos` INT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'Número de Adultos',
-    `numero_menores` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Número de Menores',
+    `numero_adultos` SMALLINT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'Número de Adultos',
+    `numero_menores` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Número de Menores',
     `estado` VARCHAR(20) NOT NULL DEFAULT 'pendiente' COMMENT 'Estado',
     `motivo_cancelacion` LONGTEXT NULL COMMENT 'Motivo de Cancelación',
-    `monto_total` DECIMAL(12,2) NOT NULL COMMENT 'Monto Total',
+    `monto_total` DECIMAL(12, 2) NOT NULL COMMENT 'Monto Total',
     `fecha_registro` DATETIME NOT NULL COMMENT 'Fecha de Registro',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `unique_usuario_paquete_fecha` (`usuario_id`, `paquete_id`, `fecha`),
+    UNIQUE KEY `unique_usuario_paquete_fecha_inicio` (`usuario_id`, `paquete_id`, `fecha_inicio`),
     KEY `idx_reserva_paquete_id` (`paquete_id`),
     KEY `idx_reserva_usuario_id` (`usuario_id`),
     CONSTRAINT `fk_reserva_paquete_id` FOREIGN KEY (`paquete_id`) REFERENCES `paquete` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT `fk_reserva_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Reserva(id, paquete, usuario, fecha, fecha_inicio, numero_adultos, numero_menores, estado, motivo_cancelacion, monto_total, fecha_registro)';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Reserva(id, paquete, usuario, fecha_inicio, numero_adultos, numero_menores, estado, motivo_cancelacion, monto_total, fecha_registro)';
 
 -- -----------------------------------------------------
 -- Tabla `seguimiento` (Seguimiento)
@@ -324,10 +324,10 @@ DROP TABLE IF EXISTS `temporada`;
 CREATE TABLE IF NOT EXISTS `temporada` (
     `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
     `nombre` VARCHAR(50) NOT NULL COMMENT 'Nombre de la Temporada',
-    `descripcion` LONGTEXT NOT NULL COMMENT 'Descripción de la Temporada',
+    `descripcion` LONGTEXT NULL COMMENT 'Descripción de la Temporada',
     `fecha_inicio` DATE NOT NULL COMMENT 'Fecha de Inicio',
     `fecha_fin` DATE NOT NULL COMMENT 'Fecha de Fin',
-    `estado` VARCHAR(20) NOT NULL DEFAULT 'programada' COMMENT 'Estado',
+    `estado` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '¿Está Activa?',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Representa una temporada turística con fechas de inicio y fin.';
 
@@ -336,26 +336,26 @@ CREATE TABLE IF NOT EXISTS `temporada` (
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `usuario`;
 CREATE TABLE IF NOT EXISTS `usuario` (
-    `id` BIGINT AUTO_INCREMENT NOT NULL COMMENT 'ID',
     `password` VARCHAR(128) NOT NULL COMMENT 'password',
-    `last_login` DATETIME NULL COMMENT 'last login',
     `is_superuser` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'superuser status - Designates that this user has all permissions without explicitly assigning them.',
-    `username` VARCHAR(150) NOT NULL COMMENT 'username - Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.',
     `first_name` VARCHAR(150) NOT NULL COMMENT 'first name',
     `last_name` VARCHAR(150) NOT NULL COMMENT 'last name',
     `is_staff` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'staff status - Designates whether the user can log into this admin site.',
     `is_active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT 'active - Designates whether this user should be treated as active. Unselect this instead of deleting accounts.',
     `date_joined` DATETIME NOT NULL COMMENT 'date joined',
+    `id` BIGINT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `username` VARCHAR(50) NOT NULL COMMENT 'Nombre de Usuario',
     `email` VARCHAR(254) NOT NULL COMMENT 'Correo Electrónico',
+    `last_login` DATETIME NULL COMMENT 'Último inicio de sesión',
     `rol` SMALLINT UNSIGNED NOT NULL DEFAULT 2 COMMENT 'Rol',
     `tipo_documento` VARCHAR(20) NOT NULL COMMENT 'Tipo de Documento',
     `numero_documento` VARCHAR(20) NOT NULL COMMENT 'Número de Documento',
     `telefono` VARCHAR(15) NOT NULL COMMENT 'Teléfono',
     `residencia` VARCHAR(100) NOT NULL COMMENT 'Residencia de Origen',
     `imagen_perfil` VARCHAR(100) NULL COMMENT 'Imagen de Perfil',
-    `pais` VARCHAR(100) NOT NULL COMMENT 'País',
-    `departamento` VARCHAR(100) NOT NULL COMMENT 'Departamento',
-    `ciudad` VARCHAR(100) NOT NULL COMMENT 'Ciudad',
+    `pais` VARCHAR(3) NOT NULL COMMENT 'País',
+    `departamento` INT NULL COMMENT 'Departamento',
+    `ciudad` INT NULL COMMENT 'Ciudad',
     `numero_tarjeta_profesional` VARCHAR(50) NULL COMMENT 'Licencia de Turismo',
     `experiencia_anos` INT UNSIGNED NULL COMMENT 'Años de Experiencia',
     `experiencia_fecha` DATE NULL COMMENT 'Fecha de Inicio de Experiencia',
