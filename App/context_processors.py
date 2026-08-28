@@ -1,18 +1,18 @@
 """
-Context processor para inyectar notificaciones globales desde el modelo Auditoria.
+Context processor para inyectar notificaciones globales desde el modelo Bitacora.
 """
-from App.models import Auditoria
+from App.models import Bitacora
 
 def lista_notificaciones_global(request):
     if request.user.is_authenticated:
-        # Trae las últimas 5 auditorías/notificaciones para la campanita
-        alertas = Auditoria.objects.filter(
-            codigo_usuario=request.user
-        ).order_by('-fecha', '-hora', '-id')[:5]
+        # Trae las últimas 5 notificaciones/bitácoras para la campanita
+        alertas = Bitacora.objects.filter(
+            usuario=request.user
+        ).order_by('-fecha_accion', '-id')[:5]
 
         # Conteo total de registros del usuario
-        contador = Auditoria.objects.filter(
-            codigo_usuario=request.user
+        contador = Bitacora.objects.filter(
+            usuario=request.user
         ).count()
 
         return {

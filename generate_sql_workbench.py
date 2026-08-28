@@ -60,7 +60,7 @@ DJANGO_TO_MYSQL_TYPES = {
     'SlugField': lambda f: f"VARCHAR({f.max_length or 50})",
     'UUIDField': 'CHAR(32)',
     'JSONField': 'JSON',
-    'GenericIPAddressField': 'VARCHAR(39)',
+    'GenericIPAddressField': 'VARCHAR(45)',
     'BinaryField': 'LONGBLOB',
     'DurationField': 'BIGINT',
 }

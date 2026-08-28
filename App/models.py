@@ -1051,10 +1051,103 @@ class Aseguradora(models.Model):
 
 
 # ==============================================================================
-# USUARIOS
+# BITÁCORA DEL SISTEMA
 # ==============================================================================
-"""
-Modelos de datos para la gestión de usuarios: Usuario personalizado.
-(Los perfiles de Cliente y Guía Turístico fueron consolidados directamente en el modelo de Usuario).
-"""
+
+class Bitacora(models.Model):
+    """
+    Bitácora del sistema para trazabilidad de acciones, seguridad web y monitoreo
+    de cambios en los registros de la base de datos.
+    """
+    ACCION_CHOICES = [
+        ('INSERT', 'Creación / Registro'),
+        ('UPDATE', 'Modificación / Actualización'),
+        ('DELETE', 'Eliminación'),
+        ('LOGIN', 'Inicio de Sesión'),
+        ('LOGOUT', 'Cierre de Sesión'),
+        ('ACCESO', 'Acceso / Consulta'),
+    ]
+
+    id = models.BigAutoField(primary_key=True)
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='bitacoras',
+        verbose_name='Usuario Responsable'
+    )
+    accion_realizada = models.CharField(
+        max_length=50,
+        choices=ACCION_CHOICES,
+        default='UPDATE',
+        verbose_name='Acción Realizada'
+    )
+    tabla_afectada = models.CharField(
+        max_length=100,
+        db_index=True,
+        verbose_name='Tabla Afectada'
+    )
+    registro_afectado_id = models.BigIntegerField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name='ID de Registro Afectado',
+        help_text='Identificador numérico del registro modificado en la tabla.'
+    )
+    fecha_accion = models.DateTimeField(
+        default=timezone.now,
+        db_index=True,
+        verbose_name='Fecha y Hora de la Acción'
+    )
+    direccion_ip = models.GenericIPAddressField(
+        null=True,
+        blank=True,
+        verbose_name='Dirección IP',
+        help_text='Dirección IPv4 o IPv6 desde donde se ejecutó la acción.'
+    )
+    observacion = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='Observaciones / Detalle'
+    )
+    valor_anterior = models.JSONField(
+        null=True,
+        blank=True,
+        verbose_name='Valor Anterior (JSON)',
+        help_text='Estado previo del registro antes del cambio (NULL en creaciones).'
+    )
+    nuevo_valor = models.JSONField(
+        null=True,
+        blank=True,
+        verbose_name='Nuevo Valor (JSON)',
+        help_text='Estado posterior del registro tras el cambio (NULL en eliminaciones).'
+    )
+
+    class Meta:
+        db_table = 'bitacora'
+        verbose_name = 'Bitácora'
+        verbose_name_plural = 'Bitácoras'
+        ordering = ['-fecha_accion']
+        indexes = [
+            models.Index(fields=['tabla_afectada', 'registro_afectado_id'], name='idx_bitacora_tabla_reg'),
+            models.Index(fields=['usuario', '-fecha_accion'], name='idx_bitacora_usr_fecha'),
+        ]
+
+    def __str__(self):
+        usuario_str = self.usuario.username if self.usuario else 'Anónimo/Sistema'
+        return f"[{self.fecha_accion.strftime('%Y-%m-%d %H:%M:%S')}] {self.accion_realizada} en {self.tabla_afectada} (ID: {self.registro_afectado_id}) por {usuario_str}"
+
+
+# ==============================================================================
+# REGISTRO AUTOMÁTICO DE AUDITORÍA (DJANGO-AUDITLOG)
+# ==============================================================================
+try:
+    from auditlog.registry import auditlog
+    auditlog.register(Reserva)
+    auditlog.register(Pago)
+except Exception as e:
+    logger.warning("No se pudo registrar modelos en auditlog: %s", e)
+
+
 

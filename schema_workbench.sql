@@ -2,7 +2,7 @@
 -- SCRIPT SQL GENERADO PARA MYSQL WORKBENCH
 -- Proyecto: MNG_WEB
 -- Base de Datos: monagua_turismo_db
--- Total Tablas de la Aplicación: 18
+-- Total Tablas de la Aplicación: 20
 -- (Excluidas todas las tablas internas/predeterminadas de Django)
 -- ============================================================================
 
@@ -54,6 +54,29 @@ CREATE TABLE IF NOT EXISTS `aseguradora` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Representa la adquisición de un seguro para una reserva. (Anteriormente SeguroViaje)';
 
 -- -----------------------------------------------------
+-- Tabla `bitacora` (Bitacora)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `bitacora`;
+CREATE TABLE IF NOT EXISTS `bitacora` (
+    `id` BIGINT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `usuario_id` BIGINT NULL COMMENT 'Usuario Responsable',
+    `accion_realizada` VARCHAR(50) NOT NULL DEFAULT 'UPDATE' COMMENT 'Acción Realizada',
+    `tabla_afectada` VARCHAR(100) NOT NULL COMMENT 'Tabla Afectada',
+    `registro_afectado_id` BIGINT NULL COMMENT 'ID de Registro Afectado - Identificador numérico del registro modificado en la tabla.',
+    `fecha_accion` DATETIME NOT NULL COMMENT 'Fecha y Hora de la Acción',
+    `direccion_ip` VARCHAR(45) NULL COMMENT 'Dirección IP - Dirección IPv4 o IPv6 desde donde se ejecutó la acción.',
+    `observacion` LONGTEXT NULL COMMENT 'Observaciones / Detalle',
+    `valor_anterior` JSON NULL COMMENT 'Valor Anterior (JSON) - Estado previo del registro antes del cambio (NULL en creaciones).',
+    `nuevo_valor` JSON NULL COMMENT 'Nuevo Valor (JSON) - Estado posterior del registro tras el cambio (NULL en eliminaciones).',
+    PRIMARY KEY (`id`),
+    KEY `idx_bitacora_usuario_id` (`usuario_id`),
+    KEY `idx_bitacora_tabla_afectada` (`tabla_afectada`),
+    KEY `idx_bitacora_registro_afectado_id` (`registro_afectado_id`),
+    KEY `idx_bitacora_fecha_accion` (`fecha_accion`),
+    CONSTRAINT `fk_bitacora_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Bitácora del sistema para trazabilidad de acciones, seguridad web y monitoreo de cambios en los registros de la base de datos.';
+
+-- -----------------------------------------------------
 -- Tabla `blog` (Blog)
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `blog`;
@@ -102,6 +125,25 @@ CREATE TABLE IF NOT EXISTS `comunidad_calificacion` (
     KEY `idx_comunidad_calificacion_reserva_id` (`reserva_id`),
     CONSTRAINT `fk_comunidad_calificacion_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Calificación y reseña de una experiencia o reserva de un paquete turístico realizada por un cliente o usuario registrado.';
+
+-- -----------------------------------------------------
+-- Tabla `notificacion` (Notificacion)
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `notificacion`;
+CREATE TABLE IF NOT EXISTS `notificacion` (
+    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
+    `reserva_id` INT NOT NULL COMMENT 'Reserva',
+    `usuario_id` BIGINT NOT NULL COMMENT 'Usuario',
+    `mensaje` LONGTEXT NOT NULL COMMENT 'Mensaje de la Notificación',
+    `leido` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '¿Leído?',
+    `tipo` VARCHAR(50) NOT NULL COMMENT 'Tipo de Notificación',
+    `fecha_creacion` DATETIME NOT NULL COMMENT 'Fecha de Creación',
+    PRIMARY KEY (`id`),
+    KEY `idx_notificacion_reserva_id` (`reserva_id`),
+    KEY `idx_notificacion_usuario_id` (`usuario_id`),
+    CONSTRAINT `fk_notificacion_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_notificacion_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Notificacion(id, reserva, usuario, mensaje, leido, tipo, fecha_creacion)';
 
 -- -----------------------------------------------------
 -- Tabla `pago` (Pago)
@@ -294,7 +336,7 @@ CREATE TABLE IF NOT EXISTS `seguimiento` (
     KEY `idx_seguimiento_reserva_id` (`reserva_id`),
     CONSTRAINT `fk_seguimiento_pqrs_id` FOREIGN KEY (`pqrs_id`) REFERENCES `pqrs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_seguimiento_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de seguimiento y respuestas a una solicitud PQRS asociada a una reserva.';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de seguimiento y respuestas a una solicitud PQRS por parte de un usuario o administrador.';
 
 -- -----------------------------------------------------
 -- Tabla `tarifa` (Tarifa)
@@ -364,25 +406,6 @@ CREATE TABLE IF NOT EXISTS `usuario` (
     UNIQUE KEY `uk_usuario_email` (`email`),
     UNIQUE KEY `uk_usuario_numero_documento` (`numero_documento`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Modelo de usuario personalizado que extiende AbstractUser con campos adicionales como rol, tipo de documento, teléfono e imagen de perfil.';
-
--- -----------------------------------------------------
--- Tabla `notificacion` (Notificacion)
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `notificacion`;
-CREATE TABLE IF NOT EXISTS `notificacion` (
-    `id` INT AUTO_INCREMENT NOT NULL COMMENT 'id',
-    `reserva_id` INT NOT NULL COMMENT 'Reserva',
-    `usuario_id` BIGINT NOT NULL COMMENT 'Usuario',
-    `mensaje` LONGTEXT NOT NULL COMMENT 'Mensaje de la Notificación',
-    `leido` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '¿Leído?',
-    `tipo` VARCHAR(50) NOT NULL COMMENT 'Tipo de Notificación',
-    `fecha_creacion` DATETIME NOT NULL COMMENT 'Fecha de Creación',
-    PRIMARY KEY (`id`),
-    KEY `idx_notificacion_reserva_id` (`reserva_id`),
-    KEY `idx_notificacion_usuario_id` (`usuario_id`),
-    CONSTRAINT `fk_notificacion_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reserva` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_notificacion_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Registro de notificaciones para los usuarios sobre sus reservas.';
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
