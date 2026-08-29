@@ -1,0 +1,196 @@
+{% extends "base-admin.html" %} 
+{% load static %} 
+
+{% block content %}
+<div class="container-fluid py-2">
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden bg-white mb-5">
+    <div class="w-100 bg-dark bg-opacity-75">
+      <img src="{% static 'img/Fondo.webp' %}" class="w-100 object-fit-cover" height="160" alt="Fondo" />
+    </div>
+
+    <div class="card-body p-4 p-md-5 pt-4">
+      <div class="row">
+        <!-- Columna Izquierda: Información de perfil / Sidebar -->
+        <div class="col-lg-4 text-center text-lg-start mb-5 mb-lg-0 border-end">
+          <div class="d-flex justify-content-center justify-content-lg-start mb-4">
+            <img
+              src="{{ user.avatar_url }}"
+              alt="{{ user.username }}"
+              class="rounded-circle object-fit-cover shadow border border-3 border-light"
+              width="140"
+              height="140"
+            />
+          </div>
+
+          <div class="ps-2">
+            <h3 class="fw-bold text-dark mb-1">
+              {{ user.first_name|default:user.username }} {{ user.last_name }}
+            </h3>
+            <span class="badge bg-dark bg-opacity-10 text-dark rounded-pill px-3 py-1 fw-bold mb-3">
+              <i class="bi bi-shield-lock-fill me-1"></i> {% if user.is_superuser %}Administrador{% else %}{{ user.get_rol_display }}{% endif %}
+            </span>
+            <p class="text-muted small mb-4">
+              <i class="bi bi-calendar3 me-1"></i>Miembro desde: {{ user.date_joined|date:"d F, Y" }}
+            </p>
+          </div>
+
+          <div class="list-group list-group-flush rounded-3 overflow-hidden border border-light shadow-sm">
+            <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3">
+              <i class="bi bi-speedometer2 text-dark fs-5"></i>
+              <span class="fw-semibold text-secondary">Dashboard Admin</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3">
+              <i class="bi bi-people-fill text-dark fs-5"></i>
+              <span class="fw-semibold text-secondary">Gestión de Usuarios</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center gap-3">
+              <i class="bi bi-map-fill text-dark fs-5"></i>
+              <span class="fw-semibold text-secondary">Gestión de Catálogo</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Formulario -->
+        <div class="col-lg-8 ps-lg-5 pt-3">
+          <div class="d-flex align-items-center gap-2 mb-4">
+            <i class="bi bi-person-gear text-dark fs-3"></i>
+            <h4 class="fw-bold text-dark mb-0">Configuración del Perfil</h4>
+          </div>
+
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger rounded-4 shadow-sm py-2 mb-4">
+            {{ form.non_field_errors.0 }}
+          </div>
+          {% endif %}
+
+
+
+          <form method="POST" enctype="multipart/form-data" id="form_perfil_principal">
+            {% csrf_token %}
+            <input type="hidden" name="editar_perfil" value="1" />
+
+            <div class="row g-4">
+              <!-- Nombre de Usuario (NO EDITABLE) -->
+              <div class="col-md-6">
+                <div class="form-floating mb-1">
+                  <input type="text" class="form-control rounded-4 shadow-sm bg-light text-muted" id="username" value="{{ user.username }}" readonly disabled />
+                  <label for="username"><i class="bi bi-person-badge text-dark me-2"></i>Nombre de Usuario</label>
+                </div>
+                <span class="text-muted small ps-2">No es modificable.</span>
+              </div>
+
+              <!-- Correo (NO EDITABLE) -->
+              <div class="col-md-6">
+                <div class="form-floating mb-1">
+                  <input type="email" class="form-control rounded-4 shadow-sm bg-light text-muted" id="email" value="{{ user.email }}" readonly disabled />
+                  <label for="email"><i class="bi bi-envelope text-dark me-2"></i>Correo Electrónico</label>
+                </div>
+                <span class="text-muted small ps-2">No es modificable.</span>
+              </div>
+
+              <!-- Nombres (EDITABLE) -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="text" name="first_name" class="form-control rounded-4 shadow-sm {% if form.first_name.errors %}is-invalid{% endif %}" id="first_name" value="{{ form.first_name.value|default:user.first_name }}" placeholder="Nombres" required />
+                  <label for="first_name">Nombres</label>
+                  {% if form.first_name.errors %}
+                  <div class="invalid-feedback ms-2">
+                    {{ form.first_name.errors.0 }}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Apellidos (EDITABLE) -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="text" name="last_name" class="form-control rounded-4 shadow-sm {% if form.last_name.errors %}is-invalid{% endif %}" id="last_name" value="{{ form.last_name.value|default:user.last_name }}" placeholder="Apellidos" required />
+                  <label for="last_name">Apellidos</label>
+                  {% if form.last_name.errors %}
+                  <div class="invalid-feedback ms-2">
+                    {{ form.last_name.errors.0 }}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Tipo Documento (NO EDITABLE) -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control rounded-4 shadow-sm bg-light text-muted"
+                    id="tipo_documento_disabled"
+                    value="{{ user.get_tipo_documento_display|default:'No especificado' }}"
+                    disabled
+                    readonly
+                  />
+                  <label for="tipo_documento_disabled"><i class="bi bi-card-heading text-dark me-2"></i>Tipo de Documento</label>
+                </div>
+              </div>
+
+              <!-- Número Documento (NO EDITABLE) -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control rounded-4 shadow-sm bg-light text-muted"
+                    id="numero_documento_disabled"
+                    value="{{ user.numero_documento|default:'No especificado' }}"
+                    disabled
+                    readonly
+                  />
+                  <label for="numero_documento_disabled"><i class="bi bi-123 text-dark me-2"></i>Número de Documento</label>
+                </div>
+              </div>
+
+              <!-- Teléfono (EDITABLE) -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="tel" name="telefono" class="form-control rounded-4 shadow-sm {% if form.telefono.errors %}is-invalid{% endif %}" id="telefono" value="{{ form.telefono.value|default:user.telefono }}" placeholder="Número de Teléfono" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                  <label for="telefono"><i class="bi bi-telephone text-dark me-2"></i>Teléfono</label>
+                  {% if form.telefono.errors %}
+                  <div class="invalid-feedback ms-2">
+                    {{ form.telefono.errors.0 }}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Imagen de Perfil (EDITABLE) -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="file" name="imagen_perfil" class="form-control rounded-4 shadow-sm {% if form.imagen_perfil.errors %}is-invalid{% endif %}" id="imagen_perfil" accept="image/*" />
+                  <label for="imagen_perfil"><i class="bi bi-camera text-dark me-2"></i>Foto de Perfil (Opcional)</label>
+                  {% if form.imagen_perfil.errors %}
+                  <div class="invalid-feedback ms-2">
+                    {{ form.imagen_perfil.errors.0 }}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Ciudad y País (NO EDITABLE) -->
+              <div class="col-md-12">
+                <div class="form-floating">
+                  <input type="text" class="form-control rounded-4 shadow-sm bg-light text-muted" id="residencia_disabled" value="{{ user.residencia|default:'No especificado' }}" disabled readonly />
+                  <label for="residencia_disabled"><i class="bi bi-geo-alt text-dark me-2"></i>Ciudad y País</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-5">
+              <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+                Cancelar
+              </a>
+              <button type="submit" class="btn btn-dark rounded-pill px-5 fw-bold shadow-sm">
+                Guardar Cambios
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

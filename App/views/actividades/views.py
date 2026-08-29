@@ -9,9 +9,6 @@ from App.mixins import StaffRequiredMixin
 from django import forms
 from App.models import *
 
-# Create your views here.
-
-
 # ==========================================
 # ACTIVIDADES
 # ==========================================

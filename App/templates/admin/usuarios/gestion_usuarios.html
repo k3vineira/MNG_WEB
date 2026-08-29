@@ -1,0 +1,533 @@
+{% extends 'base-admin.html' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- 1. Panel Superior: Encabezado -->
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
+        <div class="mb-0">
+            <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
+                <i class="bi bi-people-fill me-3"></i>Gestión Integral de Usuarios
+            </h1>
+            <div class="d-flex gap-2 flex-wrap">
+                <span class="badge bg-success bg-opacity-75 p-2 rounded-pill shadow-sm d-flex align-items-center"><i class="bi bi-person-badge me-1"></i> {{ total_admins }} Administradores</span>
+                <span class="badge bg-warning text-dark p-2 rounded-pill shadow-sm d-flex align-items-center"><i class="bi bi-compass me-1"></i> {{ total_guias }} Guías</span>
+                <span class="badge bg-info text-dark p-2 rounded-pill shadow-sm d-flex align-items-center"><i class="bi bi-person-walking me-1"></i> {{ total_clientes }} Clientes</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Visualización y Filtros (Listado General de Usuarios) -->
+    <div class="card border-0 shadow-sm p-3 mb-4">
+        <!-- Zona de Filtros -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div class="btn-group shadow-sm" role="group" aria-label="Filtros de usuario">
+                <a href="{% url 'gestion_usuarios' %}" class="btn btn-outline-success {% if not filtro_actual %}active{% endif %}">Todos</a>
+                <a href="{% url 'gestion_usuarios' %}?filtro=ADMIN" class="btn btn-outline-success {% if filtro_actual == 'ADMIN' %}active{% endif %}">Administradores</a>
+                <a href="{% url 'gestion_usuarios' %}?filtro=CLIENTE" class="btn btn-outline-success {% if filtro_actual == 'CLIENTE' %}active{% endif %}">Clientes/Turistas</a>
+            </div>
+            
+            <form method="GET" action="{% url 'gestion_usuarios' %}" class="input-group shadow-sm u-style-9dd291e0">
+                {% if filtro_actual %}
+                    <input type="hidden" name="filtro" value="{{ filtro_actual }}">
+                {% endif %}
+                <input type="text" name="q" class="form-control border-success border-opacity-25" placeholder="Buscar usuario..." value="{{ request.GET.q|default:'' }}">
+                <button class="btn btn-success" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+
+        <!-- Tabla Responsiva para Desktop -->
+        <div class="table-responsive d-none d-lg-block">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th scope="col" class="fw-bold">ID</th>
+                        <th scope="col" class="fw-bold">Perfil</th>
+                        <th scope="col" class="fw-bold">Identificación</th>
+                        <th scope="col" class="fw-bold">Contacto</th>
+                        <th scope="col" class="fw-bold text-center">Rol</th>
+                        <th scope="col" class="fw-bold text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td class="text-muted fw-bold">#{{ u.id }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if u.imagen_perfil %}
+                                <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm me-3 border flex-shrink-0 {% if u.rol == 'ADMIN' %}border-primary{% elif u.rol == 'GUIA' %}border-warning{% else %}border-info{% endif %} border-opacity-50" style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; font-size: 1.1rem;">
+                                    {{ u.first_name|first|default:u.username|first|upper }}
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="fw-bold text-dark mb-0">{{ u.get_full_name|default:u.username }}</div>
+                                    <div class="text-muted small">@{{ u.username }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-dark fw-semibold">{{ u.tipo_documento|default:"—" }}</div>
+                            <div class="text-muted small">{{ u.numero_documento|default:"—" }}</div>
+                        </td>
+                        <td>
+                            <div class="text-dark small d-flex align-items-center mb-1"><i class="bi bi-envelope text-success me-2"></i> {{ u.email|default:"—" }}</div>
+                            <div class="text-muted small d-flex align-items-center"><i class="bi bi-telephone text-success me-2"></i> {{ u.telefono|default:"—" }}</div>
+                        </td>
+                        <td class="text-center">
+                            {% if u.rol == 'ADMIN' %}
+                            <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">ADMIN</span>
+                            {% elif u.rol == 'GUIA' %}
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm">GUIA</span>
+                            {% else %}
+                            <span class="badge bg-info text-dark px-3 py-2 rounded-pill shadow-sm">CLIENTE</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group shadow-sm" role="group">
+                                <!-- Ver Detalles -->
+                                <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetallesUsuario{{ u.id }}" title="Ver Detalles">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <!-- Editar -->
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditarUsuario{{ u.id }}" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <!-- Toggle Estado -->
+                                <form action="{% url 'usuarios_toggle_estado' u.id %}" method="POST" class="d-inline m-0 p-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="{% if u.is_active %}Inactivar{% else %}Activar{% endif %}">
+                                        <i class="bi bi-power"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center p-5 text-muted small">No hay usuarios registrados con este filtro o búsqueda.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tarjetas Responsivas para Móviles -->
+        <div class="d-lg-none">
+            <div class="row g-3">
+                {% for u in usuarios %}
+                <div class="col-12">
+                    <div class="card border border-light shadow-sm rounded-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                                <div class="d-flex align-items-center gap-3">
+                                    {% if u.imagen_perfil %}
+                                        <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border flex-shrink-0" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; font-size: 1.2rem;">
+                                            {{ u.first_name|first|default:u.username|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark">{{ u.get_full_name|default:u.username }}</h6>
+                                        <small class="text-muted">@{{ u.username }}</small>
+                                    </div>
+                                </div>
+                                <div>
+                                    {% if u.rol == 'ADMIN' %}
+                                        <span class="badge bg-primary rounded-pill px-2 py-1 small">ADMIN</span>
+                                    {% elif u.rol == 'GUIA' %}
+                                        <span class="badge bg-warning text-dark rounded-pill px-2 py-1 small">GUIA</span>
+                                    {% else %}
+                                        <span class="badge bg-info text-dark rounded-pill px-2 py-1 small">CLIENTE</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="small text-muted mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="fw-bold text-secondary">Documento:</span>
+                                    <span class="text-dark">{{ u.tipo_documento|default:"—" }} {{ u.numero_documento|default:"" }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="fw-bold text-secondary">Email:</span>
+                                    <span class="text-dark">{{ u.email|default:"—" }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold text-secondary">Teléfono:</span>
+                                    <span class="text-dark">{{ u.telefono|default:"—" }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2 justify-content-end border-top pt-3">
+                                <button type="button" class="btn btn-sm btn-outline-success flex-fill fw-bold rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetallesUsuario{{ u.id }}">
+                                    <i class="bi bi-eye me-1"></i> Detalles
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditarUsuario{{ u.id }}">
+                                    <i class="bi bi-pencil me-1"></i> Editar
+                                </button>
+                                <form action="{% url 'usuarios_toggle_estado' u.id %}" method="POST" class="m-0 p-0 flex-fill">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold rounded-pill" title="Cambiar Estado">
+                                        <i class="bi bi-power"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center p-4 text-muted border rounded shadow-sm bg-light">
+                    No hay usuarios registrados.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<!-- COMPONENTES PARA CADA USUARIO (DENTRO DEL BUCLE) -->
+<!-- ============================================== -->
+{% for u in usuarios %}
+
+    <!-- OFFCANVAS DE DETALLES (Reemplaza el antiguo modal) -->
+    <div class="offcanvas offcanvas-end border-0 shadow-lg u-style-c407f9e8" tabindex="-1" id="offcanvasDetallesUsuario{{ u.id }}">
+        <div class="offcanvas-header {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning{% else %}bg-info{% endif %} bg-opacity-10 border-bottom p-4">
+            <div class="d-flex align-items-center gap-3">
+                {% if u.imagen_perfil %}
+                    <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow border border-white flex-shrink-0" style="width: 55px; height: 55px; min-width: 55px; min-height: 55px; object-fit: cover;">
+                {% else %}
+                    <div class="rounded-circle shadow d-flex align-items-center justify-content-center text-white fw-bold fs-4 flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 55px; height: 55px; min-width: 55px; min-height: 55px;">
+                        {{ u.first_name|first|default:u.username|first|upper }}
+                    </div>
+                {% endif %}
+                <div>
+                    <h5 class="offcanvas-title fw-bold text-dark m-0">{{ u.get_full_name|default:u.username }}</h5>
+                    <small class="text-muted">@{{ u.username }}</small>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+
+            <!-- Badge de Estado y Rol -->
+            <div class="d-flex justify-content-between align-items-center p-4 pb-0">
+                {% if u.rol == 'ADMIN' %}
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2 fw-semibold"><i class="bi bi-shield-lock-fill me-1"></i> Administrador</span>
+                {% elif u.rol == 'GUIA' %}
+                    <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-semibold"><i class="bi bi-compass-fill me-1"></i> Guía Turístico</span>
+                {% else %}
+                    <span class="badge bg-info bg-opacity-10 text-dark border border-info border-opacity-25 rounded-pill px-3 py-2 fw-semibold"><i class="bi bi-person-walking me-1"></i> Cliente / Turista</span>
+                {% endif %}
+                {% if u.is_active %}
+                    <span class="badge bg-success bg-opacity-75 rounded-pill px-3 py-2 shadow-sm"><i class="bi bi-check-circle-fill me-1"></i> Activo</span>
+                {% else %}
+                    <span class="badge bg-danger bg-opacity-75 rounded-pill px-3 py-2 shadow-sm"><i class="bi bi-x-circle-fill me-1"></i> Inactivo</span>
+                {% endif %}
+            </div>
+
+            <!-- Datos Personales -->
+            <div class="p-4">
+                <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-person-vcard me-2 text-success"></i>Datos Personales</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="bg-light rounded-3 p-3">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Nombres</small>
+                            <span class="fw-bold text-dark">{{ u.first_name|default:"—" }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-light rounded-3 p-3">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Apellidos</small>
+                            <span class="fw-bold text-dark">{{ u.last_name|default:"—" }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-light rounded-3 p-3">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Tipo Documento</small>
+                            <span class="fw-bold text-dark">{{ u.tipo_documento|default:"—" }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-light rounded-3 p-3">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Nro. Documento</small>
+                            <span class="fw-bold text-dark font-monospace">{{ u.numero_documento|default:"—" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-telephone me-2 text-success"></i>Contacto</h6>
+                <div class="list-group list-group-flush mb-4">
+                    <div class="list-group-item bg-transparent px-0 d-flex align-items-center gap-3 border-bottom">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center u-style-80722803">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Correo Electrónico</small>
+                            <span class="fw-semibold text-dark">{{ u.email|default:"—" }}</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item bg-transparent px-0 d-flex align-items-center gap-3 border-bottom">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center u-style-80722803">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Teléfono</small>
+                            <span class="fw-semibold text-dark">{{ u.telefono|default:"—" }}</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item bg-transparent px-0 d-flex align-items-center gap-3">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center u-style-80722803">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Residencia</small>
+                            <span class="fw-semibold text-dark">{{ u.residencia|default:"—" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Perfil Específico por Rol -->
+                {% if u.rol == 'GUIA' %}
+                <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-award me-2 text-warning"></i>Perfil de Guía</h6>
+                <div class="bg-warning bg-opacity-10 rounded-4 p-3 border border-warning border-opacity-25 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-warning border-opacity-25 pb-2">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold d-block u-style-22c80133">Licencia de Turismo</small>
+                            <span class="fw-bold text-dark fs-5 font-monospace">{% if u.guia %}{{ u.guia.numero_tarjeta_profesional|default:"—" }}{% else %}—{% endif %}</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted text-uppercase fw-bold d-block u-style-22c80133">Experiencia</small>
+                            <span class="fw-bold text-success fs-5">{% if u.guia %}{{ u.guia.experiencia_anos|default:0 }}{% else %}0{% endif %} <small class="text-muted fw-normal">años</small></span>
+                        </div>
+                    </div>
+                    <small class="text-muted text-uppercase fw-bold d-block mb-2 u-style-22c80133">Biografía Profesional</small>
+                    <div class="bg-white rounded-3 p-3 border">
+                        <p class="text-dark small mb-0 lh-lg">{% if u.guia and u.guia.descripcion_experiencia %}{{ u.guia.descripcion_experiencia }}{% else %}Sin biografía registrada.{% endif %}</p>
+                    </div>
+                </div>
+                {% elif u.rol == 'CLIENTE' %}
+                <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-airplane me-2 text-info"></i>Información de Origen</h6>
+                <div class="bg-info bg-opacity-10 rounded-4 p-3 border border-info border-opacity-25 mb-3">
+                    <div class="row g-3">
+                        <div class="col-4">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">País</small>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-globe-americas text-info"></i>
+                                <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.nombre_pais|default:"—" }}{% else %}—{% endif %}</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Departamento</small>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-map text-info"></i>
+                                <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.nombre_departamento|default:"—" }}{% else %}—{% endif %}</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Ciudad/Mun.</small>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-building text-info"></i>
+                                <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.nombre_ciudad|default:"—" }}{% else %}—{% endif %}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% elif u.rol == 'ADMIN' %}
+                <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-shield-lock me-2 text-primary"></i>Privilegios</h6>
+                <div class="bg-primary bg-opacity-10 rounded-4 p-4 border border-primary border-opacity-25 text-center">
+                    <i class="bi bi-shield-lock-fill text-primary fs-1 mb-2 d-block"></i>
+                    <p class="text-muted small mb-0">Este usuario tiene privilegios completos de administración del sistema Monagua.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Acciones del Pie -->
+            <div class="p-4 pt-0 d-grid gap-2">
+                <button type="button" class="btn btn-outline-secondary fw-bold py-2 rounded-pill" data-bs-dismiss="offcanvas" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditarUsuario{{ u.id }}">
+                    <i class="bi bi-pencil-square me-2"></i>Editar este Usuario
+                </button>
+                <button type="button" class="btn btn-outline-dark fw-bold py-2 rounded-pill" data-bs-dismiss="offcanvas">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OFFCANVAS DE EDICIÓN -->
+    <div class="offcanvas offcanvas-end border-0 shadow-lg u-style-5d401be2" tabindex="-1" id="offcanvasEditarUsuario{{ u.id }}">
+        <div class="offcanvas-header bg-secondary bg-opacity-10 border-bottom p-4">
+            <h5 class="offcanvas-title fw-bold text-dark d-flex align-items-center gap-2 m-0">
+                <i class="bi bi-person-gear fs-4"></i> Editar Usuario #{{ u.id }}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            <form action="{% url 'usuarios_guardar' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ u.id }}">
+
+                <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-person me-2 text-secondary"></i>Datos Base</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-sm bg-light" name="username" value="{{ u.username }}" readonly>
+                            <label class="text-muted small">Username (No editable)</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="password" class="form-control form-control-sm" name="password" placeholder="Contraseña">
+                            <label class="text-muted small">Nueva Contraseña (Dejar en blanco para mantener actual)</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="email" class="form-control form-control-sm" name="email" value="{{ u.email }}" required>
+                            <label class="text-muted small">Email *</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-sm" name="first_name" value="{{ u.first_name }}">
+                            <label class="text-muted small">Nombres</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-sm" name="last_name" value="{{ u.last_name }}">
+                            <label class="text-muted small">Apellidos</label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-floating">
+                            <select class="form-select form-select-sm" name="tipo_documento">
+                                <option value="CC" {% if u.tipo_documento == 'CC' %}selected{% endif %}>CC</option>
+                                <option value="CE" {% if u.tipo_documento == 'CE' %}selected{% endif %}>CE</option>
+                                <option value="PASAPORTE" {% if u.tipo_documento == 'PASAPORTE' %}selected{% endif %}>Pasaporte</option>
+                            </select>
+                            <label class="text-muted small">Tipo Doc.</label>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-sm" name="numero_documento" value="{{ u.numero_documento|default:'' }}">
+                            <label class="text-muted small">Número Documento</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="tel" class="form-control form-control-sm" name="telefono" value="{{ u.telefono|default:'' }}">
+                            <label class="text-muted small">Teléfono</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-sm" name="residencia" value="{{ u.residencia|default:'' }}">
+                            <label class="text-muted small">Residencia Local</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label text-muted small fw-bold mb-1">Actualizar Foto de Perfil</label>
+                        <input class="form-control form-control-sm" type="file" name="imagen_perfil" accept="image/*">
+                    </div>
+                </div>
+
+                <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-briefcase me-2 text-secondary"></i>Perfil y Rol Actual</h6>
+                <div class="form-floating border border-secondary border-opacity-50 rounded shadow-sm mb-3">
+                    {% if u.id == request.user.id %}
+                        <!-- No puede cambiar su propio rol -->
+                        <select class="form-select form-select-sm fw-bold bg-light text-muted shadow-none" name="rol_disabled" disabled>
+                            <option value="ADMIN" selected>Administrador (Tu propio rol)</option>
+                        </select>
+                        <input type="hidden" name="rol" value="ADMIN">
+                    {% else %}
+                        <!-- No puede hacer ADMIN a otros -->
+                        <select class="form-select form-select-sm fw-bold bg-light" name="rol" required>
+                            <option value="CLIENTE" {% if u.rol == 'CLIENTE' %}selected{% endif %}>Cliente / Turista</option>
+                            <option value="GUIA" {% if u.rol == 'GUIA' %}selected{% endif %}>Guía Turístico</option>
+                            {% if u.rol == 'ADMIN' %}
+                                <option value="ADMIN" selected>Administrador</option>
+                            {% endif %}
+                        </select>
+                    {% endif %}
+                    <label class="text-secondary fw-bold">Rol del Usuario *</label>
+                </div>
+                
+                <div class="accordion mb-4 shadow-sm" id="accordionEditarRoles{{ u.id }}">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button {% if u.rol != 'CLIENTE' %}collapsed{% endif %} fw-bold text-info" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditarCliente{{ u.id }}">
+                                Datos de Cliente / Turista
+                            </button>
+                        </h2>
+                        <div id="collapseEditarCliente{{ u.id }}" class="accordion-collapse collapse {% if u.rol == 'CLIENTE' %}show{% endif %}" data-bs-parent="#accordionEditarRoles{{ u.id }}">
+                            <div class="accordion-body bg-info bg-opacity-10">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-sm" name="pais" value="{% if u.rol == 'CLIENTE' and u.cliente %}{{ u.cliente.pais }}{% endif %}">
+                                            <label class="text-muted small">País de Origen</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-sm" name="departamento" value="{% if u.rol == 'CLIENTE' and u.cliente %}{{ u.cliente.departamento }}{% endif %}">
+                                            <label class="text-muted small">Departamento</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-sm" name="ciudad" value="{% if u.rol == 'CLIENTE' and u.cliente %}{{ u.cliente.ciudad }}{% endif %}">
+                                            <label class="text-muted small">Ciudad / Municipio</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button {% if u.rol != 'GUIA' %}collapsed{% endif %} fw-bold text-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditarGuia{{ u.id }}">
+                                Datos de Guía Turístico
+                            </button>
+                        </h2>
+                        <div id="collapseEditarGuia{{ u.id }}" class="accordion-collapse collapse {% if u.rol == 'GUIA' %}show{% endif %}" data-bs-parent="#accordionEditarRoles{{ u.id }}">
+                            <div class="accordion-body bg-warning bg-opacity-10">
+                                <div class="row g-3">
+                                    <div class="col-md-8">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-sm text-uppercase" name="licencia_turismo" value="{% if u.rol == 'GUIA' and u.guia %}{{ u.guia.numero_tarjeta_profesional }}{% endif %}">
+                                            <label class="text-muted small">Licencia de Turismo</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control form-control-sm text-center" name="experiencia_anos" value="{% if u.rol == 'GUIA' and u.guia %}{{ u.guia.experiencia_anos }}{% endif %}" min="0">
+                                            <label class="text-muted small">Exp. (Años)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control form-control-sm u-style-1a3a679d" name="biografia">{% if u.rol == 'GUIA' and u.guia %}{{ u.guia.descripcion_experiencia }}{% endif %}</textarea>
+                                            <label class="text-muted small">Biografía / Presentación</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4 pt-3 border-top">
+                    <button type="submit" class="btn btn-secondary fw-bold py-2 shadow-sm rounded-pill"><i class="bi bi-save me-2"></i>Guardar Cambios</button>
+                    <button type="button" class="btn btn-outline-secondary py-2 rounded-pill fw-bold" data-bs-dismiss="offcanvas">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endfor %}
+
+{% endblock %}

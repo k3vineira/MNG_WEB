@@ -1,0 +1,117 @@
+<!-- ── base-turista (dashboard layout) ── -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Panel Viajero | Monagua{% endblock %}</title>
+  <link rel="icon" type="image/x-icon" href="{% static 'img/monagua_log.ico' %}">
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/librerias/iconos_bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/librerias/fuente_poppins.css' %}">
+  
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'css/styles_generated.css' %}">
+  {% block extra_head %}{% endblock %}
+  
+</head>
+<body class="bg-light u-style-0e1c2a89">
+
+<!-- ── Botón hamburguesa (solo móvil) ── -->
+<button id="sidebar-toggle"
+        class="btn btn-success position-fixed d-lg-none u-style-f3ff7e61"
+        aria-label="Abrir menú" aria-expanded="false" aria-controls="mainSidebar">
+  <i class="bi bi-list fs-5"></i>
+</button>
+
+<!-- ── Overlay móvil ── -->
+<div id="sidebar-overlay"
+     class="position-fixed top-0 start-0 w-100 h-100 d-none u-style-11b54de0"></div>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+{% if user.is_authenticated and user.rol == 'ADMIN' %}
+  {% include 'partials/aside-admin.html' %}
+{% elif user.is_authenticated and user.rol == 'GUIA' %}
+  {% include 'partials/aside-guia.html' %}
+{% else %}
+  {% include 'partials/aside-turista.html' %}
+{% endif %}
+
+{% include 'partials/accesibilidad.html' %}
+
+<!-- ══════════════ CONTENIDO PRINCIPAL ══════════════ -->
+<main id="mainContent" class="p-4">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Scripts -->
+<script src="{% static 'js/librerias/bootstrap.paquete.min.js' %}"></script>
+<script>
+(function () {
+  const btn     = document.getElementById('sidebar-toggle');
+  const sb      = document.getElementById('mainSidebar');
+  const ov      = document.getElementById('sidebar-overlay');
+  const content = document.getElementById('mainContent');
+
+  const ICON_OPEN  = '<i class="bi bi-list fs-5"></i>';
+  const ICON_CLOSE = '<i class="bi bi-x-lg fs-5"></i>';
+
+  function toggleSidebar(forceClose = false) {
+    const isOpen = document.body.classList.contains('sidebar-open');
+    if (isOpen || forceClose) {
+      document.body.classList.remove('sidebar-open');
+      btn.innerHTML = ICON_OPEN;
+      btn.setAttribute('aria-expanded', 'false');
+    } else {
+      document.body.classList.add('sidebar-open');
+      btn.innerHTML = ICON_CLOSE;
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  if (btn) {
+    btn.addEventListener('click', () => toggleSidebar());
+  }
+  if (ov) {
+    ov.addEventListener('click', () => toggleSidebar(true));
+  }
+
+  // Cerrar al hacer clic en un link en móvil
+  if (sb) {
+    sb.querySelectorAll('a').forEach(link =>
+      link.addEventListener('click', () => { if (window.innerWidth < 992) toggleSidebar(true); })
+    );
+  }
+})();
+</script>
+{% block extra_js %}{% endblock %}
+{% include 'partials/toast_messages.html' %}
+
+<script>
+(function() {
+    function initTooltips() {
+        if (typeof bootstrap === 'undefined') return;
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"], [title]:not([title=""])'));
+        tooltipTriggerList.forEach(function (el) {
+            var toggle = el.getAttribute('data-bs-toggle');
+            if (toggle && toggle !== 'tooltip') return;
+            try {
+                if (!bootstrap.Tooltip.getInstance(el)) {
+                    new bootstrap.Tooltip(el, { boundary: document.body, trigger: 'hover' });
+                }
+            } catch(e) {}
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTooltips);
+    } else {
+        initTooltips();
+    }
+})();
+</script>
+
+</body>
+</html>
+

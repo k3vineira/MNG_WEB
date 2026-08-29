@@ -1,0 +1,62 @@
+<div class="modal fade" id="modalContestar{{ pqr.id }}" tabindex="-1" aria-labelledby="label{{ pqr.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <form method="POST" action="{% url 'contestar_pqrs' pqr.id %}">
+                {% csrf_token %}
+                <div class="modal-header bg-success text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold" id="label{{ pqr.id }}">
+                        <i class="bi bi-reply-fill me-2"></i>Responder a {{ pqr.cliente.usuario.first_name }} {{ pqr.cliente.usuario.last_name }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body p-4">
+                    
+                    <div class="p-3 bg-light rounded-3 mb-3 border">
+                        <p class="mb-1"><strong>Asunto:</strong> {{ pqr.asunto }}</p>
+                        <p class="mb-0 text-muted small"><strong>Descripción original:</strong> {{ pqr.descripcion }}</p>
+                    </div>
+
+                    
+                    <h6 class="fw-bold text-success mb-2">
+                        <i class="bi bi-clock-history me-1"></i> Historial de respuestas registradas:
+                    </h6>
+                    <div class="mb-3 p-3 bg-light rounded-3 border" style="max-height: 180px; overflow-y: auto;">
+                        {% for item in pqr.seguimientos.all %}
+                            <div class="border-bottom pb-2 mb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="fw-bold text-dark"><i class="bi bi-person-badge me-1"></i> {{ item.usuario.first_name|default:"Administrador" }}</small>
+                                    <small class="text-muted fs-7">{{ item.fecha_respuesta|date:"d/m/Y h:i A" }}</small>
+                                </div>
+                                <p class="mb-0 text-secondary small mt-1">{{ item.respuesta }}</p>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted small mb-0"><i class="bi bi-info-circle me-1"></i> No hay respuestas previas en el historial.</p>
+                        {% endfor %}
+                    </div>
+
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nueva Respuesta / Seguimiento:</label>
+                        <textarea name="respuesta" class="form-control" rows="4" required placeholder="Escribe aquí la nueva respuesta para agregar al historial..."></textarea>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-bold">Actualizar Estado de la Solicitud:</label>
+                        <select name="estado" class="form-select">
+                            <option value="en_proceso" {% if pqr.estado == 'en_proceso' %}selected{% endif %}>En Proceso</option>
+                            <option value="cerrado" {% if pqr.estado == 'cerrado' %}selected{% endif %}>Cerrado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light rounded-bottom-4">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn u-style-ffd7384b btn-success rounded-pill px-4 fw-bold">
+                        <i class="bi bi-send-fill me-1"></i> Guardar respuesta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

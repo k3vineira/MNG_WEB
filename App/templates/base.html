@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ request.LANGUAGE_CODE|default:'es' }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="preload"
+      as="image"
+      href="{% static 'img/Fondo.webp' %}"
+      fetchpriority="high"
+    />
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/librerias/iconos_fontawesome.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/librerias/iconos_bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/librerias/fuente_poppins.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.4" />
+    <link rel="stylesheet" href="{% static 'css/librerias/animaciones_scroll_aos.css' %}" />
+
+    <link
+      class="rounded-pill"
+      rel="icon"
+      type="image/webp"
+      href="{% static 'img/monagua_log.webp' %}"
+    />
+
+    <title>{% block titulo %}Monagua{% endblock %}</title>
+  </head>
+  <body>
+    {% block navbar %}{% include 'partials/header.html' %}{% endblock %}
+
+    <main class="wrapper min-vh-100">
+      <div class="content-wrapper">{% block content %}{% endblock %}</div>
+    </main>
+
+    {% block footer %}{% include 'partials/footer.html' %}{% endblock %}
+
+    <!-- Componentes Flotantes Globales -->
+    {% include 'partials/accesibilidad.html' %}
+    {% block mascota %}
+    {% include 'partials/mascota.html' %}
+    {% endblock %}
+
+    <script src="{% static 'js/librerias/bootstrap.paquete.min.js' %}"></script>
+    <script src="{% static 'js/librerias/animaciones_scroll_aos.js' %}"></script>
+
+    {% include 'partials/toast_messages.html' %}
+
+    <script>
+      // Inicialización global de tooltips para toda la página
+      document.addEventListener("DOMContentLoaded", function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl, { trigger: 'hover' });
+        });
+        AOS.init({
+          duration: 600,
+          once: true,
+          mirror: false,
+          offset: 80,
+        });
+      });
+    </script>
+  </body>
+</html>

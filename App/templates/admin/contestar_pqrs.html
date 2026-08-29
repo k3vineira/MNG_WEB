@@ -1,0 +1,25 @@
+{% extends "admin/base-admin.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="card shadow-sm border-0 rounded-4 p-4">
+        <h4 class="fw-bold mb-3"><i class="bi bi-reply-fill text-success me-2"></i>Contestar PQRS #{{ pqr.id }}</h4>
+        <div class="mb-3">
+            <p><strong>Asunto:</strong> {{ pqr.asunto }}</p>
+            <p><strong>Tipo:</strong> {{ pqr.get_tipo_display }}</p>
+            <p><strong>Descripción:</strong> {{ pqr.descripcion }}</p>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="respuesta" class="form-label fw-semibold">Respuesta / Seguimiento</label>
+                <textarea class="form-control" id="respuesta" name="respuesta" rows="4" required></textarea>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{% url 'listar_pqrs' %}" class="btn btn-secondary rounded-pill">Cancelar</a>
+                <button type="submit" class="btn btn-success rounded-pill px-4">Enviar Respuesta</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

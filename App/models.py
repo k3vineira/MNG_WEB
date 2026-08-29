@@ -76,7 +76,6 @@ class Usuario(AbstractUser):
 
     # --- PROPIEDADES ---
 
-
     @property
     def nombre_completo(self):
         """Retorna el nombre completo del usuario."""
@@ -152,6 +151,7 @@ class Categoria(models.Model):
     def __str__(self):
         """Retorna el nombre de la categoría como representación textual."""
         return self.nombre
+
 # ==============================================================================
 #  ACTIVIDADES
 # ==============================================================================
@@ -356,7 +356,6 @@ class Reserva(models.Model):
         ('cancelada', 'Cancelada'),
     ]
 
-    # Relaciones apuntando a los modelos dentro del mismo archivo
     paquete = models.ForeignKey('Paquete', on_delete=models.PROTECT, related_name='reservas', verbose_name='Paquete Reservado')
     usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='reservas', verbose_name='Usuario', null=True, blank=True)
     fecha_inicio = models.DateField(null=True, blank=True, verbose_name='Fecha de inicio')
@@ -375,7 +374,6 @@ class Reserva(models.Model):
     def save(self, *args, **kwargs):
         if self.paquete and self.fecha_inicio:
             try:
-                # Búsqueda directa sin imports
                 temporada = Temporada.objects.filter(
                     fecha_inicio__lte=self.fecha_inicio, 
                     fecha_fin__gte=self.fecha_inicio
@@ -409,6 +407,7 @@ class Reserva(models.Model):
             self.monto_total = 0.00
 
         super().save(*args, **kwargs)
+
 # ==============================================================================
 # PQRS
 # ==============================================================================
@@ -489,8 +488,6 @@ class Calificacion(models.Model):
     admin_respuesta = models.TextField(blank=True, null=True, verbose_name='Respuesta del Admin')
     fecha_calificacion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Calificación')
 
-
-
     class Meta:
         db_table = 'comunidad_calificacion'
         ordering = ['-fecha_calificacion']
@@ -501,12 +498,9 @@ class Calificacion(models.Model):
         """Retorna el título de la calificación y el puntaje en estrellas."""
         return f'{self.titulo} - {self.puntaje_estrellas} estrellas'
 
-
-
 # ==============================================================================
 # GUIAS
 # ==============================================================================
-
 
 class PlanGuia(models.Model):
     """
@@ -530,7 +524,6 @@ class PlanGuia(models.Model):
     def __str__(self):
         nombre_guia = self.usuario.get_full_name()
         return f'Plan Guía #{self.pk} — {nombre_guia} — {self.paquete.nombre}'
-
 
 # ==============================================================================
 # PAGOS
@@ -731,6 +724,3 @@ try:
     auditlog.register(Pago)
 except Exception as e:
     logger.warning("No se pudo registrar modelos en auditlog: %s", e)
-
-
-
