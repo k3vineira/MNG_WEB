@@ -26,123 +26,6 @@ class PositiveTinyIntegerField(models.PositiveSmallIntegerField):
 logger = logging.getLogger(__name__)
 
 # ==============================================================================
-# RESOLVEDOR DE UBICACIONES
-# ==============================================================================
-class LocationResolver:
-    _cache_file = None
-    _countries = {}
-    _departments = {}
-    _cities = {}
-    _loaded = False
-
-    @classmethod
-    def _get_cache_path(cls):
-        if cls._cache_file is None:
-            cls._cache_file = os.path.join(settings.BASE_DIR, 'location_cache.json')
-        return cls._cache_file
-
-    @classmethod
-    def load_data(cls):
-        if cls._loaded:
-            return
-
-        cache_path = cls._get_cache_path()
-        if os.path.exists(cache_path):
-            try:
-                with open(cache_path, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    cls._countries = data.get('countries', {})
-                    cls._departments = data.get('departments', {})
-                    cls._cities = data.get('cities', {})
-                    cls._loaded = True
-                    return
-            except Exception:
-                pass
-
-        cls._fetch_and_cache()
-
-    @classmethod
-    def _fetch_and_cache(cls):
-        # 1. Fetch countries
-        try:
-            context = ssl._create_unverified_context()
-            req = urllib.request.Request(
-                'https://countriesnow.space/api/v0.1/countries',
-                headers={'User-Agent': 'Mozilla/5.0'}
-            )
-            with urllib.request.urlopen(req, timeout=5, context=context) as response:
-                res_data = json.loads(response.read().decode('utf-8'))
-                cls._countries = {}
-                for item in res_data.get('data', []):
-                    iso3 = item.get('iso3')
-                    country = item.get('country')
-                    if iso3 and country:
-                        cls._countries[str(iso3).upper()] = country
-        except Exception as e:
-            logger.error("Error loading countries: %s", e)
-            cls._countries = {'COL': 'Colombia'}
-
-        # 2. Fetch Colombia departments and municipalities
-        try:
-            context = ssl._create_unverified_context()
-            req = urllib.request.Request(
-                'https://www.datos.gov.co/resource/gdxc-w37w.json?$limit=1500',
-                headers={'User-Agent': 'Mozilla/5.0'}
-            )
-            with urllib.request.urlopen(req, timeout=5, context=context) as response:
-                res_data = json.loads(response.read().decode('utf-8'))
-                cls._departments = {}
-                cls._cities = {}
-                for item in res_data:
-                    dept_code = item.get('cod_dpto')
-                    dept_name = item.get('dpto')
-                    muni_code = item.get('cod_mpio')
-                    muni_name = item.get('nom_mpio')
-                    if dept_code and dept_name:
-                        cls._departments[str(dept_code)] = dept_name.title().strip()
-                    if muni_code and muni_name:
-                        cls._cities[str(muni_code)] = muni_name.title().strip()
-        except Exception as e:
-            logger.error("Error loading Colombia DANE data: %s", e)
-            cls._departments = {}
-            cls._cities = {}
-
-        # Save to cache file
-        cache_path = cls._get_cache_path()
-        try:
-            with open(cache_path, 'w', encoding='utf-8') as f:
-                json.dump({
-                    'countries': cls._countries,
-                    'departments': cls._departments,
-                    'cities': cls._cities
-                }, f, ensure_ascii=False, indent=4)
-        except Exception as e:
-            logger.error("Error writing location cache file: %s", e)
-
-        cls._loaded = True
-
-    @classmethod
-    def resolve_country(cls, iso3):
-        if not iso3:
-            return ""
-        cls.load_data()
-        return cls._countries.get(str(iso3).upper(), str(iso3))
-
-    @classmethod
-    def resolve_department(cls, code):
-        if code is None or code == "":
-            return ""
-        cls.load_data()
-        return cls._departments.get(str(code), str(code))
-
-    @classmethod
-    def resolve_city(cls, code):
-        if code is None or code == "":
-            return ""
-        cls.load_data()
-        return cls._cities.get(str(code), str(code))
-
-# ==============================================================================
 # USUARIO
 # ==============================================================================
 
@@ -163,213 +46,41 @@ class Usuario(AbstractUser):
         CE = 'CE', 'Cédula de Extranjería'
         PASAPORTE = 'PASAPORTE', 'Pasaporte'
 
-    username = models.CharField(
-        max_length=50,
-        unique=True,
-        verbose_name='Nombre de Usuario'
-    )
-
-    email = models.EmailField(
-        max_length=254,
-        unique=True,
-        error_messages={
-            'unique': 'Ya existe un usuario registrado con este correo electrónico.',
-        },
-        verbose_name='Correo Electrónico'
-    )
-
-    last_login = models.DateTimeField(
-        blank=True,
-        null=True,
-        verbose_name='Último inicio de sesión'
-    )
-
-    rol = models.PositiveSmallIntegerField(
-        choices=Roles.choices,
-        default=Roles.CLIENTE,
-        verbose_name='Rol'
-    )
-    tipo_documento = models.CharField(
-        max_length=20,
-        choices=TipoDocumento.choices,
-        verbose_name='Tipo de Documento'
-    )
-    numero_documento = models.CharField(
-        max_length=20,
-        unique=True,
-        verbose_name='Número de Documento'
-    )
-    telefono = models.CharField(
-        max_length=15,
-        verbose_name='Teléfono'
-    )
-    residencia = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name='Residencia de Origen'
-    )
-    imagen_perfil = models.ImageField(
-        upload_to='perfiles/',
-        null=True,
-        blank=True,
-        verbose_name='Imagen de Perfil'
-    )
-
-    # --- CAMPOS DE CLIENTE (FUSIONADOS) ---
-    pais = models.CharField(
-        max_length=3,
-        blank=True,
-        verbose_name='País'
-    )
-    departamento = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name='Departamento'
-    )
-    ciudad = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name='Ciudad'
-    )
-
-    # --- CAMPOS DE GUÍA TURÍSTICO (FUSIONADOS) ---
-    numero_tarjeta_profesional = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        verbose_name='Licencia de Turismo'
-    )
-    experiencia_anos = models.PositiveIntegerField(
-        null=True,
-        blank=True,
-        verbose_name='Años de Experiencia'
-    )
-    experiencia_fecha = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name='Fecha de Inicio de Experiencia'
-    )
-    descripcion_experiencia = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name='Descripción de la Experiencia'
-    )
-    entidad_salud = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name='Entidad de Salud'
-    )
+    username = models.CharField(max_length=50, unique=True, verbose_name='Nombre de Usuario')
+    email = models.EmailField(max_length=254, unique=True, error_messages={'unique': 'Ya existe un usuario registrado con este correo electrónico.'}, verbose_name='Correo Electrónico')
+    last_login = models.DateTimeField(blank=True, null=True, verbose_name='Último inicio de sesión')
+    rol = models.PositiveSmallIntegerField(choices=Roles.choices, default=Roles.CLIENTE, verbose_name='Rol')
+    tipo_documento = models.CharField(max_length=20, choices=TipoDocumento.choices, verbose_name='Tipo de Documento')
+    numero_documento = models.CharField(max_length=20, unique=True, verbose_name='Número de Documento')
+    telefono = models.CharField(max_length=15, verbose_name='Teléfono')
+    residencia = models.CharField(max_length=100, blank=True, verbose_name='Residencia de Origen')
+    imagen_perfil = models.ImageField(upload_to='perfiles/', null=True, blank=True, verbose_name='Imagen de Perfil')
+    pais = models.CharField(max_length=3, blank=True, verbose_name='País')
+    departamento = models.IntegerField(null=True, blank=True, verbose_name='Departamento')
+    ciudad = models.IntegerField(null=True, blank=True, verbose_name='Ciudad')
+    numero_tarjeta_profesional = models.CharField(max_length=50, blank=True, null=True, verbose_name='Licencia de Turismo')
+    experiencia_anos = models.PositiveIntegerField(null=True, blank=True, verbose_name='Años de Experiencia')
+    experiencia_fecha = models.DateField(null=True, blank=True, verbose_name='Fecha de Inicio de Experiencia')
+    descripcion_experiencia = models.TextField(blank=True, null=True, verbose_name='Descripción de la Experiencia')
+    entidad_salud = models.CharField(max_length=100, blank=True, null=True, verbose_name='Entidad de Salud')
 
     def clean(self):
-        """Validación limpia del modelo."""
         super().clean()
 
     def save(self, *args, **kwargs):
-        """
-        Asigna automáticamente el rol ADMIN a superusuarios.
-
-        Args:
-            *args: Argumentos posicionales adicionales.
-            **kwargs: Argumentos de clave-valor adicionales.
-        """
         # Garantiza que si es superusuario de Django, tome automáticamente el rol ADMIN
         if self.is_superuser and self.rol != self.Roles.ADMIN:
             self.rol = self.Roles.ADMIN
 
         super().save(*args, **kwargs)
 
-    # --- ALIAS EN ESPAÑOL LATAM ---
-    @property
-    def nombre_usuario(self):
-        """Alias en español LATAM para username."""
-        return self.username
+    # --- PROPIEDADES ---
 
-    @nombre_usuario.setter
-    def nombre_usuario(self, value):
-        self.username = value
-
-    @property
-    def nombres(self):
-        """Alias en español LATAM para first_name."""
-        return self.first_name
-
-    @nombres.setter
-    def nombres(self, value):
-        self.first_name = value
-
-    @property
-    def apellidos(self):
-        """Alias en español LATAM para last_name."""
-        return self.last_name
-
-    @apellidos.setter
-    def apellidos(self, value):
-        self.last_name = value
-
-    @property
-    def es_activo(self):
-        """Alias en español LATAM para is_active."""
-        return self.is_active
-
-    @es_activo.setter
-    def es_activo(self, value):
-        self.is_active = value
-
-    @property
-    def es_personal(self):
-        """Alias en español LATAM para is_staff."""
-        return self.is_staff
-
-    @es_personal.setter
-    def es_personal(self, value):
-        self.is_staff = value
-
-    @property
-    def es_superusuario(self):
-        """Alias en español LATAM para is_superuser."""
-        return self.is_superuser
-
-    @es_superusuario.setter
-    def es_superusuario(self, value):
-        self.is_superuser = value
-
-    @property
-    def fecha_registro(self):
-        """Alias en español LATAM para date_joined."""
-        return self.date_joined
-
-    @property
-    def ultimo_login(self):
-        """Alias en español LATAM para last_login."""
-        return self.last_login
-
-    @property
-    def pais_nombre(self):
-        """Retorna el nombre completo del país."""
-        return LocationResolver.resolve_country(self.pais)
-
-    @property
-    def departamento_nombre(self):
-        """Retorna el nombre completo del departamento."""
-        return LocationResolver.resolve_department(self.departamento)
-
-    @property
-    def ciudad_nombre(self):
-        """Retorna el nombre completo de la ciudad/municipio."""
-        return LocationResolver.resolve_city(self.ciudad)
 
     @property
     def nombre_completo(self):
         """Retorna el nombre completo del usuario."""
         return f"{self.first_name} {self.last_name}".strip() or self.username
-
-    @property
-    def avatar_url(self):
-        """Retorna la URL de la imagen o una por defecto si no existe."""
-        if self.imagen_perfil and hasattr(self.imagen_perfil, 'url'):
-            return self.imagen_perfil.url
-        return f"{settings.STATIC_URL}img/avatar_pred.webp"
 
     @property
     def es_guia(self):
@@ -572,12 +283,7 @@ class PaqueteActividad(models.Model):
         ('Media', 'Media'),
         ('Baja', 'Baja'),
     ]
-    dificultad_nivel = models.CharField(
-        max_length=10,
-        choices=DIFICULTAD_CHOICES,
-        default='Media',
-        verbose_name='Nivel de Dificultad'
-    )
+    dificultad_nivel = models.CharField(max_length=10, choices=DIFICULTAD_CHOICES, default='Media', verbose_name='Nivel de Dificultad')
 
     class Meta:
         db_table = 'paquete_actividades'
@@ -616,12 +322,7 @@ class PaquetePromocion(models.Model):
 class Blog(models.Model):
     """Entrada de blog publicada por un administrador o autor en Mongua Turismo."""
     id = models.AutoField(primary_key=True)
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="blogs_publicados",
-        verbose_name="Autor / Administrador",
-    )
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="blogs_publicados", verbose_name="Autor / Administrador",)
     titulo = models.CharField(max_length=200)
     contenido = models.TextField()
     informacion_adicional = models.TextField(blank=True, null=True, verbose_name='Información Adicional')
@@ -644,9 +345,6 @@ class Blog(models.Model):
         """Retorna el título y el autor del blog."""
         return f"{self.titulo} - Por: {self.usuario.get_full_name() or self.usuario.username}"
 
-
-
-
 # ==============================================================================
 # RESERVA
 # ==============================================================================
@@ -659,20 +357,8 @@ class Reserva(models.Model):
     ]
 
     # Relaciones apuntando a los modelos dentro del mismo archivo
-    paquete = models.ForeignKey(
-        'Paquete',
-        on_delete=models.PROTECT,
-        related_name='reservas',
-        verbose_name='Paquete Reservado'
-    )
-    usuario = models.ForeignKey(
-        'Usuario', # O settings.AUTH_USER_MODEL si usas el modelo de Django
-        on_delete=models.CASCADE,
-        related_name='reservas',
-        verbose_name='Usuario',
-        null=True,
-        blank=True,
-    )
+    paquete = models.ForeignKey('Paquete', on_delete=models.PROTECT, related_name='reservas', verbose_name='Paquete Reservado')
+    usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='reservas', verbose_name='Usuario', null=True, blank=True)
     fecha_inicio = models.DateField(null=True, blank=True, verbose_name='Fecha de inicio')
     numero_adultos = models.PositiveSmallIntegerField(verbose_name='Número de Adultos', default=1)
     numero_menores = models.PositiveSmallIntegerField(verbose_name='Número de Menores', default=0)
@@ -684,12 +370,7 @@ class Reserva(models.Model):
     class Meta:
         verbose_name = 'Reserva'
         verbose_name_plural = 'Reservas'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['usuario', 'paquete', 'fecha_inicio'],
-                name='unique_usuario_paquete_fecha_inicio'
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=['usuario', 'paquete', 'fecha_inicio'], name='unique_usuario_paquete_fecha_inicio')]
 
     def save(self, *args, **kwargs):
         if self.paquete and self.fecha_inicio:
@@ -728,10 +409,6 @@ class Reserva(models.Model):
             self.monto_total = 0.00
 
         super().save(*args, **kwargs)
-        
-
-
-
 # ==============================================================================
 # PQRS
 # ==============================================================================
@@ -739,28 +416,13 @@ class Reserva(models.Model):
 class PQRS(models.Model):
     """Solicitud de Petición, Queja, Reclamo o Sugerencia enviada por un usuario."""
     id = models.AutoField(primary_key=True)
-    TIPO_CHOICES = [
-        ('peticion', 'Petición'),
-        ('queja', 'Queja'),
-        ('reclamo', 'Reclamo'),
-        ('sugerencia', 'Sugerencia'),
-    ]
-    ESTADO_CHOICES = [
-        ('abierto', 'Abierto'),
-        ('en_proceso', 'En Proceso'),
-        ('cerrado', 'Cerrado'),
-    ]
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='pqrs'
-    )
+    TIPO_CHOICES = [('peticion', 'Petición'), ('queja', 'Queja'), ('reclamo', 'Reclamo'), ('sugerencia', 'Sugerencia'),]
+    ESTADO_CHOICES = [('abierto', 'Abierto'), ('en_proceso', 'En Proceso'), ('cerrado', 'Cerrado'),]
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pqrs')
     tipo = models.CharField(max_length=15, choices=TIPO_CHOICES)
     asunto = models.CharField(max_length=150)
     descripcion = models.TextField()
-    estado = models.CharField(
-        max_length=20, choices=ESTADO_CHOICES, default='abierto'
-    )
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='abierto')
     fecha = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -777,28 +439,9 @@ class Seguimiento(models.Model):
     """Registro de seguimiento y respuestas a una solicitud PQRS por parte de un usuario o administrador."""
     
     id = models.AutoField(primary_key=True)
-    pqrs = models.ForeignKey(
-        PQRS,
-        on_delete=models.CASCADE,
-        related_name='seguimientos',
-        verbose_name='PQRS'
-    )
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='seguimientos',
-        verbose_name='Usuario / Administrador',
-        null=True,
-        blank=True
-    )
-    reserva = models.ForeignKey(
-        Reserva,
-        on_delete=models.CASCADE,
-        related_name='seguimientos',
-        verbose_name='Reserva Asociada',
-        null=True,
-        blank=True
-    )
+    pqrs = models.ForeignKey(PQRS, on_delete=models.CASCADE, related_name='seguimientos', verbose_name='PQRS')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='seguimientos', verbose_name='Usuario / Administrador', null=True, blank=True)
+    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='seguimientos', verbose_name='Reserva Asociada', null=True, blank=True)
     respuesta = models.TextField(verbose_name='Mensaje / Respuesta')
     fecha_respuesta = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Respuesta')
 
@@ -815,12 +458,7 @@ class Seguimiento(models.Model):
 class Notificacion(models.Model):
     id = models.AutoField(primary_key=True)
     reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='notificaciones', verbose_name='Reserva')
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='notificaciones',
-        verbose_name='Usuario'
-    )
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notificaciones', verbose_name='Usuario')
     mensaje = models.TextField(verbose_name='Mensaje de la Notificación')
     leido = models.BooleanField(default=False, verbose_name='¿Leído?')
     tipo = models.CharField(max_length=50, verbose_name='Tipo de Notificación')
@@ -851,28 +489,7 @@ class Calificacion(models.Model):
     admin_respuesta = models.TextField(blank=True, null=True, verbose_name='Respuesta del Admin')
     fecha_calificacion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Calificación')
 
-    @property
-    def valoracion(self):
-        """Alias para puntaje_estrellas."""
-        return self.puntaje_estrellas
 
-    @valoracion.setter
-    def valoracion(self, value):
-        self.puntaje_estrellas = value
-
-    @property
-    def mensaje(self):
-        """Alias para comentario."""
-        return self.comentario
-
-    @mensaje.setter
-    def mensaje(self, value):
-        self.comentario = value
-
-    @property
-    def fecha_creacion(self):
-        """Alias para fecha_calificacion."""
-        return self.fecha_calificacion
 
     class Meta:
         db_table = 'comunidad_calificacion'
@@ -977,22 +594,9 @@ class Pago(models.Model):
             pass
         super().save(*args, **kwargs)
 
-    def nombre_archivo(self):
-        """
-        Retorna el nombre del archivo de imagen del comprobante.
-
-        Returns:
-             str: El nombre base del archivo, o '—' si no hay imagen.
-        """
-        return os.path.basename(self.imagen_comprobante.name) if self.imagen_comprobante else '—'
-
-
-
 # ==============================================================================
 # PROMOCIONES
 # ==============================================================================
-
-
 class Promocion(models.Model):
     """Promoción o descuento aplicado a un paquete turístico durante un período determinado."""
     id = models.AutoField(primary_key=True)
@@ -1013,10 +617,6 @@ class Promocion(models.Model):
     def __str__(self):
         """Retorna el nombre y porcentaje de descuento de la promoción."""
         return f'{self.nombre} ({self.porcentaje_descuento}%)'
-
-
-
-
 
 class PolizaViaje(models.Model):
     """
@@ -1068,7 +668,6 @@ class Aseguradora(models.Model):
     def __str__(self):
         return f"Seguro {self.numero_poliza} para Reserva {(self.reserva.id if self.reserva else 'N/A')}"
 
-
 # ==============================================================================
 # BITÁCORA DEL SISTEMA
 # ==============================================================================
@@ -1091,130 +690,17 @@ class Bitacora(models.Model):
     ]
 
     id = models.BigAutoField(primary_key=True)
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='bitacoras',
-        verbose_name='Usuario Responsable'
-    )
-    seguimiento = models.ForeignKey(
-        Seguimiento,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='bitacoras',
-        verbose_name='Seguimiento Asociado'
-    )
-    reserva = models.ForeignKey(
-        Reserva,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='bitacoras',
-        verbose_name='Reserva Asociada'
-    )
-    pqrs = models.ForeignKey(
-        PQRS,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='bitacoras',
-        verbose_name='PQRS Asociada'
-    )
-    pago = models.ForeignKey(
-        Pago,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='bitacoras',
-        verbose_name='Pago Asociado'
-    )
-    accion = models.CharField(
-        max_length=50,
-        choices=ACCION_CHOICES,
-        default='UPDATE',
-        verbose_name='Acción Realizada'
-    )
-    modulo = models.CharField(
-        max_length=100,
-        default='General',
-        db_index=True,
-        verbose_name='Módulo / Tabla Afectada'
-    )
-    registro_id = models.BigIntegerField(
-        null=True,
-        blank=True,
-        db_index=True,
-        verbose_name='ID del Registro',
-        help_text='Identificador numérico del registro modificado en la tabla.'
-    )
-    fecha_registro = models.DateTimeField(
-        default=timezone.now,
-        db_index=True,
-        verbose_name='Fecha y Hora del Registro'
-    )
-    ip_origen = models.GenericIPAddressField(
-        null=True,
-        blank=True,
-        verbose_name='Dirección IP de Origen',
-        help_text='Dirección IPv4 o IPv6 desde donde se ejecutó la acción.'
-    )
-    descripcion = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name='Descripción / Observaciones'
-    )
-
-    # --- PROPIEDADES DE RETROCOMPATIBILIDAD CON NOMBRES ANTERIORES ---
-    @property
-    def accion_realizada(self):
-        return self.accion
-
-    @accion_realizada.setter
-    def accion_realizada(self, value):
-        self.accion = value
-
-    @property
-    def tabla_afectada(self):
-        return self.modulo
-
-    @tabla_afectada.setter
-    def tabla_afectada(self, value):
-        self.modulo = value
-
-    @property
-    def registro_afectado_id(self):
-        return self.registro_id
-
-    @registro_afectado_id.setter
-    def registro_afectado_id(self, value):
-        self.registro_id = value
-
-    @property
-    def fecha_accion(self):
-        return self.fecha_registro
-
-    @fecha_accion.setter
-    def fecha_accion(self, value):
-        self.fecha_registro = value
-
-    @property
-    def direccion_ip(self):
-        return self.ip_origen
-
-    @direccion_ip.setter
-    def direccion_ip(self, value):
-        self.ip_origen = value
-
-    @property
-    def observacion(self):
-        return self.descripcion
-
-    @observacion.setter
-    def observacion(self, value):
-        self.descripcion = value
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='bitacoras', verbose_name='Usuario Responsable')
+    seguimiento = models.ForeignKey(Seguimiento, on_delete=models.SET_NULL, null=True, blank=True, related_name='bitacoras', verbose_name='Seguimiento Asociado')
+    reserva = models.ForeignKey(Reserva, on_delete=models.SET_NULL, null=True, blank=True, related_name='bitacoras', verbose_name='Reserva Asociada')
+    pqrs = models.ForeignKey(PQRS, on_delete=models.SET_NULL, null=True, blank=True, related_name='bitacoras', verbose_name='PQRS Asociada')
+    pago = models.ForeignKey(Pago, on_delete=models.SET_NULL, null=True, blank=True, related_name='bitacoras', verbose_name='Pago Asociado')
+    accion = models.CharField(max_length=50, choices=ACCION_CHOICES, default='UPDATE', verbose_name='Acción Realizada')
+    modulo = models.CharField(max_length=100, default='General', db_index=True, verbose_name='Módulo / Tabla Afectada')
+    registro_id = models.BigIntegerField(null=True, blank=True, db_index=True, verbose_name='ID del Registro', help_text='Identificador numérico del registro modificado en la tabla.')
+    fecha_registro = models.DateTimeField(default=timezone.now, db_index=True, verbose_name='Fecha y Hora del Registro')
+    ip_origen = models.GenericIPAddressField(null=True, blank=True, verbose_name='Dirección IP de Origen', help_text='Dirección IPv4 o IPv6 desde donde se ejecutó la acción.')
+    descripcion = models.TextField(blank=True, null=True, verbose_name='Descripción / Observaciones')
 
     class Meta:
         db_table = 'bitacora'

@@ -2,19 +2,7 @@ from django.contrib import admin
 from .models import Usuario, Temporada, Categoria, Actividades, Paquete, Tarifa, PaqueteActividad, Blog, PQRS, Seguimiento, Reserva, Calificacion, PlanGuia, Pago, Promocion, PolizaViaje, Aseguradora, Bitacora
 
 class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'rol', 'get_pais', 'get_departamento', 'get_ciudad', 'is_active')
-
-    def get_pais(self, obj):
-        return obj.pais_nombre
-    get_pais.short_description = 'País'
-
-    def get_departamento(self, obj):
-        return obj.departamento_nombre
-    get_departamento.short_description = 'Departamento'
-
-    def get_ciudad(self, obj):
-        return obj.ciudad_nombre
-    get_ciudad.short_description = 'Ciudad'
+    list_display = ('username', 'email', 'rol', 'is_active')
 
 
 class SeguimientoAdmin(admin.ModelAdmin):
@@ -22,7 +10,6 @@ class SeguimientoAdmin(admin.ModelAdmin):
     list_filter = ('fecha_respuesta',)
     search_fields = ('pqrs__asunto', 'usuario__username', 'respuesta')
     ordering = ('-fecha_respuesta',)
-
 
 class BitacoraAdmin(admin.ModelAdmin):
     list_display = ('fecha_registro', 'usuario', 'accion', 'modulo', 'registro_id', 'seguimiento', 'reserva', 'pago', 'pqrs', 'ip_origen')
