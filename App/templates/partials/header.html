@@ -24,14 +24,16 @@
     <!-- Links centrales (Solo Desktop) -->
     <ul class="nav justify-content-center d-none d-lg-flex m-0 gap-3 gap-xl-4">
       <li>
-        <a class="navbar-glass__link nav-link text-dark small fw-bold px-2" href="/"
+        <a
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          href="/"
           ><i class="bi bi-house-door me-1"></i>INICIO</a
         >
       </li>
       <li>
         <a
           class="navbar-glass__link nav-link text-dark small fw-bold px-2"
-          href="#" 
+          href="{% url 'tours' %}"
           ><i class="bi bi-geo-alt me-1"></i>TOURS</a
         >
       </li>
@@ -51,7 +53,9 @@
         >
       </li>
       <li>
-        <a class="navbar-glass__link nav-link text-dark small fw-bold px-2" href="#"
+        <a
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          href="#"
           ><i class="bi bi-journal-text me-1"></i>BLOG</a
         >
       </li>
@@ -85,14 +89,16 @@
           >
         </a>
         <ul
-          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2">
+          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2"
+        >
           {% include 'partials/user_dropdown_items.html' %}
         </ul>
       </div>
       {% else %}
       <a
         class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 fw-bold"
-        href="#">Acceder
+        href="#"
+        >Acceder
       </a>
       {% endif %}
 
@@ -100,7 +106,8 @@
       {% if not user.is_authenticated or user.rol != 'ADMIN' %}
       <a
         class="btn btn-link text-dark p-2 position-relative shadow-none"
-        href="#">
+        href="#"
+      >
         <i class="bi bi-cart3 fs-5"></i>
       </a>
       {% endif %}
