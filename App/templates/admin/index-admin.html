@@ -21,10 +21,10 @@
     <p class="text-muted mb-0 small">Visión general del negocio y métricas clave.</p>
   </div>
   <div class="d-flex align-items-center gap-2 flex-wrap">
-    <a href="{% url 'gestion_promociones' %}" class="btn btn-outline-success btn-sm rounded-pill d-none d-lg-inline-flex align-items-center gap-1">
+    <a href="#" class="btn btn-outline-success btn-sm rounded-pill d-none d-lg-inline-flex align-items-center gap-1">
       <i class="bi bi-megaphone-fill"></i> Banners
     </a>
-    <a href="{% url 'listar_comentarios' %}" class="btn btn-outline-secondary btn-sm rounded-pill d-none d-lg-inline-flex align-items-center gap-1">
+    <a href="#" class="btn btn-outline-secondary btn-sm rounded-pill d-none d-lg-inline-flex align-items-center gap-1">
       <i class="bi bi-chat-left-text"></i> Comentarios
     </a>
     <span class="badge bg-white text-secondary border d-none d-md-inline-flex align-items-center gap-1 px-3 py-2">
@@ -112,7 +112,7 @@
         <div class="text-muted small">Pagos Rechazados</div>
         <div class="fw-bold fs-5 text-danger">{{ total_pagos_rechazados|intcomma|default:"0" }}</div>
         <div class="u-style-640fb1f6">
-          <a href="{% url 'admin_comprobantes' %}?estado=rechazado" class="text-decoration-none text-muted">
+          <a href="#" class="text-decoration-none text-muted">
             Ver detalles <i class="bi bi-arrow-right text-danger"></i>
           </a>
         </div>

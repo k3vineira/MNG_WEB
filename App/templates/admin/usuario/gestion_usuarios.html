@@ -22,9 +22,9 @@
         <!-- Zona de Filtros -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div class="btn-group shadow-sm" role="group" aria-label="Filtros de usuario">
-                <a href="{% url 'gestion_usuarios' %}" class="btn btn-outline-success {% if not filtro_actual %}active{% endif %}">Todos</a>
-                <a href="{% url 'gestion_usuarios' %}?filtro=ADMIN" class="btn btn-outline-success {% if filtro_actual == 'ADMIN' %}active{% endif %}">Administradores</a>
-                <a href="{% url 'gestion_usuarios' %}?filtro=CLIENTE" class="btn btn-outline-success {% if filtro_actual == 'CLIENTE' %}active{% endif %}">Clientes/Turistas</a>
+                <a href="#" class="btn btn-outline-success {% if not filtro_actual %}active{% endif %}">Todos</a>
+                <a href="#" class="btn btn-outline-success {% if filtro_actual == 'ADMIN' %}active{% endif %}">Administradores</a>
+                <a href="#" class="btn btn-outline-success {% if filtro_actual == 'CLIENTE' %}active{% endif %}">Clientes/Turistas</a>
             </div>
             
             <form method="GET" action="{% url 'gestion_usuarios' %}" class="input-group shadow-sm u-style-9dd291e0">
