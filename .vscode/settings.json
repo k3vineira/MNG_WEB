@@ -1,0 +1,21 @@
+{
+  "material-icon-theme.folders.associations": {
+    "guia_turistico": "helper",
+    "guias": "helper",
+    "usuario": "client",
+    "actividades": "event",
+    "aseguradora": "guard",
+    "auditoria": "log",
+    "blog": "content",
+    "calificacion": "review",
+    "categoria": "class",
+    "notificacion": "messages",
+    "pago": "cart",
+    "paquete": "packages",
+    "pqrs": "messages",
+    "promocion": "target",
+    "reserva": "event",
+    "tarifa": "contract",
+    "temporada": "job"
+  }
+}
