@@ -18,15 +18,7 @@ staticfiles/
 **/migrations/*.py
 !**/migrations/__init__.py
 
-<<<<<<< HEAD
 # Entornos virtuales
-=======
-# Assets
-node_modules/
-1
-
-# Environments
->>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
 .env
 .venv/
 env/

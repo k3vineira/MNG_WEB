@@ -25,13 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD
     'django.contrib.humanize',
     'App'
-=======
-    'auditlog',
-    'App',
->>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
 ]
 
 MIDDLEWARE = [
