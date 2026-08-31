@@ -1,0 +1,260 @@
+{% load static %}
+<div id="mainSidebar" class="position-fixed top-0 start-0 h-100 d-flex shadow-lg bg-dark u-style-b9a43dee">
+  <!--1. VISTA EXPANDIDA (SIDEBAR ADMIN ANCHO) -->
+  <div class="collapse collapse-horizontal show toggle-admin-sidebar sidebar-wide" id="sidebarWide">
+    
+    <aside class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary u-style-a3df2370">
+      
+      <!-- Header / Brand -->
+      <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
+        <a href="/" class="d-flex align-items-center gap-2 text-white text-decoration-none">
+          <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="rounded-circle border border-success flex-shrink-0 u-style-a2bbb072" width="35" height="35">
+          <div class="d-flex flex-column">
+            <span class="fw-bold small u-style-135310c2">MONAGUA</span>
+            <span class="text-success text-uppercase fw-bold u-style-6c971d9b">Admin Panel</span>
+          </div>
+        </a>
+        <button class="btn btn-sm btn-outline-secondary border-0 text-white flex-shrink-0 toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-admin-sidebar" aria-label="Contraer menú">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      </div>
+
+      <!-- Menú de Navegación con ACORDEÓN -->
+      <nav class="flex-grow-1 overflow-auto p-3">
+        <ul class="nav nav-pills flex-column mb-auto gap-1" id="adminAccordion">
+          
+          <!-- Sección Principal -->
+          <li class="nav-item mt-1 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2 u-style-e8f06dcb">Principal</span>
+          </li>
+          <li class="nav-item">
+            <a href="/" class="nav-link text-white opacity-75 d-flex align-items-center gap-2">
+              <i class="bi bi-house-door-fill"></i> Página Principal
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'dashboard' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-grid-1x2-fill"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'estadisticas_admin' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-graph-up-arrow"></i> Estadísticas
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link d-flex align-items-center gap-2 {% if 'listar_comentarios' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-chat-left-dots-fill"></i> Comentarios
+            </a>
+          </li>
+
+          <!-- Separador -->
+          <li class="nav-item mt-2"><hr class="border-secondary mx-2 my-1"></li>
+
+          <!-- Sección Gestión -->
+          <li class="nav-item mt-2 mb-1">
+            <span class="text-secondary text-uppercase fw-bold small px-2 u-style-e8f06dcb">Gestión</span>
+          </li>
+
+          <!-- Paquetes -->
+          <li class="nav-item">
+            <a href="#menuPaquetes" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-box-seam-fill"></i> Paquetes</div>
+              <i class="bi bi-chevron-down small"></i>
+            </a>
+            <div class="collapse {% if 'listar_paquetes' in request.resolver_match.url_name or 'listar_actividades' in request.resolver_match.url_name or 'listar_tarifas' in request.resolver_match.url_name or 'listar_temporadas' in request.resolver_match.url_name or 'listar_categorias' in request.resolver_match.url_name %}show{% endif %}" id="menuPaquetes" data-bs-parent="#adminAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_categorias' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-bookmark me-1"></i> 1. Categorías</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_temporadas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar-range me-1"></i> 2. Temporadas</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_actividades' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-activity me-1"></i> 3. Actividades</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_paquetes' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-box me-1"></i> 4. Paquetes</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_tarifas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-tag me-1"></i> 5. Tarifas</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Reservas & Pagos -->
+          <li class="nav-item">
+            <a href="#menuReservas" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if request.resolver_match.url_name in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-calendar-check-fill"></i> Reservas &amp; Pagos</div>
+              <i class="bi bi-chevron-down small"></i>
+            </a>
+            <div class="collapse {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}show{% endif %}" id="menuReservas" data-bs-parent="#adminAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_reservas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar2-check me-1"></i> Reservas</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-circle me-1"></i> Cancelaciones</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-receipt me-1"></i> Comprobantes</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon text-danger me-1"></i> Pagos Rechazados</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Usuarios & Guías -->
+          <li class="nav-item">
+            <a href="#menuUsuarios" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'gestion_usuarios gestion_guias listar_planes_guia' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if request.resolver_match.url_name in 'gestion_usuarios gestion_guias listar_planes_guia' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-people-fill"></i> Usuarios &amp; Guías</div>
+              <i class="bi bi-chevron-down small"></i>
+            </a>
+            <div class="collapse {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name or 'listar_planes_guia' in request.resolver_match.url_name %}show{% endif %}" id="menuUsuarios" data-bs-parent="#adminAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'gestion_usuarios' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-person-fill me-1"></i> Gestionar Usuarios</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if 'gestion_guias' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-person-badge-fill me-1"></i> Gestionar Guías</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if 'listar_planes_guia' in request.resolver_match.url_name or 'crear_plan_guia' in request.resolver_match.url_name or 'editar_plan_guia' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-person-lines-fill me-1"></i> Asignación de Guías</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Contenido -->
+          <li class="nav-item">
+            <a href="#menuContenido" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_blog listar_pqrs gestion_promociones' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if request.resolver_match.url_name in 'listar_blog listar_pqrs gestion_promociones' %}true{% else %}false{% endif %}">
+              <div class="d-flex align-items-center gap-2"><i class="bi bi-journal-text"></i> Contenido</div>
+              <i class="bi bi-chevron-down small"></i>
+            </a>
+            <div class="collapse {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}show{% endif %}" id="menuContenido" data-bs-parent="#adminAccordion">
+              <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_blog' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-journal-richtext me-1"></i> Blog</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_pqrs' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-envelope-paper me-1"></i> PQRS</a></li>
+                <li><a href="#" class="nav-link small py-1 {% if 'promociones' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-megaphone me-1"></i> Promociones</a></li>
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- Footer: Perfil + Logout -->
+      <div class="p-3 border-top border-secondary">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success flex-shrink-0 u-style-a2bbb072" width="40" height="40">
+          <div class="overflow-hidden">
+            <div class="fw-bold text-white fs-6 text-truncate">{{ user.first_name|default:'Administrador' }}</div>
+            <div class="text-success fw-semibold text-truncate u-style-bc9efe64">Super Admin</div>
+          </div>
+        </div>
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-power"></i> Cerrar Sesión
+          </button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+
+  <!-- =========================================================================
+       2. VISTA CONTRAÍDA (SIDEBAR MINIMALISTA ADMIN - SOLO ÍCONOS)
+       ========================================================================= -->
+  <div class="collapse collapse-horizontal toggle-admin-sidebar sidebar-slim" id="sidebarSlim">
+    
+    <aside class="bg-dark text-white d-flex flex-column align-items-center h-100 border-end border-secondary u-style-1ba5ed5b">
+      
+      <!-- Header / Icono de despliegue -->
+      <div class="d-flex align-items-center justify-content-center p-3 w-100 border-bottom border-secondary u-style-0d0bd2ea">
+        <button class="btn btn-sm btn-outline-secondary border-0 text-white toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target=".toggle-admin-sidebar" aria-label="Expandir menú">
+          <i class="bi bi-list fs-4"></i>
+        </button>
+      </div>
+
+      <!-- Navegación Minimalista (Dropend) -->
+      <nav class="flex-grow-1 overflow-visible w-100 py-3">
+        <ul class="nav flex-column align-items-center w-100 gap-2">
+          
+          <li class="nav-item w-100 text-center">
+            <a href="/" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" data-bs-toggle="tooltip" title="Volver a la vista pública de Monagua"><i class="bi bi-house-door-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="#" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'dashboard' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Panel general y estado del sistema"><i class="bi bi-grid-1x2-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="#" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'estadisticas_admin' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Análisis de datos, finanzas y reportes"><i class="bi bi-graph-up-arrow fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="#" class="btn w-100 py-2 border-0 rounded-0 {% if 'listar_comentarios' in request.resolver_match.url_name %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Gestionar y moderar las reseñas de los usuarios"><i class="bi bi-chat-left-dots-fill fs-5"></i></a>
+          </li>
+
+          <!-- Separador -->
+          <li class="nav-item w-100 text-center mt-2"><hr class="border-secondary mx-2 my-1"></li>
+
+          <!-- Paquetes (Dropend) -->
+          <li class="nav-item w-100 text-center dropend mt-2">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_paquetes' in request.resolver_match.url_name or 'listar_actividades' in request.resolver_match.url_name or 'listar_tarifas' in request.resolver_match.url_name or 'listar_temporadas' in request.resolver_match.url_name or 'listar_categorias' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Administrar ofertas, tours y categorías">
+              <i class="bi bi-box-seam-fill fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Paquetes</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_categorias' %}active bg-success{% endif %}" href="#"><i class="bi bi-bookmark me-2"></i>1. Categorías</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_temporadas' %}active bg-success{% endif %}" href="#"><i class="bi bi-calendar-range me-2"></i>2. Temporadas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_actividades' %}active bg-success{% endif %}" href="#"><i class="bi bi-activity me-2"></i>3. Actividades</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_paquetes' %}active bg-success{% endif %}" href="#"><i class="bi bi-box me-2"></i>4. Paquetes</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_tarifas' %}active bg-success{% endif %}" href="#"><i class="bi bi-tag me-2"></i>5. Tarifas</a></li>
+            </ul>
+          </li>
+
+          <!-- Reservas & Pagos (Dropend) -->
+          <li class="nav-item w-100 text-center dropend">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Control de ventas, facturación y cancelaciones">
+              <i class="bi bi-calendar-check-fill fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Reservas &amp; Pagos</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_reservas' %}active bg-success{% endif %}" href="#"><i class="bi bi-calendar2-check me-2"></i>Reservas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}active bg-success{% endif %}" href="#"><i class="bi bi-x-circle me-2"></i>Cancelaciones</a></li>
+              <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success{% endif %}" href="#"><i class="bi bi-receipt me-2"></i>Comprobantes</a></li>
+              <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger{% endif %}" href="#"><i class="bi bi-x-octagon text-danger me-2"></i>Pagos Rechazados</a></li>
+            </ul>
+          </li>
+
+          <!-- Usuarios & Guías (Dropend) -->
+          <li class="nav-item w-100 text-center dropend">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name or 'listar_planes_guia' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Gestión de roles y perfiles de cuenta">
+              <i class="bi bi-people-fill fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Usuarios &amp; Guías</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'gestion_usuarios' %}active bg-success{% endif %}" href="#"><i class="bi bi-person-fill me-2"></i>Gestionar Usuarios</a></li>
+              <li><a class="dropdown-item {% if 'gestion_guias' in request.resolver_match.url_name %}active bg-success{% endif %}" href="#"><i class="bi bi-person-badge-fill me-2"></i>Gestionar Guías</a></li>
+              <li><a class="dropdown-item {% if 'listar_planes_guia' in request.resolver_match.url_name or 'crear_plan_guia' in request.resolver_match.url_name or 'editar_plan_guia' in request.resolver_match.url_name %}active bg-success{% endif %}" href="#"><i class="bi bi-person-lines-fill me-2"></i>Asignación de Guías</a></li>
+            </ul>
+          </li>
+
+          <!-- Contenido (Dropend) -->
+          <li class="nav-item w-100 text-center dropend">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Moderación de PQRS, blogs y promociones">
+              <i class="bi bi-journal-text fs-5"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark shadow">
+              <li><h6 class="dropdown-header text-success text-uppercase small">Contenido</h6></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_blog' %}active bg-success{% endif %}" href="#"><i class="bi bi-journal-richtext me-2"></i>Blog</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_pqrs' %}active bg-success{% endif %}" href="#"><i class="bi bi-envelope-paper me-2"></i>PQRS</a></li>
+              <li><a class="dropdown-item {% if 'promociones' in request.resolver_match.url_name %}active bg-success{% endif %}" href="#"><i class="bi bi-megaphone me-2"></i>Promociones</a></li>
+            </ul>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- Footer Slim -->
+      <div class="p-2 w-100 text-center border-top border-secondary d-flex flex-column align-items-center gap-3">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success u-style-a2bbb072" width="34" height="34" data-bs-toggle="tooltip" title="Perfil de administrador: {{ user.first_name|default:'Administrador' }}">
+        <form action="{% url 'logout' %}" method="post" class="w-100">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger border-0 w-100" data-bs-toggle="tooltip" title="Cerrar la sesión de forma segura">
+            <i class="bi bi-power fs-5"></i>
+          </button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+
+</div>
+
+<link rel="stylesheet" href="{% static 'css/sidebar.css' %}?v=1.1">
+<script src="{% static 'js/sidebar.js' %}" defer></script>
+
+{% include 'notificaciones.html' %}

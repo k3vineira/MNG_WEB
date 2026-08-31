@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.db.models import Count, Q
 from django.contrib import messages
 from App.forms.actividades.forms import ActividadesForm
+<<<<<<< HEAD
 from App.utils import crear_notificacion_sistema
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django import forms
@@ -19,6 +20,12 @@ class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_active and self.request.user.is_staff
 
+=======
+from App.utils import crear_notificacion_sistema, StaffRequiredMixin
+from django import forms
+from App.models import *
+
+>>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
 # ==========================================
 # ACTIVIDADES
 # ==========================================

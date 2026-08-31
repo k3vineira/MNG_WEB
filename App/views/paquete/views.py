@@ -4,8 +4,12 @@ from django.urls import reverse_lazy
 from django.db.models import Count, Q
 from django.contrib import messages
 from App.forms.paquete.forms import PaqueteForm
+<<<<<<< HEAD
 from App.utils import crear_notificacion_sistema
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+=======
+from App.utils import crear_notificacion_sistema, StaffRequiredMixin
+>>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
 from django import forms
 from App.models import *
 from decimal import Decimal, InvalidOperation
@@ -82,7 +86,11 @@ def destinos(request):
 
 class PaqueteListView(StaffRequiredMixin, ListView):
     model = Paquete
+<<<<<<< HEAD
     template_name = 'paquete/paquetes.html'
+=======
+    template_name = 'admin/paquete/paquetes.html'
+>>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
     context_object_name = 'paquetes'
 
     def get_queryset(self):
@@ -118,7 +126,11 @@ class PaqueteListView(StaffRequiredMixin, ListView):
 class PaqueteCreateView(StaffRequiredMixin, CreateView):
     model = Paquete
     form_class = PaqueteForm
+<<<<<<< HEAD
     template_name = 'paquete/agregar_paquete.html'
+=======
+    template_name = 'admin/paquete/agregar_paquete.html'
+>>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
     success_url = reverse_lazy('listar_paquetes')
 
     def get_form(self, form_class=None):
@@ -148,7 +160,11 @@ class PaqueteCreateView(StaffRequiredMixin, CreateView):
 class PaqueteUpdateView(StaffRequiredMixin, UpdateView):
     model = Paquete
     form_class = PaqueteForm
+<<<<<<< HEAD
     template_name = 'paquete/editar_paquete.html'
+=======
+    template_name = 'admin/paquete/editar_paquete.html'
+>>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
     success_url = reverse_lazy('listar_paquetes')
 
     def get_form(self, form_class=None):
@@ -183,7 +199,11 @@ class PaqueteUpdateView(StaffRequiredMixin, UpdateView):
 
 class PaqueteDeleteView(StaffRequiredMixin, DeleteView):
     model = Paquete
+<<<<<<< HEAD
     template_name = 'paquete/eliminar_paquete.html'
+=======
+    template_name = 'admin/paquete/eliminar_paquete.html'
+>>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
     success_url = reverse_lazy('listar_paquetes')
 
     def delete(self, request, *args, **kwargs):

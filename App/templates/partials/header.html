@@ -1,0 +1,128 @@
+{% load static %}
+
+<!-- ── Navbar Principal ── -->
+<nav
+  class="navbar navbar-light navbar-glass border-bottom px-2 px-md-3 py-2 fixed-top rounded-bottom-2 shadow-sm"
+>
+  <div
+    class="container-fluid d-flex align-items-center justify-content-between flex-nowrap"
+  >
+    <!-- Logo -->
+    <a
+      class="navbar-brand m-0 d-flex align-items-center text-dark py-0"
+      href="/"
+    >
+      <span class="fw-bold me-2 d-none d-sm-inline">MONAGUA</span>
+      <img
+        src="{% static 'img/Logo.webp' %}"
+        alt="Monagua"
+        width="45"
+        height="45"
+      />
+    </a>
+
+    <!-- Links centrales (Solo Desktop) -->
+    <ul class="nav justify-content-center d-none d-lg-flex m-0 gap-3 gap-xl-4">
+      <li>
+        <a
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          href="/"
+          ><i class="bi bi-house-door me-1"></i>INICIO</a
+        >
+      </li>
+      <li>
+        <a
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          href="{% url 'tours' %}"
+          ><i class="bi bi-geo-alt me-1"></i>TOURS</a
+        >
+      </li>
+      <li>
+        <a
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          href="#"
+          ><i class="bi bi-chat-left-text me-1"></i>RESEÑAS</a
+        >
+      </li>
+      <li>
+        <a
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          href="#"
+          target="_blank"
+          ><i class="bi bi-people me-1"></i>NOSOTROS</a
+        >
+      </li>
+      <li>
+        <a
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          href="#"
+          ><i class="bi bi-journal-text me-1"></i>BLOG</a
+        >
+      </li>
+    </ul>
+
+    <!-- Lado Derecho: Acciones de Usuario -->
+    <div class="d-flex align-items-center gap-1 gap-md-2">
+      {% if user.is_authenticated %}
+      <div class="dropdown">
+        <a
+          class="dropdown-toggle btn btn-outline-success rounded-pill px-2 py-1 d-flex align-items-center gap-2 shadow-none border-0 border-md"
+          href="#"
+          id="navbarDropdown"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          {% if user.imagen_perfil %}
+          <img
+            src="{{ user.imagen_perfil.url }}"
+            alt="Perfil"
+            width="24"
+            height="24"
+            class="rounded-circle object-fit-cover"
+          />
+          {% else %}
+          <i class="bi bi-person-circle fs-5"></i>
+          {% endif %}
+          <span class="d-none d-md-inline small fw-bold"
+            >Hola, {{ user.first_name|default:user.username }}</span
+          >
+        </a>
+        <ul
+          class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2"
+        >
+          {% include 'partials/user_dropdown_items.html' %}
+        </ul>
+      </div>
+      {% else %}
+      <a
+        class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 fw-bold"
+        href="#"
+        >Acceder
+      </a>
+      {% endif %}
+
+      <!-- Carrito (solo para turistas/clientes) -->
+      {% if not user.is_authenticated or user.rol != 'ADMIN' %}
+      <a
+        class="btn btn-link text-dark p-2 position-relative shadow-none"
+        href="#"
+      >
+        <i class="bi bi-cart3 fs-5"></i>
+      </a>
+      {% endif %}
+
+      <!-- Botón Hamburguesa -->
+      <button
+        class="navbar-toggler border-0 shadow-none p-1 ms-1"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#menuPremium"
+        aria-controls="menuPremium"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </div>
+</nav>
+{% include 'partials/offcanvas_menu.html' %}

@@ -1,0 +1,104 @@
+{% extends "admin/base-admin.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4" >
+    <div class="row justify-content-center">
+       
+        <div class="col-12 col-lg-10" style="max-width: 880px;">
+            
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                
+                <div class="card-header p-4 border-0 text-white" style="background-color: var(--verde-main);">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-activity fs-2 me-3"></i>
+                        <div>
+                            <h4 class="fw-bold mb-0 text-white">Registrar Nueva Actividad</h4>
+                            <p class="mb-0 text-white-50 small">Completa la información para habilitar una nueva actividad turística en Mongua.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 bg-white">
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                       
+                        <div class="row g-3 mb-3">
+
+
+                            <div class="col-md-12">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold text-dark">
+                                    {{ form.nombre.label }}{% if form.nombre.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                <input type="text" name="{{ form.nombre.name }}" id="{{ form.nombre.id_for_label }}" class="form-control {% if form.nombre.errors %}is-invalid{% endif %}" value="{{ form.nombre.value|default:'' }}">
+                                {% for error in form.nombre.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-semibold text-dark">
+                                    {{ form.descripcion.label }}{% if form.descripcion.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                <textarea name="{{ form.descripcion.name }}" id="{{ form.descripcion.id_for_label }}" class="form-control {% if form.descripcion.errors %}is-invalid{% endif %}" rows="3">{{ form.descripcion.value|default:'' }}</textarea>
+                                {% for error in form.descripcion.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.equipo_requerido.id_for_label }}" class="form-label fw-semibold text-dark">
+                                    {{ form.equipo_requerido.label }}{% if form.equipo_requerido.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                <textarea name="{{ form.equipo_requerido.name }}" id="{{ form.equipo_requerido.id_for_label }}" class="form-control {% if form.equipo_requerido.errors %}is-invalid{% endif %}" rows="3">{{ form.equipo_requerido.value|default:'' }}</textarea>
+                                {% for error in form.equipo_requerido.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                  
+                        <div class="row g-3 mb-3 align-items-center">
+                            <div class="col-md-6">
+                                <label for="{{ form.recomendaciones_salud.id_for_label }}" class="form-label fw-semibold text-dark">
+                                    {{ form.recomendaciones_salud.label }}{% if form.recomendaciones_salud.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                <textarea name="{{ form.recomendaciones_salud.name }}" id="{{ form.recomendaciones_salud.id_for_label }}" class="form-control {% if form.recomendaciones_salud.errors %}is-invalid{% endif %}" rows="3">{{ form.recomendaciones_salud.value|default:'' }}</textarea>
+                                {% for error in form.recomendaciones_salud.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-6">
+                                {% if form.apto_menores %}
+                                <div class="form-check p-3 bg-light rounded-3 border">
+                                    <input type="checkbox" name="{{ form.apto_menores.name }}" id="{{ form.apto_menores.id_for_label }}" class="form-check-input me-2" {% if form.apto_menores.value %}checked{% endif %}>
+                                    <label class="form-check-label fw-semibold text-dark" for="{{ form.apto_menores.id_for_label }}">
+                                        {{ form.apto_menores.label }}
+                                    </label>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                      
+                        <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
+                            <a href="#" class="btn btn-outline-secondary px-4 rounded-pill">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn text-white px-4 rounded-pill shadow-sm fw-bold" style="background-color: var(--verde-main); border-color: var(--verde-oscuro);">
+                                <i class="bi bi-plus-circle me-1"></i> Crear Actividad
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}

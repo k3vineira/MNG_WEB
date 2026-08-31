@@ -1,0 +1,104 @@
+{% extends "base_turista.html" %} {% load static %} {% block navbar %}{% include "partials/header.html" %}{% endblock %}
+<!-- Panel: {{ user.username }} -->
+{% block content %}
+<main class="container pt-5 mt-4 mt-lg-5 pb-5">
+  <!-- Hero Section para Turista -->
+  <div class="row align-items-center mb-5 g-4">
+    <div class="col-12 col-lg-7">
+      <span
+        class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-3 fw-bold"
+        ><i class="bi bi-geo-alt-fill me-1"></i>EXPLORA MONAGUA</span
+      >
+      <h1 class="display-4 display-lg-3 fw-bold mb-3 text-dark">
+        Hola, {{ user.first_name|default:user.username }}
+      </h1>
+      <p class="lead text-muted mb-4">
+        Bienvenido de vuelta a las montañas. Nuevas rutas esperándote en
+        el páramo.
+      </p>
+      <div class="d-flex flex-column flex-sm-row gap-3">
+        <a
+          href="#"
+          class="btn btn-success rounded-pill px-4 px-sm-5 py-3 fw-bold shadow-sm text-center w-100 w-sm-auto"
+        >
+          <i class="bi bi-compass me-2"></i>Explorar Destinos
+        </a>
+        <a
+          href="#"
+          class="btn btn-outline-dark rounded-pill px-4 px-sm-5 py-3 fw-bold text-center w-100 w-sm-auto"
+        >
+          <i class="bi bi-calendar-check me-2"></i>Ver Mis Reservas
+        </a>
+      </div>
+    </div>
+    <div class="col-12 col-lg-5 mt-4 mt-lg-0">
+      <div class="position-relative overflow-hidden rounded-4 shadow-lg">
+        <img
+          src="{% static 'img/Fondo.webp' %}"
+          alt="Naturaleza"
+          class="img-fluid rounded-4 w-100"
+          style="max-height: 400px; object-fit: cover;"
+        />
+        <div class="position-absolute bottom-0 start-0 p-3 p-sm-4 w-100">
+          <div
+            class="bg-white bg-opacity-90 backdrop-blur rounded-4 p-3 shadow-sm border border-white"
+          >
+            <p class="mb-0 small fw-bold text-success">
+              <i class="bi bi-stars me-1"></i> Recomendación: Laguna Negra
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accesos Rápidos -->
+  <section class="mt-5 pt-4 border-top">
+    <h4 class="fw-bold mb-4 text-dark">¿Qué quieres hacer hoy?</h4>
+    <div class="row g-4">
+      <div class="col-12 col-md-4">
+        <a href="#" class="text-decoration-none text-dark h-100 d-block">
+          <div
+            class="p-4 rounded-4 bg-white h-100 border shadow-sm transition-all hover-shadow-lg text-center"
+          >
+            <i class="bi bi-calendar2-check text-success display-5 mb-3 d-block"></i>
+            <h5 class="fw-bold">Nueva Reserva</h5>
+            <p class="text-muted small mb-0">
+              Encuentra tu próxima aventura guiada por expertos.
+            </p>
+          </div>
+        </a>
+      </div>
+      <div class="col-12 col-md-4">
+        <a
+          href="#"
+          class="text-decoration-none text-dark h-100 d-block"
+        >
+          <div
+            class="p-4 rounded-4 bg-white h-100 border shadow-sm transition-all hover-shadow-lg text-center"
+          >
+            <i class="bi bi-chat-square-text text-success display-5 mb-3 d-block"></i>
+            <h5 class="fw-bold">Blog y Comentarios</h5>
+            <p class="text-muted small mb-0">
+              Lee historias de otros viajeros o deja tu reseña.
+            </p>
+          </div>
+        </a>
+      </div>
+      <div class="col-12 col-md-4">
+        <a href="#" class="text-decoration-none text-dark h-100 d-block">
+          <div
+            class="p-4 rounded-4 bg-white h-100 border shadow-sm transition-all hover-shadow-lg text-center"
+          >
+            <i class="bi bi-person-gear text-success display-5 mb-3 d-block"></i>
+            <h5 class="fw-bold">Gestionar Perfil</h5>
+            <p class="text-muted small mb-0">
+              Actualiza tu información y documentos de identidad.
+            </p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

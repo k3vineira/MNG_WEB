@@ -1,0 +1,183 @@
+{% load static %}
+{% if '/autenticacion/' not in request.path and request.resolver_match.app_name != 'autenticacion' %}
+<!-- ── Mascot: Cóndy El Cóndor ── -->
+<div id="condor-mascot-container" class="position-fixed">
+    <!-- Toggle Button (para colapsar/desplegar) -->
+    <button id="condor-toggle-btn" class="btn btn-success d-flex align-items-center justify-content-center shadow-sm border border-light">
+        <i id="condor-toggle-icon" class="bi bi-chevron-left"></i>
+    </button>
+
+    <!-- Speech bubble -->
+    <div id="condor-speech-bubble" class="bg-dark text-white rounded-4 p-3 shadow-lg border border-success position-absolute d-none">
+        <div class="fw-bold text-success mb-1">¡Cóndy dice! 🦅</div>
+        <span id="condor-speech-text">¡Hola! Soy Cóndy, tu guía en {{ site_name|default:"Monagua" }}. ¡Cuidemos el páramo juntos!</span>
+        <!-- Small arrow at the bottom of speech bubble -->
+        <div class="position-absolute"></div>
+    </div>
+    
+    <!-- Condor Mascot Image -->
+    <div class="condor-avatar-wrapper position-relative">
+        <img id="condor-img" src="{% static 'img/mascota/condor0.webp' %}" alt="Cóndor Mascot" width="100" height="100" class="transition-all">
+        <!-- Label badge -->
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success border border-light shadow-sm">
+            Cóndy
+        </span>
+    </div>
+</div>
+<script src="{% static 'js/mascota.js' %}" defer></script>
+
+<style>
+#condor-mascot-container {
+    bottom: 25px !important;
+    left: 25px !important;
+    z-index: 999999 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease !important;
+}
+
+#condor-img {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+}
+#condor-img:hover {
+    transform: scale(1.15) rotate(6deg);
+}
+.condor-bounce {
+    animation: condorBounce 2.5s infinite ease-in-out;
+}
+@keyframes condorBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+#condor-mascot-container.collapsed {
+    transform: translateX(-105px) !important;
+    opacity: 0.8;
+}
+
+#condor-mascot-container.collapsed #condor-toggle-icon {
+    transform: rotate(180deg);
+}
+
+#condor-mascot-container.collapsed #condor-speech-bubble {
+    display: none !important;
+}
+
+#condor-toggle-btn {
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+}
+
+#condor-speech-bubble {
+    bottom: 115px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    z-index: 100000;
+}
+
+#condor-speech-bubble .position-absolute {
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #198754 transparent transparent transparent;
+}
+
+@media (max-width: 576px) {
+    #condor-mascot-container {
+        bottom: 15px;
+        left: 15px;
+    }
+    #condor-img {
+        width: 80px !important;
+        height: 80px !important;
+    }
+    #condor-speech-bubble {
+        width: 220px;
+        left: 30px;
+        transform: none;
+        font-size: 0.85rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const mascot = document.getElementById('condor-mascot-container');
+    const bubble = document.getElementById('condor-speech-bubble');
+    const text = document.getElementById('condor-speech-text');
+    const img = document.getElementById('condor-img');
+    const toggleBtn = document.getElementById('condor-toggle-btn');
+    
+    if (!mascot || !toggleBtn || !img) return;
+
+    const tips = [
+        "¡Hola! Soy Cóndy, tu guía en Monagua. ¡Exploremos el Páramo de Mongua juntos!",
+        "¡No dejes basura en los senderos! Mantengamos el páramo limpio.",
+        "¡Lleva siempre ropa abrigada e impermeable! El clima del páramo cambia rápido.",
+        "¡El cóndor andino es el rey de los Andes! ¿Sabías que está en peligro de extinción?",
+        "¡Sigue siempre el sendero demarcado para proteger los frailejones!",
+        "¡Si tienes dudas sobre tus reservas, escríbenos a través de las PQRS!",
+        "¿Sabías que la Laguna Negra es un sitio sagrado lleno de leyendas?",
+        "¡El agua del páramo es vida! Respeta las fuentes hídricas naturales.",
+        "Planifica tu visita con guías autorizados en nuestra pestaña de Guías y Usuarios."
+    ];
+    
+    // Activate bouncing animation
+    img.classList.add('condor-bounce');
+    
+    // Start collapsed on mobile devices
+    if (window.innerWidth <= 768) {
+        mascot.classList.add('collapsed');
+    }
+
+    // Toggle button handler
+    toggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        mascot.classList.toggle('collapsed');
+        bubble.classList.add('d-none');
+        img.classList.add('condor-bounce');
+    });
+    
+    mascot.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        // If collapsed, clicking the mascot expands it instead of showing speech bubble
+        if (mascot.classList.contains('collapsed')) {
+            mascot.classList.remove('collapsed');
+            return;
+        }
+
+        if (bubble.classList.contains('d-none')) {
+            // Pick a random tip
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            text.textContent = randomTip;
+            bubble.classList.remove('d-none');
+            img.classList.remove('condor-bounce');
+        } else {
+            bubble.classList.add('d-none');
+            img.classList.add('condor-bounce');
+        }
+    });
+    
+    // Close bubble when clicking anywhere else
+    document.addEventListener('click', function() {
+        if (bubble) bubble.classList.add('d-none');
+        if (img) img.classList.add('condor-bounce');
+    });
+});
+</script>
+{% endif %}
+

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Si tus archivos se llaman views.py dentro de cada carpeta:
 from .views.actividades.views import *
 from .views.blog.views import *
@@ -8,9 +9,13 @@ from .views.reserva.views import *
 from .views.tarifa.views import *
 from .views.temporada.views import *
 
+=======
+>>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
 from django.urls import path
+from App.views import views
 
 urlpatterns = [
+<<<<<<< HEAD
 
     path('nuestros-destinos/', destinos, name='destinos'),
 
@@ -57,4 +62,8 @@ urlpatterns = [
     path('blog/', blog, name='blog'),
     path('blog/<int:id>/', detalle_blog, name='detalle_blog'),
 
+=======
+    path('', views.index, name='index'),
+    path('Tours/', views.tours, name='tours'),
+>>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
 ]

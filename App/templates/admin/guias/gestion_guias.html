@@ -1,0 +1,492 @@
+{% extends 'base-admin.html' %} {% load static %} {% block content %}
+<div class="container-fluid py-4">
+  <!-- 1. Panel de Control y Encabezado (Header & Stats) -->
+  <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+          <div class="mb-3 mb-md-0">
+              <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
+                  <i class="bi bi-compass me-3"></i>Gestión de Guías Turísticos
+              </h1>
+              <p class="text-muted mb-2">
+                Administración de perfiles y documentación de guías locales de Monagua.
+              </p>
+              <div class="d-flex gap-2 flex-wrap">
+                  <span class="badge bg-warning text-dark p-2 rounded-pill shadow-sm d-flex align-items-center">
+                      <i class="bi bi-compass me-1"></i> {{ guias.count }} Guías Registrados
+                  </span>
+                  <span class="badge bg-success bg-opacity-75 p-2 rounded-pill shadow-sm d-flex align-items-center">
+                      <i class="bi bi-people-fill me-1"></i> {{ guias_activos }} Guías Activos
+                  </span>
+              </div>
+          </div>
+          <div class="text-md-end">
+              <button class="btn btn-success px-4 py-2 shadow-sm rounded-pill fw-bold d-inline-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNuevoGuia" aria-controls="offcanvasNuevoGuia">
+                  <i class="bi bi-person-plus-fill fs-5"></i>
+                  <span>Nuevo Guía</span>
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna Única: Listado Completo -->
+    <div class="col-12">
+      <!-- 2. Vista de Usuarios con Rol de Guía (Listado General) -->
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+          <h5 class="h5 text-success fw-bold mb-0">Directorio de Guías</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive d-none d-lg-block">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light text-muted">
+                <tr>
+                  <th scope="col" class="fw-bold">ID</th>
+                  <th scope="col" class="fw-bold">Guía</th>
+                  <th scope="col" class="fw-bold">Documento</th>
+                  <th scope="col" class="fw-bold">Contacto</th>
+                  <th scope="col" class="text-center fw-bold">Exp.</th>
+                  <th scope="col" class="text-center fw-bold">Estado</th>
+                  <th scope="col" class="text-center fw-bold">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user_guia in guias %}
+                <tr>
+                  <td class="text-muted fw-bold">#{{ user_guia.id }}</td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      {% if user_guia.imagen_perfil %}
+                      <img
+                        src="{{ user_guia.imagen_perfil.url }}"
+                        alt="Foto"
+                        class="rounded-circle shadow-sm me-3 border border-warning border-opacity-50 flex-shrink-0"
+                        style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; object-fit: cover;"
+                      />
+                      {% else %}
+                      <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-dark fw-bold bg-warning flex-shrink-0" style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; font-size: 1.1rem;">
+                          {{ user_guia.first_name|first|default:user_guia.username|first|upper }}
+                      </div>
+                      {% endif %}
+                      <div>
+                        <div class="fw-bold text-dark">
+                          {{ user_guia.get_full_name|default:user_guia.username }}
+                        </div>
+                        <div class="text-muted small">
+                          @{{ user_guia.username }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="text-dark fw-semibold">
+                      {{ user_guia.tipo_documento|default:"—" }}
+                    </div>
+                    <div class="text-muted small">
+                      {{ user_guia.numero_documento|default:"—" }}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="text-dark small mb-1">
+                      <i class="bi bi-envelope text-success me-1"></i> {{ user_guia.email|default:"—" }}
+                    </div>
+                    <div class="text-muted small">
+                      <i class="bi bi-telephone text-success me-1"></i> {{ user_guia.telefono|default:"—" }}
+                    </div>
+                  </td>
+                  <td class="text-center align-middle">
+                    <div class="fw-bold text-success fs-5">
+                      {% if user_guia.guia %}{{ user_guia.guia.experiencia_anos }}{% else %}0{% endif %}<span class="text-muted fw-normal small fs-6"> años</span>
+                    </div>
+                  </td>
+                  <td class="text-center align-middle">
+                    {% if user_guia.is_active %}
+                    <span class="badge bg-success bg-opacity-75 rounded-pill px-3 py-2">Activo</span>
+                    {% else %}
+                    <span class="badge bg-danger bg-opacity-75 rounded-pill px-3 py-2">Inactivo</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-center align-middle">
+                    <div class="btn-group shadow-sm" role="group">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-success"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalDocumentacion{{ user_guia.id }}"
+                        title="Ver Documentación"
+                      >
+                        <i class="bi bi-file-earmark-person"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary"
+                        title="Editar"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasEditarGuia{{ user_guia.id }}"
+                      >
+                        <i class="bi bi-pencil-square"></i>
+                      </button>
+                      <form
+                        action="{% url 'asignar_rol_guia' user_guia.id %}"
+                        method="POST"
+                        class="d-inline m-0 p-0"
+                      >
+                        {% csrf_token %}
+                        <button
+                          type="submit"
+                          class="btn btn-sm btn-outline-danger"
+                          title="Quitar Rol de Guía / Alternar"
+                        >
+                          <i class="bi bi-arrow-left-right"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center p-5 text-muted small">
+                    No hay guías turísticos registrados.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Vista Responsiva Tarjetas para Móviles -->
+          <div class="d-lg-none">
+              <div class="row g-3">
+                  {% for user_guia in guias %}
+                  <div class="col-12">
+                      <div class="card border border-light shadow-sm rounded-4">
+                          <div class="card-body">
+                              <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                                  <div class="d-flex align-items-center gap-3">
+                                      {% if user_guia.imagen_perfil %}
+                                          <img src="{{ user_guia.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border border-warning flex-shrink-0" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; object-fit: cover;">
+                                      {% else %}
+                                          <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-dark fw-bold bg-warning flex-shrink-0" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; font-size: 1.2rem;">
+                                              {{ user_guia.first_name|first|default:user_guia.username|first|upper }}
+                                          </div>
+                                      {% endif %}
+                                      <div>
+                                          <h6 class="fw-bold mb-0 text-dark">{{ user_guia.get_full_name|default:user_guia.username }}</h6>
+                                          <small class="text-muted">@{{ user_guia.username }}</small>
+                                      </div>
+                                  </div>
+                                  <div>
+                                      {% if user_guia.is_active %}
+                                          <span class="badge bg-success rounded-pill px-2 py-1 small">Activo</span>
+                                      {% else %}
+                                          <span class="badge bg-danger rounded-pill px-2 py-1 small">Inactivo</span>
+                                      {% endif %}
+                                  </div>
+                              </div>
+                              
+                              <div class="small text-muted mb-3">
+                                  <div class="d-flex justify-content-between mb-1">
+                                      <span class="fw-bold text-secondary">Documento:</span>
+                                      <span class="text-dark">{{ user_guia.tipo_documento|default:"—" }} {{ user_guia.numero_documento|default:"" }}</span>
+                                  </div>
+                                  <div class="d-flex justify-content-between mb-1">
+                                      <span class="fw-bold text-secondary">Email:</span>
+                                      <span class="text-dark">{{ user_guia.email|default:"—" }}</span>
+                                  </div>
+                                  <div class="d-flex justify-content-between">
+                                      <span class="fw-bold text-secondary">Experiencia:</span>
+                                      <span class="fw-bold text-success">{% if user_guia.guia %}{{ user_guia.guia.experiencia_anos }}{% else %}0{% endif %} años</span>
+                                  </div>
+                              </div>
+                              
+                              <div class="d-flex gap-2 justify-content-end border-top pt-3">
+                                  <button type="button" class="btn btn-sm btn-outline-success flex-fill fw-bold rounded-pill" data-bs-toggle="modal" data-bs-target="#modalDocumentacion{{ user_guia.id }}">
+                                      <i class="bi bi-file-earmark-person me-1"></i> Perfil
+                                  </button>
+                                  <button type="button" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditarGuia{{ user_guia.id }}">
+                                      <i class="bi bi-pencil me-1"></i> Editar
+                                  </button>
+                                  <form action="{% url 'asignar_rol_guia' user_guia.id %}" method="POST" class="m-0 p-0 flex-fill">
+                                      {% csrf_token %}
+                                      <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold rounded-pill" title="Alternar Rol">
+                                          <i class="bi bi-arrow-left-right"></i>
+                                      </button>
+                                  </form>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  {% empty %}
+                  <div class="col-12 text-center p-4 text-muted border rounded shadow-sm bg-light">
+                      No hay guías registrados.
+                  </div>
+                  {% endfor %}
+              </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- COMPONENTES PARA NUEVO GUÍA (FUERA DEL BUCLE) -->
+<!-- ============================================== -->
+<div class="offcanvas offcanvas-end border-0 shadow u-style-faff040a" tabindex="-1" id="offcanvasNuevoGuia">
+  <div class="offcanvas-header bg-success bg-opacity-10 border-bottom">
+    <h5 class="offcanvas-title fw-bold text-success d-flex align-items-center gap-2 m-0">
+      <i class="bi bi-person-plus fs-4"></i>
+      Registrar Guía
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body p-4">
+    <form action="{% url 'guias_guardar' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="id" value="" />
+
+      <h6 class="text-success fw-bold mb-3 border-bottom pb-2">
+        <i class="bi bi-person me-2"></i>Datos del Usuario
+      </h6>
+      <div class="form-floating mb-3">
+          <input type="text" class="form-control form-control-sm" name="username" placeholder="user_guia" required>
+          <label class="text-muted small">Username *</label>
+      </div>
+      <div class="form-floating mb-3">
+          <input type="email" class="form-control form-control-sm" name="email" placeholder="correo@ejemplo.com" required>
+          <label class="text-muted small">Email *</label>
+      </div>
+      <div class="form-floating mb-3">
+          <input type="text" class="form-control form-control-sm" name="first_name" placeholder="Ej: Juan" required>
+          <label class="text-muted small">Nombres *</label>
+      </div>
+      <div class="form-floating mb-3">
+          <input type="text" class="form-control form-control-sm" name="last_name" placeholder="Ej: Pérez" required>
+          <label class="text-muted small">Apellidos *</label>
+      </div>
+      
+      <div class="row g-2 mb-3">
+          <div class="col-md-5">
+              <div class="form-floating">
+                  <select class="form-select form-select-sm" name="tipo_documento" required>
+                      <option value="CC" selected>CC</option>
+                      <option value="CE">CE</option>
+                      <option value="PASAPORTE">PASAPORTE</option>
+                  </select>
+                  <label class="text-muted small">Tipo Doc.</label>
+              </div>
+          </div>
+          <div class="col-md-7">
+              <div class="form-floating">
+                  <input type="number" class="form-control form-control-sm" name="numero_documento" placeholder="Ej: 1000000000" required>
+                  <label class="text-muted small">Número *</label>
+              </div>
+          </div>
+      </div>
+      
+      <div class="form-floating mb-3">
+          <input type="tel" class="form-control form-control-sm" name="telefono" placeholder="+57 300 000 0000">
+          <label class="text-muted small">Teléfono</label>
+      </div>
+      <div class="form-floating mb-3">
+          <input type="text" class="form-control form-control-sm" name="residencia" placeholder="Mongua, Boyacá">
+          <label class="text-muted small">Residencia Local</label>
+      </div>
+      <div class="mb-4">
+        <label class="form-label text-muted small fw-bold mb-1">Foto de Perfil</label>
+        <input class="form-control form-control-sm" type="file" name="imagen_perfil" accept="image/*">
+      </div>
+
+      <h6 class="text-warning text-dark fw-bold mb-3 border-bottom pb-2 mt-2">
+        <i class="bi bi-compass me-2"></i>Perfil Profesional
+      </h6>
+      <div class="form-floating mb-3">
+          <input type="text" class="form-control form-control-sm text-uppercase" name="licencia_turismo" placeholder="COL-12345" required>
+          <label class="text-muted small">Licencia de Turismo *</label>
+      </div>
+      <div class="form-floating mb-3">
+          <input type="number" class="form-control form-control-sm" name="experiencia_anos" placeholder="0" min="0" required>
+          <label class="text-muted small">Años de Experiencia *</label>
+      </div>
+      <div class="form-floating mb-4">
+          <textarea class="form-control form-control-sm u-style-1a3a679d" name="biografia" placeholder="Breve descripción..."></textarea>
+          <label class="text-muted small">Biografía / Presentación</label>
+      </div>
+
+      <div class="d-grid gap-2 mb-4">
+        <button type="submit" class="btn btn-success fw-bold py-2 shadow-sm rounded-pill">
+          <i class="bi bi-save me-2"></i>Guardar Guía
+        </button>
+        <button type="button" class="btn btn-outline-secondary py-2 rounded-pill fw-bold" data-bs-dismiss="offcanvas">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- COMPONENTES PARA CADA GUÍA (DENTRO DEL BUCLE) -->
+<!-- ============================================== -->
+{% for user_guia in guias %}
+    <!-- OFFCANVAS DE EDICIÓN -->
+    <div class="offcanvas offcanvas-end border-0 shadow u-style-faff040a" tabindex="-1" id="offcanvasEditarGuia{{ user_guia.id }}">
+      <div class="offcanvas-header bg-secondary bg-opacity-10 border-bottom p-4">
+        <h5 class="offcanvas-title fw-bold text-dark d-flex align-items-center gap-2 m-0">
+          <i class="bi bi-pencil-square fs-4"></i>
+          Editar Guía #{{ user_guia.id }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body p-4">
+        <form action="{% url 'guias_guardar' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="id" value="{{ user_guia.id }}" />
+
+          <h6 class="text-secondary fw-bold mb-3 border-bottom pb-2">
+            <i class="bi bi-person me-2"></i>Datos del Usuario
+          </h6>
+          <div class="form-floating mb-3">
+              <input type="text" class="form-control form-control-sm bg-light" name="username" value="{{ user_guia.username }}" readonly>
+              <label class="text-muted small">Username (No editable)</label>
+          </div>
+          <div class="form-floating mb-3">
+              <input type="email" class="form-control form-control-sm" name="email" value="{{ user_guia.email }}" required>
+              <label class="text-muted small">Email *</label>
+          </div>
+          <div class="form-floating mb-3">
+              <input type="text" class="form-control form-control-sm" name="first_name" value="{{ user_guia.first_name }}" required>
+              <label class="text-muted small">Nombres *</label>
+          </div>
+          <div class="form-floating mb-3">
+              <input type="text" class="form-control form-control-sm" name="last_name" value="{{ user_guia.last_name }}" required>
+              <label class="text-muted small">Apellidos *</label>
+          </div>
+          
+          <div class="row g-2 mb-3">
+              <div class="col-md-5">
+                  <div class="form-floating">
+                      <select class="form-select form-select-sm" name="tipo_documento" required>
+                          <option value="CC" {% if user_guia.tipo_documento == 'CC' %}selected{% endif %}>CC</option>
+                          <option value="CE" {% if user_guia.tipo_documento == 'CE' %}selected{% endif %}>CE</option>
+                          <option value="PASAPORTE" {% if user_guia.tipo_documento == 'PASAPORTE' %}selected{% endif %}>PASAPORTE</option>
+                      </select>
+                      <label class="text-muted small">Tipo Doc.</label>
+                  </div>
+              </div>
+              <div class="col-md-7">
+                  <div class="form-floating">
+                      <input type="number" class="form-control form-control-sm" name="numero_documento" value="{{ user_guia.numero_documento|default:'' }}" required>
+                      <label class="text-muted small">Número *</label>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="form-floating mb-3">
+              <input type="tel" class="form-control form-control-sm" name="telefono" value="{{ user_guia.telefono|default:'' }}">
+              <label class="text-muted small">Teléfono</label>
+          </div>
+          <div class="form-floating mb-3">
+              <input type="text" class="form-control form-control-sm" name="residencia" value="{{ user_guia.residencia|default:'' }}">
+              <label class="text-muted small">Residencia Local</label>
+          </div>
+          <div class="mb-4">
+            <label class="form-label text-muted small fw-bold mb-1">Actualizar Foto</label>
+            <input class="form-control form-control-sm" type="file" name="imagen_perfil" accept="image/*">
+          </div>
+
+          <h6 class="text-warning text-dark fw-bold mb-3 border-bottom pb-2 mt-2">
+            <i class="bi bi-compass me-2"></i>Perfil Profesional
+          </h6>
+          <div class="form-floating mb-3">
+              <input type="text" class="form-control form-control-sm text-uppercase" name="licencia_turismo" value="{% if user_guia.guia %}{{ user_guia.guia.numero_tarjeta_profesional|default:'' }}{% endif %}" required>
+              <label class="text-muted small">Licencia de Turismo *</label>
+          </div>
+          <div class="form-floating mb-3">
+              <input type="number" class="form-control form-control-sm" name="experiencia_anos" value="{% if user_guia.guia %}{{ user_guia.guia.experiencia_anos|default:0 }}{% else %}0{% endif %}" min="0" required>
+              <label class="text-muted small">Años de Experiencia *</label>
+          </div>
+          <div class="form-floating mb-4">
+              <textarea class="form-control form-control-sm u-style-1a3a679d" name="biografia">{% if user_guia.guia %}{{ user_guia.guia.descripcion_experiencia|default:'' }}{% endif %}</textarea>
+              <label class="text-muted small">Biografía / Presentación</label>
+          </div>
+
+          <div class="d-grid gap-2 mb-4">
+            <button type="submit" class="btn btn-secondary fw-bold py-2 shadow-sm rounded-pill">
+              <i class="bi bi-save me-2"></i>Guardar Cambios
+            </button>
+            <button type="button" class="btn btn-outline-secondary py-2 rounded-pill fw-bold" data-bs-dismiss="offcanvas">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE DETALLES (DOCUMENTACIÓN) -->
+    <div
+      class="modal fade"
+      id="modalDocumentacion{{ user_guia.id }}"
+      tabindex="-1"
+      aria-labelledby="modalDocumentacionLabel{{ user_guia.id }}"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-warning bg-opacity-10 border-bottom-0 p-4 pb-3">
+            <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="modalDocumentacionLabel{{ user_guia.id }}">
+              <i class="bi bi-award-fill text-warning fs-3"></i>
+              <span>Perfil de Guía: {{ user_guia.get_full_name|default:user_guia.username }}</span>
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-4 pt-2">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill">
+                <i class="bi bi-check-circle-fill me-1"></i> Perfil Verificado
+              </div>
+              <div class="text-muted small fw-bold">
+                Exp: <span class="text-dark fs-6">{% if user_guia.guia %}{{ user_guia.guia.experiencia_anos }}{% else %}0{% endif %} años</span>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="text-muted small fw-bold text-uppercase u-style-135310c2">Licencia de Turismo</label>
+              <div class="fs-4 font-monospace fw-bold text-dark border-bottom border-warning pb-2">
+                {% if user_guia.guia %}{{ user_guia.guia.numero_tarjeta_profesional|default:"—" }}{% else %}—{% endif %}
+              </div>
+            </div>
+
+            <div>
+              <label class="text-muted small fw-bold text-uppercase mb-2 u-style-135310c2">Biografía Oficial</label>
+              <div class="bg-light p-3 rounded border">
+                <p class="text-dark small mb-0 lh-lg u-style-5288d5e7">
+                  {% if user_guia.guia and user_guia.guia.descripcion_experiencia %}
+                      {{ user_guia.guia.descripcion_experiencia }}
+                  {% else %}
+                      Sin información biográfica registrada en el sistema.
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-top-0 pt-0 p-4">
+            <button
+              type="button"
+              class="btn btn-outline-secondary w-100 fw-bold rounded-pill"
+              data-bs-dismiss="modal"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endfor %}
+{% endblock %}
