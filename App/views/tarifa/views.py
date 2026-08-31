@@ -1,14 +1,9 @@
 from django.views.generic import ListView
 from django.db.models import Count, Q
 from App.models import *
-<<<<<<< HEAD
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from App.utils import crear_notificacion_sistema
 from App.forms.tarifa.forms import TarifaForm
-=======
-from App.utils import crear_notificacion_sistema, StaffRequiredMixin
-from App.forms import TarifaForm
->>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView,UpdateView
 
@@ -23,11 +18,7 @@ class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
 class TarifaListView(StaffRequiredMixin, ListView):
     model = Tarifa
-<<<<<<< HEAD
     template_name = 'tarifa/tarifas.html'
-=======
-    template_name = 'admin/tarifa/tarifas.html'
->>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
     context_object_name = 'tarifas'
 
     def get_queryset(self):
@@ -63,11 +54,7 @@ class TarifaListView(StaffRequiredMixin, ListView):
 class TarifaCreateView(StaffRequiredMixin, CreateView):
     model = Tarifa
     form_class = TarifaForm
-<<<<<<< HEAD
     template_name = 'tarifa/agregar_tarifa.html'
-=======
-    template_name = 'admin/tarifa/agregar_tarifa.html'
->>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
     success_url = reverse_lazy('listar_tarifas')
 
     def form_valid(self, form):
@@ -94,11 +81,7 @@ class TarifaCreateView(StaffRequiredMixin, CreateView):
 class TarifaUpdateView(StaffRequiredMixin, UpdateView):
     model = Tarifa
     form_class = TarifaForm
-<<<<<<< HEAD
     template_name = 'tarifa/editar_tarifa.html'
-=======
-    template_name = 'admin/tarifa/editar_tarifa.html'
->>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
     success_url = reverse_lazy('listar_tarifas')
 
     def form_valid(self, form):

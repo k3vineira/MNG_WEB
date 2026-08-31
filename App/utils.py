@@ -330,7 +330,6 @@ def enviar_correo_confirmacion_con_factura(reserva, request=None):
     email.send(fail_silently=False)
 
 
-<<<<<<< HEAD
 def crear_notificacion_sistema(
     usuario,
     accion=None,
@@ -364,7 +363,6 @@ def crear_notificacion_sistema(
             print(f"Error al crear la notificación: {e}")
 
     return None
-=======
 def registrar_bitacora(
     usuario=None,
     accion='UPDATE',
@@ -480,4 +478,3 @@ def lista_notificaciones_global(request):
     }
 
 
->>>>>>> 59a3ebe372eb455308020e845a9560af7bb44377
