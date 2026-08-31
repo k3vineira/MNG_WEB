@@ -1,7 +1,5 @@
-from App.models import PQRS
 from django import forms
-from django.forms import ModelForm
-
+from App.models import PQRS
 
 class PqrsForm(forms.ModelForm):
     class Meta:

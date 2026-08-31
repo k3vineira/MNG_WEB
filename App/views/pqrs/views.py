@@ -2,25 +2,23 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from App.models import PQRS, Seguimiento
-from App.forms import PqrsForm
+from App.forms.pqrs.forms import PqrsForm
 from django.views.generic import ListView
 from django.db.models import Count, Q
 from App.models import *
 from core.decoradores import requiere_autenticacion
 
 
-
-
 def pqrs(request):
     pqrs = PQRS.objects.all()
     form = PqrsForm()
     context = {'pqrs': pqrs, 'form': form}
-    return render(request, 'usuario/pqrs.html', context)
+    return render(request, 'pqrs/pqrs.html', context)
 
 
 class PQRSListView(ListView):
     model = PQRS
-    template_name = 'admin/pqrs/pqrs.html'
+    template_name = 'pqrs/pqrs_admin.html'
     context_object_name = 'todas_las_pqrs'
 
     def get_queryset(self):
@@ -68,6 +66,7 @@ def contestar_pqrs(request, pqrs_id):
             return redirect('listar_pqrs')
 
     return render(request, 'admin/contestar_pqrs.html', {'pqr': pqr})
+
 def guardar_pqrs(request):
     if request.method == 'POST':
         form = PqrsForm(request.POST)
@@ -111,4 +110,4 @@ def mis_pqrs_view(request):
         'solicitudes': solicitudes_usuario,
         'form': form,
     }
-    return render(request, 'usuario/mis_pqrs.html', context)
+    return render(request, 'pqrs/mis_pqrs.html', context)

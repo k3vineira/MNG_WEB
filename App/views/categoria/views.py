@@ -1,22 +1,29 @@
 from django.urls import reverse_lazy
 from django.shortcuts import render
-from django.views.generic import ListView, CreateView, UpdateView, DeleteViewr
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib import messages
 from django import forms
 from django.db.models import Count, Q
 from App.forms.categoria.forms import CategoriaForm
 from App.models import*
-from App.mixins import StaffRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from App.utils import crear_notificacion_sistema
 from django.views.generic.edit import DeleteView
 
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """
+    Mixin para asegurar que solo usuarios autenticados con permisos
+    de staff/administrador puedan acceder a las vistas administrativas.
+    """
+    def test_func(self):
+        return self.request.user.is_active and self.request.user.is_staff
 
 
 # Create your views here.
 
 class CategoriaListView(StaffRequiredMixin, ListView):
     model = Categoria
-    template_name = 'admin/categorias/categorias.html'
+    template_name = 'categoria/categorias.html'
     context_object_name = 'categorias'
 
     def get_queryset(self):
@@ -40,7 +47,7 @@ class CategoriaListView(StaffRequiredMixin, ListView):
 class CategoriaCreateView(StaffRequiredMixin, CreateView):
     model = Categoria
     form_class = CategoriaForm
-    template_name = 'admin/categorias/agregar_categoria.html'
+    template_name = 'categoria/agregar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
 
     def get_form(self, form_class=None):
@@ -70,7 +77,7 @@ class CategoriaCreateView(StaffRequiredMixin, CreateView):
 class CategoriaUpdateView(StaffRequiredMixin, UpdateView):
     model = Categoria
     form_class = CategoriaForm
-    template_name = 'admin/categorias/editar_categoria.html'
+    template_name = 'categoria/editar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
 
     def get_form(self, form_class=None):
@@ -105,7 +112,7 @@ class CategoriaUpdateView(StaffRequiredMixin, UpdateView):
 
 class CategoriaDeleteView(StaffRequiredMixin, DeleteView):
     model = Categoria
-    template_name = 'admin/categorias/eliminar_categoria.html'
+    template_name = 'categoria/eliminar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
 
     def delete(self, request, *args, **kwargs):

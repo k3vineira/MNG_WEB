@@ -1,18 +1,24 @@
 from django.views.generic import ListView
 from django.db.models import Count, Q
 from App.models import *
-from App.mixins import StaffRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from App.utils import crear_notificacion_sistema
-from App.forms import TarifaForm
+from App.forms.tarifa.forms import TarifaForm
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView,UpdateView
 
 
-
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """
+    Mixin para asegurar que solo usuarios autenticados con permisos
+    de staff/administrador puedan acceder a las vistas administrativas.
+    """
+    def test_func(self):
+        return self.request.user.is_active and self.request.user.is_staff
 
 class TarifaListView(StaffRequiredMixin, ListView):
     model = Tarifa
-    template_name = 'admin/tarifas/tarifas.html'
+    template_name = 'tarifa/tarifas.html'
     context_object_name = 'tarifas'
 
     def get_queryset(self):
@@ -48,7 +54,7 @@ class TarifaListView(StaffRequiredMixin, ListView):
 class TarifaCreateView(StaffRequiredMixin, CreateView):
     model = Tarifa
     form_class = TarifaForm
-    template_name = 'admin/tarifas/agregar_tarifa.html'
+    template_name = 'tarifa/agregar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
 
     def form_valid(self, form):
@@ -75,7 +81,7 @@ class TarifaCreateView(StaffRequiredMixin, CreateView):
 class TarifaUpdateView(StaffRequiredMixin, UpdateView):
     model = Tarifa
     form_class = TarifaForm
-    template_name = 'admin/tarifas/editar_tarifa.html'
+    template_name = 'tarifa/editar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
 
     def form_valid(self, form):

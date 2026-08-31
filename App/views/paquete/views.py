@@ -5,13 +5,22 @@ from django.db.models import Count, Q
 from django.contrib import messages
 from App.forms.paquete.forms import PaqueteForm
 from App.utils import crear_notificacion_sistema
-from App.mixins import StaffRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django import forms
 from App.models import *
 from decimal import Decimal, InvalidOperation
 
 
 # Create your views here.
+
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """
+    Mixin para asegurar que solo usuarios autenticados con permisos
+    de staff/administrador puedan acceder a las vistas administrativas.
+    """
+    def test_func(self):
+        return self.request.user.is_active and self.request.user.is_staff
+
 def destinos(request):
     """
     Vista pública que filtra y devuelve la lista de paquetes turísticos disponibles.
@@ -63,7 +72,7 @@ def destinos(request):
         'destinos_sugerencias': destinos_sugerencias,
         'categorias': categorias_list
     }
-    return render(request, 'usuario/destinos.html', context)
+    return render(request, 'paquete/destinos.html', context)
 
 
 
@@ -73,7 +82,7 @@ def destinos(request):
 
 class PaqueteListView(StaffRequiredMixin, ListView):
     model = Paquete
-    template_name = 'admin/paquetes/paquetes.html'
+    template_name = 'paquete/paquetes.html'
     context_object_name = 'paquetes'
 
     def get_queryset(self):
@@ -109,7 +118,7 @@ class PaqueteListView(StaffRequiredMixin, ListView):
 class PaqueteCreateView(StaffRequiredMixin, CreateView):
     model = Paquete
     form_class = PaqueteForm
-    template_name = 'admin/paquetes/agregar_paquete.html'
+    template_name = 'paquete/agregar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
 
     def get_form(self, form_class=None):
@@ -139,7 +148,7 @@ class PaqueteCreateView(StaffRequiredMixin, CreateView):
 class PaqueteUpdateView(StaffRequiredMixin, UpdateView):
     model = Paquete
     form_class = PaqueteForm
-    template_name = 'admin/paquetes/editar_paquete.html'
+    template_name = 'paquete/editar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
 
     def get_form(self, form_class=None):
@@ -174,7 +183,7 @@ class PaqueteUpdateView(StaffRequiredMixin, UpdateView):
 
 class PaqueteDeleteView(StaffRequiredMixin, DeleteView):
     model = Paquete
-    template_name = 'admin/paquetes/eliminar_paquete.html'
+    template_name = 'paquete/eliminar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
 
     def delete(self, request, *args, **kwargs):

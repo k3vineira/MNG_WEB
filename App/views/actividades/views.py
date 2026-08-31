@@ -5,12 +5,19 @@ from django.db.models import Count, Q
 from django.contrib import messages
 from App.forms.actividades.forms import ActividadesForm
 from App.utils import crear_notificacion_sistema
-from App.mixins import StaffRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django import forms
 from App.models import *
 
 # Create your views here.
 
+class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """
+    Mixin para asegurar que solo usuarios autenticados con permisos
+    de staff/administrador puedan acceder a las vistas administrativas.
+    """
+    def test_func(self):
+        return self.request.user.is_active and self.request.user.is_staff
 
 # ==========================================
 # ACTIVIDADES
@@ -18,7 +25,7 @@ from App.models import *
 
 class ActividadesListView(StaffRequiredMixin, ListView):
     model = Actividades
-    template_name = 'admin/actividades/actividades.html'
+    template_name = 'actividades/actividades.html'
     context_object_name = 'actividades'
 
     def get_queryset(self):
@@ -50,7 +57,7 @@ class ActividadesListView(StaffRequiredMixin, ListView):
 class ActividadesCreateView(StaffRequiredMixin, CreateView):
     model = Actividades
     form_class = ActividadesForm
-    template_name = 'admin/actividades/agregar_actividad.html'
+    template_name = 'actividades/agregar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
 
     def get_form(self, form_class=None):
@@ -80,7 +87,7 @@ class ActividadesCreateView(StaffRequiredMixin, CreateView):
 class ActividadesUpdateView(StaffRequiredMixin, UpdateView):
     model = Actividades
     form_class = ActividadesForm
-    template_name = 'admin/actividades/editar_actividad.html'
+    template_name = 'actividades/editar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
 
     def get_form(self, form_class=None):
@@ -115,7 +122,7 @@ class ActividadesUpdateView(StaffRequiredMixin, UpdateView):
 
 class ActividadesDeleteView(StaffRequiredMixin, DeleteView):
     model = Actividades
-    template_name = 'admin/actividades/eliminar_actividad.html'
+    template_name = 'actividades/eliminar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
 
     def delete(self, request, *args, **kwargs):

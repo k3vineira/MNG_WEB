@@ -1,30 +1,35 @@
 """
-Utilidades del núcleo del proyecto: plantillas de correo HTML, envío de emails y generación de PDFs.
+Utilidades del núcleo del proyecto: plantillas de correo HTML, envío de emails, generación de PDFs y notificaciones.
 """
 
-from django.core.mail import send_mail
-from django.conf import settings
+import base64
+import io
+import os
 from datetime import datetime, time
 
-def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menores=0, punto_encuentro=None, hora_encuentro=None, estado='pendiente', reserva_id='', monto_total='0.00'):
-    """
-    Genera el HTML de un correo electrónico para notificaciones de reservas.
+from django.apps import apps
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives, send_mail
+from django.template.loader import render_to_string
+from django.urls import reverse
+from pypdf import PdfReader, PdfWriter
+import qrcode
+from xhtml2pdf import pisa
 
-    Args:
-        nombre_cliente (str): Nombre del cliente destinatario.
-        paquete (str): Nombre del paquete reservado.
-        fecha (str, optional): Fecha de la reserva.
-        adultos (int): Número de adultos.
-        menores (int): Número de menores.
-        punto_encuentro (str, optional): Lugar de encuentro del tour.
-        hora_encuentro (str | time, optional): Hora de encuentro.
-        estado (str): Estado de la reserva ('pendiente', 'confirmada', 'cancelada').
-        reserva_id (str): Identificador de la reserva.
-        monto_total (str): Monto total formateado.
 
-    Returns:
-        str: Cadena HTML lista para enviar como cuerpo de correo.
-    """
+def plantilla_reserva_html(
+    nombre_cliente,
+    paquete,
+    fecha=None,
+    adultos=1,
+    menores=0,
+    punto_encuentro=None,
+    hora_encuentro=None,
+    estado='pendiente',
+    reserva_id='',
+    monto_total='0.00'
+):
+    """Genera el HTML de un correo electrónico para notificaciones de reservas."""
     if isinstance(hora_encuentro, str):
         try:
             hora_encuentro = datetime.strptime(hora_encuentro, '%H:%M').time()
@@ -39,7 +44,6 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menor
 
     hora_formateada = hora_encuentro.strftime('%H:%M')
 
-    # Configuración de colores y textos por estado de reserva
     if estado == 'confirmada':
         color_tag = "#1E4620"
         bg_caja_estado = "#f4f8f5"
@@ -113,7 +117,6 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menor
                         <tr style="border-bottom: 1px solid #edf2f0;">
                             <td style="padding: 12px 0; color: #718096;">Destino / Paquete</td>
                             <td style="padding: 12px 0; text-align: right; font-weight: 600; color: #1a202c;">{paquete}</td>
-                            
                         </tr>
                         {bloque_detalles}
                     </table>
@@ -136,21 +139,11 @@ def plantilla_reserva_html(nombre_cliente, paquete, fecha=None, adultos=1, menor
     </html>
     """
 
+
 def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"):
-    """
-    Genera el HTML de un correo electrónico para notificaciones de cancelaciones.
-
-    Args:
-        nombre_cliente (str): Nombre del cliente destinatario.
-        paquete (str): Nombre del paquete cancelado.
-        estado (str): Estado de la cancelación ('aceptada', 'rechazada', etc.).
-        penalidad (str): Monto de penalidad formateado.
-
-    Returns:
-        str: Cadena HTML lista para enviar como cuerpo de correo.
-    """
+    """Genera el HTML de un correo electrónico para notificaciones de cancelaciones."""
     if estado in ['aceptada', 'confirmada']:
-        color_tag = "#dc3545"  # Rojo por cancelación aprobada
+        color_tag = "#dc3545"
         bg_caja_estado = "#fff5f5"
         texto_estado = "Solicitud Aceptada"
         mensaje_cuerpo = f'La solicitud de cancelación de tu viaje fue procesada con éxito. Ten en cuenta que se aplicará una penalidad de <strong style="color: #dc3545; font-size: 17px;">${penalidad}</strong> conforme a las políticas del servicio.'
@@ -193,16 +186,9 @@ def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"
     </html>
     """
 
-def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_contenido):
-    """
-    Envía un correo electrónico con contenido HTML desde la cuenta configurada en settings.
 
-    Args:
-        asunto (str): Asunto del correo.
-        mensaje_texto (str): Cuerpo del correo en texto plano (fallback).
-        destinatario (str): Dirección de correo del destinatario.
-        html_contenido (str): Cuerpo del correo en formato HTML.
-    """
+def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_contenido):
+    """Envía un correo electrónico con contenido HTML desde la cuenta configurada."""
     send_mail(
         asunto,
         mensaje_texto,
@@ -215,10 +201,6 @@ def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_conteni
 
 def get_image_base64(relative_path):
     """Retorna la representación en base64 de una imagen estática local."""
-    import base64
-    import os
-    from django.conf import settings
-    
     file_path = os.path.join(settings.BASE_DIR, relative_path)
     if os.path.exists(file_path):
         with open(file_path, "rb") as image_file:
@@ -231,10 +213,6 @@ def get_image_base64(relative_path):
 
 def get_qr_base64(url):
     """Genera un código QR para la URL dada y lo retorna en formato base64."""
-    import qrcode
-    import io
-    import base64
-
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -252,34 +230,27 @@ def get_qr_base64(url):
 
 def generar_factura_pdf_bytes(reserva, request=None, password=None):
     """Genera el contenido en bytes del PDF de la factura, opcionalmente protegido por contraseña."""
-    import io
-    from xhtml2pdf import pisa
-    from django.template.loader import render_to_string
-    from django.urls import reverse
-    from pypdf import PdfReader, PdfWriter
-    
     comprobante = reserva.pago if (hasattr(reserva, 'pago') and reserva.pago.estado_transaccion == 'aprobado') else None
     metodo_pago = comprobante.banco_origen if comprobante else "Transferencia Bancaria"
-    
+
     documento_tipo = reserva.usuario.tipo_documento or "Documento"
     documento_num = reserva.usuario.numero_documento or "—"
-    
+
     if request:
         abs_url = request.build_absolute_uri(reverse('ver_factura', args=[reserva.id]))
     else:
-        # Fallback si no hay request
         domain = "localhost:8000"
         scheme = "http" if settings.DEBUG else "https"
         abs_url = f"{scheme}://{domain}{reverse('ver_factura', args=[reserva.id])}"
-        
+
     qr_base64 = get_qr_base64(abs_url)
     logo_base64 = get_image_base64('static/img/logo_monagua.webp')
-    
+
     if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro:
         fecha_emision = reserva.fecha_registro.strftime('%d/%m/%Y')
     else:
         fecha_emision = reserva.fecha.strftime('%d/%m/%Y')
-        
+
     context = {
         'nro_factura': f"FAC-1000{reserva.id}",
         'cliente_nombre': reserva.usuario.nombre_completo,
@@ -295,12 +266,12 @@ def generar_factura_pdf_bytes(reserva, request=None, password=None):
         'logo_base64': logo_base64,
         'qr_base64': qr_base64,
     }
-    
+
     html_string = render_to_string('private/factura_pdf.html', context)
     pdf_temp = io.BytesIO()
     pisa.pisaDocument(io.BytesIO(html_string.encode("UTF-8")), pdf_temp)
     pdf_bytes = pdf_temp.getvalue()
-    
+
     if password:
         try:
             reader = PdfReader(io.BytesIO(pdf_bytes))
@@ -313,28 +284,25 @@ def generar_factura_pdf_bytes(reserva, request=None, password=None):
             return pdf_encrypted.getvalue()
         except Exception as e:
             print(f"Error encrypting PDF: {e}")
-            
+
     return pdf_bytes
 
 
 def enviar_correo_confirmacion_con_factura(reserva, request=None):
-    """Genera la factura PDF encriptada con el número de documento y envía el correo con diseño OTP."""
-    from django.core.mail import EmailMultiAlternatives
-    from django.template.loader import render_to_string
-    
+    """Genera la factura PDF encriptada con el número de documento y envía el correo."""
     password = reserva.usuario.numero_documento
     if password:
         password = str(password).strip()
-        
+
     pdf_bytes = generar_factura_pdf_bytes(reserva, request=request, password=password)
-    
+
     nombre_cliente = reserva.usuario.get_full_name() or reserva.usuario.username
     asunto = f"¡Tu Pago fue Aprobado y tu Reserva #{reserva.id} está Confirmada! - Monagua"
     mensaje_texto = (
         f"Hola {nombre_cliente}, ¡excelentes noticias! Tu comprobante de pago ha sido aprobado con éxito "
         f"y tu aventura está 100% asegurada. Hemos adjuntado tu factura oficial en formato PDF."
     )
-    
+
     context = {
         'nombre_cliente': nombre_cliente,
         'reserva_id': reserva.id,
@@ -345,9 +313,9 @@ def enviar_correo_confirmacion_con_factura(reserva, request=None):
         'monto_total': str(reserva.monto_total),
         'tiene_password': bool(password),
     }
-    
+
     html_contenido = render_to_string('emails/factura_email.html', context)
-    
+
     email = EmailMultiAlternatives(
         subject=asunto,
         body=mensaje_texto,
@@ -355,9 +323,43 @@ def enviar_correo_confirmacion_con_factura(reserva, request=None):
         to=[reserva.usuario.email],
     )
     email.attach_alternative(html_contenido, "text/html")
-    
+
     pdf_filename = f"factura_FAC-1000{reserva.id}.pdf"
     email.attach(pdf_filename, pdf_bytes, "application/pdf")
-    
+
     email.send(fail_silently=False)
 
+
+def crear_notificacion_sistema(
+    usuario,
+    accion=None,
+    tabla_afectada="Sistema",
+    observacion="",
+    valor_anterior="",
+    nuevo_valor="",
+    titulo=None,
+    mensaje=None,
+    tipo=None,
+):
+    """Crea un registro de notificación en el sistema usando el modelo Notificacion."""
+    if usuario and usuario.is_authenticated:
+        titulo_final = titulo or accion or "Notificación del sistema"
+        mensaje_final = mensaje or observacion or f"Acción realizada en {tabla_afectada}"
+        tipo_final = tipo or "info"
+
+        try:
+            # Reemplaza 'nombre_de_tu_app' por el nombre de tu aplicación Django (ej. 'experiencias', 'core', etc.)
+            Notificacion = apps.get_model('nombre_de_tu_app', 'Notificacion')
+
+            return Notificacion.objects.create(
+                usuario=usuario,
+                titulo=titulo_final,
+                mensaje=mensaje_final,
+                tipo=tipo_final,
+            )
+        except LookupError:
+            print("El modelo 'Notificacion' no se encuentra registrado.")
+        except Exception as e:
+            print(f"Error al crear la notificación: {e}")
+
+    return None
