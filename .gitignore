@@ -1,30 +1,34 @@
+# Python & Byte-compiled
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
 # Django
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media
+media/
+staticfiles/
 
 # Django Migrations
 **/migrations/*.py
 !**/migrations/__init__.py
 
-# Assets
-node_modules/
-
-
-# Environments
+# Entornos virtuales
 .env
-.venv
+.venv/
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
 
-# Python
-*.pyc
-__pycache__/
-*.pyo
-*.pyd
-.Python
+# Editores de código y SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
