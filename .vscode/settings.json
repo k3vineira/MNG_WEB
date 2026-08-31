@@ -5,7 +5,7 @@
     "usuario": "client",
     "actividades": "event",
     "aseguradora": "guard",
-    "auditoria": "log",
+    "bitacora": "log",
     "blog": "content",
     "calificacion": "review",
     "categoria": "class",

@@ -1,8 +1,7 @@
 from django.views.generic import ListView
 from django.db.models import Count, Q
 from App.models import *
-from App.mixins import StaffRequiredMixin
-from App.utils import crear_notificacion_sistema
+from App.utils import crear_notificacion_sistema, StaffRequiredMixin
 from App.forms import TarifaForm
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView,UpdateView

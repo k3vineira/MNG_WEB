@@ -38,32 +38,32 @@
                             <!-- Cabecera: Acción y Fecha/Hora -->
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="badge bg-success bg-opacity-10 text-success text-uppercase px-2 py-1 rounded small fw-bold">
-                                    {{ noti.acciones_realizada }}
+                                    {{ noti.get_accion_display }}
                                 </span>
-                                <small class="text-muted fs-7"><i class="bi bi-clock me-1"></i>{{ noti.fecha|date:"d/m" }} {{ noti.hora|time:"H:i" }}</small>
+                                <small class="text-muted fs-7"><i class="bi bi-clock me-1"></i>{{ noti.fecha_registro|date:"d/m H:i" }}</small>
                             </div>
 
                             <!-- Tabla / Módulo Afectado -->
                             <strong class="text-dark d-block mb-1">
-                                <i class="bi bi-folder2-open me-1 text-success"></i>Módulo: {{ noti.tabla_afectada|title }}
+                                <i class="bi bi-folder2-open me-1 text-success"></i>Módulo: {{ noti.modulo|title }}
                             </strong>
 
                             <!-- Observación -->
-                            {% if noti.observacion %}
-                                <p class="mb-1 text-secondary small text-wrap">{{ noti.observacion }}</p>
+                            {% if noti.descripcion %}
+                                <p class="mb-1 text-secondary small text-wrap">{{ noti.descripcion }}</p>
                             {% endif %}
 
                             <!-- Usuario y Botón Ver Detalle -->
                             <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top" style="border-top-style: dashed !important;">
                                 <small class="text-muted fs-7">
                                     <i class="bi bi-person-circle me-1"></i>
-                                    <strong>Usuario:</strong> {{ noti.codigo_usuario.username }}
+                                    <strong>Usuario:</strong> {{ noti.usuario.username|default:"Sistema" }}
                                 </small>
 
                                 <button type="button" 
                                         class="btn btn-outline-success btn-sm py-0 px-2 rounded-pill fs-7 fw-bold" 
                                         data-bs-toggle="modal" 
-                                        data-bs-target="#modalDetalleAuditoria{{ noti.id }}">
+                                        data-bs-target="#modalDetalleBitacora{{ noti.id }}">
                                     Detalles <i class="bi bi-eye ms-1"></i>
                                 </button>
                             </div>
@@ -81,12 +81,12 @@
 
 <!-- Modales de detalle (fuera del dropdown para evitar fallos de renderizado) -->
 {% for noti in notificaciones_globales %}
-<div class="modal fade" id="modalDetalleAuditoria{{ noti.id }}" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalDetalleBitacora{{ noti.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header bg-success text-white">
                 <h6 class="modal-title fw-bold">
-                    <i class="bi bi-journal-text me-2"></i>Detalle de Auditoría #{{ noti.id }}
+                    <i class="bi bi-journal-text me-2"></i>Detalle de Bitácora #{{ noti.id }}
                 </h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -95,41 +95,62 @@
                     <tbody>
                         <tr>
                             <td class="fw-bold text-muted w-35">Acción Realizada:</td>
-                            <td><span class="badge bg-primary bg-opacity-10 text-primary">{{ noti.acciones_realizada }}</span></td>
+                            <td><span class="badge bg-primary bg-opacity-10 text-primary">{{ noti.get_accion_display }}</span></td>
                         </tr>
                         <tr>
                             <td class="fw-bold text-muted">Tabla/Módulo:</td>
-                            <td><strong class="text-dark">{{ noti.tabla_afectada }}</strong></td>
+                            <td><strong class="text-dark">{{ noti.modulo }}</strong></td>
                         </tr>
                         <tr>
                             <td class="fw-bold text-muted">Usuario:</td>
-                            <td>{{ noti.codigo_usuario.get_full_name|default:noti.codigo_usuario.username }}</td>
+                            <td>{{ noti.usuario.get_full_name|default:noti.usuario.username|default:"Sistema" }}</td>
                         </tr>
                         <tr>
                             <td class="fw-bold text-muted">Fecha y Hora:</td>
-                            <td>{{ noti.fecha|date:"d/m/Y" }} a las {{ noti.hora|time:"H:i:s" }}</td>
+                            <td>{{ noti.fecha_registro|date:"d/m/Y \a \l\a\s H:i:s" }}</td>
                         </tr>
                         <tr>
-                            <td class="fw-bold text-muted">Observación:</td>
-                            <td>{{ noti.observacion|default:"Sin observación" }}</td>
+                            <td class="fw-bold text-muted">IP Origen:</td>
+                            <td><code>{{ noti.ip_origen|default:"—" }}</code></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">ID Registro:</td>
+                            <td><code>{{ noti.registro_id|default:"—" }}</code></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Descripción:</td>
+                            <td>{{ noti.descripcion|default:"Sin observaciones" }}</td>
                         </tr>
                     </tbody>
                 </table>
 
-                <div class="row g-2 pt-2 border-top">
-                    <div class="col-6">
-                        <label class="fw-bold small text-danger mb-1"><i class="bi bi-dash-circle me-1"></i>Valor Anterior:</label>
-                        <div class="p-2 bg-danger bg-opacity-10 text-danger rounded border border-danger border-opacity-25 small text-break" style="min-height: 60px;">
-                            {{ noti.valor_anterior|default:"Ninguno / Sin datos" }}
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <label class="fw-bold small text-success mb-1"><i class="bi bi-plus-circle me-1"></i>Nuevo Valor:</label>
-                        <div class="p-2 bg-success bg-opacity-10 text-success rounded border border-success border-opacity-25 small text-break" style="min-height: 60px;">
-                            {{ noti.nuevo_valor|default:"Ninguno / Sin datos" }}
-                        </div>
+                {% if noti.reserva or noti.pago or noti.pqrs or noti.seguimiento %}
+                <div class="pt-2 border-top">
+                    <label class="fw-bold small text-secondary mb-2"><i class="bi bi-link-45deg me-1"></i>Registros Relacionados:</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if noti.reserva %}
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                <i class="bi bi-calendar2-check me-1"></i>Reserva #{{ noti.reserva.id }}
+                            </span>
+                        {% endif %}
+                        {% if noti.pago %}
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                <i class="bi bi-cash-coin me-1"></i>Pago #{{ noti.pago.id }}
+                            </span>
+                        {% endif %}
+                        {% if noti.pqrs %}
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                <i class="bi bi-chat-left-text me-1"></i>PQRS #{{ noti.pqrs.id }}
+                            </span>
+                        {% endif %}
+                        {% if noti.seguimiento %}
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                <i class="bi bi-reply me-1"></i>Seguimiento #{{ noti.seguimiento.id }}
+                            </span>
+                        {% endif %}
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

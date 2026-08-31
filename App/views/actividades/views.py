@@ -4,8 +4,7 @@ from django.urls import reverse_lazy
 from django.db.models import Count, Q
 from django.contrib import messages
 from App.forms.actividades.forms import ActividadesForm
-from App.utils import crear_notificacion_sistema
-from App.mixins import StaffRequiredMixin
+from App.utils import crear_notificacion_sistema, StaffRequiredMixin
 from django import forms
 from App.models import *
 

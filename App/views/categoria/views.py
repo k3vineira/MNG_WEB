@@ -6,8 +6,7 @@ from django import forms
 from django.db.models import Count, Q
 from App.forms.categoria.forms import CategoriaForm
 from App.models import*
-from App.mixins import StaffRequiredMixin
-from App.utils import crear_notificacion_sistema
+from App.utils import crear_notificacion_sistema, StaffRequiredMixin
 from django.views.generic.edit import DeleteView
 
 
