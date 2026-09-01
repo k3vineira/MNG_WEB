@@ -23,7 +23,7 @@ class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
 class CategoriaListView(StaffRequiredMixin, ListView):
     model = Categoria
-    template_name = 'categoria/categorias.html'
+    template_name = 'admin/categoria/categorias.html'
     context_object_name = 'categorias'
 
     def get_queryset(self):
@@ -47,7 +47,7 @@ class CategoriaListView(StaffRequiredMixin, ListView):
 class CategoriaCreateView(StaffRequiredMixin, CreateView):
     model = Categoria
     form_class = CategoriaForm
-    template_name = 'categoria/agregar_categoria.html'
+    template_name = 'admin/categoria/agregar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
 
     def get_form(self, form_class=None):
@@ -77,7 +77,7 @@ class CategoriaCreateView(StaffRequiredMixin, CreateView):
 class CategoriaUpdateView(StaffRequiredMixin, UpdateView):
     model = Categoria
     form_class = CategoriaForm
-    template_name = 'categoria/editar_categoria.html'
+    template_name = 'admin/categoria/editar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
 
     def get_form(self, form_class=None):
@@ -112,7 +112,7 @@ class CategoriaUpdateView(StaffRequiredMixin, UpdateView):
 
 class CategoriaDeleteView(StaffRequiredMixin, DeleteView):
     model = Categoria
-    template_name = 'categoria/eliminar_categoria.html'
+    template_name = 'admin/categoria/eliminar_categoria.html'
     success_url = reverse_lazy('listar_categorias')
 
     def delete(self, request, *args, **kwargs):

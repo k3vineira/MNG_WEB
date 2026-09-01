@@ -20,7 +20,7 @@ class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
 class TemporadaListView(StaffRequiredMixin, ListView):
     model = Temporada
-    template_name = 'temporada/temporada.html'
+    template_name = 'admin/temporada/temporada.html'
     context_object_name = 'temporadas'
 
     def get_queryset(self):
@@ -66,7 +66,7 @@ class TemporadaListView(StaffRequiredMixin, ListView):
 class TemporadaCreateView(StaffRequiredMixin, CreateView):
     model = Temporada
     form_class = TemporadaForm
-    template_name = 'temporada/agregar_temporada.html'
+    template_name = 'admin/temporada/agregar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
 
     def form_valid(self, form):
@@ -93,7 +93,7 @@ class TemporadaCreateView(StaffRequiredMixin, CreateView):
 class TemporadaUpdateView(StaffRequiredMixin, UpdateView):
     model = Temporada
     form_class = TemporadaForm
-    template_name = 'temporada/editar_temporada.html'
+    template_name = 'admin/temporada/editar_temporada.html'
     success_url = reverse_lazy('listar_temporadas')
 
     def form_valid(self, form):

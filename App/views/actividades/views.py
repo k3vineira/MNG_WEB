@@ -25,7 +25,7 @@ class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
 class ActividadesListView(StaffRequiredMixin, ListView):
     model = Actividades
-    template_name = 'actividades/actividades.html'
+    template_name = 'admin/actividades/actividades.html'
     context_object_name = 'actividades'
 
     def get_queryset(self):
@@ -57,7 +57,7 @@ class ActividadesListView(StaffRequiredMixin, ListView):
 class ActividadesCreateView(StaffRequiredMixin, CreateView):
     model = Actividades
     form_class = ActividadesForm
-    template_name = 'actividades/agregar_actividad.html'
+    template_name = 'admin/actividades/agregar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
 
     def get_form(self, form_class=None):
@@ -87,7 +87,7 @@ class ActividadesCreateView(StaffRequiredMixin, CreateView):
 class ActividadesUpdateView(StaffRequiredMixin, UpdateView):
     model = Actividades
     form_class = ActividadesForm
-    template_name = 'actividades/editar_actividad.html'
+    template_name = 'admin/actividades/editar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
 
     def get_form(self, form_class=None):
@@ -122,7 +122,7 @@ class ActividadesUpdateView(StaffRequiredMixin, UpdateView):
 
 class ActividadesDeleteView(StaffRequiredMixin, DeleteView):
     model = Actividades
-    template_name = 'actividades/eliminar_actividad.html'
+    template_name = 'admin/actividades/eliminar_actividad.html'
     success_url = reverse_lazy('listar_actividades')
 
     def delete(self, request, *args, **kwargs):

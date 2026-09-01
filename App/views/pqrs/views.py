@@ -13,12 +13,12 @@ def pqrs(request):
     pqrs = PQRS.objects.all()
     form = PqrsForm()
     context = {'pqrs': pqrs, 'form': form}
-    return render(request, 'pqrs/pqrs.html', context)
+    return render(request, 'admin/pqrs/pqrs.html', context)
 
 
 class PQRSListView(ListView):
     model = PQRS
-    template_name = 'pqrs/pqrs_admin.html'
+    template_name = 'admin/pqrs/pqrs_admin.html'
     context_object_name = 'todas_las_pqrs'
 
     def get_queryset(self):
@@ -99,7 +99,7 @@ def guardar_pqrs(request):
             print(f"--- ERRORES DEL FORMULARIO: {form.errors} ---")
             messages.error(request, "Por favor verifica los campos del formulario.")
 
-    return redirect('mis_pqrs')
+    return redirect('admin/pqrs/mis_pqrs')
 
 @requiere_autenticacion
 def mis_pqrs_view(request):
@@ -114,7 +114,7 @@ def mis_pqrs_view(request):
             nueva_pqrs.save()
             
             messages.success(request, "Tu solicitud ha sido enviada correctamente.")
-            return redirect('mis_pqrs')
+            return redirect('admin/pqrs/mis_pqrs')
     else:
         form = PqrsForm()
 
@@ -122,4 +122,4 @@ def mis_pqrs_view(request):
         'solicitudes': solicitudes_usuario,
         'form': form,
     }
-    return render(request, 'pqrs/mis_pqrs.html', context)
+    return render(request, 'admin/pqrs/mis_pqrs.html', context)

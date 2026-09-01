@@ -18,7 +18,7 @@ class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
 class TarifaListView(StaffRequiredMixin, ListView):
     model = Tarifa
-    template_name = 'tarifa/tarifas.html'
+    template_name = 'admin/tarifa/tarifas.html'
     context_object_name = 'tarifas'
 
     def get_queryset(self):
@@ -54,7 +54,7 @@ class TarifaListView(StaffRequiredMixin, ListView):
 class TarifaCreateView(StaffRequiredMixin, CreateView):
     model = Tarifa
     form_class = TarifaForm
-    template_name = 'tarifa/agregar_tarifa.html'
+    template_name = 'admin/tarifa/agregar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
 
     def form_valid(self, form):
@@ -81,7 +81,7 @@ class TarifaCreateView(StaffRequiredMixin, CreateView):
 class TarifaUpdateView(StaffRequiredMixin, UpdateView):
     model = Tarifa
     form_class = TarifaForm
-    template_name = 'tarifa/editar_tarifa.html'
+    template_name = 'admin/tarifa/editar_tarifa.html'
     success_url = reverse_lazy('listar_tarifas')
 
     def form_valid(self, form):

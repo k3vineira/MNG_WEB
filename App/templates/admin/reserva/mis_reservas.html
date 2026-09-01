@@ -1,0 +1,163 @@
+{% extends "private/base_private.html" %}
+{% load static humanize %}
+
+{% block titulo %}Mis Reservas | Monagua{% endblock %}
+
+{% block private_content %}
+<div class="container py-4 mx-auto u-style-f694cf53">
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
+        <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h2 class="fw-bold text-success mb-1">
+                    <i class="bi bi-archive text-success me-2"></i>Mis Aventuras Reservadas
+                </h2>
+                <p class="text-muted mb-0">Descubre y administra tus próximas experiencias</p>
+            </div>
+        </div>
+    </div>
+
+    {% if reservas %}
+        <div class="row g-4">
+            {% for reserva in reservas %}
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                        <div class="row g-0 align-items-stretch">
+                            
+                            <div class="col-md-4 position-relative u-style-47f2ed6c">
+                                {% if reserva.paquete.imagen %}
+                                    <img src="{{ reserva.paquete.imagen.url }}" class="w-100 h-100 position-absolute start-0 top-0 u-style-ca362336" alt="{{ reserva.paquete.nombre }}">
+                                {% else %}
+                                    <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 position-absolute start-0 top-0 u-style-ca362336" alt="Imagen por defecto">
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-8 d-flex flex-column">
+                                <div class="card-body p-4 d-flex flex-column h-100">
+                                    
+                                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                                        <div>
+                                            <h3 class="fw-bold text-dark mb-1">{{ reserva.paquete.nombre }}</h3>
+                                            <p class="text-muted small mb-0"><i class="bi bi-journal-check me-1"></i> Reserva #{{ reserva.id }} · Turística</p>
+                                        </div>
+
+                                        <div>
+                                            {% with estado=reserva.estado|default:reserva.estado_reserva %}
+                                                {% if estado == 'pendiente' %}
+                                                    <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="bi bi-clock me-1"></i> Pendiente</span>
+                                                {% elif estado == 'confirmada' %}
+                                                    <span class="badge bg-success text-white rounded-pill px-3 py-2"><i class="bi bi-check-circle me-1"></i> Confirmada</span>
+                                                {% elif estado == 'cancelada' %}
+                                                    <span class="badge bg-danger text-white rounded-pill px-3 py-2"><i class="bi bi-x-circle me-1"></i> Cancelada</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-sm-4">
+                                            <div class="border rounded-4 p-3 bg-light h-100">
+                                                <small class="text-muted d-block mb-1">Fecha de Viaje</small>
+                                                <span class="fw-semibold text-dark small">
+                                                    <i class="bi bi-calendar-event me-1 text-success"></i> 
+                                                    {{ reserva.fecha_inicio|default:reserva.fecha|date:"d M Y"|default:"Por definir" }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <div class="border rounded-4 p-3 bg-light h-100">
+                                                <small class="text-muted d-block mb-1">Pasajeros</small>
+                                                <span class="fw-semibold text-dark small">
+                                                    <i class="bi bi-people me-1 text-success"></i> 
+                                                    {{ reserva.numero_adultos }} Adul. / {{ reserva.numero_menores }} Men.
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4">
+                                            <div class="border rounded-4 p-3 h-100 u-style-ae701efb">
+                                                <small class="text-success-emphasis d-block mb-1 fw-medium">Total de Reserva</small>
+                                                <h5 class="fw-bold text-success mb-0">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if reserva.pago %}
+                                        <div class="mb-4 border-top pt-3">
+                                            <h6 class="fw-bold text-secondary mb-2 u-style-1952029f">
+                                                <i class="bi bi-credit-card me-1"></i> Comprobante de pago enviado
+                                            </h6>
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="d-flex align-items-center justify-content-between p-2 rounded-3 border bg-light flex-wrap gap-2">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        {% if reserva.pago.imagen_comprobante %}
+                                                            <img src="{{ reserva.pago.imagen_comprobante.url }}" alt="Comprobante" class="img-fluid rounded border u-style-35afc132" style="max-width: 100%; height: auto; object-fit: contain; max-height: 120px;">
+                                                        {% endif %}
+                                                        <div>
+                                                            <div class="small fw-semibold text-dark">Referencia: {{ reserva.pago.referencia|default:"—" }}</div>
+                                                            <div class="text-muted u-style-e58064fd">{{ reserva.pago.banco_origen|default:"Medio desconocido" }} · {{ reserva.pago.fecha_envio|date:"d M Y" }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        {% if reserva.pago.monto %}
+                                                            <span class="small fw-bold text-success">COP ${{ reserva.pago.monto|floatformat:0|intcomma }}</span>
+                                                        {% else %}
+                                                            <span class="small fw-bold text-success">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</span>
+                                                        {% endif %}
+                                                        <span class="badge {% if reserva.pago.estado_transaccion == 'aprobado' %}bg-success{% elif reserva.pago.estado_transaccion == 'pendiente' %}bg-warning text-dark{% else %}bg-danger{% endif %} u-style-dd8eb2f6">
+                                                            {{ reserva.pago.get_estado_transaccion_display }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="mt-auto d-flex gap-2 flex-wrap pt-2 border-top">
+                                        {% with estado=reserva.estado|default:reserva.estado_reserva %}
+                                            {# BOTÓN ENVIAR PAGO #}
+                                            {% if estado == 'pendiente' and not reserva.pago %}
+                                                <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
+                                                    <i class="bi bi-wallet2 me-1"></i> Enviar pago
+                                                </a>
+                                            {% endif %}
+                                            
+                                            {# BOTÓN FACTURA #}
+                                            {% if estado == 'confirmada' %}
+                                                <a href="{% url 'ver_factura' reserva.id %}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
+                                                    <i class="bi bi-file-earmark-ruled me-1"></i> Ver Factura
+                                                </a>
+                                            {% endif %}
+                                            
+                                            {# BOTÓN CANCELACIÓN DIRECTA DE RESERVA #}
+                                            {% if estado != 'cancelada' %}
+                                                <a href="{% url 'cancelar_reserva_usuario' reserva.id %}" 
+                                                   class="btn btn-outline-danger rounded-pill px-4 py-2"
+                                                   onclick="return confirm('¿Estás seguro de que deseas cancelar la reserva #{{ reserva.id }}?');">
+                                                    <i class="bi bi-x-lg me-1"></i> Cancelar Reserva
+                                                </a>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm rounded-4 bg-white text-center py-5">
+            <div class="mb-3 text-muted">
+                <i class="bi bi-airplane display-3 opacity-50"></i>
+            </div>
+            <h3 class="fw-bold text-dark">Aún no tienes reservas</h3>
+            <p class="text-muted">Explora experiencias increíbles y planifica tu próxima aventura en Mongua.</p>
+            <a href="{% url 'destinos' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2">Explorar paquetes</a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -57,5 +57,14 @@ urlpatterns = [
     path('gestion/blog/eliminar/<int:pk>/', BlogDeleteView.as_view(), name='eliminar_blog'),
     path('blog/', blog, name='blog'),
     path('blog/<int:id>/', detalle_blog, name='detalle_blog'),
+    
+    #RESERVA
+   path('admin/reservas/', ReservaListView.as_view(), name='listar_reservas'),
+    path('admin/reservas/crear/', ReservaCreateView.as_view(), name='crear_reserva'),
+    path('admin/reservas/<int:pk>/editar/', ReservaUpdateView.as_view(), name='editar_reserva'),
+    path('admin/reservas/<int:pk>/cancelar/', ReservaCancelarView.as_view(), name='cancelar_reserva_admin'),
+    path('admin/reservas/<int:pk>/eliminar/', ReservaDeleteView.as_view(), name='eliminar_reserva'),
+    path('mis-reservas/', mis_reservas_usuario, name='mis_reservas_usuario'),
+    path('mis-reservas/<int:pk>/cancelar/', cancelar_reserva_usuario, name='cancelar_reserva_usuario'),
 
 ]

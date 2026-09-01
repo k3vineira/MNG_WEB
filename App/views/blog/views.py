@@ -16,20 +16,20 @@ def blog(request):
     page_number = request.GET.get('page')
     blogs = paginator.get_page(page_number)
     context = {'blogs': blogs}
-    return render(request, 'blog/blog.html', context)
+    return render(request, 'admin/blog/blog.html', context)
 
 
 def detalle_blog(request, id):
     post = get_object_or_404(Blog, id=id)
     context = {'post': post}
-    return render(request, 'blog/detalle_blog.html', context)
+    return render(request, 'admin/blog/detalle_blog.html', context)
 
 # BLOG
 
 
 class BlogListView(ListView):
     model = Blog
-    template_name = 'blog/blog_admin.html'
+    template_name = 'admin/blog/blog_admin.html'
     context_object_name = 'blogs'
     ordering = ['-id']
 
@@ -54,7 +54,7 @@ class BlogListView(ListView):
 class BlogCreateView(CreateView):
     model = Blog
     form_class = BlogForm
-    template_name = 'blog/agregar_blog.html'
+    template_name = 'admin/blog/agregar_blog.html'
     success_url = reverse_lazy('listar_blog')
     
     def form_valid(self, form):
@@ -71,7 +71,7 @@ class BlogCreateView(CreateView):
 class BlogUpdateView(UpdateView):
     model = Blog
     form_class = BlogForm
-    template_name = 'blog/editar_blog.html'
+    template_name = 'admin/blog/editar_blog.html'
     success_url = reverse_lazy('listar_blog')
     
     def form_valid(self, form):
@@ -87,7 +87,7 @@ class BlogUpdateView(UpdateView):
 
 class BlogDeleteView(DeleteView):
     model = Blog
-    template_name = 'blog/eliminar_blog.html'
+    template_name = 'admin/blog/eliminar_blog.html'
     success_url = reverse_lazy('listar_blog')
     
     def delete(self, request, *args, **kwargs):

@@ -72,7 +72,7 @@ def destinos(request):
         'destinos_sugerencias': destinos_sugerencias,
         'categorias': categorias_list
     }
-    return render(request, 'paquete/destinos.html', context)
+    return render(request, 'admin/paquete/destinos.html', context)
 
 
 
@@ -82,7 +82,7 @@ def destinos(request):
 
 class PaqueteListView(StaffRequiredMixin, ListView):
     model = Paquete
-    template_name = 'paquete/paquetes.html'
+    template_name = 'admin/paquete/paquetes.html'
     context_object_name = 'paquetes'
 
     def get_queryset(self):
@@ -118,7 +118,7 @@ class PaqueteListView(StaffRequiredMixin, ListView):
 class PaqueteCreateView(StaffRequiredMixin, CreateView):
     model = Paquete
     form_class = PaqueteForm
-    template_name = 'paquete/agregar_paquete.html'
+    template_name = 'admin/paquete/agregar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
 
     def get_form(self, form_class=None):
@@ -148,7 +148,7 @@ class PaqueteCreateView(StaffRequiredMixin, CreateView):
 class PaqueteUpdateView(StaffRequiredMixin, UpdateView):
     model = Paquete
     form_class = PaqueteForm
-    template_name = 'paquete/editar_paquete.html'
+    template_name = 'admin/paquete/editar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
 
     def get_form(self, form_class=None):
@@ -183,7 +183,7 @@ class PaqueteUpdateView(StaffRequiredMixin, UpdateView):
 
 class PaqueteDeleteView(StaffRequiredMixin, DeleteView):
     model = Paquete
-    template_name = 'paquete/eliminar_paquete.html'
+    template_name = 'admin/paquete/eliminar_paquete.html'
     success_url = reverse_lazy('listar_paquetes')
 
     def delete(self, request, *args, **kwargs):
