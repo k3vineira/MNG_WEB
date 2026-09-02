@@ -91,7 +91,7 @@
         <ul
           class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2"
         >
-          {% include 'partials/user_dropdown_items.html' %}
+          {% include 'partials/opciones_usuario.html' %}
         </ul>
       </div>
       {% else %}
@@ -112,17 +112,18 @@
       </a>
       {% endif %}
 
-      <!-- Botón Hamburguesa -->
+      <!-- menú de hamburguesa -->
       <button
         class="navbar-toggler border-0 shadow-none p-1 ms-1"
         type="button"
         data-bs-toggle="offcanvas"
         data-bs-target="#menuPremium"
         aria-controls="menuPremium"
+        aria-label="Menú de hamburguesa"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
     </div>
   </div>
 </nav>
-{% include 'partials/offcanvas_menu.html' %}
+{% include 'partials/menu_hamburguesa.html' %}

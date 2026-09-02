@@ -1,4 +1,4 @@
-{% extends "private/base_private.html" %}
+{% extends "usuario/base-turista-dashboard.html" %}
 {% load static %}
 
 {% block extra_head %}
@@ -13,14 +13,23 @@
     .btn-confirmar-fijo {
         background-color: var(--monagua-primary) !important;
         color: white !important;
-        border: none !important;
-        transition: 0.3s !important;
     }
 
     .btn-confirmar-fijo:hover {
         background-color: var(--monagua-primary-hover) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        color: white !important;
+    }
+
+    .border-custom-muted {
+        border-color: #e9ecef !important;
+    }
+
+    .form-django-custom input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.75rem;
+        transition: all 0.2s ease-in-out;
     }
 
     .form-django-custom input:focus {
@@ -31,7 +40,7 @@
 </style>
 {% endblock %}
 
-{% block private_content %}
+{% block content %}
     <div class="container py-5">
         <h2 class="h5 fw-bold mb-4 text-success text-center text-md-start">Finalizar Reserva</h2>
         <div class="row g-4 justify-content-center">

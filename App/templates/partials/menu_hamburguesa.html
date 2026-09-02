@@ -1,0 +1,112 @@
+{% load static %}
+<!-- Menú de hamburguesa (Offcanvas) -->
+<div
+  class="offcanvas offcanvas-top h-100 menu-hamburguesa-premium"
+  tabindex="-1"
+  id="menuPremium"
+  aria-labelledby="menuPremiumLabel"
+>
+  <div class="d-flex justify-content-between align-items-center px-3 px-md-4 py-3 border-bottom border-dark border-opacity-10">
+    <a class="navbar-brand m-0 d-flex align-items-center text-white" href="/">
+      <span class="fw-bold me-2" id="menuPremiumLabel">MONAGUA</span>
+      <img src="{% static 'img/Logo.webp' %}" alt="Monagua" width="50" height="50" class="object-fit-contain" />
+    </a>
+
+    <div class="d-flex align-items-center gap-3 gap-md-4">
+      {% if user.is_authenticated %}
+      <div class="dropdown">
+        <button
+          class="dropdown-toggle d-flex align-items-center gap-2 btn btn-outline-light rounded-pill px-3 py-1 text-decoration-none"
+          type="button"
+          id="offcanvasNavbarDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          {% if user.imagen_perfil %}
+          <img src="{{ user.imagen_perfil.url }}" alt="Avatar" width="28" height="28" class="rounded-circle object-fit-cover" />
+          {% else %}
+          <i class="bi bi-person-circle fs-5"></i>
+          {% endif %}
+          <span class="d-none d-sm-inline">Hola, {{ user.first_name|default:user.username }}</span>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4" aria-labelledby="offcanvasNavbarDropdown">
+          {% include 'partials/opciones_usuario.html' %}
+        </ul>
+      </div>
+      {% else %}
+      <a class="btn btn-outline-light rounded-pill px-3 px-md-4 py-1.5" href="#">Acceder</a>
+      {% endif %}
+
+      {% if not user.is_authenticated or user.rol != 'ADMIN' %}
+      <a class="nav-link text-white" href="#">
+        <i class="bi bi-cart3 fs-5"></i>
+      </a>
+      {% endif %}
+      <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Cerrar menú de hamburguesa"></button>
+    </div>
+  </div>
+
+  {# ── NAVEGACIÓN DERECHA E IZQUIERDA (Dentro del menú de hamburguesa)── #}
+  <div class="offcanvas-body d-flex align-items-center overflow-y-auto">
+    <div class="container-fluid px-3 px-md-5 py-3">
+      <div class="row align-items-start">
+        <!-- Columna Principal (Izquierda): Enlaces Generales Grandes -->
+        <div class="col-12 col-lg-7 offset-lg-1 mb-4 mb-lg-0">
+          <nav class="d-flex flex-column gap-2 gap-md-3">
+            <a href="#" class="menu-hamburguesa-premium__main-link">Inicio</a>
+            <a href="#" class="menu-hamburguesa-premium__main-link">Tours</a>
+            <a href="#" class="menu-hamburguesa-premium__main-link">Reseñas</a>
+            <a href="#" class="menu-hamburguesa-premium__main-link">Nosotros</a>
+            <a href="#" class="menu-hamburguesa-premium__main-link">Blog</a>
+          </nav>
+        </div>
+        
+        <!-- Columna Secundaria (Derecha): Enlaces por Rol + Accesos Secundarios -->
+        <div class="col-12 col-lg-3 menu-hamburguesa-premium__secondary-menu mt-2 mt-lg-4">
+          <ul class="nav flex-column gap-2 gap-md-3">
+            {% if user.is_authenticated %}
+              <li>
+                <a class="menu-hamburguesa-premium__secondary-link fw-bold text-success" href="#">
+                  <i class="bi bi-person-vcard me-2"></i>Mi Perfil
+                </a>
+              </li>
+
+              {# Administrador / Staff #}
+              {% if user.is_staff or user.is_superuser %}
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a></li>
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-people me-2"></i>Gestión Guías</a></li>
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-calendar-check me-2"></i>Reservas Globales</a></li>
+              {% endif %}
+
+              {# Guía Turístico #}
+              {% if user.es_guia %}
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-chat-left-text me-2"></i>Mis Reseñas</a></li>
+              {% endif %}
+
+              {# Turista / Viajero #}
+              {% if user.es_turista %}
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-house-door-fill me-2"></i>Mi Panel</a></li>
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-bar-chart-line me-2"></i>Mi Dashboard</a></li>
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-calendar2-check me-2"></i>Mis Reservas</a></li>
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-cash-stack me-2"></i>Mis Comprobantes</a></li>
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-file-earmark-ruled me-2"></i>Mis Facturas</a></li>
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-envelope me-2"></i>Mis PQRS</a></li>
+              {% endif %}
+
+              <li><hr class="border-secondary opacity-25 my-1" /></li>
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-question-circle me-2"></i>Soporte</a></li>
+              <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-shield-lock me-2"></i>Privacidad</a></li>
+            {% else %}
+              <li><a class="menu-hamburguesa-premium__secondary-link fw-bold text-success" href="#"><i class="bi bi-box-arrow-in-right me-2"></i>Acceder</a></li>
+            {% endif %}
+
+            <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-envelope me-2"></i>Contacto</a></li>
+            <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-people me-2"></i>Nosotros</a></li>
+            <li><a class="menu-hamburguesa-premium__secondary-link" href="#"><i class="bi bi-tag me-2"></i>Promociones</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
