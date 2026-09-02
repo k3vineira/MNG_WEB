@@ -55,6 +55,7 @@
                     <tr>
                         <th scope="col" class="fw-bold ps-3">Solicitante</th>
                         <th scope="col" class="fw-bold">Tipo</th>
+                        <th scope="col" class="fw-bold">Reserva</th>
                         <th scope="col" class="fw-bold">Asunto</th>
                         <th scope="col" class="fw-bold text-center">Acción</th>
                     </tr>
@@ -76,11 +77,24 @@
                                 </span>
                             {% endif %}
                         </td>
+
+                        <!-- MOSTRAR RESERVA DESDE SEGUIMIENTO -->
+                        <td>
+                            {% with seguimiento=pqr.seguimientos.first %}
+                                {% if seguimiento and seguimiento.reserva %}
+                                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold">
+                                        <i class="bi bi-bookmark-check-fill me-1"></i> Reserva #{{ seguimiento.reserva.id }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted small">Sin Reserva</span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+
                         <td class="text-muted small" title="{{ pqr.asunto }}">
                             {{ pqr.asunto|truncatechars:50 }}
                         </td>
                         <td class="text-center">
-                            <!-- EVALUACIÓN POR ESTADO / HISTORIAL EN LUGAR DE pqr.respuesta -->
                             {% if pqr.estado == 'cerrado' or pqr.seguimientos.all %}
                                 <button type="button" 
                                         class="btn btn-sm btn-outline-success rounded-pill px-4 fw-bold" 
@@ -98,7 +112,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center py-5 text-muted">No hay PQRS registradas.</td>
+                        <td colspan="5" class="text-center py-5 text-muted">No hay PQRS registradas.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -125,8 +139,20 @@
                             </div>
                         </div>
 
+                        <!-- MOSTRAR RESERVA EN MÓVIL -->
+                        <div class="mb-2">
+                            {% with seguimiento=pqr.seguimientos.first %}
+                                {% if seguimiento and seguimiento.reserva %}
+                                    <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill small fw-bold">
+                                        <i class="bi bi-bookmark-check-fill me-1"></i> Reserva #{{ seguimiento.reserva.id }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted small">Sin Reserva</span>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+
                         <div class="pt-2">
-                            <!-- EVALUACIÓN EN MÓVIL TAMBIÉN -->
                             {% if pqr.estado == 'cerrado' or pqr.seguimientos.all %}
                                 <button type="button" 
                                         class="btn btn-sm w-100 btn-outline-success rounded-pill fw-bold" 
