@@ -16,6 +16,8 @@ class BlogForm(forms.ModelForm):
             'estado': '¿Publicar ahora?',
         }
         widgets = {
-            'contenido': forms.Textarea(attrs={'rows': 10, 'placeholder': 'Escribe el contenido del blog aquí...'}),
+            'contenido': forms.Textarea(attrs={'rows': 6, 'placeholder': 'Escribe el contenido del blog aquí...'}),
+            'informacion_adicional': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Agrega información adicional si es necesario...'}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            
         }

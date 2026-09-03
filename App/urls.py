@@ -9,6 +9,7 @@ from .views.tarifa.views import *
 from .views.temporada.views import *
 
 from django.urls import path
+from django.contrib.auth.views import LogoutView
 from App.views import views
 
 urlpatterns = [
@@ -66,5 +67,8 @@ urlpatterns = [
     path('admin/reservas/<int:pk>/eliminar/', ReservaDeleteView.as_view(), name='eliminar_reserva'),
     path('mis-reservas/', mis_reservas_usuario, name='mis_reservas_usuario'),
     path('mis-reservas/<int:pk>/cancelar/', cancelar_reserva_usuario, name='cancelar_reserva_usuario'),
+    
+    
+    path('logout/', LogoutView.as_view(), name='logout'),
 
 ]

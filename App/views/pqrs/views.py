@@ -11,16 +11,22 @@ from App.utils import registrar_bitacora
 
 
 def pqrs(request):
-    pqrs = PQRS.objects.all()
-    form = PqrsForm()
-    context = {'pqrs': pqrs, 'form': form}
-    return render(request, 'admin/pqrs/pqrs.html', context)
+    mis_reservas = Reserva.objects.filter(usuario=request.user)
+    form = PqrsForm(user=request.user)
+    pqrs_usuario = PQRS.objects.filter(usuario=request.user)
+    
+    context = {
+        'pqrs': pqrs_usuario,
+        'form': form,
+        'tiene_reservas': mis_reservas.exists()
+    }
+    return render(request, 'admin/pqrs/pqrs_usuario.html', context)
 
 
 
 class PQRSListView(ListView):
     model = PQRS
-    template_name = 'admin/pqrs/pqrs_admin.html'
+    template_name = 'admin/pqrs/pqrs.html'
     context_object_name = 'todas_las_pqrs'
 
     def get_queryset(self):
@@ -96,11 +102,13 @@ def contestar_pqrs(request, pqrs_id):
         'pqr': pqr,
         'reservas_cliente': reservas_cliente
     })
-
 def guardar_pqrs(request):
     if request.method == 'POST':
-        form = PqrsForm(request.POST)
+        # 1. Pasamos user=request.user para que el form filtre y valide las reservas del usuario
+        form = PqrsForm(request.POST, user=request.user)
+
         if form.is_valid():
+            # 2. Guardar la PQRS principal (sin la reserva)
             nueva_pqrs = form.save(commit=False)
             
             if request.user.is_authenticated:
@@ -111,13 +119,24 @@ def guardar_pqrs(request):
             nueva_pqrs.estado = 'abierto'
             nueva_pqrs.save()
 
-            messages.success(request, "Tu PQRS ha sido radicada con éxito.")
+            # 3. Extraer la reserva elegida en el campo del formulario
+            reserva_seleccionada = form.cleaned_data.get('reserva')
+
+            # 4. Guardar OBLIGATORIAMENTE en la tabla Seguimiento la relación con la Reserva
+            Seguimiento.objects.create(
+                pqrs=nueva_pqrs,
+                usuario=request.user if request.user.is_authenticated else None,
+                reserva=reserva_seleccionada,
+                respuesta=f"Solicitud radicada inicialmente sobre la Reserva #{reserva_seleccionada.id}"
+            )
+
+            messages.success(request, f"Tu PQRS ha sido radicada con éxito para la Reserva #{reserva_seleccionada.id}.")
             return redirect('mis_pqrs')
         else:
             print(f"--- ERRORES DEL FORMULARIO: {form.errors} ---")
             messages.error(request, "Por favor verifica los campos del formulario.")
 
-    return redirect('admin/pqrs/mis_pqrs')
+    return redirect('mis_pqrs')
 
 @requiere_autenticacion
 def mis_pqrs_view(request):
