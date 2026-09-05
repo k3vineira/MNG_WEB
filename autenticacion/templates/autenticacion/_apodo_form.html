@@ -1,0 +1,77 @@
+<form method="POST" action="">
+  {% csrf_token %}
+
+  <!-- Input Correo -->
+  <div class="mb-3" data-aos="fade-up" data-aos-delay="150">
+    <label for="email_apodo" class="form-label small fw-semibold text-secondary ps-3 mb-1">
+      Correo electrónico
+    </label>
+    <input
+      type="email"
+      id="email_apodo"
+      name="email"
+      class="form-control rounded-pill py-3 px-4"
+      placeholder="aventura@monagua.com"
+      autofocus
+      {% if request.POST.email %}value="{{ request.POST.email }}"{% endif %}
+    />
+  </div>
+
+  <!-- Input Número de Documento -->
+  <div class="mb-4" data-aos="fade-up" data-aos-delay="200">
+    <label for="documento_apodo" class="form-label small fw-semibold text-secondary ps-3 mb-1">
+      Número de documento
+    </label>
+    <input
+      type="text"
+      id="documento_apodo"
+      name="numero_documento"
+      class="form-control rounded-pill py-3 px-4"
+      placeholder="1000000000"
+      oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+      {% if request.POST.numero_documento %}value="{{ request.POST.numero_documento }}"{% endif %}
+    />
+    <p class="small text-muted ps-3 mt-2 mb-0" style="font-size: 0.78rem">
+      <i class="bi bi-info-circle me-1"></i>
+      Ingresa al menos uno de los datos con los que te registraste en Monagua.
+    </p>
+  </div>
+
+  <!-- Botones de Acción -->
+  <div class="d-grid gap-2 pt-1 mb-4" data-aos="fade-up" data-aos-delay="250">
+    <button
+      type="submit"
+      id="btn_buscar_apodo"
+      class="btn btn-success rounded-pill py-3 fw-bold shadow-sm"
+    >
+      Buscar mi apodo
+    </button>
+    <a
+      href="{% url 'recuperar_clave' %}"
+      class="btn btn-light rounded-pill py-3 fw-semibold text-secondary border-0 shadow-sm text-center"
+    >
+      Volver a recuperar contraseña
+    </a>
+  </div>
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+    const btn = document.getElementById('btn_buscar_apodo');
+    const emailInput = document.getElementById('email_apodo');
+    const docInput = document.getElementById('documento_apodo');
+
+    if (form && btn) {
+      form.addEventListener('submit', function (e) {
+        if (!emailInput.value.trim() && !docInput.value.trim()) {
+          e.preventDefault();
+          alert('Por favor ingresa tu correo electrónico o tu número de documento.');
+          return false;
+        }
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Buscando...';
+      });
+    }
+  });
+</script>

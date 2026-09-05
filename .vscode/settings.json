@@ -1,5 +1,6 @@
 {
   "material-icon-theme.folders.associations": {
+    "autenticacion": "secure",
     "guia_turistico": "helper",
     "guias": "helper",
     "usuario": "client",
@@ -16,6 +17,8 @@
     "promocion": "target",
     "reserva": "event",
     "tarifa": "contract",
-    "temporada": "job"
+    "temporada": "job",
+    "terminos_y_condiciones": "contract",
+    "terminos": "contract"
   }
 }

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<main class="container" style="margin-top: 100px;">
+  <div class="row g-4 align-items-stretch justify-content-center mb-5">
+    <div class="col-md-5">
+      <div class="h-100 shadow-sm rounded-4 overflow-hidden border bg-light d-flex align-items-center justify-content-center">
+        {% if paquete and paquete.imagen %}
+          <img src="{{ paquete.imagen.url }}" class="img-fluid w-100 h-100 object-fit-cover" alt="{{ paquete.nombre }}" />
+        {% else %}
+          <img src="{% static 'img/carousel/paramo.webp' %}" class="img-fluid w-100 h-100 object-fit-cover" alt="Paisaje por defecto" />
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-md-5">
+      <div class="card shadow-sm border h-100 card-reserva">
+        <div class="card-header text-center py-3 bg-white border-0">
+          <h3 class="mb-0 fw-bold header-reserva text-dark">Haz tu Reserva</h3>
+          {% if paquete %}
+            <p class="text-success fw-semibold mb-0 mt-2 small bg-success bg-opacity-10 d-inline-block px-3 py-1 rounded-pill">
+              <i class="bi bi-geo-alt-fill me-1"></i>{{ paquete.nombre }}
+            </p>
+          {% endif %}
+        </div>
+        
+        <div class="card-body p-4 pt-0 position-relative">
+          
+          {% if not user.is_authenticated %}
+          <div class="overlay-blur">
+            <div class="overlay-content text-center">
+              <i class="bi bi-lock-fill display-4 mb-3"></i>
+              <h5 class="fw-bold">Inicia sesión o regístrate</h5>
+              <p class="small mb-3">Para realizar una reserva necesitas tener una cuenta en Monagua.</p>
+              <div class="d-flex gap-2 justify-content-center">
+                <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-confirmar btn-sm text-white">
+                  Iniciar Sesión
+                </a>
+                <a href="{% url 'registro' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success btn-sm">
+                  Registrarse
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <form action="{% if paquete %}{% url 'guardar_reserva' paquete.id %}{% else %}#{% endif %}" method="POST">
+            {% csrf_token %}
+
+            <div class="mb-4 mt-2">
+              <label class="form-label fw-bold text-dark mb-2"><i class="bi bi-calendar-event text-success me-2"></i>Fecha de tu Aventura</label>
+              <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                <span class="input-group-text bg-light text-secondary border-0"><i class="bi bi-calendar-date"></i></span>
+                <input type="date" name="fecha" id="fecha_input" class="form-control form-control-lg bg-light border-0 px-3" required onchange="updatePrice()" />
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-bold text-dark mb-3"><i class="bi bi-people-fill text-success me-2"></i>Pasajeros</label>
+              
+              <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded-4 border border-light shadow-sm">
+                <div>
+                  <h6 class="mb-0 fw-bold text-dark">Adultos</h6>
+                  <small class="text-muted">Mayores de 12 años</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                  <button type="button" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center u-style-8bf9f9a0" onclick="updateCount('adultos', -1)">
+                    <i class="bi bi-dash fw-bold"></i>
+                  </button>
+                  <span id="adultos_count" class="fw-bold fs-5 u-style-416df0f6">1</span>
+                  <input type="hidden" name="adultos" id="adultos_input" value="1">
+                  <input type="hidden" name="numero_personas" id="numero_personas_compat" value="1">
+                  <button type="button" class="btn btn-outline-success bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center u-style-8bf9f9a0" onclick="updateCount('adultos', 1)">
+                    <i class="bi bi-plus fw-bold"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-4 border border-light shadow-sm">
+                <div>
+                  <h6 class="mb-0 fw-bold text-dark">Menores</h6>
+                  <small class="text-muted">De 2 a 11 años</small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                  <button type="button" class="btn btn-white border shadow-sm rounded-circle d-flex align-items-center justify-content-center u-style-8bf9f9a0" onclick="updateCount('menores', -1)">
+                    <i class="bi bi-dash fw-bold"></i>
+                  </button>
+                  <span id="menores_count" class="fw-bold fs-5 u-style-416df0f6">0</span>
+                  <input type="hidden" name="menores" id="menores_input" value="0">
+                  <button type="button" class="btn btn-outline-success bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center u-style-8bf9f9a0" onclick="updateCount('menores', 1)">
+                    <i class="bi bi-plus fw-bold"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div id="total_reserva_display" class="mb-3 text-center p-3 rounded-4 bg-success bg-opacity-10 border border-success border-opacity-25">
+                <small class="text-muted">Selecciona una fecha para ver el precio.</small>
+            </div>
+
+            <div class="form-check mb-4 mt-2">
+              <input class="form-check-input border-secondary shadow-sm" type="checkbox" id="terminos" required />
+              <label class="form-check-label small text-muted" for="terminos">
+                He leído y acepto los <a href="#" class="text-decoration-none link-verde">términos y condiciones</a>
+              </label>
+            </div>
+
+            <div class="d-grid mt-2">
+              <button id="submit_reserva_btn" 
+                      class="btn btn-confirmar rounded-pill py-3 fs-5 shadow-sm fw-bold transition-all" 
+                      type="submit" 
+                      data-auth="{% if user.is_authenticated %}true{% else %}false{% endif %}"
+                      {% if not user.is_authenticated %}disabled{% endif %}>
+                Confirmar Reserva
+              </button>
+            </div>
+
+            <div class="u-style-9c766357" id="contenedor-tarifas">
+              {% for tarifa in paquete.tarifas.all %}
+                <span class="tarifa-item" 
+                      data-inicio="{{ tarifa.temporada.fecha_inicio|date:'Y-m-d' }}" 
+                      data-fin="{{ tarifa.temporada.fecha_fin|date:'Y-m-d' }}" 
+                      data-adulto="{{ tarifa.precio_adulto }}" 
+                      data-menor="{{ tarifa.precio_menor }}">
+                </span>
+              {% endfor %}
+            </div>
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+            <script src="{% static 'js/reserva.js' %}"></script>
+            <script>
+           document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('fecha_input');
+    if (dateInput) {
+        
+        // Calculamos HOY + 2 días
+        const fechaMinima = new Date();
+        fechaMinima.setDate(fechaMinima.getDate() + 2);
+
+        const fp = flatpickr(dateInput, {
+            locale: 'es',
+            dateFormat: 'Y-m-d',
+            allowInput: false, // 1. Evita que escriban manualmente en el input
+            minDate: fechaMinima,
+            onChange: function(selectedDates, dateStr, instance) {
+                // 2. Si intentan meter una fecha menor manipulando JS
+                if (selectedDates[0] < fechaMinima) {
+                    instance.clear();
+                    alert("Fecha no permitida");
+                    return;
+                }
+                if (typeof window.updatePrice === 'function') {
+                    window.updatePrice();
+                }
+            }
+        });
+    }
+});
+            </script>
+          </form> 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </main>
+{% endblock %}

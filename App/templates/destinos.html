@@ -208,7 +208,7 @@
                                         data-bs-target="#modalActividades-{{ destino.id }}">
                                     Detalles
                                 </button>
-                                <a href="#" class="btn btn-success btn-lg w-100 rounded-pill fw-bold fs-6">
+                                <a href="{% url 'reservas' %}?paquete_id={{ destino.id }}" class="btn btn-success btn-lg w-100 rounded-pill fw-bold fs-6">
                                     RESERVAR
                                 </a>
                             </div>                 

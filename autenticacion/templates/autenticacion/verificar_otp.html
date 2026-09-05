@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Verificar Código - Monagua{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CONTENEDOR PRINCIPAL: Formulario Centrado con Fondo -->
+<!-- ============================================================ -->
+<div
+  class="min-vh-100 d-flex flex-column justify-content-center align-items-center pt-5 pb-5 px-3"
+  style="
+    background-image: url('{% static 'img/difuminado.jpg' %}');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  "
+>
+  <div
+    class="w-100 p-2 p-sm-4 my-5"
+    style="max-width: 520px"
+    data-aos="fade-up"
+    data-aos-duration="1000"
+  >
+    <!-- Botón de retroceso estilo Meta -->
+    <div class="mb-3" data-aos="fade-right" data-aos-delay="50">
+      <a
+        href="{% url 'recuperar_clave' %}"
+        class="btn btn-light rounded-circle d-inline-flex align-items-center justify-content-center border shadow-xs"
+        style="width: 38px; height: 38px"
+        title="Volver e intentar de nuevo"
+      >
+        <i class="bi bi-chevron-left text-dark"></i>
+      </a>
+    </div>
+
+    <!-- Branding y Cabecera Editorial -->
+    <div class="mb-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <img
+          src="{% static 'img/Logo.webp' %}"
+          alt="Logo Monagua"
+          width="28"
+          height="28"
+        />
+        <span class="fw-bold text-success small text-uppercase tracking-wider"
+          >Monagua</span
+        >
+      </div>
+      <h1 class="h3 fw-bold text-dark mb-2">Verifica tu identidad</h1>
+      <p class="text-muted small fw-medium mb-0">
+        Hemos enviado un código de seguridad de 6 dígitos a <br />
+        <strong class="text-dark">{{ email_oculto }}</strong>
+      </p>
+    </div>
+
+    <!-- Alertas de Errores Django / Mensajes -->
+    {% if messages %}
+      {% for message in messages %}
+      <div
+        class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} border-0 rounded-4 small mb-3 alert-dismissible fade show shadow-sm"
+        role="alert"
+      >
+        <div class="d-flex align-items-center">
+          <i class="bi bi-exclamation-circle me-2"></i>{{ message }}
+        </div>
+        <button
+          type="button"
+          class="btn-close small"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Formulario OTP -->
+    <form method="POST" action="">
+      {% csrf_token %}
+
+      <!-- Sección: Input OTP -->
+      <div class="mb-4" data-aos="fade-up" data-aos-delay="150">
+        <label for="otp_input" class="form-label small fw-semibold text-secondary ps-3 mb-1">
+          Código de seguridad (OTP)
+        </label>
+        <input
+          type="text"
+          id="otp_input"
+          name="otp"
+          class="form-control rounded-pill py-3 px-4 text-center fs-3 fw-bold tracking-wider"
+          placeholder="000000"
+          maxlength="6"
+          pattern="\d{6}"
+          title="Debe contener exactamente 6 números"
+          required
+          autofocus
+          autocomplete="one-time-code"
+          style="letter-spacing: 0.3em;"
+        />
+        <p class="small text-muted ps-3 mt-2 mb-0" style="font-size: 0.78rem">
+          <i class="bi bi-info-circle me-1"></i>
+          El código expira pronto. Revisa también tu carpeta de correo no deseado (spam).
+        </p>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="d-grid gap-2 pt-1 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <button
+          type="submit"
+          id="btn_verificar"
+          class="btn btn-success rounded-pill py-3 fw-bold shadow-sm"
+        >
+          Verificar Código
+        </button>
+        <a
+          href="{% url 'recuperar_clave' %}"
+          class="btn btn-light rounded-pill py-3 fw-semibold text-secondary border-0 shadow-sm text-center"
+        >
+          Volver e intentar de nuevo
+        </a>
+      </div>
+    </form>
+
+    <!-- Pie sutil -->
+    <div class="text-center" data-aos="fade-up" data-aos-delay="250">
+      <p class="small text-muted mb-0">
+        ¿Necesitas ayuda?
+        <a
+          href="{% url 'nosotros' %}"
+          class="link-secondary fw-semibold text-decoration-none ms-1"
+          >Contáctanos</a
+        >
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="{% static 'js/auth/alertas.js' %}"></script>
+<script src="{% static 'js/auth/otp.js' %}"></script>
+{% block mascota %}{% endblock %}
+{% endblock %}

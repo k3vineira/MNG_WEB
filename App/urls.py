@@ -1,8 +1,33 @@
 from django.urls import path
 from App.views import views
 from App.views.paquete import views as paquete_views
+from App.views.reserva import views as reserva_views
+from App.views.terminos_y_condiciones import views as terminos_views
 
 urlpatterns = [
+    # Inicio
     path('', views.index, name='index'),
+
+    # Términos y Condiciones & Nosotros
+    path('terminos-y-condiciones/', terminos_views.terminos_view, name='terminos'),
+    path('nosotros/', terminos_views.nosotros_view, name='nosotros'),
+
+    # Tours / Paquetes públicos
     path('Tours/', paquete_views.tours, name='tours'),
+
+    # Reservas (Usuario / Turista)
+    path('reservas/reservar/', reserva_views.reservas_view, name='reservas'),
+    path('reservas/guardar/<int:paquete_id>/', reserva_views.guardar_reserva, name='guardar_reserva'),
+    path('reservas/mis-reservas/', reserva_views.mis_reservas_usuario, name='mis_reservas_usuario'),
+    path('reservas/carrito/', reserva_views.carrito_view, name='carrito'),
+    path('reservas/cancelar/<int:reserva_id>/', reserva_views.cancelar_reserva_usuario, name='cancelar_reserva_usuario'),
+    path('reservas/comprobante/<int:reserva_id>/', reserva_views.comprobante_reserva_html, name='comprobante_reserva'),
+    path('reservas/comprobante-multiple/', reserva_views.comprobante_multiple, name='comprobante_multiple'),
+
+    # Reservas (Administración / Staff)
+    path('admin/reservas/', reserva_views.ReservaListView.as_view(), name='listar_reservas'),
+    path('admin/reservas/agregar/', reserva_views.ReservaCreateView.as_view(), name='agregar_reserva'),
+    path('admin/reservas/editar/<int:pk>/', reserva_views.ReservaUpdateView.as_view(), name='editar_reserva'),
+    path('admin/reservas/eliminar/<int:pk>/', reserva_views.ReservaDeleteView.as_view(), name='eliminar_reserva'),
+    path('admin/reservas/cambiar-estado/<int:reserva_id>/', reserva_views.cambiar_estado_reserva, name='cambiar_estado_reserva'),
 ]

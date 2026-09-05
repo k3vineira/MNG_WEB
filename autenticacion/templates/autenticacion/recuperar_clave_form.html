@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Nueva Contraseña - Monagua{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CONTENEDOR PRINCIPAL: Formulario Centrado con Fondo -->
+<!-- ============================================================ -->
+<div
+  class="min-vh-100 d-flex flex-column justify-content-center align-items-center pt-5 pb-5 px-3"
+  style="
+    background-image: url('{% static 'img/difuminado.jpg' %}');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  "
+>
+  <div
+    class="w-100 p-2 p-sm-4 my-5"
+    style="max-width: 540px"
+    data-aos="fade-up"
+    data-aos-duration="1000"
+  >
+    <!-- Botón de retroceso estilo Meta -->
+    <div class="mb-3" data-aos="fade-right" data-aos-delay="50">
+      <a
+        href="{% url 'login' %}"
+        class="btn btn-light rounded-circle d-inline-flex align-items-center justify-content-center border shadow-xs"
+        style="width: 38px; height: 38px"
+        title="Volver al inicio de sesión"
+      >
+        <i class="bi bi-chevron-left text-dark"></i>
+      </a>
+    </div>
+
+    <!-- Branding y Cabecera Editorial -->
+    <div class="mb-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <img
+          src="{% static 'img/Logo.webp' %}"
+          alt="Logo Monagua"
+          width="28"
+          height="28"
+        />
+        <span class="fw-bold text-success small text-uppercase tracking-wider"
+          >Monagua</span
+        >
+      </div>
+      <h1 class="h3 fw-bold text-dark mb-2">Nueva contraseña</h1>
+      <p class="text-muted small fw-medium mb-0">
+        Crea una contraseña segura para proteger tu cuenta de Monagua.
+      </p>
+    </div>
+
+    {% if validlink %}
+      <!-- Alertas de Errores Django / Validación -->
+      {% if form.non_field_errors %}
+      <div
+        class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show shadow-sm"
+        role="alert"
+      >
+        {% for error in form.non_field_errors %}
+        <div class="d-flex align-items-center">
+          <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+        </div>
+        {% endfor %}
+        <button
+          type="button"
+          class="btn-close small"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endif %}
+
+      <div
+        id="mensajeError"
+        class="alert alert-danger border-0 rounded-4 small py-2 d-none mb-3 shadow-sm"
+        role="alert"
+      >
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> Las contraseñas no coinciden.
+      </div>
+
+      <!-- Formulario Restablecer -->
+      <form method="POST" action="" id="form_reset">
+        {% csrf_token %}
+
+        <!-- Nueva Contraseña -->
+        <div class="mb-3" data-aos="fade-up" data-aos-delay="150">
+          <div class="d-flex justify-content-between align-items-center px-3 mb-1">
+            <label for="pass1" class="form-label small fw-semibold text-secondary mb-0">
+              Nueva contraseña
+            </label>
+            <button
+              type="button"
+              id="info-password-trigger"
+              class="btn btn-link p-0 text-success text-decoration-none small d-none"
+              style="font-size: 0.8rem"
+            >
+              <i class="bi bi-info-circle me-1"></i>Requisitos
+            </button>
+          </div>
+          <div class="position-relative">
+            <input
+              type="password"
+              id="pass1"
+              name="new_password1"
+              class="form-control rounded-pill py-3 px-4 pe-5 {% if form.new_password1.errors %}is-invalid{% endif %}"
+              placeholder="••••••••"
+              required
+              minlength="6"
+              autofocus
+            />
+            <i
+              class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary toggle-password"
+              style="cursor: pointer; z-index: 5"
+              data-target="pass1"
+              title="Mostrar/ocultar contraseña"
+            ></i>
+          </div>
+          {% if form.new_password1.errors %}
+          <div class="invalid-feedback ms-3 d-block">
+            {{ form.new_password1.errors.0 }}
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Barra de fortaleza de contraseña -->
+        <div class="mb-3 px-3" id="strength-container" style="display: none">
+          <div
+            class="progress rounded-pill"
+            style="height: 6px; background-color: #e9ecef"
+          >
+            <div
+              id="strength-bar"
+              class="progress-bar progress-bar-striped progress-bar-animated rounded-pill"
+              role="progressbar"
+              style="width: 0%"
+              aria-valuenow="0"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-1">
+            <span class="text-muted" style="font-size: 0.75rem">Seguridad:</span>
+            <span
+              id="strength-text"
+              class="fw-bold small text-secondary"
+              style="font-size: 0.75rem"
+              >Mala</span
+            >
+          </div>
+        </div>
+
+        <!-- Tarjeta colapsable de requisitos de contraseña -->
+        <div
+          id="password-requirements"
+          class="card card-body p-3 mb-3 border-0 rounded-4 bg-light d-none shadow-sm"
+          style="font-size: 0.82rem"
+        >
+          <h6 class="fw-bold text-success mb-2 small">
+            <i class="bi bi-shield-check me-1"></i>Requisitos de contraseña segura:
+          </h6>
+          <ul
+            class="mb-0 ps-3 text-secondary small"
+            style="list-style-type: none"
+          >
+            <li id="req-length" class="mb-1">
+              <i class="bi bi-circle me-1 text-muted"></i>Mínimo 8 caracteres
+            </li>
+            <li id="req-upper" class="mb-1">
+              <i class="bi bi-circle me-1 text-muted"></i>Al menos una letra mayúscula
+            </li>
+            <li id="req-lower" class="mb-1">
+              <i class="bi bi-circle me-1 text-muted"></i>Al menos una letra minúscula
+            </li>
+            <li id="req-number" class="mb-1">
+              <i class="bi bi-circle me-1 text-muted"></i>Al menos un número
+            </li>
+            <li id="req-special" class="mb-0">
+              <i class="bi bi-circle me-1 text-muted"></i>Al menos un carácter especial (@, $, !, %, *, ?, &)
+            </li>
+          </ul>
+        </div>
+
+        <!-- Confirmar Contraseña -->
+        <div class="mb-4" data-aos="fade-up" data-aos-delay="200">
+          <label for="pass2" class="form-label small fw-semibold text-secondary ps-3 mb-1">
+            Confirmar nueva contraseña
+          </label>
+          <div class="position-relative">
+            <input
+              type="password"
+              id="pass2"
+              name="new_password2"
+              class="form-control rounded-pill py-3 px-4 pe-5 {% if form.new_password2.errors %}is-invalid{% endif %}"
+              placeholder="••••••••"
+              required
+              minlength="6"
+            />
+            <i
+              class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary toggle-password"
+              style="cursor: pointer; z-index: 5"
+              data-target="pass2"
+              title="Mostrar/ocultar contraseña"
+            ></i>
+          </div>
+          {% if form.new_password2.errors %}
+          <div class="invalid-feedback ms-3 d-block">
+            {{ form.new_password2.errors.0 }}
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="d-grid gap-2 pt-1 mb-4" data-aos="fade-up" data-aos-delay="250">
+          <button
+            type="submit"
+            id="btn_guardar"
+            class="btn btn-success rounded-pill py-3 fw-bold shadow-sm"
+          >
+            Guardar nueva contraseña
+          </button>
+          <a
+            href="{% url 'login' %}"
+            class="btn btn-light rounded-pill py-3 fw-semibold text-secondary border-0 shadow-sm text-center"
+          >
+            Volver al inicio de sesión
+          </a>
+        </div>
+      </form>
+
+    {% else %}
+      <!-- Enlace Inválido o Expirado -->
+      <div
+        class="card border-0 rounded-4 bg-white shadow-sm p-4 text-center mb-4"
+        data-aos="fade-up"
+        data-aos-delay="150"
+      >
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 text-danger mx-auto mb-3" style="width: 60px; height: 60px;">
+          <i class="bi bi-exclamation-triangle fs-2"></i>
+        </div>
+        <h2 class="h5 fw-bold text-dark mb-1">Enlace no válido o expirado</h2>
+        <p class="text-muted small mb-0">
+          El enlace de recuperación ha expirado o ya fue utilizado anteriormente. Por favor, solicita uno nuevo.
+        </p>
+      </div>
+
+      <div class="d-grid gap-2 pt-1 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <a
+          href="{% url 'recuperar_clave' %}"
+          class="btn btn-success rounded-pill py-3 fw-bold shadow-sm"
+        >
+          Solicitar un nuevo enlace
+        </a>
+        <a
+          href="{% url 'login' %}"
+          class="btn btn-light rounded-pill py-3 fw-semibold text-secondary border-0 shadow-sm text-center"
+        >
+          Volver al inicio de sesión
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Pie sutil -->
+    <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+      <p class="small text-muted mb-0">
+        ¿Necesitas ayuda?
+        <a
+          href="{% url 'nosotros' %}"
+          class="link-secondary fw-semibold text-decoration-none ms-1"
+          >Contáctanos</a
+        >
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="{% static 'js/auth/alertas.js' %}"></script>
+<script src="{% static 'js/auth/validar_passwords.js' %}"></script>
+<script src="{% static 'js/auth/password_strength.js' %}"></script>
+<script>
+  // Mostrar / ocultar contraseña
+  document.querySelectorAll(".toggle-password").forEach(function (toggle) {
+    toggle.addEventListener("click", function () {
+      var targetId = this.getAttribute("data-target");
+      var input = document.getElementById(targetId);
+      if (input) {
+        if (input.type === "password") {
+          input.type = "text";
+          this.classList.replace("bi-eye", "bi-eye-slash");
+        } else {
+          input.type = "password";
+          this.classList.replace("bi-eye-slash", "bi-eye");
+        }
+      }
+    });
+  });
+
+  // Mostrar el botón de requisitos sólo cuando el campo tenga el foco
+  var passInput = document.getElementById("pass1");
+  var infoTrigger = document.getElementById("info-password-trigger");
+  var requirementsCard = document.getElementById("password-requirements");
+
+  if (passInput && infoTrigger) {
+    passInput.addEventListener("focus", function () {
+      infoTrigger.classList.remove("d-none");
+      if (requirementsCard) {
+        requirementsCard.classList.remove("d-none");
+        var icon = infoTrigger.querySelector("i");
+        if (icon) {
+          icon.classList.remove("bi-info-circle");
+          icon.classList.add("bi-info-circle-fill");
+        }
+      }
+    });
+
+    passInput.addEventListener("blur", function () {
+      setTimeout(function () {
+        infoTrigger.classList.add("d-none");
+        if (requirementsCard) {
+          requirementsCard.classList.add("d-none");
+          var icon = infoTrigger.querySelector("i");
+          if (icon) {
+            icon.classList.remove("bi-info-circle-fill");
+            icon.classList.add("bi-info-circle");
+          }
+        }
+      }, 250);
+    });
+  }
+</script>
+{% block mascota %}{% endblock %}
+{% endblock %}

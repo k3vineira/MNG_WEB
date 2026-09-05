@@ -91,6 +91,35 @@ class Usuario(AbstractUser):
         """Retorna si el usuario tiene el rol de Cliente / Turista."""
         return self.rol == self.Roles.CLIENTE
 
+    @property
+    def cliente(self):
+        """Retorna la instancia de usuario como cliente para compatibilidad con plantillas."""
+        return self
+
+    @property
+    def nombre_pais(self):
+        """Retorna el nombre legible del país según dr5hn."""
+        if not self.pais:
+            return ""
+        from autenticacion.geografia import get_nombre_pais
+        return get_nombre_pais(self.pais)
+
+    @property
+    def nombre_departamento(self):
+        """Retorna el nombre legible del departamento según dr5hn."""
+        if not self.departamento:
+            return ""
+        from autenticacion.geografia import get_nombre_departamento
+        return get_nombre_departamento(self.departamento)
+
+    @property
+    def nombre_ciudad(self):
+        """Retorna el nombre legible de la ciudad o municipio según dr5hn."""
+        if not self.ciudad:
+            return ""
+        from autenticacion.geografia import get_nombre_ciudad
+        return get_nombre_ciudad(self.ciudad)
+
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'

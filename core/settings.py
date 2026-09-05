@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'auditlog',
     'App',
+    'autenticacion',
 ]
 
 MIDDLEWARE = [
@@ -111,3 +112,4 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 AUTH_USER_MODEL = 'App.Usuario'
+LOGIN_URL = 'login'

@@ -1,0 +1,325 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+<!-- ============================================================ -->
+<!-- VERSIÓN MÓVIL: Imagen de fondo + formulario con transparencia -->
+<!-- ============================================================ -->
+<div
+  class="d-lg-none position-relative min-vh-100 d-flex flex-column justify-content-center pt-5 pb-4"
+  style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;"
+>
+  <!-- Contenedor centrado del formulario -->
+  <div class="d-flex align-items-center justify-content-center px-3 w-100">
+    <div
+      class="w-100 rounded-4 shadow-lg p-4 p-sm-5 bg-white bg-opacity-95"
+      style="max-width: 480px"
+      data-aos="fade-up"
+      data-aos-duration="800"
+    >
+      <!-- Cabecera Editorial -->
+      <div class="mb-5" data-aos="fade-up" data-aos-delay="100">
+        <h1 class="display-4 fw-bold text-dark mb-1">¡Hola!</h1>
+        <p class="text-muted mb-4 small fw-medium">
+          Bienvenido de vuelta a las montañas de Mongua.
+        </p>
+        <h2 class="h4 fw-bold text-dark">Inicia sesión</h2>
+      </div>
+
+      {% if not request.COOKIES.ha_registrado %}
+      <div
+        class="alert alert-success alert-dismissible fade show border-0 bg-light rounded-4 shadow p-4 mb-4"
+        role="alert"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
+        <div class="d-flex align-items-center gap-3 pe-4">
+          <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
+            <i class="bi bi-compass fs-3 d-block"></i>
+          </div>
+          <div>
+            <h5 class="mb-1 fw-bold text-dark">
+              ¿Quieres realizar una reserva pero no tienes una cuenta?
+            </h5>
+            <p class="mb-0 text-muted">
+              <a
+                href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}"
+                class="link-success fw-bold text-decoration-none"
+                >Regístrate</a
+              >
+              y entra a la familia Monagua.
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endif %}
+
+      <!-- Formulario -->
+      <form method="POST" action="" class="mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}" />
+
+        {% if form.errors %}
+        <div
+          class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show"
+          role="alert"
+        >
+          <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña
+          incorrectos.
+          <button
+            type="button"
+            class="btn-close small"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+        {% endif %}
+
+        <!-- Input Usuario -->
+        <div class="mb-3" data-aos="fade-up" data-aos-delay="300">
+          <label class="form-label small fw-semibold text-secondary ps-3 mb-1">Correo electrónico o nombre de usuario</label>
+          <input
+            type="text"
+            name="username"
+            class="form-control rounded-pill py-3 px-4"
+            placeholder="Correo electrónico o nombre de usuario"
+            required
+          />
+        </div>
+
+        <!-- Input Password -->
+        <div class="mb-3" data-aos="fade-up" data-aos-delay="400">
+          <label class="form-label small fw-semibold text-secondary ps-3 mb-1">Contraseña</label>
+          <div class="position-relative">
+            <input
+              type="password"
+              name="password"
+              class="form-control rounded-pill py-3 px-4 pe-5"
+              placeholder="Contraseña"
+              required
+            />
+            <i
+              class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary u-style-26590802"
+              onclick="
+                const input = this.previousElementSibling;
+                if (input.type === 'password') {
+                  input.type = 'text';
+                  this.classList.replace('bi-eye', 'bi-eye-slash');
+                } else {
+                  input.type = 'password';
+                  this.classList.replace('bi-eye-slash', 'bi-eye');
+                }
+              "
+            ></i>
+          </div>
+        </div>
+
+        <!-- Botón Principal -->
+        <div class="d-grid pt-2 mb-3" data-aos="fade-up" data-aos-delay="500">
+          <button
+            type="submit"
+            class="btn btn-success rounded-pill py-3 fw-bold shadow-sm"
+          >
+            Iniciar Aventura
+          </button>
+        </div>
+
+        <!-- Link Olvidaste tu contraseña -->
+        <div class="text-center mb-4" data-aos="fade-up" data-aos-delay="550">
+          <a
+            href="{% url 'recuperar_clave' %}"
+            class="small text-dark fw-semibold link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover"
+            >¿Olvidaste tu contraseña?</a
+          >
+        </div>
+
+        <!-- Botón Secundario: Crear cuenta nueva -->
+        <div class="d-grid pt-2 mb-2" data-aos="fade-up" data-aos-delay="600">
+          <a
+            href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}"
+            class="btn btn-outline-success rounded-pill py-3 fw-bold text-center text-decoration-none"
+            >Crear cuenta nueva</a
+          >
+        </div>
+      </form>
+
+      <!-- Branding Sutil Estilo Meta -->
+      <div class="d-flex align-items-center justify-content-center gap-2 mt-4">
+        <img src="{% static 'img/Logo.webp' %}" alt="Logo Monagua" width="22" height="22" />
+        <span class="fw-bold text-secondary opacity-75 fs-6">Monagua</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VERSIÓN DESKTOP: Layout original de dos columnas              -->
+<!-- ============================================================ -->
+<div class="d-none d-lg-block">
+  <section class="container-fluid p-0 overflow-hidden min-vh-100 pt-5">
+    <div class="row g-0 min-vh-100 w-100 m-0">
+      <!-- Columna Izquierda: Imagen de Naturaleza -->
+      <div
+        class="col-lg-6 min-vh-100"
+        style="background-image: url('{% static 'img/Fondo6.png' %}'); background-size: cover; background-position: center;"
+        data-aos="fade-right"
+        data-aos-duration="800"
+      ></div>
+
+      <!-- Columna Derecha: Formulario Minimalista -->
+      <div
+        class="col-lg-6 bg-white d-flex align-items-center justify-content-center p-5 min-vh-100 overflow-auto"
+      >
+        <div class="w-100" style="max-width: 480px" data-aos="fade-left" data-aos-duration="800">
+          <!-- Cabecera Editorial -->
+          <div class="mb-5" data-aos="fade-up" data-aos-delay="100">
+            <h1 class="display-4 fw-bold text-dark mb-1">¡Hola!</h1>
+            <p class="text-muted mb-4 small fw-medium">
+              Bienvenido de vuelta a las montañas de Mongua.
+            </p>
+            <h2 class="h4 fw-bold text-dark">Inicia sesión</h2>
+          </div>
+
+          {% if not request.COOKIES.ha_registrado %}
+          <div
+            class="alert alert-success alert-dismissible fade show border-0 bg-light rounded-4 shadow p-4 mb-4"
+            role="alert"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="d-flex align-items-center gap-3 pe-4">
+              <div
+                class="p-3 bg-success bg-opacity-10 text-success rounded-circle"
+              >
+                <i class="bi bi-compass fs-3 d-block"></i>
+              </div>
+              <div>
+                <h5 class="mb-1 fw-bold text-dark">
+                  ¿Quieres realizar una reserva pero no tienes una cuenta?
+                </h5>
+                <p class="mb-0 text-muted">
+                  <a
+                    href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}"
+                    class="link-success fw-bold text-decoration-none"
+                    >Regístrate</a
+                  >
+                  y entra a la familia Monagua.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          {% endif %}
+
+          <!-- Formulario -->
+          <form method="POST" action="" class="mb-4">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}" />
+
+            {% if form.errors %}
+            <div
+              class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show"
+              role="alert"
+            >
+              <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña
+              incorrectos.
+              <button
+                type="button"
+                class="btn-close small"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+            {% endif %}
+
+            <!-- Input Usuario -->
+            <div class="mb-3" data-aos="fade-up" data-aos-delay="300">
+              <label class="form-label small fw-semibold text-secondary ps-3 mb-1">Correo electrónico o nombre de usuario</label>
+              <input
+                type="text"
+                name="username"
+                class="form-control rounded-pill py-3 px-4"
+                placeholder="Correo electrónico o nombre de usuario"
+                required
+              />
+            </div>
+
+            <!-- Input Password -->
+            <div class="mb-3" data-aos="fade-up" data-aos-delay="400">
+              <label class="form-label small fw-semibold text-secondary ps-3 mb-1">Contraseña</label>
+              <div class="position-relative">
+                <input
+                  type="password"
+                  name="password"
+                  class="form-control rounded-pill py-3 px-4 pe-5"
+                  placeholder="Contraseña"
+                  required
+                />
+                <i
+                  class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-4 text-secondary u-style-26590802"
+                  onclick="
+                    const input = this.previousElementSibling;
+                    if (input.type === 'password') {
+                      input.type = 'text';
+                      this.classList.replace('bi-eye', 'bi-eye-slash');
+                    } else {
+                      input.type = 'password';
+                      this.classList.replace('bi-eye-slash', 'bi-eye');
+                    }
+                  "
+                ></i>
+              </div>
+            </div>
+
+            <!-- Botón Principal -->
+            <div class="d-grid pt-2 mb-3" data-aos="fade-up" data-aos-delay="500">
+              <button
+                type="submit"
+                class="btn btn-success rounded-pill py-3 fw-bold shadow-sm"
+              >
+                Iniciar Aventura
+              </button>
+            </div>
+
+            <!-- Link Olvidaste tu contraseña -->
+            <div class="text-center mb-4" data-aos="fade-up" data-aos-delay="550">
+              <a
+                href="{% url 'recuperar_clave' %}"
+                class="small text-dark fw-semibold link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover"
+                >¿Olvidaste tu contraseña?</a
+              >
+            </div>
+
+            <!-- Botón Secundario: Crear cuenta nueva -->
+            <div class="d-grid pt-2 mb-2" data-aos="fade-up" data-aos-delay="600">
+              <a
+                href="{% url 'registro' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}"
+                class="btn btn-outline-success rounded-pill py-3 fw-bold text-center text-decoration-none"
+                >Crear cuenta nueva</a
+              >
+            </div>
+          </form>
+
+          <!-- Branding Sutil Estilo Meta -->
+          <div class="d-flex align-items-center justify-content-center gap-2 mt-4">
+            <img src="{% static 'img/Logo.webp' %}" alt="Logo Monagua" width="22" height="22" />
+            <span class="fw-bold text-secondary opacity-75 fs-6">Monagua</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="{% static 'js/auth/alertas.js' %}"></script>
+{% block mascota %}{% endblock %}
+{% endblock %}
