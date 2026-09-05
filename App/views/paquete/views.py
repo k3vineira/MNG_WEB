@@ -11,18 +11,18 @@ from decimal import Decimal, InvalidOperation
 
 
 # Create your views here.
-def destinos(request):
+def tours(request):
     """
-    Vista pública que filtra y devuelve la lista de paquetes turísticos disponibles.
+    Vista pública que filtra y devuelve la lista de tours (paquetes turísticos) disponibles.
     Incluye validaciones y sanitización para los parámetros GET.
     """
-    destinos_list = Paquete.objects.filter(estado=True)
-    destinos_sugerencias = Paquete.objects.filter(estado=True).values('nombre').distinct()
+    tours_list = Paquete.objects.filter(estado=True)
+    tours_sugerencias = Paquete.objects.filter(estado=True).values('nombre').distinct()
 
     # Validar y sanitizar búsqueda textual
     busqueda = request.GET.get('q', '').strip()
     if busqueda and len(busqueda) <= 100:
-        destinos_list = destinos_list.filter(nombre__icontains=busqueda)
+        tours_list = tours_list.filter(nombre__icontains=busqueda)
 
     # Validar que precio_max sea un decimal/entero positivo válido
     precio_max = request.GET.get('precio_max', '').strip()
@@ -30,7 +30,7 @@ def destinos(request):
         try:
             precio_decimal = Decimal(precio_max)
             if precio_decimal >= 0:
-                destinos_list = destinos_list.filter(
+                tours_list = tours_list.filter(
                     tarifas__precio_adulto__lte=precio_decimal
                 ).distinct()
         except (InvalidOperation, TypeError):
@@ -39,9 +39,9 @@ def destinos(request):
     # Validar parámetro estricto de apto_menores
     apto_menores = request.GET.get('apto_menores', '').strip().lower()
     if apto_menores == 'si':
-        destinos_list = destinos_list.exclude(actividades__apto_menores=False).distinct()
+        tours_list = tours_list.exclude(actividades__apto_menores=False).distinct()
     elif apto_menores == 'no':
-        destinos_list = destinos_list.exclude(actividades__apto_menores=True).distinct()
+        tours_list = tours_list.exclude(actividades__apto_menores=True).distinct()
 
     # Validar que categoria_id sea un entero válido
     categoria_id = request.GET.get('categoria', '').strip()
@@ -49,20 +49,22 @@ def destinos(request):
         try:
             cat_id = int(categoria_id)
             if cat_id > 0:
-                destinos_list = destinos_list.filter(categoria_id=cat_id)
+                tours_list = tours_list.filter(categoria_id=cat_id)
         except (ValueError, TypeError):
             pass
 
     # Carga optimizada
-    destinos_list = destinos_list.select_related('categoria').prefetch_related('actividades', 'tarifas__temporada')
+    tours_list = tours_list.select_related('categoria').prefetch_related('actividades', 'tarifas__temporada')
     categorias_list = Categoria.objects.filter(estado=True)
 
     context = {
-        'destinos': destinos_list,
-        'destinos_sugerencias': destinos_sugerencias,
+        'tours': tours_list,
+        'destinos': tours_list,
+        'tours_sugerencias': tours_sugerencias,
+        'destinos_sugerencias': tours_sugerencias,
         'categorias': categorias_list
     }
-    return render(request, 'usuario/destinos.html', context)
+    return render(request, 'destinos.html', context)
 
 
 
