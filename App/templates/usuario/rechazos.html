@@ -1,14 +1,14 @@
-{% extends "private/base_private.html" %}
+{% extends "usuario/base-turista-dashboard.html" %}
 {% load static %}
 {% load humanize %}
 
-{% block titulo %}Mis Rechazos | Monagua{% endblock %}
+{% block title %}Mis Rechazos | Monagua{% endblock %}
 
-{% block private_css %}
+{% block extra_head %}
 <!-- Rediseño completo en base a Bootstrap 5, sin CSS personalizado -->
 {% endblock %}
 
-{% block private_content %}
+{% block content %}
 <div class="container py-4">
 
     <!-- Encabezado -->

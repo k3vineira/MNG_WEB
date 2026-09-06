@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Correo Enviado - Monagua{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CONTENEDOR PRINCIPAL: Formulario Centrado con Fondo -->
+<!-- ============================================================ -->
+<div
+  class="min-vh-100 d-flex flex-column justify-content-center align-items-center pt-5 pb-5 px-3"
+  style="
+    background-image: url('{% static 'img/difuminado.jpg' %}');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  "
+>
+  <div
+    class="w-100 p-2 p-sm-4 my-5"
+    style="max-width: 520px"
+    data-aos="fade-up"
+    data-aos-duration="1000"
+  >
+    <!-- Botón de retroceso estilo Meta -->
+    <div class="mb-3" data-aos="fade-right" data-aos-delay="50">
+      <a
+        href="{% url 'login' %}"
+        class="btn btn-light rounded-circle d-inline-flex align-items-center justify-content-center border shadow-xs"
+        style="width: 38px; height: 38px"
+        title="Volver al inicio de sesión"
+      >
+        <i class="bi bi-chevron-left text-dark"></i>
+      </a>
+    </div>
+
+    <!-- Branding y Cabecera Editorial -->
+    <div class="mb-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <img
+          src="{% static 'img/Logo.webp' %}"
+          alt="Logo Monagua"
+          width="28"
+          height="28"
+        />
+        <span class="fw-bold text-success small text-uppercase tracking-wider"
+          >Monagua</span
+        >
+      </div>
+      <h1 class="h3 fw-bold text-dark mb-2">¡Correo enviado!</h1>
+      <p class="text-muted small fw-medium mb-0">
+        Hemos enviado un enlace de recuperación a tu correo electrónico registrado.
+      </p>
+    </div>
+
+    <!-- Tarjeta informativa de pasos -->
+    <div class="card border-0 rounded-4 bg-white shadow-sm p-4 mb-4" data-aos="fade-up" data-aos-delay="150">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle flex-shrink-0">
+          <i class="bi bi-envelope-check fs-3"></i>
+        </div>
+        <div>
+          <h2 class="h6 fw-bold text-dark mb-1">Revisa tu bandeja de entrada</h2>
+          <p class="text-muted small mb-0">Sigue los pasos enviados a tu dirección de correo.</p>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column gap-2 pt-2 border-top">
+        <div class="d-flex align-items-center gap-2 small text-secondary">
+          <i class="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+          <span>Abre el mensaje enviado por <strong>Monagua</strong>.</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 small text-secondary">
+          <i class="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+          <span>Haz clic en el enlace de restablecimiento.</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 small text-secondary">
+          <i class="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+          <span>Crea tu nueva contraseña segura.</span>
+        </div>
+      </div>
+
+      <p class="small text-muted mb-0 mt-3 pt-2 border-top" style="font-size: 0.78rem">
+        <i class="bi bi-info-circle me-1 text-success"></i>
+        ¿No ves el correo? Revisa tu carpeta de spam o correo no deseado.
+      </p>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="d-grid gap-2 pt-1 mb-4" data-aos="fade-up" data-aos-delay="200">
+      <a
+        href="{% url 'login' %}"
+        class="btn btn-success rounded-pill py-3 fw-bold shadow-sm"
+      >
+        Volver al inicio de sesión
+      </a>
+      <a
+        href="{% url 'recuperar_clave' %}"
+        class="btn btn-light rounded-pill py-3 fw-semibold text-secondary border-0 shadow-sm text-center"
+      >
+        Solicitar un nuevo enlace
+      </a>
+    </div>
+
+    <!-- Pie sutil -->
+    <div class="text-center" data-aos="fade-up" data-aos-delay="250">
+      <p class="small text-muted mb-0">
+        ¿Necesitas ayuda?
+        <a
+          href="{% url 'nosotros' %}"
+          class="link-secondary fw-semibold text-decoration-none ms-1"
+          >Contáctanos</a
+        >
+      </p>
+    </div>
+  </div>
+</div>
+{% block mascota %}{% endblock %}
+{% endblock %}

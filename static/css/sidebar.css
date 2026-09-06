@@ -35,7 +35,7 @@
     margin-left: 70px;
   }
 
-  /* Ocultamos el botón hamburguesa y el overlay en desktop */
+  /* Ocultamos el menú de hamburguesa y el overlay en desktop */
   #sidebar-toggle,
   #sidebar-overlay {
     display: none !important;

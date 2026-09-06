@@ -1,0 +1,33 @@
+{
+  "material-icon-theme.folders.associations": {
+    "autenticacion": "secure",
+    "guia_turistico": "helper",
+    "guias": "helper",
+    "usuario": "client",
+    "actividades": "event",
+    "aseguradora": "guard",
+    "bitacora": "log",
+    "blog": "content",
+    "calificacion": "review",
+    "categoria": "class",
+    "notificacion": "messages",
+    "pago": "cart",
+    "paquete": "packages",
+    "pqrs": "messages",
+    "promocion": "target",
+    "reserva": "event",
+    "tarifa": "contract",
+    "temporada": "job",
+    "terminos_y_condiciones": "contract",
+    "terminos": "contract"
+  },
+  "python.testing.unittestArgs": [
+    "-v",
+    "-s",
+    "./autenticacion",
+    "-p",
+    "*test.py"
+  ],
+  "python.testing.pytestEnabled": false,
+  "python.testing.unittestEnabled": true
+}

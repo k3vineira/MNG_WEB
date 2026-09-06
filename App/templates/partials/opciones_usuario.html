@@ -1,0 +1,58 @@
+<!-- Encabezado de Usuario por Rol -->
+<li class="px-3 py-2 border-bottom mb-2 bg-light rounded-top-4 d-flex flex-column">
+  {% if user.is_staff or user.is_superuser %}
+    <span class="text-muted fw-bold text-uppercase u-style-22c80133">Gestión Global</span>
+    <span class="small fw-semibold text-dark">Administrador</span>
+  {% elif user.es_guia %}
+    <span class="text-muted fw-bold text-uppercase u-style-22c80133">Panel de Trabajo</span>
+    <span class="small fw-semibold text-dark">Guía Turístico</span>
+  {% elif user.es_turista %}
+    <span class="text-muted fw-bold text-uppercase u-style-22c80133">Mi Cuenta</span>
+    <span class="small fw-semibold text-dark">Viajero</span>
+  {% else %}
+    <span class="text-muted fw-bold text-uppercase u-style-22c80133">Mi Cuenta</span>
+    <span class="small fw-semibold text-dark">Usuario</span>
+  {% endif %}
+</li>
+
+<!-- Acción Común: Mi Perfil -->
+<li>
+  <a class="dropdown-item py-2 fw-bold text-dark" href="#">
+    <i class="bi bi-person-vcard me-2"></i>Mi Perfil
+  </a>
+</li>
+<li><hr class="dropdown-divider" /></li>
+
+<!-- Opciones por Rol -->
+{% if user.is_staff or user.is_superuser %}
+<li><a class="dropdown-item py-2 fw-bold text-primary" href="#"><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a></li>
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-people me-2"></i>Gestión Guías</a></li>
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-calendar-check me-2"></i>Reservas</a></li>
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-envelope me-2"></i>PQRS</a></li>
+{% endif %}
+
+{% if user.es_guia %}
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-calendar-event me-2"></i>Mis Rutas</a></li>
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-chat-left-text me-2"></i>Mis Reseñas</a></li>
+{% endif %}
+
+{% if user.es_turista %}
+<li><a class="dropdown-item py-2 fw-bold text-success" href="#"><i class="bi bi-house-door-fill me-2"></i>Panel Rápido</a></li>
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-bar-chart-line me-2"></i>Mi Dashboard</a></li>
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a></li>
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-cash-stack me-2"></i>Mis Comprobantes</a></li>
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-file-earmark-ruled me-2"></i>Mis Facturas</a></li>
+<li><a class="dropdown-item py-2" href="#"><i class="bi bi-envelope me-2"></i>Mis PQRS</a></li>
+{% endif %}
+
+<li><hr class="dropdown-divider" /></li>
+
+<!-- Cerrar Sesión -->
+<li>
+  <form action="{% url 'logout' %}" method="post" class="m-0">
+    {% csrf_token %}
+    <button type="submit" class="dropdown-item text-danger py-2">
+      <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+    </button>
+  </form>
+</li>

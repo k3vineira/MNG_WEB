@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Recuperar Apodo - Monagua{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CONTENEDOR PRINCIPAL: Formulario Centrado con Fondo -->
+<!-- ============================================================ -->
+<div
+  class="min-vh-100 d-flex flex-column justify-content-center align-items-center pt-5 pb-5 px-3"
+  style="
+    background-image: url('{% static 'img/difuminado.jpg' %}');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  "
+>
+  <div
+    class="w-100 p-2 p-sm-4 my-5"
+    style="max-width: 540px"
+    data-aos="fade-up"
+    data-aos-duration="1000"
+  >
+    <!-- Botón de retroceso estilo Meta -->
+    <div class="mb-3" data-aos="fade-right" data-aos-delay="50">
+      <a
+        href="{% url 'recuperar_clave' %}"
+        class="btn btn-light rounded-circle d-inline-flex align-items-center justify-content-center border shadow-xs"
+        style="width: 38px; height: 38px"
+        title="Volver a recuperar contraseña"
+      >
+        <i class="bi bi-chevron-left text-dark"></i>
+      </a>
+    </div>
+
+    <!-- Branding y Cabecera Editorial -->
+    <div class="mb-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <img
+          src="{% static 'img/Logo.webp' %}"
+          alt="Logo Monagua"
+          width="28"
+          height="28"
+        />
+        <span class="fw-bold text-success small text-uppercase tracking-wider"
+          >Monagua</span
+        >
+      </div>
+      <h1 class="h3 fw-bold text-dark mb-2">¿Olvidaste tu apodo?</h1>
+      <p class="text-muted small fw-medium mb-0">
+        Ingresa tu correo electrónico o tu número de documento para encontrar tu nombre de usuario registrado.
+      </p>
+    </div>
+
+    {% if apodo_encontrado %}
+      <!-- RESULTADO EXITOSO -->
+      <div class="card border-0 rounded-4 bg-white shadow-sm p-4 text-center mb-4" data-aos="fade-up" data-aos-delay="150">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 text-success mx-auto mb-3" style="width: 60px; height: 60px;">
+          <i class="bi bi-person-check fs-2"></i>
+        </div>
+        <h2 class="h5 fw-bold text-dark mb-1">¡Lo encontramos!</h2>
+        <p class="text-muted small mb-4">Tu apodo registrado en Monagua es:</p>
+
+        <!-- Tarjeta del Apodo -->
+        <div class="p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-pill d-flex align-items-center justify-content-between px-4 mb-4">
+          <span class="fw-bold text-dark fs-5 mb-0">@{{ apodo_encontrado }}</span>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-success rounded-pill px-3 fw-semibold"
+            id="btn_copiar"
+            onclick="copiarApodo('{{ apodo_encontrado }}')"
+            title="Copiar apodo"
+          >
+            <i class="bi bi-clipboard me-1"></i>Copiar
+          </button>
+        </div>
+
+        <p class="small text-muted mb-0">
+          <i class="bi bi-check-circle-fill text-success me-1"></i>
+          Ahora puedes utilizar este apodo para continuar con la recuperación de tu contraseña.
+        </p>
+      </div>
+
+      <div class="d-grid gap-2 pt-1 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <a
+          href="{% url 'recuperar_clave' %}"
+          class="btn btn-success rounded-pill py-3 fw-bold shadow-sm"
+        >
+          Continuar a recuperar contraseña
+        </a>
+        <a
+          href="{% url 'login' %}"
+          class="btn btn-light rounded-pill py-3 fw-semibold text-secondary border-0 shadow-sm text-center"
+        >
+          Ya lo recuerdo — Iniciar sesión
+        </a>
+      </div>
+
+    {% else %}
+      <!-- FORMULARIO DE BÚSQUEDA -->
+      {% include "autenticacion/_apodo_form.html" %}
+    {% endif %}
+
+    <!-- Pie sutil -->
+    <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+      <p class="small text-muted mb-0">
+        ¿Necesitas ayuda?
+        <a
+          href="{% url 'nosotros' %}"
+          class="link-secondary fw-semibold text-decoration-none ms-1"
+          >Contáctanos</a
+        >
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function copiarApodo(texto) {
+    navigator.clipboard.writeText(texto).then(function () {
+      const btn = document.getElementById('btn_copiar');
+      btn.innerHTML = '<i class="bi bi-clipboard-check me-1"></i>¡Copiado!';
+      btn.classList.remove('btn-outline-success');
+      btn.classList.add('btn-success', 'text-white');
+      setTimeout(function () {
+        btn.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copiar';
+        btn.classList.add('btn-outline-success');
+        btn.classList.remove('btn-success', 'text-white');
+      }, 2500);
+    });
+  }
+</script>
+{% block mascota %}{% endblock %}
+{% endblock %}

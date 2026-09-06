@@ -6,7 +6,7 @@ from App.forms.pqrs.forms import PqrsForm
 from django.views.generic import ListView
 from django.db.models import Count, Q
 from App.models import *
-from core.decoradores import requiere_autenticacion
+from django.contrib.auth.decorators import login_required
 from App.utils import registrar_bitacora
 
 
@@ -138,7 +138,7 @@ def guardar_pqrs(request):
 
     return redirect('mis_pqrs')
 
-@requiere_autenticacion
+@login_required
 def mis_pqrs_view(request):
 
     solicitudes_usuario = PQRS.objects.filter(usuario=request.user).prefetch_related('seguimientos').order_by('-fecha')

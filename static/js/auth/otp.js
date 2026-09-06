@@ -16,8 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
         var form = otpInput.closest('form');
         if (form) {
             form.addEventListener('submit', function () {
-                btnVerificar.disabled = true;
-                btnVerificar.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Verificando...';
+                setTimeout(function () {
+                    btnVerificar.disabled = true;
+                    btnVerificar.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Verificando...';
+                }, 0);
             });
         }
     }

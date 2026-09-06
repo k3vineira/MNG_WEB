@@ -1,4 +1,5 @@
 {% load static %}
+<link rel="stylesheet" href="{% static 'css/accesibilidad.css' %}">
 <!-- Accesibilidad: {{ a11y_mode|default:"activo" }} -->
 <!-- ── Botón flotante de Accesibilidad ── -->
 <button
@@ -349,7 +350,7 @@
       var baseSize = 16;
       document.documentElement.style.fontSize = (v / 100) * baseSize + "px";
       
-      // Inmunizar el menú desplegable hamburguesa para que accesibilidad no altere sus proporciones
+      // Inmunizar el menú de hamburguesa para que accesibilidad no altere sus proporciones
       var a11yOffcanvas = document.getElementById("a11y-offcanvas-fix");
       if (!a11yOffcanvas) {
         a11yOffcanvas = document.createElement("style");

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titulo %}Contraseña Restablecida - Monagua{% endblock %}
+
+{% block content %}
+<!-- ============================================================ -->
+<!-- CONTENEDOR PRINCIPAL: Formulario Centrado con Fondo -->
+<!-- ============================================================ -->
+<div
+  class="min-vh-100 d-flex flex-column justify-content-center align-items-center pt-5 pb-5 px-3"
+  style="
+    background-image: url('{% static 'img/difuminado.jpg' %}');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  "
+>
+  <div
+    class="w-100 p-2 p-sm-4 my-5"
+    style="max-width: 520px"
+    data-aos="fade-up"
+    data-aos-duration="1000"
+  >
+    <!-- Branding y Cabecera Editorial -->
+    <div class="mb-4 text-center" data-aos="fade-up" data-aos-delay="100">
+      <div class="d-inline-flex align-items-center gap-2 mb-2">
+        <img
+          src="{% static 'img/Logo.webp' %}"
+          alt="Logo Monagua"
+          width="28"
+          height="28"
+        />
+        <span class="fw-bold text-success small text-uppercase tracking-wider"
+          >Monagua</span
+        >
+      </div>
+      <h1 class="h3 fw-bold text-dark mb-2">¡Contraseña restablecida!</h1>
+      <p class="text-muted small fw-medium mb-0">
+        Tu contraseña ha sido actualizada correctamente. Ya puedes acceder a tu cuenta de Monagua con tus nuevas credenciales.
+      </p>
+    </div>
+
+    <!-- Tarjeta resumen de éxito -->
+    <div class="card border-0 rounded-4 bg-white shadow-sm p-4 mb-4" data-aos="fade-up" data-aos-delay="150">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle flex-shrink-0">
+          <i class="bi bi-shield-check fs-2"></i>
+        </div>
+        <div>
+          <h2 class="h6 fw-bold text-dark mb-1">Cuenta protegida</h2>
+          <p class="text-muted small mb-0">Tu acceso se ha actualizado de forma segura.</p>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column gap-2 pt-2 border-top">
+        <div class="d-flex align-items-center gap-2 small text-secondary">
+          <i class="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+          <span>Nueva contraseña guardada exitosamente.</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 small text-secondary">
+          <i class="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+          <span>Enlace de recuperación consumido y finalizado.</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 small text-secondary">
+          <i class="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+          <span>Listo para iniciar sesión.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón de Acción Principal -->
+    <div class="d-grid gap-2 pt-1 mb-4" data-aos="fade-up" data-aos-delay="200">
+      <a
+        href="{% url 'login' %}"
+        class="btn btn-success rounded-pill py-3 fw-bold shadow-sm"
+      >
+        Iniciar sesión ahora
+      </a>
+    </div>
+
+    <!-- Pie sutil -->
+    <div class="text-center" data-aos="fade-up" data-aos-delay="250">
+      <p class="small text-muted mb-0">
+        ¿Necesitas ayuda?
+        <a
+          href="{% url 'nosotros' %}"
+          class="link-secondary fw-semibold text-decoration-none ms-1"
+          >Contáctanos</a
+        >
+      </p>
+    </div>
+  </div>
+</div>
+{% block mascota %}{% endblock %}
+{% endblock %}

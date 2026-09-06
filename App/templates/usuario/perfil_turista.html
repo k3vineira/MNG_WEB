@@ -73,13 +73,6 @@
             <h4 class="fw-bold text-dark mb-0">Configuración del Perfil</h4>
           </div>
 
-          {% if form.non_field_errors %}
-          <div class="alert alert-danger rounded-4 shadow-sm py-2 mb-4">
-            {{ form.non_field_errors.0 }}
-          </div>
-          {% endif %}
-
-
           <form method="POST" enctype="multipart/form-data" id="form_perfil_principal">
             {% csrf_token %}
             <input type="hidden" name="editar_perfil" value="1" />

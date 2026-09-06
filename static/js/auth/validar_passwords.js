@@ -1,14 +1,12 @@
 /**
  * validar_passwords.js - Validación de coincidencia de contraseñas.
  * Compara los campos pass1 y pass2 antes de enviar el formulario.
- * Funciona tanto en el registro (#formularioRegistro) como en el
- * restablecimiento de contraseña (#form_reset).
+ * Dispara la notificación Toast unificada superior derecha en caso de error.
  */
 
 document.addEventListener('DOMContentLoaded', function () {
     var formRegistro = document.getElementById('formularioRegistro');
     var formReset = document.getElementById('form_reset');
-    var msgError = document.getElementById('mensajeError');
 
     function validatePasswordMatch(event, btn) {
         var pass1 = document.getElementById('pass1');
@@ -17,13 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (pass1 && pass2) {
             if (pass1.value !== pass2.value) {
                 event.preventDefault();
-                if (msgError) {
-                    msgError.classList.remove('d-none');
+                pass2.classList.add('is-invalid');
+                if (typeof window.mostrarToast === 'function') {
+                    window.mostrarToast('error', 'Contraseñas no coinciden', 'Las contraseñas ingresadas no coinciden. Por favor verifícalas antes de continuar.', 5000);
                 }
+                pass2.focus();
             } else {
-                if (msgError) {
-                    msgError.classList.add('d-none');
-                }
+                pass2.classList.remove('is-invalid');
                 if (btn) {
                     setTimeout(function() {
                         btn.disabled = true;

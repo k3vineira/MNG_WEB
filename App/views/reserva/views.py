@@ -12,8 +12,8 @@ from django.conf import settings
 
 from App.models import Reserva
 from App.forms.reserva.forms import ReservaForm
-from core.decoradores import requiere_administrador
 from App.utils import (
+    StaffRequiredMixin,
     plantilla_reserva_html,
     enviar_correo_html_monagua,
     enviar_correo_confirmacion_con_factura,
@@ -25,8 +25,7 @@ from App.utils import (
 # CRUD RESERVAS - ADMINISTRACIÓN
 # -------------------------------------------------------------------
 
-@method_decorator(requiere_administrador, name='dispatch')
-class ReservaListView(ListView):
+class ReservaListView(StaffRequiredMixin, ListView):
     model = Reserva
     template_name = 'admin/reservas/reservas.html'
     context_object_name = 'reservas'
@@ -65,8 +64,7 @@ class ReservaListView(ListView):
         return context
 
 
-@method_decorator(requiere_administrador, name='dispatch')
-class ReservaCreateView(SuccessMessageMixin, CreateView):
+class ReservaCreateView(StaffRequiredMixin, SuccessMessageMixin, CreateView):
     model = Reserva
     form_class = ReservaForm
     template_name = 'admin/reservas/agregar_reserva.html'
@@ -89,8 +87,7 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
         return response
 
 
-@method_decorator(requiere_administrador, name='dispatch')
-class ReservaUpdateView(UpdateView):
+class ReservaUpdateView(StaffRequiredMixin, UpdateView):
     model = Reserva
     form_class = ReservaForm
     template_name = 'admin/reservas/editar_reserva.html'
@@ -143,8 +140,7 @@ class ReservaUpdateView(UpdateView):
         return response
 
 
-@method_decorator(requiere_administrador, name='dispatch')
-class ReservaCancelarView(View):
+class ReservaCancelarView(StaffRequiredMixin, View):
     """Acción del CRUD para cambiar lógicamente el estado a 'cancelada' desde el panel admin."""
     def post(self, request, pk):
         reserva = get_object_or_404(Reserva, pk=pk)
@@ -187,8 +183,7 @@ class ReservaCancelarView(View):
         return redirect('listar_reservas')
 
 
-@method_decorator(requiere_administrador, name='dispatch')
-class ReservaDeleteView(DeleteView):
+class ReservaDeleteView(StaffRequiredMixin, DeleteView):
     model = Reserva
     template_name = 'admin/reservas/eliminar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
