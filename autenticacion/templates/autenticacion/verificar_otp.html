@@ -53,26 +53,6 @@
       </p>
     </div>
 
-    <!-- Alertas de Errores Django / Mensajes -->
-    {% if messages %}
-      {% for message in messages %}
-      <div
-        class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} border-0 rounded-4 small mb-3 alert-dismissible fade show shadow-sm"
-        role="alert"
-      >
-        <div class="d-flex align-items-center">
-          <i class="bi bi-exclamation-circle me-2"></i>{{ message }}
-        </div>
-        <button
-          type="button"
-          class="btn-close small"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-        ></button>
-      </div>
-      {% endfor %}
-    {% endif %}
-
     <!-- Formulario OTP -->
     <form method="POST" action="">
       {% csrf_token %}

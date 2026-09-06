@@ -2,13 +2,15 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 from App.models import Usuario
-import re
 
 
 class IniciarSesionForm(forms.Form):
-    """Formulario de inicio de sesión por usuario o correo y contraseña."""
+    """Formulario de inicio de sesión por usuario o correo electrónico y contraseña."""
     usuario_o_email = forms.CharField(
         label="Usuario o Correo Electrónico",
+        error_messages={
+            'required': 'Por favor ingresa tu nombre de usuario o correo electrónico.'
+        },
         widget=forms.TextInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4',
             'placeholder': 'Correo electrónico o nombre de usuario',
@@ -18,6 +20,9 @@ class IniciarSesionForm(forms.Form):
     )
     password = forms.CharField(
         label="Contraseña",
+        error_messages={
+            'required': 'Por favor ingresa tu contraseña.'
+        },
         widget=forms.PasswordInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4 pe-5',
             'placeholder': 'Contraseña',
@@ -28,9 +33,12 @@ class IniciarSesionForm(forms.Form):
 
 
 class RegistroForm(forms.ModelForm):
-    """Formulario de registro completo de nuevos clientes en Monagua."""
+    """Formulario de registro de nuevos clientes basado en el modelo Usuario."""
     password = forms.CharField(
         label="Contraseña",
+        error_messages={
+            'required': 'Por favor ingresa una contraseña.'
+        },
         widget=forms.PasswordInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4',
             'placeholder': 'Mínimo 8 caracteres',
@@ -39,6 +47,9 @@ class RegistroForm(forms.ModelForm):
     )
     confirmar_password = forms.CharField(
         label="Confirmar Contraseña",
+        error_messages={
+            'required': 'Por favor confirma tu contraseña.'
+        },
         widget=forms.PasswordInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4',
             'placeholder': 'Repite tu contraseña',
@@ -49,10 +60,31 @@ class RegistroForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = [
-            'first_name', 'last_name', 'username', 'email',
-            'tipo_documento', 'numero_documento', 'telefono', 'residencia',
-            'pais', 'departamento', 'ciudad'
+            'first_name',
+            'last_name',
+            'username',
+            'email',
+            'tipo_documento',
+            'numero_documento',
+            'telefono',
+            'residencia',
+            'pais',
+            'departamento',
+            'ciudad'
         ]
+        labels = {
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'username': 'Nombre de usuario',
+            'email': 'Correo electrónico',
+            'tipo_documento': 'Tipo de documento',
+            'numero_documento': 'Número de documento',
+            'telefono': 'Número de celular',
+            'residencia': 'Residencia',
+            'pais': 'País',
+            'departamento': 'Departamento',
+            'ciudad': 'Municipio',
+        }
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'Nombre'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'Apellido'}),
@@ -65,6 +97,43 @@ class RegistroForm(forms.ModelForm):
             'pais': forms.TextInput(attrs={'class': 'form-control'}),
             'departamento': forms.NumberInput(attrs={'class': 'form-control'}),
             'ciudad': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+        error_messages = {
+            'first_name': {
+                'required': 'El nombre es obligatorio.',
+            },
+            'last_name': {
+                'required': 'El apellido es obligatorio.',
+            },
+            'username': {
+                'required': 'El nombre de usuario es obligatorio.',
+                'unique': 'Este nombre de usuario ya está registrado.',
+            },
+            'email': {
+                'required': 'El correo electrónico es obligatorio.',
+                'invalid': 'Ingresa un correo electrónico válido.',
+                'unique': 'Ya existe una cuenta vinculada a este correo electrónico.',
+            },
+            'tipo_documento': {
+                'required': 'Selecciona un tipo de documento.',
+                'invalid_choice': 'Selecciona una opción válida de tipo de documento.',
+            },
+            'numero_documento': {
+                'required': 'El número de documento es obligatorio.',
+                'unique': 'Este número de documento ya está registrado.',
+            },
+            'telefono': {
+                'required': 'El número de celular es obligatorio.',
+            },
+            'pais': {
+                'required': 'El país es obligatorio.',
+            },
+            'departamento': {
+                'required': 'El departamento es obligatorio.',
+            },
+            'ciudad': {
+                'required': 'El municipio es obligatorio.',
+            },
         }
 
     def clean_username(self):
@@ -114,9 +183,12 @@ class RegistroForm(forms.ModelForm):
 
 
 class RecuperacionPersonalizadaForm(forms.Form):
-    """Formulario para solicitar restablecimiento validando username, documento y email."""
+    """Formulario para solicitar restablecimiento validando nombre de usuario, documento y correo."""
     username = forms.CharField(
-        label="Apodo (Nombre de usuario)",
+        label="Nombre de Usuario",
+        error_messages={
+            'required': 'El nombre de usuario es obligatorio.'
+        },
         widget=forms.TextInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4',
             'placeholder': 'aventurero_mongua',
@@ -125,6 +197,9 @@ class RecuperacionPersonalizadaForm(forms.Form):
     )
     numero_documento = forms.CharField(
         label="Número de Documento",
+        error_messages={
+            'required': 'El número de documento es obligatorio.'
+        },
         widget=forms.TextInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4',
             'placeholder': '1000000000',
@@ -133,9 +208,13 @@ class RecuperacionPersonalizadaForm(forms.Form):
     )
     email = forms.EmailField(
         label="Correo Electrónico",
+        error_messages={
+            'required': 'El correo electrónico es obligatorio.',
+            'invalid': 'Ingresa un correo electrónico válido.'
+        },
         widget=forms.EmailInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4',
-            'placeholder': 'aventura@monagua.com',
+            'placeholder': 'correo@ejemplo.com',
             'required': True
         })
     )
@@ -156,7 +235,7 @@ class RecuperacionPersonalizadaForm(forms.Form):
             if not usuario:
                 raise ValidationError(
                     "Los datos ingresados no coinciden con ninguna cuenta activa en Monagua. "
-                    "Verifica tu apodo, documento y correo."
+                    "Verifica tu nombre de usuario, número de documento y correo electrónico."
                 )
             cleaned_data['usuario_encontrado'] = usuario
 
@@ -167,6 +246,9 @@ class RestablecerClaveForm(forms.Form):
     """Formulario para ingresar y confirmar la nueva contraseña tras validar token."""
     new_password1 = forms.CharField(
         label="Nueva Contraseña",
+        error_messages={
+            'required': 'Por favor ingresa la nueva contraseña.'
+        },
         widget=forms.PasswordInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4 pe-5',
             'placeholder': '••••••••',
@@ -176,6 +258,9 @@ class RestablecerClaveForm(forms.Form):
     )
     new_password2 = forms.CharField(
         label="Confirmar Nueva Contraseña",
+        error_messages={
+            'required': 'Por favor confirma la nueva contraseña.'
+        },
         widget=forms.PasswordInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4 pe-5',
             'placeholder': '••••••••',
@@ -196,8 +281,3 @@ class RestablecerClaveForm(forms.Form):
                 self.add_error('new_password1', "La contraseña debe tener al menos 6 caracteres.")
 
         return cleaned_data
-
-
-# Alias para retrocompatibilidad
-LoginForm = IniciarSesionForm
-RecuperarPasswordForm = RecuperacionPersonalizadaForm

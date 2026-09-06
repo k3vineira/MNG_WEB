@@ -52,26 +52,6 @@
       </p>
     </div>
 
-    <!-- Alertas de Errores Django / Validación -->
-    {% if form.non_field_errors %}
-    <div
-      class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show shadow-sm"
-      role="alert"
-    >
-      {% for error in form.non_field_errors %}
-      <div class="d-flex align-items-center">
-        <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
-      </div>
-      {% endfor %}
-      <button
-        type="button"
-        class="btn-close small"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-      ></button>
-    </div>
-    {% endif %}
-
     <!-- Formulario de Recuperación -->
     <form method="POST" action="">
       {% csrf_token %}

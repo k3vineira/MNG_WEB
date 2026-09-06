@@ -52,35 +52,6 @@ Monagua{% endblock %} {% block content %}
       </p>
     </div>
 
-    <!-- Alertas de Errores Django / Validación -->
-    {% if form.non_field_errors %}
-    <div
-      class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show shadow-sm"
-      role="alert"
-    >
-      {% for error in form.non_field_errors %}
-      <div class="d-flex align-items-center">
-        <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
-      </div>
-      {% endfor %}
-      <button
-        type="button"
-        class="btn-close small"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-      ></button>
-    </div>
-    {% endif %}
-
-    <div
-      id="mensajeError"
-      class="alert alert-danger border-0 rounded-4 small py-2 d-none mb-3 shadow-sm"
-      role="alert"
-    >
-      <i class="bi bi-exclamation-triangle-fill me-2"></i> Las contraseñas no
-      coinciden.
-    </div>
-
     <!-- Formulario de Registro -->
     <form id="formularioRegistro" method="POST" action="">
       {% csrf_token %}
@@ -103,7 +74,7 @@ Monagua{% endblock %} {% block content %}
               required
             />
             {% if form.first_name.errors %}
-            <div class="invalid-feedback ms-3">
+            <div class="invalid-feedback ms-3 d-block">
               {{ form.first_name.errors.0 }}
             </div>
             {% endif %}
@@ -119,7 +90,7 @@ Monagua{% endblock %} {% block content %}
               required
             />
             {% if form.last_name.errors %}
-            <div class="invalid-feedback ms-3">
+            <div class="invalid-feedback ms-3 d-block">
               {{ form.last_name.errors.0 }}
             </div>
             {% endif %}
@@ -144,7 +115,7 @@ Monagua{% endblock %} {% block content %}
           required
         />
         {% if form.username.errors %}
-        <div class="invalid-feedback ms-3">{{ form.username.errors.0 }}</div>
+        <div class="invalid-feedback ms-3 d-block">{{ form.username.errors.0 }}</div>
         {% endif %}
       </div>
 
@@ -163,46 +134,13 @@ Monagua{% endblock %} {% block content %}
               class="form-select rounded-pill py-3 px-4 text-secondary {% if form.tipo_documento.errors %}is-invalid{% endif %}"
               required
             >
-              <option value="" selected disabled>Selecciona tipo</option>
-              <option
-                value="CC"
-                {%
-                if
-                form.tipo_documento.value=""
-                ="CC"
-                %}selected{%
-                endif
-                %}
-              >
-                Cédula de Ciudadanía (CC)
-              </option>
-              <option
-                value="CE"
-                {%
-                if
-                form.tipo_documento.value=""
-                ="CE"
-                %}selected{%
-                endif
-                %}
-              >
-                Cédula de Extranjería (CE)
-              </option>
-              <option
-                value="PAS"
-                {%
-                if
-                form.tipo_documento.value=""
-                ="PAS"
-                %}selected{%
-                endif
-                %}
-              >
-                Pasaporte (PAS)
-              </option>
+              <option value="" {% if not form.tipo_documento.value %}selected{% endif %} disabled>Selecciona tipo</option>
+              <option value="CC" {% if form.tipo_documento.value == 'CC' %}selected{% endif %}>Cédula de Ciudadanía (CC)</option>
+              <option value="CE" {% if form.tipo_documento.value == 'CE' %}selected{% endif %}>Cédula de Extranjería (CE)</option>
+              <option value="PASAPORTE" {% if form.tipo_documento.value == 'PASAPORTE' or form.tipo_documento.value == 'PAS' %}selected{% endif %}>Pasaporte (PAS)</option>
             </select>
             {% if form.tipo_documento.errors %}
-            <div class="invalid-feedback ms-3">
+            <div class="invalid-feedback ms-3 d-block">
               {{ form.tipo_documento.errors.0 }}
             </div>
             {% endif %}
@@ -224,7 +162,7 @@ Monagua{% endblock %} {% block content %}
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
             {% if form.numero_documento.errors %}
-            <div class="invalid-feedback ms-3">
+            <div class="invalid-feedback ms-3 d-block">
               {{ form.numero_documento.errors.0 }}
             </div>
             {% endif %}
@@ -242,8 +180,8 @@ Monagua{% endblock %} {% block content %}
             <select
               name="pais"
               id="id_pais"
-              class="form-select rounded-pill py-3 px-3 text-secondary"
-              data-prev="{{ request.POST.pais }}"
+              class="form-select rounded-pill py-3 px-3 text-secondary {% if form.pais.errors %}is-invalid{% endif %}"
+              data-prev="{{ form.pais.value|default:'' }}"
               required
             >
               <option value="" selected disabled>País...</option>
@@ -253,8 +191,8 @@ Monagua{% endblock %} {% block content %}
             <select
               name="departamento"
               id="id_departamento"
-              class="form-select rounded-pill py-3 px-3 text-secondary"
-              data-prev="{{ request.POST.departamento }}"
+              class="form-select rounded-pill py-3 px-3 text-secondary {% if form.departamento.errors %}is-invalid{% endif %}"
+              data-prev="{{ form.departamento.value|default:'' }}"
               required
               disabled
             >
@@ -265,8 +203,8 @@ Monagua{% endblock %} {% block content %}
             <select
               name="ciudad"
               id="id_ciudad"
-              class="form-select rounded-pill py-3 px-3 text-secondary"
-              data-prev="{{ request.POST.ciudad }}"
+              class="form-select rounded-pill py-3 px-3 text-secondary {% if form.ciudad.errors %}is-invalid{% endif %}"
+              data-prev="{{ form.ciudad.value|default:'' }}"
               required
               disabled
             >
@@ -274,6 +212,11 @@ Monagua{% endblock %} {% block content %}
             </select>
           </div>
         </div>
+        {% if form.pais.errors or form.departamento.errors or form.ciudad.errors %}
+        <div class="invalid-feedback ms-3 d-block">
+          {{ form.pais.errors.0|default:form.departamento.errors.0|default:form.ciudad.errors.0 }}
+        </div>
+        {% endif %}
       </div>
 
       <!-- Sección: Contacto (Celular y Correo) -->
@@ -297,7 +240,7 @@ Monagua{% endblock %} {% block content %}
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
             {% if form.telefono.errors %}
-            <div class="invalid-feedback ms-3">
+            <div class="invalid-feedback ms-3 d-block">
               {{ form.telefono.errors.0 }}
             </div>
             {% endif %}
@@ -318,7 +261,7 @@ Monagua{% endblock %} {% block content %}
               required
             />
             {% if form.email.errors %}
-            <div class="invalid-feedback ms-3">{{ form.email.errors.0 }}</div>
+            <div class="invalid-feedback ms-3 d-block">{{ form.email.errors.0 }}</div>
             {% endif %}
           </div>
         </div>
@@ -351,8 +294,8 @@ Monagua{% endblock %} {% block content %}
           <input
             type="password"
             id="pass1"
-            name="password1"
-            class="form-control rounded-pill py-3 px-4 pe-5 {% if form.password1.errors %}is-invalid{% endif %}"
+            name="password"
+            class="form-control rounded-pill py-3 px-4 pe-5 {% if form.password.errors %}is-invalid{% endif %}"
             placeholder="••••••••"
             required
             minlength="6"
@@ -364,9 +307,9 @@ Monagua{% endblock %} {% block content %}
             title="Mostrar/ocultar contraseña"
           ></i>
         </div>
-        {% if form.password1.errors %}
+        {% if form.password.errors %}
         <div class="invalid-feedback ms-3 d-block">
-          {{ form.password1.errors.0 }}
+          {{ form.password.errors.0 }}
         </div>
         {% endif %}
       </div>
@@ -444,8 +387,8 @@ Monagua{% endblock %} {% block content %}
           <input
             type="password"
             id="pass2"
-            name="password2"
-            class="form-control rounded-pill py-3 px-4 pe-5 {% if form.password2.errors %}is-invalid{% endif %}"
+            name="confirmar_password"
+            class="form-control rounded-pill py-3 px-4 pe-5 {% if form.confirmar_password.errors %}is-invalid{% endif %}"
             placeholder="••••••••"
             required
             minlength="6"
@@ -457,9 +400,9 @@ Monagua{% endblock %} {% block content %}
             title="Mostrar/ocultar contraseña"
           ></i>
         </div>
-        {% if form.password2.errors %}
+        {% if form.confirmar_password.errors %}
         <div class="invalid-feedback ms-3 d-block">
-          {{ form.password2.errors.0 }}
+          {{ form.confirmar_password.errors.0 }}
         </div>
         {% endif %}
       </div>

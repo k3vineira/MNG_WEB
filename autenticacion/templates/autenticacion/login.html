@@ -26,12 +26,11 @@
 
       {% if not request.COOKIES.ha_registrado %}
       <div
-        class="alert alert-success alert-dismissible fade show border-0 bg-light rounded-4 shadow p-4 mb-4"
-        role="alert"
+        class="card border-0 bg-light rounded-4 shadow-sm p-4 mb-4"
         data-aos="fade-up"
         data-aos-delay="200"
       >
-        <div class="d-flex align-items-center gap-3 pe-4">
+        <div class="d-flex align-items-center gap-3">
           <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
             <i class="bi bi-compass fs-3 d-block"></i>
           </div>
@@ -49,12 +48,6 @@
             </p>
           </div>
         </div>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-        ></button>
       </div>
       {% endif %}
 
@@ -62,22 +55,6 @@
       <form method="POST" action="" class="mb-4">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.GET.next }}" />
-
-        {% if form.errors %}
-        <div
-          class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show"
-          role="alert"
-        >
-          <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña
-          incorrectos.
-          <button
-            type="button"
-            class="btn-close small"
-            data-bs-dismiss="alert"
-            aria-label="Close"
-          ></button>
-        </div>
-        {% endif %}
 
         <!-- Input Usuario -->
         <div class="mb-3" data-aos="fade-up" data-aos-delay="300">
@@ -186,12 +163,11 @@
 
           {% if not request.COOKIES.ha_registrado %}
           <div
-            class="alert alert-success alert-dismissible fade show border-0 bg-light rounded-4 shadow p-4 mb-4"
-            role="alert"
+            class="card border-0 bg-light rounded-4 shadow-sm p-4 mb-4"
             data-aos="fade-up"
             data-aos-delay="200"
           >
-            <div class="d-flex align-items-center gap-3 pe-4">
+            <div class="d-flex align-items-center gap-3">
               <div
                 class="p-3 bg-success bg-opacity-10 text-success rounded-circle"
               >
@@ -211,12 +187,6 @@
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="alert"
-              aria-label="Close"
-            ></button>
           </div>
           {% endif %}
 
@@ -224,22 +194,6 @@
           <form method="POST" action="" class="mb-4">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.GET.next }}" />
-
-            {% if form.errors %}
-            <div
-              class="alert alert-danger border-0 rounded-4 small mb-3 alert-dismissible fade show"
-              role="alert"
-            >
-              <i class="bi bi-exclamation-circle me-2"></i> Usuario o contraseña
-              incorrectos.
-              <button
-                type="button"
-                class="btn-close small"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-              ></button>
-            </div>
-            {% endif %}
 
             <!-- Input Usuario -->
             <div class="mb-3" data-aos="fade-up" data-aos-delay="300">

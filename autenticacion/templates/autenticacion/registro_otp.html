@@ -53,26 +53,6 @@
       </p>
     </div>
 
-    <!-- Alertas de Errores Django / Mensajes -->
-    {% if messages %}
-      {% for message in messages %}
-      <div
-        class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} border-0 rounded-4 small mb-3 alert-dismissible fade show shadow-sm"
-        role="alert"
-      >
-        <div class="d-flex align-items-center">
-          <i class="bi bi-exclamation-circle me-2"></i>{{ message }}
-        </div>
-        <button
-          type="button"
-          class="btn-close small"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-        ></button>
-      </div>
-      {% endfor %}
-    {% endif %}
-
     <!-- Formulario OTP -->
     <form method="POST" action="">
       {% csrf_token %}
@@ -86,7 +66,7 @@
           type="text"
           id="otp_input"
           name="otp"
-          class="form-control rounded-pill py-3 px-4 text-center fs-3 fw-bold tracking-wider"
+          class="form-control rounded-pill py-3 px-4 text-center fs-3 fw-bold tracking-wider {% if error_otp %}is-invalid border-danger{% endif %}"
           placeholder="000000"
           maxlength="6"
           pattern="\d{6}"
@@ -96,6 +76,17 @@
           autocomplete="one-time-code"
           style="letter-spacing: 0.3em;"
         />
+        {% if error_otp %}
+        <div class="invalid-feedback text-center mt-2 d-block fw-semibold">
+          El código de 6 dígitos ingresado no es correcto. Por favor verifícalo o solicita uno nuevo.
+        </div>
+        {% endif %}
+        <div class="d-flex justify-content-between align-items-center ps-3 pe-3 mt-2">
+          <span class="small text-muted" style="font-size: 0.8rem">¿No recibiste el código?</span>
+          <a href="{% url 'reenviar_otp_registro' %}" class="link-success fw-bold small text-decoration-none" style="font-size: 0.82rem">
+            <i class="bi bi-arrow-clockwise me-1"></i>Reenviar código
+          </a>
+        </div>
         <p class="small text-muted ps-3 mt-2 mb-0" style="font-size: 0.78rem">
           <i class="bi bi-info-circle me-1"></i>
           Revisa tu bandeja de entrada o tu carpeta de correo no deseado (spam).

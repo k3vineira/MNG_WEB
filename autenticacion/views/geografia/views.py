@@ -1,6 +1,8 @@
 import os
 import json
 from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 
 _STATIC_DATA_DIR = os.path.join(settings.BASE_DIR, 'static', 'data')
 
@@ -122,3 +124,34 @@ def get_nombre_ciudad(ciudad_id):
     _cargar_datos()
     key = str(ciudad_id).strip()
     return _MAPA_CIUDADES.get(key, str(ciudad_id))
+
+
+# ==============================================================================
+# ENDPOINTS REST / AJAX
+# ==============================================================================
+
+@require_GET
+def api_paises(request):
+    """
+    Retorna la lista de países disponibles en el dataset local dr5hn.
+    """
+    paises = get_paises()
+    return JsonResponse(paises, safe=False)
+
+
+@require_GET
+def api_departamentos(request, pais_id):
+    """
+    Retorna los departamentos o estados de un país (por ISO3, ISO2 o ID).
+    """
+    departamentos = get_departamentos(pais_id)
+    return JsonResponse(departamentos, safe=False)
+
+
+@require_GET
+def api_ciudades(request, departamento_id):
+    """
+    Retorna los municipios o ciudades de un departamento dado por su ID.
+    """
+    ciudades = get_ciudades(departamento_id)
+    return JsonResponse(ciudades, safe=False)

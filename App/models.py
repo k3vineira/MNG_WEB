@@ -101,7 +101,7 @@ class Usuario(AbstractUser):
         """Retorna el nombre legible del país según dr5hn."""
         if not self.pais:
             return ""
-        from autenticacion.geografia import get_nombre_pais
+        from autenticacion.views.geografia import get_nombre_pais
         return get_nombre_pais(self.pais)
 
     @property
@@ -109,7 +109,7 @@ class Usuario(AbstractUser):
         """Retorna el nombre legible del departamento según dr5hn."""
         if not self.departamento:
             return ""
-        from autenticacion.geografia import get_nombre_departamento
+        from autenticacion.views.geografia import get_nombre_departamento
         return get_nombre_departamento(self.departamento)
 
     @property
@@ -117,7 +117,7 @@ class Usuario(AbstractUser):
         """Retorna el nombre legible de la ciudad o municipio según dr5hn."""
         if not self.ciudad:
             return ""
-        from autenticacion.geografia import get_nombre_ciudad
+        from autenticacion.views.geografia import get_nombre_ciudad
         return get_nombre_ciudad(self.ciudad)
 
     class Meta:

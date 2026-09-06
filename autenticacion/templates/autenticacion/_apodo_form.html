@@ -3,7 +3,10 @@
 
   <!-- Input Correo -->
   <div class="mb-3" data-aos="fade-up" data-aos-delay="150">
-    <label for="email_apodo" class="form-label small fw-semibold text-secondary ps-3 mb-1">
+    <label
+      for="email_apodo"
+      class="form-label small fw-semibold text-secondary ps-3 mb-1"
+    >
       Correo electrónico
     </label>
     <input
@@ -13,13 +16,22 @@
       class="form-control rounded-pill py-3 px-4"
       placeholder="aventura@monagua.com"
       autofocus
-      {% if request.POST.email %}value="{{ request.POST.email }}"{% endif %}
+      {%
+      if
+      request.POST.get.email
+      %}value="{{ request.POST.get.email }}"
+      {%
+      endif
+      %}
     />
   </div>
 
   <!-- Input Número de Documento -->
   <div class="mb-4" data-aos="fade-up" data-aos-delay="200">
-    <label for="documento_apodo" class="form-label small fw-semibold text-secondary ps-3 mb-1">
+    <label
+      for="documento_apodo"
+      class="form-label small fw-semibold text-secondary ps-3 mb-1"
+    >
       Número de documento
     </label>
     <input
@@ -29,7 +41,13 @@
       class="form-control rounded-pill py-3 px-4"
       placeholder="1000000000"
       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-      {% if request.POST.numero_documento %}value="{{ request.POST.numero_documento }}"{% endif %}
+      {%
+      if
+      request.POST.get.numero_documento
+      %}value="{{ request.POST.get.numero_documento }}"
+      {%
+      endif
+      %}
     />
     <p class="small text-muted ps-3 mt-2 mb-0" style="font-size: 0.78rem">
       <i class="bi bi-info-circle me-1"></i>
@@ -56,21 +74,29 @@
 </form>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form');
-    const btn = document.getElementById('btn_buscar_apodo');
-    const emailInput = document.getElementById('email_apodo');
-    const docInput = document.getElementById('documento_apodo');
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    const btn = document.getElementById("btn_buscar_apodo");
+    const emailInput = document.getElementById("email_apodo");
+    const docInput = document.getElementById("documento_apodo");
 
     if (form && btn) {
-      form.addEventListener('submit', function (e) {
+      form.addEventListener("submit", function (e) {
         if (!emailInput.value.trim() && !docInput.value.trim()) {
           e.preventDefault();
-          alert('Por favor ingresa tu correo electrónico o tu número de documento.');
+          if (typeof window.mostrarToast === "function") {
+            window.mostrarToast(
+              "warning",
+              "Campos Requeridos",
+              "Por favor ingresa tu correo electrónico o tu número de documento.",
+              5000,
+            );
+          }
           return false;
         }
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Buscando...';
+        btn.innerHTML =
+          '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Buscando...';
       });
     }
   });

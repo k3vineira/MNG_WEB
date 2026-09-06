@@ -96,33 +96,8 @@
         </a>
       </div>
 
-    {% elif error %}
-      <!-- ERROR DE BÚSQUEDA -->
-      <div
-        class="alert alert-danger border-0 rounded-4 small mb-4 alert-dismissible fade show shadow-sm"
-        role="alert"
-        data-aos="fade-up"
-        data-aos-delay="120"
-      >
-        <div class="d-flex align-items-center">
-          <i class="bi bi-exclamation-circle me-2 fs-5"></i>
-          <div>
-            <strong>No encontramos tu cuenta:</strong> {{ error }}
-          </div>
-        </div>
-        <button
-          type="button"
-          class="btn-close small"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-        ></button>
-      </div>
-
-      <!-- FORMULARIO CON DATOS PREVIOS -->
-      {% include "autenticacion/_apodo_form.html" %}
-
     {% else %}
-      <!-- FORMULARIO INICIAL -->
+      <!-- FORMULARIO DE BÚSQUEDA -->
       {% include "autenticacion/_apodo_form.html" %}
     {% endif %}
 

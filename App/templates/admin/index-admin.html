@@ -527,7 +527,9 @@ document.getElementById('btnExportPdf').addEventListener('click', async function
     pdf.save('monagua-dashboard-' + new Date().toISOString().slice(0, 10) + '.pdf');
   } catch (e) {
     console.error(e);
-    alert('Error al generar el PDF.');
+    if (typeof window.mostrarToast === 'function') {
+      window.mostrarToast('error', 'Error en Exportación', 'Ocurrió un error al generar el archivo PDF.', 5000);
+    }
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="bi bi-file-earmark-pdf-fill"></i> Exportar PDF';

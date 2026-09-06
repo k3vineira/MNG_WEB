@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from App.models import Usuario
 from autenticacion.forms import RegistroForm
-from autenticacion.geografia import (
+from autenticacion.views.geografia import (
     get_paises,
     get_departamentos,
     get_ciudades,

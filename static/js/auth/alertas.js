@@ -1,20 +1,21 @@
 /**
- * alertas.js - Auto-cierre de alertas de Bootstrap después de 5 segundos.
- * Cierra automáticamente las alertas informativas (no las de error crítico).
+ * alertas.js - Módulo unificado de alertas y notificaciones Monagua.
+ * Todas las alertas se gestionan a través del sistema Toast superior derecho con temporizador.
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-    setTimeout(function () {
-        var alerts = document.querySelectorAll('.alert:not(.alert-danger)');
-        alerts.forEach(function (alert) {
-            if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
-                var bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            } else {
-                alert.style.display = 'none';
-            }
-        });
-    }, 5000);
+    // Si quedan elementos .alert residuales en el DOM, se cierran automáticamente o se muestran como Toast
+    var legacyAlerts = document.querySelectorAll('.alert');
+    legacyAlerts.forEach(function (alertEl) {
+        if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+            setTimeout(function () {
+                try {
+                    var bsAlert = new bootstrap.Alert(alertEl);
+                    bsAlert.close();
+                } catch (e) {
+                    alertEl.style.display = 'none';
+                }
+            }, 5000);
+        }
+    });
 });
-
-

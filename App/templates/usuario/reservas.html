@@ -148,7 +148,9 @@
                 // 2. Si intentan meter una fecha menor manipulando JS
                 if (selectedDates[0] < fechaMinima) {
                     instance.clear();
-                    alert("Fecha no permitida");
+                    if (typeof window.mostrarToast === 'function') {
+                        window.mostrarToast('warning', 'Fecha no permitida', 'Por favor selecciona una fecha con al menos 2 días de anticipación.', 5000);
+                    }
                     return;
                 }
                 if (typeof window.updatePrice === 'function') {
