@@ -13,7 +13,15 @@ urlpatterns = [
     path('nosotros/', terminos_views.nosotros_view, name='nosotros'),
 
     # Tours / Paquetes públicos
-    path('Tours/', paquete_views.tours, name='tours'),
+    path('tours/', paquete_views.tours, name='tours'),
+    path('Tours/', paquete_views.tours),
+    path('destinos/', paquete_views.tours, name='destinos'),
+
+    # Tours / Paquetes (Administración / Staff)
+    path('admin/paquetes/', paquete_views.PaqueteListView.as_view(), name='listar_paquetes'),
+    path('admin/paquetes/agregar/', paquete_views.PaqueteCreateView.as_view(), name='agregar_paquete'),
+    path('admin/paquetes/editar/<int:pk>/', paquete_views.PaqueteUpdateView.as_view(), name='editar_paquete'),
+    path('admin/paquetes/eliminar/<int:pk>/', paquete_views.PaqueteDeleteView.as_view(), name='eliminar_paquete'),
 
     # Reservas (Usuario / Turista)
     path('reservas/reservar/', reserva_views.reservas_view, name='reservas'),

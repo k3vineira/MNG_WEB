@@ -455,7 +455,7 @@ def lista_notificaciones_global(request):
     """
     Context processor para inyectar notificaciones globales desde el modelo Bitacora.
     """
-    if request.user.is_authenticated:
+    if hasattr(request, 'user') and request.user.is_authenticated:
         from App.models import Bitacora
         # Trae las últimas 5 notificaciones/bitácoras para la campanita
         alertas = Bitacora.objects.filter(

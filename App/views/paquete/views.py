@@ -21,58 +21,68 @@ class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_active and self.request.user.is_staff
 
-def destinos(request):
+def tours(request):
     """
-    Vista pública que filtra y devuelve la lista de paquetes turísticos disponibles.
-    Incluye validaciones y sanitización para los parámetros GET.
+    Vista pública que filtra y devuelve el catálogo de tours y paquetes turísticos disponibles.
+    Aplica sanitización y validaciones exhaustivas a los parámetros de búsqueda y filtrado GET.
     """
-    destinos_list = Paquete.objects.filter(estado=True)
-    destinos_sugerencias = Paquete.objects.filter(estado=True).values('nombre').distinct()
+    # Consulta base: solo paquetes/tours en estado activo
+    lista_tours = Paquete.objects.filter(estado=True)
+    sugerencias_tours = Paquete.objects.filter(estado=True).values('nombre').distinct()
 
-    # Validar y sanitizar búsqueda textual
+    # 1. Filtro de búsqueda textual por nombre del tour
     busqueda = request.GET.get('q', '').strip()
     if busqueda and len(busqueda) <= 100:
-        destinos_list = destinos_list.filter(nombre__icontains=busqueda)
+        lista_tours = lista_tours.filter(nombre__icontains=busqueda)
 
-    # Validar que precio_max sea un decimal/entero positivo válido
+    # 2. Filtro de precio máximo permitido
     precio_max = request.GET.get('precio_max', '').strip()
     if precio_max:
         try:
             precio_decimal = Decimal(precio_max)
             if precio_decimal >= 0:
-                destinos_list = destinos_list.filter(
+                lista_tours = lista_tours.filter(
                     tarifas__precio_adulto__lte=precio_decimal
                 ).distinct()
         except (InvalidOperation, TypeError):
-            pass  # Ignorar filtro si envían un valor no numérico o malicioso
+            # Se ignora el filtro si se ingresa un valor no numérico
+            pass
 
-    # Validar parámetro estricto de apto_menores
+    # 3. Filtro según aptitud para menores de edad
     apto_menores = request.GET.get('apto_menores', '').strip().lower()
     if apto_menores == 'si':
-        destinos_list = destinos_list.exclude(actividades__apto_menores=False).distinct()
+        lista_tours = lista_tours.exclude(actividades__apto_menores=False).distinct()
     elif apto_menores == 'no':
-        destinos_list = destinos_list.exclude(actividades__apto_menores=True).distinct()
+        lista_tours = lista_tours.exclude(actividades__apto_menores=True).distinct()
 
-    # Validar que categoria_id sea un entero válido
+    # 4. Filtro por categoría del tour
     categoria_id = request.GET.get('categoria', '').strip()
     if categoria_id:
         try:
             cat_id = int(categoria_id)
             if cat_id > 0:
-                destinos_list = destinos_list.filter(categoria_id=cat_id)
+                lista_tours = lista_tours.filter(categoria_id=cat_id)
         except (ValueError, TypeError):
+            # Se ignora si el ID de categoría no es un entero válido
             pass
 
-    # Carga optimizada
-    destinos_list = destinos_list.select_related('categoria').prefetch_related('actividades', 'tarifas__temporada')
-    categorias_list = Categoria.objects.filter(estado=True)
+    # Optimización de consultas a la base de datos (evitar consultas N+1)
+    lista_tours = lista_tours.select_related('categoria').prefetch_related('actividades', 'tarifas__temporada')
+    lista_categorias = Categoria.objects.filter(estado=True)
 
-    context = {
-        'destinos': destinos_list,
-        'destinos_sugerencias': destinos_sugerencias,
-        'categorias': categorias_list
+    contexto = {
+        'tours': lista_tours,
+        'sugerencias_tours': sugerencias_tours,
+        'categorias': lista_categorias,
+        # Variables de retrocompatibilidad para plantillas existentes
+        'destinos': lista_tours,
+        'destinos_sugerencias': sugerencias_tours,
     }
-    return render(request, 'admin/paquete/destinos.html', context)
+    return render(request, 'admin/paquete/destinos.html', contexto)
+
+
+# Alias para retrocompatibilidad
+destinos = tours
 
 
 
@@ -208,4 +218,13 @@ class PaqueteDeleteView(StaffRequiredMixin, DeleteView):
             nuevo_valor="Registro Eliminado"
         )
         return response
+
+
+# ==========================================
+# ALIASES DE CLASES (NOMENCLATURA TOURS)
+# ==========================================
+TourListView = PaqueteListView
+TourCreateView = PaqueteCreateView
+TourUpdateView = PaqueteUpdateView
+TourDeleteView = PaqueteDeleteView
 

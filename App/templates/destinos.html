@@ -8,9 +8,9 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item fs-5 fw-semibold">
-                <a href="#" class="text-dark text-decoration-none" style="color:  #000000af !important;">Inicio</a>
+                <a href="{% url 'index' %}" class="text-dark text-decoration-none" style="color: #000000af !important;">Inicio</a>
             </li>
-            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color:  #000000af !important;">
+            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color: #000000af !important;">
                 Tours
             </li>
         </ol>
@@ -18,11 +18,11 @@
 </div>
     <div style="height: 2rem; width: 100%; background-color: #ffffff;"></div>
 
-    <div id="carouselDestinos" class="carousel slide carousel-fade shadow-lg" data-bs-ride="carousel" data-bs-interval="5000">
+    <div id="carouselTours" class="carousel slide carousel-fade shadow-lg" data-bs-ride="carousel" data-bs-interval="5000">
         <div class="carousel-indicators mb-4">
-            <button type="button" data-bs-target="#carouselDestinos" data-bs-slide-to="0" class="active" aria-current="true"></button>
-            <button type="button" data-bs-target="#carouselDestinos" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#carouselDestinos" data-bs-slide-to="2"></button>
+            <button type="button" data-bs-target="#carouselTours" data-bs-slide-to="0" class="active" aria-current="true"></button>
+            <button type="button" data-bs-target="#carouselTours" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#carouselTours" data-bs-slide-to="2"></button>
         </div>
 
         <div class="carousel-inner">
@@ -55,20 +55,21 @@
             </div>
         </div>
 
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselDestinos" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselTours" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Anterior</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselDestinos" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselTours" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Siguiente</span>
         </button>
     </div>
+
 <section class="container" style="margin-top: -4rem; position: relative; z-index: 10;">
     <div class="bg-white p-4 p-md-5 rounded-4 shadow-lg border border-light">
         <div class="text-center mb-4">
             <h2 class="display-6 fw-bold text-dark mb-2">¿Listo para la aventura?</h2>
-            <p class="text-muted">Encuentra el destino perfecto en Mongua.</p>
+            <p class="text-muted">Encuentra el tour perfecto en Mongua.</p>
         </div>
         
       <form method="GET" action="{% url 'tours' %}" class="mx-auto" style="max-width: 900px;">
@@ -78,23 +79,23 @@
                 <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
                 <input 
                     type="text" 
-                    id="input-destino"
+                    id="input-tour"
                     name="q" 
                     class="form-control border-start-0 ps-0" 
-                    placeholder="¿cuál destino de Monagua?" 
+                    placeholder="¿Cuál tour buscas en Mongua?" 
                     value="{{ request.GET.q }}"
-                    list="lista-destinos"
+                    list="lista-tours"
                     autocomplete="off">
                 
-                <datalist id="lista-destinos">
-                    {% for sug in destinos_sugerencias %}
+                <datalist id="lista-tours">
+                    {% for sug in sugerencias_tours|default:destinos_sugerencias %}
                         <option value="{{ sug.nombre }}"></option>
                     {% endfor %}
                 </datalist>
             </div>
             <!-- Mensaje de alerta en tiempo real -->
             <div id="alerta-no-existe" class="text-danger small mt-1 fw-bold style-alert" style="display: none;">
-                <i class="bi bi-exclamation-triangle-fill me-1"></i> Este destino o paquete no existe.
+                <i class="bi bi-exclamation-triangle-fill me-1"></i> Este tour o destino no existe.
             </div>
         </div>
         
@@ -116,7 +117,7 @@
                 <span class="input-group-text bg-white text-muted fs-5"><i class="bi bi-people-fill"></i></span>
                 <select name="apto_menores" class="form-select fw-semibold text-dark fs-5" onchange="this.form.submit()" style="cursor: pointer;">
                     <option value="" class="fw-normal text-muted">¿Viajas con menores? (Mostrar todos los planes)</option>
-                    <option value="si" {% if request.GET.apto_menores == 'si' %}selected{% endif %} class="text-success">¡Sí! Solo paquetes aptos para menores</option>
+                    <option value="si" {% if request.GET.apto_menores == 'si' %}selected{% endif %} class="text-success">¡Sí! Solo tours aptos para menores</option>
                     <option value="no" {% if request.GET.apto_menores == 'no' %}selected{% endif %}>Solo adultos / No aptos para menores</option>
                 </select>
             </div>
@@ -138,30 +139,29 @@
     </div>
 
     <div class="mt-3 text-center text-md-start">
-        <a href="#" class="text-decoration-none small text-muted hover-success"><i class="bi bi-x-circle me-1"></i>Limpiar filtros</a>
+        <a href="{% url 'tours' %}" class="text-decoration-none small text-muted hover-success"><i class="bi bi-x-circle me-1"></i>Limpiar filtros</a>
     </div>
 </form>
     </div>
 </section>
-<!-- ... tu código HTML anterior del formulario ... -->
 
     <section class="container my-5"> 
-        <div class="row g-4" id="contenedor-destinos"> 
-            {% for destino in destinos %}
-                <!-- Le agregamos una clase 'tarjeta-destino' y un data-attribute con el nombre para filtrar en JS -->
-                <div class="col-md-6 col-lg-4 tarjeta-destino" data-nombre="{{ destino.nombre|lower }}">
+        <div class="row g-4" id="contenedor-tours"> 
+            {% for tour in tours|default:destinos %}
+                <!-- Tarjeta de tour para filtrado dinámico en JS -->
+                <div class="col-md-6 col-lg-4 tarjeta-tour tarjeta-destino" data-nombre="{{ tour.nombre|lower }}">
                     <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden card-hover-lift" style="transition: all 0.2s ease;">
                         
                         <div class="ratio ratio-16x9 position-relative">
-                            {% if destino.imagen %}
-                                <img src="{{ destino.imagen.url }}" class="card-img-top object-fit-cover" alt="{{ destino.nombre }}">
+                            {% if tour.imagen %}
+                                <img src="{{ tour.imagen.url }}" class="card-img-top object-fit-cover" alt="{{ tour.nombre }}">
                             {% else %}
                                 <img src="{% static 'img/lagunanegra.webp' %}" class="card-img-top object-fit-cover" alt="Imagen por defecto">
                             {% endif %}
                             <div class="position-absolute top-0 start-0 m-2">
-                                <span class="badge bg-dark bg-opacity-75 text-white small px-2 py-1 rounded-pill"><i class="bi bi-geo-alt-fill me-1"></i>Mixto</span>
+                                <span class="badge bg-dark bg-opacity-75 text-white small px-2 py-1 rounded-pill"><i class="bi bi-geo-alt-fill me-1"></i>Tour</span>
                             </div>
-                            {% if not destino.apto_para_menores %}
+                            {% if not tour.apto_para_menores %}
                             <div class="position-absolute top-0 end-0 m-2">
                                 <span class="badge bg-danger bg-opacity-75 text-white small px-2 py-1 rounded-pill shadow-sm" title="No apto para niños">
                                     <i class="bi bi-person-slash me-1"></i>Solo Adultos
@@ -171,32 +171,32 @@
                         </div>
                         
                         <div class="card-body p-4 d-flex flex-column gap-3">
-                            <h4 class="fw-bold text-dark mb-0 text-truncate" style="color: #111 !important;">{{ destino.nombre }}</h4>
+                            <h4 class="fw-bold text-dark mb-0 text-truncate" style="color: #111 !important;">{{ tour.nombre }}</h4>
                             
                             <div class="d-flex gap-3 fs-5 fw-normal text-secondary mb-1">
-                                <span><i class="bi bi-sun text-success me-1"></i>{{ destino.dias_duracion }} días</span>
-                                <span><i class="bi bi-moon text-info me-1"></i>{{ destino.noches_duracion }} noches</span>
+                                <span><i class="bi bi-sun text-success me-1"></i>{{ tour.dias_duracion }} días</span>
+                                <span><i class="bi bi-moon text-info me-1"></i>{{ tour.noches_duracion }} noches</span>
                             </div>
                             <div class="d-flex gap-3 fs-5 fw-normal text-secondary mb-1">
-                                <span><i class="bi bi-clock text-muted me-1"></i>{{ destino.hora_encuentro|time:"H:i" }}</span>
-                                <span><i class="bi bi-geo-alt text-muted me-1"></i>{{ destino.punto_encuentro }}</span>
+                                <span><i class="bi bi-clock text-muted me-1"></i>{{ tour.hora_encuentro|time:"H:i" }}</span>
+                                <span><i class="bi bi-geo-alt text-muted me-1"></i>{{ tour.punto_encuentro }}</span>
                             </div>
                             
                             <p class="text-secondary fw-normal mb-1 lh-base fs-5" style="color: #4a5568 !important;">
-                                {{ destino.descripcion|truncatechars:85 }}
+                                {{ tour.descripcion|truncatechars:85 }}
                             </p>
                             
                             <hr class="text-muted opacity-25 my-1">
 
                             <div class="d-flex align-items-center justify-content-between py-2">
                                 <div>
-                                    <span class="text-success fw-black fs-4" style="font-weight: 800; letter-spacing: -0.5px;">COP ${{ destino.precio_minimo|floatformat:0|intcomma }}</span>
+                                    <span class="text-success fw-black fs-4" style="font-weight: 800; letter-spacing: -0.5px;">COP ${{ tour.precio_minimo|floatformat:0|intcomma }}</span>
                                 </div>
                                 
-                                {% if destino.categoria %}
+                                {% if tour.categoria %}
                                     <div class="text-end">
                                         <span class="text-dark fw-semibold fs-5">
-                                            <i class="bi bi-tag text-muted me-1"></i>{{ destino.categoria.nombre }}
+                                            <i class="bi bi-tag text-muted me-1"></i>{{ tour.categoria.nombre }}
                                         </span>
                                     </div>
                                 {% endif %}
@@ -205,17 +205,19 @@
                             <div class="d-flex gap-2 mt-2">
                                 <button type="button" class="btn btn-light text-success btn-lg w-100 rounded-pill fw-bold border fs-6" 
                                         data-bs-toggle="modal" 
-                                        data-bs-target="#modalActividades-{{ destino.id }}">
+                                        data-bs-target="#modalActividades-{{ tour.id }}">
                                     Detalles
                                 </button>
-                                <a href="{% url 'reservas' %}?paquete_id={{ destino.id }}" class="btn btn-success btn-lg w-100 rounded-pill fw-bold fs-6">
+                                <a href="{% url 'reservas' %}?paquete_id={{ tour.id }}" class="btn btn-success btn-lg w-100 rounded-pill fw-bold fs-6">
                                     RESERVAR
                                 </a>
                             </div>                 
                         </div>
                     </div>
                 </div>
-                {% include 'partials/actividades_modals.html' %}
+                {% with destino=tour %}
+                    {% include 'partials/actividades_modals.html' %}
+                {% endwith %}
             {% empty %}
                 <div class="col-12 text-center py-5">
                     <p class="text-muted fw-normal fs-5">No encontramos resultados para tu búsqueda.</p>
@@ -224,36 +226,36 @@
         </div> 
     </section>
 
-    <!-- ⚠️ EL SCRIPT DEBE IR DENTRO DE CONTENT -->
+    <!-- Script de filtrado en tiempo real -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const inputDestino = document.getElementById('input-destino');
+            const inputTour = document.getElementById('input-tour') || document.getElementById('input-destino');
             const alertaNoExiste = document.getElementById('alerta-no-existe');
-            const tarjetas = document.querySelectorAll('.tarjeta-destino');
+            const tarjetas = document.querySelectorAll('.tarjeta-tour, .tarjeta-destino');
 
-            if (inputDestino) {
-                inputDestino.addEventListener('input', function() {
+            if (inputTour) {
+                inputTour.addEventListener('input', function() {
                     const valorEscrito = this.value.toLowerCase().trim();
-                    let Coincidencias = 0;
+                    let coincidencias = 0;
 
                     tarjetas.forEach(tarjeta => {
-                        const nombreDestino = tarjeta.getAttribute('data-nombre') || tarjeta.innerText.toLowerCase();
+                        const nombreTour = tarjeta.getAttribute('data-nombre') || tarjeta.innerText.toLowerCase();
                         
-                        if (nombreDestino.includes(valorEscrito)) {
+                        if (nombreTour.includes(valorEscrito)) {
                             tarjeta.style.display = ''; // Mostrar tarjeta
-                            Coincidencias++;
+                            coincidencias++;
                         } else {
                             tarjeta.style.display = 'none'; // Ocultar tarjeta
                         }
                     });
 
                     // Si no hay ninguna tarjeta visible y el usuario ha escrito algo
-                    if (Coincidencias === 0 && valorEscrito !== '') {
-                        alertaNoExiste.style.display = 'block';
-                        inputDestino.classList.add('is-invalid');
+                    if (coincidencias === 0 && valorEscrito !== '') {
+                        if (alertaNoExiste) alertaNoExiste.style.display = 'block';
+                        inputTour.classList.add('is-invalid');
                     } else {
-                        alertaNoExiste.style.display = 'none';
-                        inputDestino.classList.remove('is-invalid');
+                        if (alertaNoExiste) alertaNoExiste.style.display = 'none';
+                        inputTour.classList.remove('is-invalid');
                     }
                 });
             }
