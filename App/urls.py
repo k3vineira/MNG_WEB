@@ -2,6 +2,7 @@ from django.urls import path
 from App.views import views
 from App.views.paquete import views as paquete_views
 from App.views.reserva import views as reserva_views
+from App.views.pago import views as pago_views
 from App.views.terminos_y_condiciones import views as terminos_views
 
 urlpatterns = [
@@ -14,8 +15,6 @@ urlpatterns = [
 
     # Tours / Paquetes públicos
     path('tours/', paquete_views.tours, name='tours'),
-    path('Tours/', paquete_views.tours),
-    path('destinos/', paquete_views.tours, name='destinos'),
 
     # Tours / Paquetes (Administración / Staff)
     path('admin/paquetes/', paquete_views.PaqueteListView.as_view(), name='listar_paquetes'),
@@ -31,6 +30,10 @@ urlpatterns = [
     path('reservas/cancelar/<int:reserva_id>/', reserva_views.cancelar_reserva_usuario, name='cancelar_reserva_usuario'),
     path('reservas/comprobante/<int:reserva_id>/', reserva_views.comprobante_reserva_html, name='comprobante_reserva'),
     path('reservas/comprobante-multiple/', reserva_views.comprobante_multiple, name='comprobante_multiple'),
+
+    # Pagos (Usuario / Turista)
+    path('pagos/enviar-comprobante/', pago_views.enviar_comprobante, name='enviar_comprobante'),
+    path('pagos/mis-comprobantes/', pago_views.mis_comprobantes, name='mis_comprobantes'),
 
     # Reservas (Administración / Staff)
     path('admin/reservas/', reserva_views.ReservaListView.as_view(), name='listar_reservas'),

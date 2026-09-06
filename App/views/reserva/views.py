@@ -55,9 +55,9 @@ class ReservaListView(ListView):
         if estado_param == 'todas':
             queryset = Reserva.objects.all()
         elif estado_param:
-            queryset = Reserva.objects.filter(estado=estado_param)
+            queryset = Reserva.objects.filter(estado_reserva=estado_param)
         else:
-            queryset = Reserva.objects.exclude(estado='cancelada')
+            queryset = Reserva.objects.exclude(estado_reserva='cancelada')
             
         return queryset.select_related('usuario', 'paquete').order_by('-id')
 
@@ -66,9 +66,9 @@ class ReservaListView(ListView):
         
         stats = Reserva.objects.aggregate(
             total=Count('id'),
-            pendientes=Count('id', filter=Q(estado='pendiente')),
-            confirmadas=Count('id', filter=Q(estado='confirmada')),
-            canceladas=Count('id', filter=Q(estado='cancelada'))
+            pendientes=Count('id', filter=Q(estado_reserva='pendiente')),
+            confirmadas=Count('id', filter=Q(estado_reserva='confirmada')),
+            canceladas=Count('id', filter=Q(estado_reserva='cancelada'))
         )
         context.update(stats)
 
@@ -97,8 +97,8 @@ def cambiar_estado_reserva(request, reserva_id):
             if nuevo_estado not in dict(Reserva.ESTADO_CHOICES).keys():
                 return JsonResponse({'success': False, 'error': 'Estado no válido.'}, status=400)
             
-            estado_anterior = reserva.estado
-            reserva.estado = nuevo_estado
+            estado_anterior = reserva.estado_reserva
+            reserva.estado_reserva = nuevo_estado
             reserva.save()
             
             crear_notificacion_sistema(
@@ -129,7 +129,7 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         adultos = form.cleaned_data.get('numero_adultos', 0)
         menores = form.cleaned_data.get('numero_menores', 0)
-        fecha = form.cleaned_data.get('fecha')
+        fecha = form.cleaned_data.get('fecha_inicio')
 
         if adultos < 1:
             form.add_error('numero_adultos', 'Debe haber al menos 1 adulto en la reserva.')
@@ -140,7 +140,7 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
             return self.form_invalid(form)
 
         if fecha and fecha < date.today():
-            form.add_error('fecha', 'No puedes crear reservas en fechas pasadas.')
+            form.add_error('fecha_inicio', 'No puedes crear reservas en fechas pasadas.')
             return self.form_invalid(form)
 
         response = super().form_valid(form)
@@ -151,7 +151,7 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
             tabla_afectada="Reservas",
             observacion=f"Se ha registrado manualmente la reserva #{self.object.id} para el paquete '{self.object.paquete.nombre}'.",
             valor_anterior="Ninguno (Registro Nuevo)",
-            nuevo_valor=f"Cliente: {self.object.usuario.get_full_name() or self.object.usuario.username}, Fecha: {self.object.fecha}, Adultos: {self.object.numero_adultos}, Menores: {self.object.numero_menores}"
+            nuevo_valor=f"Cliente: {self.object.usuario.get_full_name() or self.object.usuario.username}, Fecha: {self.object.fecha_inicio}, Adultos: {self.object.numero_adultos}, Menores: {self.object.numero_menores}"
         )
 
         return response
@@ -178,40 +178,40 @@ class ReservaUpdateView(UpdateView):
             return self.form_invalid(form)
 
         reserva_antigua = self.get_object()
-        valor_viejo = f"Estado: {reserva_antigua.estado}, Fecha: {reserva_antigua.fecha}, Adultos: {reserva_antigua.numero_adultos}, Menores: {reserva_antigua.numero_menores}"
+        valor_viejo = f"Estado: {reserva_antigua.estado_reserva}, Fecha: {reserva_antigua.fecha_inicio}, Adultos: {reserva_antigua.numero_adultos}, Menores: {reserva_antigua.numero_menores}"
 
         response = super().form_valid(form)
         reserva = self.object
         nombre_cliente = reserva.usuario.first_name or reserva.usuario.username
         
-        valor_nuevo = f"Estado: {reserva.estado}, Fecha: {reserva.fecha}, Adultos: {reserva.numero_adultos}, Menores: {reserva.numero_menores}"
+        valor_nuevo = f"Estado: {reserva.estado_reserva}, Fecha: {reserva.fecha_inicio}, Adultos: {reserva.numero_adultos}, Menores: {reserva.numero_menores}"
 
-        if reserva.estado in ['confirmada', 'cancelada']:
+        if reserva.estado_reserva in ['confirmada', 'cancelada']:
             crear_notificacion_sistema(
                 usuario=self.request.user,
-                accion=f"RESERVA {reserva.estado.upper()}",
+                accion=f"RESERVA {reserva.estado_reserva.upper()}",
                 tabla_afectada="Reservas",
-                observacion=f"La reserva #{reserva.id} para el paquete '{reserva.paquete.nombre}' ha cambiado a {reserva.estado}.",
+                observacion=f"La reserva #{reserva.id} para el paquete '{reserva.paquete.nombre}' ha cambiado a {reserva.estado_reserva}.",
                 valor_anterior=valor_viejo,
                 nuevo_valor=valor_nuevo
             )
 
-            if reserva.estado == 'confirmada':
+            if reserva.estado_reserva == 'confirmada':
                 try:
                     enviar_correo_confirmacion_con_factura(reserva, request=self.request)
                 except Exception as e:
                     print(f"Error enviando correo de confirmación de reserva (admin): {e}")
             else:
-                asunto = f"Tu Reserva #{reserva.id} ha sido {reserva.estado.upper()} - Monagua"
-                mensaje_texto = f"Hola {nombre_cliente}, el estado de tu reserva para {reserva.paquete.nombre} ha cambiado a {reserva.estado}."
+                asunto = f"Tu Reserva #{reserva.id} ha sido {reserva.estado_reserva.upper()} - Monagua"
+                mensaje_texto = f"Hola {nombre_cliente}, el estado de tu reserva para {reserva.paquete.nombre} ha cambiado a {reserva.estado_reserva}."
                 
                 html_contenido = plantilla_reserva_html(
                     nombre_cliente=nombre_cliente,
                     paquete=reserva.paquete.nombre,
-                    fecha=str(reserva.fecha),
+                    fecha=str(reserva.fecha_inicio),
                     adultos=reserva.numero_adultos,
                     menores=reserva.numero_menores,
-                    estado=reserva.estado,
+                    estado=reserva.estado_reserva,
                     reserva_id=reserva.id,
                     monto_total=str(reserva.monto_total)
                 )
@@ -254,7 +254,7 @@ def mis_reservas_usuario(request):
     context = {
         'reservas': mis_reservas
     }
-    return render(request, 'usuario/mis_reservas.html', context)
+    return render(request, 'usuario/reserva/mis_reservas.html', context)
 
 
 @login_required(login_url='login')
@@ -263,7 +263,7 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     real_id = reserva_id or pk
     reserva = get_object_or_404(Reserva, id=real_id, usuario=request.user)
 
-    if reserva.estado == 'cancelada':
+    if reserva.estado_reserva == 'cancelada':
         messages.warning(request, "Esta reserva ya fue cancelada previamente.")
         return redirect('mis_reservas_usuario')
 
@@ -280,8 +280,8 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
             )
             return redirect('mis_reservas_usuario')
 
-    estado_anterior = reserva.estado
-    reserva.estado = 'cancelada'
+    estado_anterior = reserva.estado_reserva
+    reserva.estado_reserva = 'cancelada'
     reserva.save()
 
     crear_notificacion_sistema(
@@ -325,18 +325,18 @@ def reservas_view(request):
 
     return render(
         request,
-        'usuario/reservas.html',
+        'usuario/reserva/reservas.html',
         context
     )
 
 
 @login_required(login_url='login')
 def carrito_view(request):
-    reservas_pendientes = Reserva.objects.filter(usuario=request.user, estado__in=['pendiente', 'Pendiente']).select_related('paquete').order_by('-id')
+    reservas_pendientes = Reserva.objects.filter(usuario=request.user, estado_reserva__in=['pendiente', 'Pendiente']).select_related('paquete').order_by('-id')
     context = {
         'reservas': reservas_pendientes
     }
-    return render(request, 'usuario/carrito.html', context)
+    return render(request, 'usuario/reserva/carrito.html', context)
 
 
 @login_required(login_url='login')
@@ -345,7 +345,7 @@ def comprobante_reserva_html(request, reserva_id):
     context = {
         'reserva': reserva,
     }
-    return render(request, 'usuario/comprobante_reserva.html', context)
+    return render(request, 'usuario/reserva/comprobante_reserva.html', context)
 
 
 @login_required(login_url='login')
@@ -377,7 +377,7 @@ def comprobante_multiple(request):
         'reservas': reservas,
         'total': total,
     }
-    return render(request, 'usuario/comprobante_multiple.html', context)
+    return render(request, 'usuario/reserva/comprobante_multiple.html', context)
 
 
 @login_required
@@ -434,7 +434,7 @@ def guardar_reserva(request, paquete_id):
         ya_existe = Reserva.objects.filter(
             usuario=request.user,
             paquete=paquete,
-            fecha=fecha_date
+            fecha_inicio=fecha_date
         ).exists()
 
         if ya_existe:
@@ -447,10 +447,10 @@ def guardar_reserva(request, paquete_id):
         reserva = Reserva.objects.create(
             usuario=request.user,
             paquete=paquete,
-            fecha=fecha_date,
+            fecha_inicio=fecha_date,
             numero_adultos=adultos,
             numero_menores=menores,
-            estado='pendiente'
+            estado_reserva='pendiente'
         )
 
         crear_notificacion_sistema(
@@ -470,12 +470,12 @@ def guardar_reserva(request, paquete_id):
         html_bonito = plantilla_reserva_html(
             nombre_cliente=nombre_cliente,
             paquete=paquete.nombre,
-            fecha=reserva.fecha.strftime('%d/%m/%Y'),  
+            fecha=reserva.fecha_inicio.strftime('%d/%m/%Y'),  
             adultos=reserva.numero_adultos,
             menores=reserva.numero_menores,
             punto_encuentro="Por definir (Sujeto a confirmación)", 
             hora_encuentro="08:00",
-            estado=reserva.estado,
+            estado=reserva.estado_reserva,
             reserva_id=reserva.id,
             monto_total=str(reserva.monto_total)
         )
@@ -494,10 +494,10 @@ def guardar_reserva(request, paquete_id):
 def mis_facturas(request):
     mis_confirmadas = Reserva.objects.filter(
         usuario=request.user, 
-        estado='confirmada'
+        estado_reserva='confirmada'
     ).select_related('paquete').order_by('-id')
     
-    return render(request, 'usuario/mis_facturas.html', {
+    return render(request, 'usuario/reserva/mis_facturas.html', {
         'reservas': mis_confirmadas
     })
 
@@ -511,7 +511,7 @@ def ver_factura(request, reserva_id):
         messages.error(request, "No tienes permiso para acceder a esta factura.")
         return redirect('mis_reservas_usuario')
     
-    if reserva.estado != 'confirmada':
+    if reserva.estado_reserva != 'confirmada':
         messages.error(request, "La factura solo está disponible para reservas confirmadas y pagadas.")
         return redirect('mis_reservas_usuario')
         

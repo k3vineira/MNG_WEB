@@ -88,7 +88,7 @@
                     autocomplete="off">
                 
                 <datalist id="lista-tours">
-                    {% for sug in sugerencias_tours|default:destinos_sugerencias %}
+                    {% for sug in sugerencias_tours %}
                         <option value="{{ sug.nombre }}"></option>
                     {% endfor %}
                 </datalist>
@@ -147,7 +147,7 @@
 
     <section class="container my-5"> 
         <div class="row g-4" id="contenedor-tours"> 
-            {% for tour in tours|default:destinos %}
+            {% for tour in tours %}
                 <!-- Tarjeta de tour para filtrado dinámico en JS -->
                 <div class="col-md-6 col-lg-4 tarjeta-tour tarjeta-destino" data-nombre="{{ tour.nombre|lower }}">
                     <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden card-hover-lift" style="transition: all 0.2s ease;">

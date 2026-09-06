@@ -23,12 +23,13 @@ class ReservaForm(forms.ModelForm):
         # Se exigen al menos 5 días de anticipación para reservas nuevas
         if not self.instance.pk:
             fecha_minima = date.today() + timedelta(days=5)
-            self.fields['fecha'].widget.attrs['min'] = fecha_minima.strftime('%Y-%m-%d')
+            if 'fecha_inicio' in self.fields:
+                self.fields['fecha_inicio'].widget.attrs['min'] = fecha_minima.strftime('%Y-%m-%d')
 
-    def clean_fecha(self):
-        fecha_reserva = self.cleaned_data.get('fecha')
+    def clean_fecha_inicio(self):
+        fecha_reserva = self.cleaned_data.get('fecha_inicio')
 
-        if self.instance.pk and self.instance.fecha == fecha_reserva:
+        if self.instance.pk and self.instance.fecha_inicio == fecha_reserva:
             return fecha_reserva
 
         fecha_minima = date.today() + timedelta(days=5)

@@ -1,9 +1,9 @@
-{% extends "private/base_private.html" %}
+{% extends "usuario/base-turista-dashboard.html" %}
 {% load static humanize %}
 
-{% block titulo %}Mis Reservas | Monagua{% endblock %}
+{% block title %}Mis Reservas | Monagua{% endblock %}
 
-{% block private_content %}
+{% block content %}
 <div class="container py-4 mx-auto u-style-f694cf53">
 
     <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
@@ -42,7 +42,7 @@
                                         </div>
 
                                         <div>
-                                            {% with estado=reserva.estado|default:reserva.estado_reserva %}
+                                            {% with estado=reserva.estado_reserva %}
                                                 {% if estado == 'pendiente' %}
                                                     <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="bi bi-clock me-1"></i> Pendiente</span>
                                                 {% elif estado == 'confirmada' %}
@@ -60,7 +60,7 @@
                                                 <small class="text-muted d-block mb-1">Fecha de Viaje</small>
                                                 <span class="fw-semibold text-dark small">
                                                     <i class="bi bi-calendar-event me-1 text-success"></i> 
-                                                    {{ reserva.fecha_inicio|default:reserva.fecha|date:"d M Y"|default:"Por definir" }}
+                                                    {{ reserva.fecha_inicio|date:"d M Y"|default:"Por definir" }}
                                                 </span>
                                             </div>
                                         </div>
@@ -115,7 +115,7 @@
                                     {% endif %}
 
                                     <div class="mt-auto d-flex gap-2 flex-wrap pt-2 border-top">
-                                        {% with estado=reserva.estado|default:reserva.estado_reserva %}
+                                        {% with estado=reserva.estado_reserva %}
                                             {# BOTÓN ENVIAR PAGO #}
                                             {% if estado == 'pendiente' and not reserva.pago %}
                                                 <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">

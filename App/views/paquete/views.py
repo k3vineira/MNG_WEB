@@ -74,16 +74,8 @@ def tours(request):
         'tours': lista_tours,
         'sugerencias_tours': sugerencias_tours,
         'categorias': lista_categorias,
-        # Variables de retrocompatibilidad para plantillas existentes
-        'destinos': lista_tours,
-        'destinos_sugerencias': sugerencias_tours,
     }
     return render(request, 'admin/paquete/destinos.html', contexto)
-
-
-# Alias para retrocompatibilidad
-destinos = tours
-
 
 
 # ==========================================
