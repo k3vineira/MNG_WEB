@@ -4,6 +4,8 @@ from App.views.paquete import views as paquete_views
 from App.views.reserva import views as reserva_views
 from App.views.pago import views as pago_views
 from App.views.terminos_y_condiciones import views as terminos_views
+from App.views.notificacion import views as notificacion_views
+from App.views.bitacora import views as bitacora_views
 
 urlpatterns = [
     # Inicio
@@ -34,6 +36,15 @@ urlpatterns = [
     # Pagos (Usuario / Turista)
     path('pagos/enviar-comprobante/', pago_views.enviar_comprobante, name='enviar_comprobante'),
     path('pagos/mis-comprobantes/', pago_views.mis_comprobantes, name='mis_comprobantes'),
+
+    # Notificaciones
+    path('notificaciones/', notificacion_views.listar_notificaciones, name='listar_notificaciones'),
+    path('notificaciones/marcar-leida/<int:notificacion_id>/', notificacion_views.marcar_notificacion_leida, name='marcar_notificacion_leida'),
+    path('notificaciones/eliminar/<int:notificacion_id>/', notificacion_views.eliminar_notificacion, name='eliminar_notificacion'),
+
+    # Bitácora
+    path('bitacora/', bitacora_views.listar_bitacora, name='listar_bitacora'),
+    path('bitacora/<int:bitacora_id>/', bitacora_views.detalle_bitacora, name='detalle_bitacora'),
 
     # Reservas (Administración / Staff)
     path('admin/reservas/', reserva_views.ReservaListView.as_view(), name='listar_reservas'),

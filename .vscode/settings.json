@@ -1,18 +1,20 @@
 {
+  "workbench.iconTheme": "material-icon-theme",
   "material-icon-theme.folders.associations": {
     "autenticacion": "secure",
+    "autenticación": "secure",
+    "bitacora": "log",
     "guia_turistico": "helper",
     "guias": "helper",
     "usuario": "client",
     "actividades": "event",
     "aseguradora": "guard",
-    "bitacora": "log",
     "blog": "content",
     "calificacion": "review",
     "categoria": "class",
     "notificacion": "messages",
     "pago": "cart",
-    "paquete": "packages",
+    "paquete": "package",
     "pqrs": "messages",
     "promocion": "target",
     "reserva": "event",
@@ -21,6 +23,23 @@
     "terminos_y_condiciones": "contract",
     "terminos": "contract"
   },
+  "vsicons.associations.folders": [
+    {
+      "icon": "lock",
+      "extensions": ["autenticacion", "autenticación"],
+      "format": "svg"
+    },
+    {
+      "icon": "log",
+      "extensions": ["bitacora"],
+      "format": "svg"
+    },
+    {
+      "icon": "user",
+      "extensions": ["usuario", "guias", "guia_turistico"],
+      "format": "svg"
+    }
+  ],
   "python.testing.unittestArgs": [
     "-v",
     "-s",
@@ -31,3 +50,5 @@
   "python.testing.pytestEnabled": false,
   "python.testing.unittestEnabled": true
 }
+
+
