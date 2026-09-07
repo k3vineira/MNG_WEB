@@ -1,6 +1,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/accesibilidad.css' %}">
-<!-- Accesibilidad: {{ a11y_mode|default:"activo" }} -->
+{% csrf_token %}
+{{ request.session.a11y_settings|json_script:"a11y-session-data" }}
 <!-- ── Botón flotante de Accesibilidad ── -->
 <button
   id="a11y-btn"
@@ -327,13 +328,37 @@
     function save() {
       try {
         localStorage.setItem("a11y", JSON.stringify(s));
+        
+        // Guardar en sesión de Django mediante fetch
+        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfToken) {
+          fetch('/api/accesibilidad/save/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken.value
+            },
+            body: JSON.stringify(s)
+          }).catch(function(e) { console.error("Error guardando accesibilidad", e); });
+        }
       } catch (_) {}
     }
     function load() {
       try {
-        var r = localStorage.getItem("a11y");
-        if (r) {
-          s = Object.assign({}, D, JSON.parse(r));
+        var serverDataEl = document.getElementById("a11y-session-data");
+        var serverData = null;
+        if (serverDataEl && serverDataEl.textContent && serverDataEl.textContent !== "null") {
+           serverData = JSON.parse(serverDataEl.textContent);
+        }
+        
+        var localDataStr = localStorage.getItem("a11y");
+        var localData = localDataStr ? JSON.parse(localDataStr) : null;
+        
+        // Priorizar datos del servidor (si la sesión sigue viva) o fallback local
+        var activeData = serverData || localData;
+        
+        if (activeData) {
+          s = Object.assign({}, D, activeData);
           if (s.font === 85) {
             s.font = 100;
             save();

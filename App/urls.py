@@ -6,8 +6,12 @@ from App.views.pago import views as pago_views
 from App.views.terminos_y_condiciones import views as terminos_views
 from App.views.notificacion import views as notificacion_views
 from App.views.bitacora import views as bitacora_views
+from App.views.accesibilidad import views as accesibilidad_views
 
 urlpatterns = [
+    # Accesibilidad API
+    path('api/accesibilidad/save/', accesibilidad_views.guardar_accesibilidad, name='guardar_accesibilidad'),
+
     # Inicio
     path('', views.index, name='index'),
 
