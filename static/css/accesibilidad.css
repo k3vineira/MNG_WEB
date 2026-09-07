@@ -256,100 +256,61 @@
 }
 
 /* Temas de Accesibilidad Global */
-.a11y-theme-light {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-}
+/* El modo Claro y Oscuro nativo está manejado por Bootstrap v5 con data-bs-theme */
 
-.a11y-theme-light a,
-.a11y-theme-light .nav-link,
-.a11y-theme-light .btn,
-.a11y-theme-light .badge,
-.a11y-theme-light .text-muted,
-.a11y-theme-light .text-secondary {
-    color: #000000 !important;
-}
-
-.a11y-theme-light .card,
-.a11y-theme-light .modal-content,
-.a11y-theme-light .offcanvas,
-.a11y-theme-light .dropdown-menu,
-.a11y-theme-light .navbar,
-.a11y-theme-light .footer-monagua,
-.a11y-theme-light .alert,
-.a11y-theme-light .table,
-.a11y-theme-light input,
-.a11y-theme-light textarea,
-.a11y-theme-light select,
-.a11y-theme-light .form-control,
-.a11y-theme-light .form-select {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border-color: #cccccc !important;
-}
-
-.a11y-theme-dark {
-    background-color: #1a1a1a !important;
-    color: #e0e0e0 !important;
-}
-
-.a11y-theme-dark a,
-.a11y-theme-dark .nav-link,
-.a11y-theme-dark .btn,
-.a11y-theme-dark .badge,
-.a11y-theme-dark .text-muted,
-.a11y-theme-dark .text-secondary {
-    color: #58a6ff !important;
-}
-
-.a11y-theme-dark .card,
-.a11y-theme-dark .modal-content,
-.a11y-theme-dark .offcanvas,
-.a11y-theme-dark .dropdown-menu,
-.a11y-theme-dark .navbar,
-.a11y-theme-dark .footer-monagua,
-.a11y-theme-dark .alert,
-.a11y-theme-dark .table,
-.a11y-theme-dark input,
-.a11y-theme-dark textarea,
-.a11y-theme-dark select,
-.a11y-theme-dark .form-control,
-.a11y-theme-dark .form-select {
-    background-color: #1a1a1a !important;
-    color: #e0e0e0 !important;
-    border-color: #444444 !important;
-}
-
-.a11y-theme-high-contrast {
+/* Alto Contraste (High Contrast) */
+html[data-a11y-theme="high-contrast"] {
     background-color: #000000 !important;
     color: #ffffff !important;
 }
 
-.a11y-theme-high-contrast a,
-.a11y-theme-high-contrast .nav-link,
-.a11y-theme-high-contrast .btn,
-.a11y-theme-high-contrast .badge,
-.a11y-theme-high-contrast .text-muted,
-.a11y-theme-high-contrast .text-secondary {
+html[data-a11y-theme="high-contrast"] body {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+html[data-a11y-theme="high-contrast"] a,
+html[data-a11y-theme="high-contrast"] .nav-link,
+html[data-a11y-theme="high-contrast"] .btn,
+html[data-a11y-theme="high-contrast"] .badge,
+html[data-a11y-theme="high-contrast"] .text-muted,
+html[data-a11y-theme="high-contrast"] .text-secondary {
     color: #ffff00 !important;
 }
 
-.a11y-theme-high-contrast .card,
-.a11y-theme-high-contrast .modal-content,
-.a11y-theme-high-contrast .offcanvas,
-.a11y-theme-high-contrast .dropdown-menu,
-.a11y-theme-high-contrast .navbar,
-.a11y-theme-high-contrast .footer-monagua,
-.a11y-theme-high-contrast .alert,
-.a11y-theme-high-contrast .table,
-.a11y-theme-high-contrast input,
-.a11y-theme-high-contrast textarea,
-.a11y-theme-high-contrast select,
-.a11y-theme-high-contrast .form-control,
-.a11y-theme-high-contrast .form-select {
+html[data-a11y-theme="high-contrast"] .card,
+html[data-a11y-theme="high-contrast"] .modal-content,
+html[data-a11y-theme="high-contrast"] .offcanvas,
+html[data-a11y-theme="high-contrast"] .dropdown-menu,
+html[data-a11y-theme="high-contrast"] .navbar,
+html[data-a11y-theme="high-contrast"] .footer-monagua,
+html[data-a11y-theme="high-contrast"] .alert,
+html[data-a11y-theme="high-contrast"] .table,
+html[data-a11y-theme="high-contrast"] input,
+html[data-a11y-theme="high-contrast"] textarea,
+html[data-a11y-theme="high-contrast"] select,
+html[data-a11y-theme="high-contrast"] .form-control,
+html[data-a11y-theme="high-contrast"] .form-select {
     background-color: #000000 !important;
     color: #ffffff !important;
     border-color: #ffffff !important;
+}
+
+/* Enlaces Resaltados */
+html[data-a11y-links="true"] a, 
+html[data-a11y-links="true"] .nav-link { 
+    text-decoration: underline !important; 
+    color: #0066cc !important; 
+    font-weight: 600 !important; 
+} 
+html[data-a11y-links="true"] a:visited { 
+    color: #6600cc !important; 
+}
+
+/* Cursor Grande */
+html[data-a11y-cursor="true"] body,
+html[data-a11y-cursor="true"] body * {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2760%27 height=%2760%27%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2728%27 fill=%27%2322c55e%27 opacity=%27.3%27/%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2712%27 fill=%27%2322c55e%27/%3E%3C/svg%3E") 30 30, crosshair !important;
 }
 
 /* Responsividad del Widget */
@@ -415,4 +376,57 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   NUEVAS FUNCIONES AVANZADAS DE ACCESIBILIDAD
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Fuente para Dislexia */
+@import url('https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap');
+
+html[data-a11y-dyslexic="true"],
+html[data-a11y-dyslexic="true"] body,
+html[data-a11y-dyslexic="true"] * {
+    font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+}
+
+/* Espaciado de Texto */
+html[data-a11y-spacing="true"] p,
+html[data-a11y-spacing="true"] span,
+html[data-a11y-spacing="true"] a,
+html[data-a11y-spacing="true"] li,
+html[data-a11y-spacing="true"] div,
+html[data-a11y-spacing="true"] td,
+html[data-a11y-spacing="true"] th {
+    line-height: 2 !important;
+    letter-spacing: 0.12em !important;
+    word-spacing: 0.16em !important;
+}
+
+/* Pausar Animaciones */
+html[data-a11y-animations="false"] *,
+html[data-a11y-animations="false"] *::before,
+html[data-a11y-animations="false"] *::after {
+    animation-play-state: paused !important;
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+}
+
+/* Modo Monocromático (Escala de grises) */
+html[data-a11y-monochrome="true"] {
+    filter: grayscale(100%) !important;
+}
+
+/* Modo Invertir Colores */
+html[data-a11y-invert="true"] {
+    filter: invert(100%) hue-rotate(180deg) !important;
+}
+
+/* Restaurar imágenes y videos cuando se invierten colores */
+html[data-a11y-invert="true"] img,
+html[data-a11y-invert="true"] video,
+html[data-a11y-invert="true"] iframe {
+    filter: invert(100%) hue-rotate(180deg) !important;
 }

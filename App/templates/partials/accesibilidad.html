@@ -95,8 +95,28 @@
       aria-selected="false"
       aria-controls="panel-visualización"
     >
-      <i class="bi bi-eye"></i>
+      <i class="bi bi-palette"></i>
       <span class="d-none d-sm-inline">Color</span>
+    </button>
+    <button
+      class="a11y-tab-btn"
+      id="tab-lectura"
+      role="tab"
+      aria-selected="false"
+      aria-controls="panel-lectura"
+    >
+      <i class="bi bi-book"></i>
+      <span class="d-none d-sm-inline">Lectura</span>
+    </button>
+    <button
+      class="a11y-tab-btn"
+      id="tab-animaciones"
+      role="tab"
+      aria-selected="false"
+      aria-controls="panel-animaciones"
+    >
+      <i class="bi bi-play-circle"></i>
+      <span class="d-none d-sm-inline">Animaciones</span>
     </button>
   </div>
 
@@ -180,40 +200,79 @@
           type="range"
           class="form-range form-range-sm"
           id="sl-saturate"
-          min="30"
+          min="0"
           max="100"
           value="100"
           step="5"
         />
       </div>
 
-      <!-- Cursor grande -->
-      <div class="form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          role="switch"
-          id="tog-cursor"
-        />
-        <label class="form-check-label small" for="tog-cursor">
-          <i class="bi bi-cursor"></i> Cursor grande
-        </label>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="tog-monochrome" />
+            <label class="form-check-label small" for="tog-monochrome"><i class="bi bi-circle-half"></i> Grises</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="tog-invert" />
+            <label class="form-check-label small" for="tog-invert"><i class="bi bi-arrow-down-up"></i> Invertir</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="tog-cursor" />
+            <label class="form-check-label small" for="tog-cursor"><i class="bi bi-cursor"></i> Cursor</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="tog-links" />
+            <label class="form-check-label small" for="tog-links"><i class="bi bi-link-45deg"></i> Enlaces</label>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <!-- Resaltar enlaces -->
-      <div class="form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          role="switch"
-          id="tog-links"
-        />
-        <label class="form-check-label small" for="tog-links">
-          <i class="bi bi-link-45deg"></i> Resaltar enlaces
-        </label>
+    <!-- TAB 3: Lectura -->
+    <div
+      id="panel-lectura"
+      class="a11y-tab-panel"
+      role="tabpanel"
+      aria-labelledby="tab-lectura"
+    >
+      <div class="form-check form-switch mb-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="tog-dyslexic" />
+        <label class="form-check-label small" for="tog-dyslexic"><i class="bi bi-fonts"></i> Fuente Dislexia</label>
+      </div>
+      <div class="form-check form-switch mb-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="tog-spacing" />
+        <label class="form-check-label small" for="tog-spacing"><i class="bi bi-distribute-vertical"></i> Espaciado de Texto</label>
+      </div>
+      <div class="form-check form-switch mb-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="tog-focus" />
+        <label class="form-check-label small" for="tog-focus"><i class="bi bi-align-center"></i> Guía de Lectura</label>
+      </div>
+    </div>
+
+    <!-- TAB 4: Animaciones -->
+    <div
+      id="panel-animaciones"
+      class="a11y-tab-panel"
+      role="tabpanel"
+      aria-labelledby="tab-animaciones"
+    >
+      <div class="form-check form-switch mb-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="tog-animations" />
+        <label class="form-check-label small" for="tog-animations"><i class="bi bi-pause-circle"></i> Pausar Animaciones</label>
       </div>
     </div>
   </div>
+
+  <!-- Contenedor para Guía de Lectura -->
+  <div id="a11y-reading-guide" class="d-none" style="position:fixed; top:50%; left:0; width:100%; height:4px; background:#ffeb3b; z-index:999998; box-shadow: 0 0 10px rgba(0,0,0,0.5); pointer-events:none; transform: translateY(-50%);"></div>
+  <div id="a11y-focus-backdrop" class="d-none" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:999997; pointer-events:none; background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.7) 40%, transparent 40%, transparent 60%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.7) 100%);"></div>
 
   <!-- Footer del Panel -->
   <div
@@ -254,6 +313,12 @@
       saturate: 100,
       bigCursor: false,
       hlLinks: false,
+      dyslexic: false,
+      spacing: false,
+      animations: true,
+      focus: false,
+      monochrome: false,
+      invert: false,
     };
     var s = Object.assign({}, D);
     var _toast = null;
@@ -277,31 +342,7 @@
       } catch (_) {}
     }
 
-    // Paletas de colores para diferentes esquemas
-    var colorSchemes = {
-      auto: {},
-      light: {
-        bg: "#ffffff",
-        text: "#000000",
-        accent: "#0066cc",
-        secondary: "#333333",
-        border: "#cccccc",
-      },
-      dark: {
-        bg: "#1a1a1a",
-        text: "#e0e0e0",
-        accent: "#58a6ff",
-        secondary: "#b0b0b0",
-        border: "#444444",
-      },
-      "high-contrast": {
-        bg: "#000000",
-        text: "#ffffff",
-        accent: "#ffff00",
-        secondary: "#ffffff",
-        border: "#ffffff",
-      },
-    };
+    // Paletas de colores se eliminaron, ahora es manejado por CSS y Bootstrap nativo
 
     // ═══ FUNCIONES DE TABS ═══
     function switchTab(tabName) {
@@ -349,15 +390,6 @@
     function applyFont(v) {
       var baseSize = 16;
       document.documentElement.style.fontSize = (v / 100) * baseSize + "px";
-      
-      // Inmunizar el menú de hamburguesa para que accesibilidad no altere sus proporciones
-      var a11yOffcanvas = document.getElementById("a11y-offcanvas-fix");
-      if (!a11yOffcanvas) {
-        a11yOffcanvas = document.createElement("style");
-        a11yOffcanvas.id = "a11y-offcanvas-fix";
-        document.head.appendChild(a11yOffcanvas);
-      }
-      a11yOffcanvas.textContent = "#menuPremium { font-size: 16px !important; }";
     }
 
     function applySaturate(v) {
@@ -372,87 +404,66 @@
     }
 
     function applyTheme(theme) {
-      var el = document.getElementById("a11y-theme-style");
-      if (!el) {
-        el = document.createElement("style");
-        el.id = "a11y-theme-style";
-        document.head.appendChild(el);
+      document.documentElement.removeAttribute("data-bs-theme");
+      document.documentElement.removeAttribute("data-a11y-theme");
+      
+      if (theme === "light" || theme === "dark") {
+        document.documentElement.setAttribute("data-bs-theme", theme);
+      } else if (theme === "high-contrast") {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+        document.documentElement.setAttribute("data-a11y-theme", "high-contrast");
       }
-
-      document.documentElement.classList.remove(
-        "a11y-theme-light",
-        "a11y-theme-dark",
-        "a11y-theme-high-contrast",
-      );
-      document.body.classList.remove(
-        "a11y-theme-light",
-        "a11y-theme-dark",
-        "a11y-theme-high-contrast",
-      );
-      if (theme === "auto") {
-        el.textContent = "";
-        return;
-      }
-
-      document.documentElement.classList.add("a11y-theme-" + theme);
-      document.body.classList.add("a11y-theme-" + theme);
-      var scheme = colorSchemes[theme] || colorSchemes["dark"];
-      var css =
-        "html, body { background-color: " +
-        scheme.bg +
-        "!important; color: " +
-        scheme.text +
-        "!important; }" +
-        "a, .nav-link, .btn, .form-label, .form-check-label, .badge, .text-muted, .text-secondary { color: " +
-        scheme.text +
-        " !important; }" +
-        "a, .nav-link { color: " +
-        scheme.accent +
-        " !important; }" +
-        ".card, .modal-content, .offcanvas, .dropdown-menu, .navbar, .footer-monagua, .a11y-panel, .a11y-toast, .alert, .table { background-color: " +
-        scheme.bg +
-        " !important; color: " +
-        scheme.text +
-        " !important; border-color: " +
-        scheme.border +
-        " !important; }" +
-        ".btn, .btn-outline-primary, .btn-outline-success, .btn-outline-dark, .btn-outline-secondary, .btn-outline-info { background-color: transparent !important; color: " +
-        scheme.accent +
-        " !important; border-color: " +
-        scheme.accent +
-        " !important; }" +
-        "input, textarea, select, .form-control, .form-select { background-color: " +
-        scheme.bg +
-        " !important; color: " +
-        scheme.text +
-        " !important; border-color: " +
-        scheme.border +
-        " !important; }";
-      el.textContent = css;
     }
 
     function applyBigCursor(on) {
-      var el = document.getElementById("a11y-cursor-style");
-      if (!el) {
-        el = document.createElement("style");
-        el.id = "a11y-cursor-style";
-        document.head.appendChild(el);
+      if (on) {
+        document.documentElement.setAttribute("data-a11y-cursor", "true");
+      } else {
+        document.documentElement.removeAttribute("data-a11y-cursor");
       }
-      el.textContent = on
-        ? 'body,body *{cursor:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2760%27 height=%2760%27%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2728%27 fill=%27%2322c55e%27 opacity=%27.3%27/%3E%3Ccircle cx=%2730%27 cy=%2730%27 r=%2712%27 fill=%27%2322c55e%27/%3E%3C/svg%3E") 30 30,crosshair!important}'
-        : "";
     }
 
     function applyLinks(on) {
-      var el = document.getElementById("a11y-links-style");
-      if (!el) {
-        el = document.createElement("style");
-        el.id = "a11y-links-style";
-        document.head.appendChild(el);
+      if (on) {
+        document.documentElement.setAttribute("data-a11y-links", "true");
+      } else {
+        document.documentElement.removeAttribute("data-a11y-links");
       }
-      el.textContent = on
-        ? "a, .nav-link { text-decoration: underline!important; color: #0066cc!important; font-weight: 600!important; } a:visited { color: #6600cc!important; }"
-        : "";
+    }
+
+    function applyToggleAttr(attr, on) {
+      if (on) {
+        document.documentElement.setAttribute(attr, "true");
+      } else {
+        document.documentElement.removeAttribute(attr);
+      }
+    }
+
+    function applyFocus(on) {
+      var backdrop = document.getElementById("a11y-focus-backdrop");
+      var guide = document.getElementById("a11y-reading-guide");
+      if (backdrop && guide) {
+        if (on) {
+          backdrop.classList.remove("d-none");
+          guide.classList.remove("d-none");
+          document.addEventListener("mousemove", updateFocusPosition);
+        } else {
+          backdrop.classList.add("d-none");
+          guide.classList.add("d-none");
+          document.removeEventListener("mousemove", updateFocusPosition);
+        }
+      }
+    }
+
+    function updateFocusPosition(e) {
+      var backdrop = document.getElementById("a11y-focus-backdrop");
+      var guide = document.getElementById("a11y-reading-guide");
+      if (backdrop && guide) {
+        var y = e.clientY;
+        guide.style.top = y + "px";
+        var perc = (y / window.innerHeight) * 100;
+        backdrop.style.background = "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.7) calc(" + perc + "% - 50px), transparent calc(" + perc + "% - 50px), transparent calc(" + perc + "% + 50px), rgba(0,0,0,0.7) calc(" + perc + "% + 50px), rgba(0,0,0,0.7) 100%)";
+      }
     }
 
     function syncUI() {
@@ -474,12 +485,26 @@
       var selTheme = document.getElementById("sel-theme");
       if (selTheme) selTheme.value = s.theme;
 
-      ["tog-cursor", "tog-links"].forEach(function (id) {
+      ["tog-cursor", "tog-links", "tog-dyslexic", "tog-spacing", "tog-focus", "tog-monochrome", "tog-invert"].forEach(function (id) {
         var el = document.getElementById(id);
         if (!el) return;
-        var key = { "tog-cursor": "bigCursor", "tog-links": "hlLinks" }[id];
+        var key = { 
+          "tog-cursor": "bigCursor", 
+          "tog-links": "hlLinks",
+          "tog-dyslexic": "dyslexic",
+          "tog-spacing": "spacing",
+          "tog-focus": "focus",
+          "tog-monochrome": "monochrome",
+          "tog-invert": "invert"
+        }[id];
         el.checked = s[key];
       });
+
+      var togAnim = document.getElementById("tog-animations");
+      if (togAnim) {
+        // tog-animations is "Pause animations" so if s.animations is true (animations enabled), checkbox is false
+        togAnim.checked = !s.animations;
+      }
     }
 
     function showToast(msg) {
@@ -530,6 +555,12 @@
       applySaturate(100);
       applyBigCursor(false);
       applyLinks(false);
+      applyToggleAttr("data-a11y-dyslexic", false);
+      applyToggleAttr("data-a11y-spacing", false);
+      applyToggleAttr("data-a11y-animations", true);
+      applyToggleAttr("data-a11y-monochrome", false);
+      applyToggleAttr("data-a11y-invert", false);
+      applyFocus(false);
       syncUI();
       showToast("Todas las opciones restablecidas ✓");
     }
@@ -546,6 +577,12 @@
       applySaturate(s.saturate);
       applyBigCursor(s.bigCursor);
       applyLinks(s.hlLinks);
+      applyToggleAttr("data-a11y-dyslexic", s.dyslexic);
+      applyToggleAttr("data-a11y-spacing", s.spacing);
+      applyToggleAttr("data-a11y-animations", s.animations);
+      applyToggleAttr("data-a11y-monochrome", s.monochrome);
+      applyToggleAttr("data-a11y-invert", s.invert);
+      applyFocus(s.focus);
       syncUI();
 
       // ═══ INICIALIZAR TABS ═══
@@ -635,10 +672,47 @@
           s.hlLinks = e.target.checked;
           applyLinks(s.hlLinks);
           save();
-          showToast(
-            s.hlLinks ? "🔗 Enlaces resaltados" : "🔗 Enlaces normales",
-          );
+          showToast(s.hlLinks ? "🔗 Enlaces resaltados" : "🔗 Enlaces normales");
         });
+
+      // Nuevas opciones avanzadas
+      function bindToggleAttr(id, key, attr, icon, msgOn, msgOff) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.addEventListener("change", function (e) {
+            s[key] = e.target.checked;
+            applyToggleAttr(attr, s[key]);
+            save();
+            showToast(icon + " " + (s[key] ? msgOn : msgOff));
+          });
+        }
+      }
+
+      bindToggleAttr("tog-dyslexic", "dyslexic", "data-a11y-dyslexic", "🔤", "Fuente dislexia activada", "Fuente normal");
+      bindToggleAttr("tog-spacing", "spacing", "data-a11y-spacing", "📏", "Espaciado aumentado", "Espaciado normal");
+      bindToggleAttr("tog-monochrome", "monochrome", "data-a11y-monochrome", "⚫", "Modo escala de grises", "Color restaurado");
+      bindToggleAttr("tog-invert", "invert", "data-a11y-invert", "🔄", "Colores invertidos", "Colores restaurados");
+
+      var togFocus = document.getElementById("tog-focus");
+      if (togFocus) {
+        togFocus.addEventListener("change", function(e) {
+          s.focus = e.target.checked;
+          applyFocus(s.focus);
+          save();
+          showToast("🎯 Guía de lectura " + (s.focus ? "activada" : "desactivada"));
+        });
+      }
+
+      var togAnim = document.getElementById("tog-animations");
+      if (togAnim) {
+        togAnim.addEventListener("change", function(e) {
+          // togAnim is true when animations are PAUSED
+          s.animations = !e.target.checked; 
+          applyToggleAttr("data-a11y-animations", s.animations);
+          save();
+          showToast("⏸️ Animaciones " + (e.target.checked ? "pausadas" : "reanudadas"));
+        });
+      }
 
       // Botón reset
       var btnReset = document.getElementById("btn-reset");
