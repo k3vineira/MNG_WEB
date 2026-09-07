@@ -8,8 +8,12 @@ from App.views.notificacion import views as notificacion_views
 from App.views.bitacora import views as bitacora_views
 from App.views.accesibilidad import views as accesibilidad_views
 from App.views.blog import views as blog_views
+from App.views.usuario import views as usuario_views
 
 urlpatterns = [
+    # Panel Rápido (Turista / Cliente)
+    path('panel-rapido/', usuario_views.panel_rapido_view, name='panel_rapido'),
+
     # Accesibilidad API
     path('api/accesibilidad/save/', accesibilidad_views.guardar_accesibilidad, name='guardar_accesibilidad'),
 
