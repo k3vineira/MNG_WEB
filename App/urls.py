@@ -7,6 +7,7 @@ from App.views.terminos_y_condiciones import views as terminos_views
 from App.views.notificacion import views as notificacion_views
 from App.views.bitacora import views as bitacora_views
 from App.views.accesibilidad import views as accesibilidad_views
+from App.views.blog import views as blog_views
 
 urlpatterns = [
     # Accesibilidad API
@@ -38,8 +39,15 @@ urlpatterns = [
     path('reservas/comprobante-multiple/', reserva_views.comprobante_multiple, name='comprobante_multiple'),
 
     # Blog
-    # path('blog/', views.blog_list, name='blog'),
+    path('blog/', blog_views.blog, name='blog'),
+    path('blog/detalle/<int:id>/', blog_views.detalle_blog, name='detalle_blog'),
     
+    # Blog (Administración / Staff)
+    path('admin/blog/', blog_views.BlogListView.as_view(), name='listar_blog'),
+    path('admin/blog/agregar/', blog_views.BlogCreateView.as_view(), name='crear_blog'),
+    path('admin/blog/editar/<int:pk>/', blog_views.BlogUpdateView.as_view(), name='editar_blog'),
+    path('admin/blog/eliminar/<int:pk>/', blog_views.BlogDeleteView.as_view(), name='eliminar_blog'),
+
     # Pagos (Usuario / Turista)
     path('pagos/enviar-comprobante/', pago_views.enviar_comprobante, name='enviar_comprobante'),
     path('pagos/mis-comprobantes/', pago_views.mis_comprobantes, name='mis_comprobantes'),

@@ -16,13 +16,12 @@ def blog(request):
     page_number = request.GET.get('page')
     blogs = paginator.get_page(page_number)
     context = {'blogs': blogs}
-    return render(request, 'admin/blog/blog.html', context)
-
+    return render(request, 'blog.html', context)
 
 def detalle_blog(request, id):
     post = get_object_or_404(Blog, id=id)
     context = {'post': post}
-    return render(request, 'admin/blog/detalle_blog.html', context)
+    return render(request, 'detalle_blog.html', context)
 
 # BLOG
 
