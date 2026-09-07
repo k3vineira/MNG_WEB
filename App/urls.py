@@ -37,6 +37,9 @@ urlpatterns = [
     path('reservas/comprobante/<int:reserva_id>/', reserva_views.comprobante_reserva_html, name='comprobante_reserva'),
     path('reservas/comprobante-multiple/', reserva_views.comprobante_multiple, name='comprobante_multiple'),
 
+    # Blog
+    # path('blog/', views.blog_list, name='blog'),
+    
     # Pagos (Usuario / Turista)
     path('pagos/enviar-comprobante/', pago_views.enviar_comprobante, name='enviar_comprobante'),
     path('pagos/mis-comprobantes/', pago_views.mis_comprobantes, name='mis_comprobantes'),
