@@ -436,6 +436,13 @@ class Reserva(models.Model):
             self.monto_total = 0.00
 
         super().save(*args, **kwargs)
+    
+    def __str__(self):
+        nombre_paquete = self.paquete.nombre if self.paquete and hasattr(self.paquete, 'nombre') else str(self.paquete)
+        if self.fecha_inicio:
+            fecha_str = self.fecha_inicio.strftime('%d/%m/%Y')
+            return f"Reserva #{self.id} - {nombre_paquete} ({fecha_str})"
+        return f"Reserva #{self.id} - {nombre_paquete}"
 
 # ==============================================================================
 # PQRS

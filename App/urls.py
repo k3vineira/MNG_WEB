@@ -8,6 +8,7 @@ from App.views.notificacion import views as notificacion_views
 from App.views.bitacora import views as bitacora_views
 from App.views.accesibilidad import views as accesibilidad_views
 from App.views.blog import views as blog_views
+from App.views.pqrs.views import PQRSListView, contestar_pqrs, mis_pqrs_view, guardar_pqrs, pqrs
 
 urlpatterns = [
     # Accesibilidad API
@@ -65,6 +66,17 @@ urlpatterns = [
     path('admin/reservas/', reserva_views.ReservaListView.as_view(), name='listar_reservas'),
     path('admin/reservas/agregar/', reserva_views.ReservaCreateView.as_view(), name='agregar_reserva'),
     path('admin/reservas/editar/<int:pk>/', reserva_views.ReservaUpdateView.as_view(), name='editar_reserva'),
-    path('admin/reservas/eliminar/<int:pk>/', reserva_views.ReservaDeleteView.as_view(), name='eliminar_reserva'),
+    path('admin/reservas/eliminar/<int:pk>/', reserva_views.ReservaDeleteView.as_view(), name='eliminar_reserva'), 
     path('admin/reservas/cambiar-estado/<int:reserva_id>/', reserva_views.cambiar_estado_reserva, name='cambiar_estado_reserva'),
+
+
+
+    # PQRS
+    path('gestion/pqrs/', PQRSListView.as_view(), name='listar_pqrs'),
+    path('gestion/pqrs/contestar/<int:pqrs_id>/', contestar_pqrs, name='contestar_pqrs'),
+    path('mis_pqrs/', mis_pqrs_view, name='mis_pqrs'),
+    path('pqrs/guardar/', guardar_pqrs, name='guardar_pqrs'),
+    path('pqrs/', pqrs, name='pqrs'),
+
 ]
+

@@ -254,7 +254,7 @@ def mis_reservas_usuario(request):
     context = {
         'reservas': mis_reservas
     }
-    return render(request, 'usuario/reserva/mis_reservas.html', context)
+    return render(request, 'admin/reserva/mis_reservas.html', context)
 
 
 @login_required(login_url='login')
@@ -325,7 +325,7 @@ def reservas_view(request):
 
     return render(
         request,
-        'usuario/reserva/reservas.html',
+        'admin/reserva/reservas.html',
         context
     )
 

@@ -59,7 +59,6 @@
             <div class="collapse {% if 'mis_reservas_usuario' in request.resolver_match.url_name or 'mis_cancelaciones_usuario' in request.resolver_match.url_name or 'mis_rechazos' in request.resolver_match.url_name or 'mis_comprobantes' in request.resolver_match.url_name or 'mis_facturas' in request.resolver_match.url_name %}show{% endif %}" id="menuViajes" data-bs-parent="#turistaAccordion">
               <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_reservas_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar-check-fill me-1"></i> Mis Reservas</a></li>
-                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_cancelaciones_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-circle-fill me-1"></i> Mis Cancelaciones</a></li>
                 <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_rechazos' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon-fill text-danger me-1"></i> Mis Rechazos</a></li>
                 <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_comprobantes' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-wallet2 me-1"></i> Mis Comprobantes</a></li>
                 <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_facturas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-file-earmark-ruled me-1"></i> Mis Facturas</a></li>
@@ -153,7 +152,6 @@
             <ul class="dropdown-menu dropdown-menu-dark shadow">
               <li><h6 class="dropdown-header text-success text-uppercase small">Mis Viajes</h6></li>
               <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_reservas_usuario' %}active bg-success{% endif %}" href="#"><i class="bi bi-calendar-check-fill me-2"></i>Mis Reservas</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_cancelaciones_usuario' %}active bg-success{% endif %}" href="#"><i class="bi bi-x-circle-fill me-2"></i>Mis Cancelaciones</a></li>
               <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_rechazos' %}active bg-danger{% endif %}" href="#"><i class="bi bi-x-octagon-fill text-danger me-2"></i>Mis Rechazos</a></li>
               <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_comprobantes' %}active bg-success{% endif %}" href="#"><i class="bi bi-wallet2 me-2"></i>Mis Comprobantes</a></li>
               <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_facturas' %}active bg-success{% endif %}" href="#"><i class="bi bi-file-earmark-ruled me-2"></i>Mis Facturas</a></li>
