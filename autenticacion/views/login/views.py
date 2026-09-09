@@ -14,7 +14,7 @@ def login_vista(request):
     """
     if request.user.is_authenticated:
         if request.user.is_staff or getattr(request.user, 'rol', None) == Usuario.Roles.ADMIN:
-            return redirect('listar_reservas')
+            return redirect('dashboard_admin')
         elif getattr(request.user, 'es_turista', False):
             return redirect('panel_rapido')
         return redirect('tours')
@@ -46,7 +46,7 @@ def login_vista(request):
                             return redirect(next_url)
                         
                         if user.is_staff or getattr(user, 'rol', None) == Usuario.Roles.ADMIN:
-                            return redirect('listar_reservas')
+                            return redirect('dashboard_admin')
                         elif getattr(user, 'es_turista', False):
                             return redirect('panel_rapido')
                         return redirect('tours')
