@@ -82,10 +82,11 @@ urlpatterns = [
     path('admin/estadisticas/', dashboard_views.estadisticas_admin, name='estadisticas_admin'),
     path('admin/perfil/', dashboard_views.perfil_admin, name='admin_perfil'),
 
-    # Calificaciones (Administración / Staff)
+    # Calificaciones (Administración / Staff & Turista / Cliente)
     path('admin/calificaciones/', calificacion_views.listar_calificaciones_admin, name='listar_calificaciones'),
     path('admin/calificaciones/toggle-visible/<int:pk>/', calificacion_views.toggle_visible_calificacion, name='toggle_visible_calificacion'),
     path('admin/calificaciones/responder/<int:pk>/', calificacion_views.responder_calificacion, name='responder_calificacion'),
+    path('calificaciones/mis-calificaciones/', calificacion_views.mis_calificaciones, name='mis_calificaciones'),
 
     # PQRS
     path('gestion/pqrs/', PQRSListView.as_view(), name='listar_pqrs'),

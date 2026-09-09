@@ -3,25 +3,24 @@
 {% block footer %}{% endblock %}
 
 {% block content %}
- <div class="container-fluid pt-1 pb-2 px-4 u-style-ed958017">
+<div class="container-fluid pt-1 pb-2 px-4 u-style-ed958017">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item fs-5 fw-semibold">
-                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none u-style-fea21948">Inicio</a>
+                <a href="{% url 'index' %}" class="text-dark text-decoration-none u-style-fea21948">Inicio</a>
             </li>
             <li class="breadcrumb-item active fs-5 fw-bold u-style-fea21948" aria-current="page">
-                Reseñas
+                Calificaciones
             </li>
         </ol>
     </nav>
 </div>
+
 <div class="container py-5 mt-5 u-style-10efeeeb">
 
-
-
   <div class="mb-5">
-    <h1 class="fw-bold mb-1">Reseñas</h1>
-    <p class="text-muted">Cuenta cómo fue tu experiencia con Monagua.</p>
+    <h1 class="fw-bold mb-1">Calificaciones</h1>
+    <p class="text-muted">Comparte y revisa las experiencias y calificaciones con Monagua.</p>
   </div>
 
   {% if stats.total %}
@@ -31,7 +30,7 @@
         <div class="col-12 col-md-3 text-center border-end">
           <div class="display-4 fw-bold text-success">{{ stats.promedio|floatformat:1 }}</div>
           <div class="text-warning fs-5 my-1">★★★★★</div>
-          <small class="text-muted">{{ stats.total }} reseña{{ stats.total|pluralize }}</small>
+          <small class="text-muted">{{ stats.total }} calificación{{ stats.total|pluralize:"es" }}</small>
         </div>
         <div class="col-12 col-md-9">
           {% for i in "54321" %}
@@ -55,10 +54,10 @@
     <div class="col-12 col-lg-7">
       <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
-          <h5 class="fw-bold mb-1"><i class="bi bi-pencil-square text-success me-2"></i>Nueva Reseña</h5>
-          <p class="text-muted small mb-4">Tu opinión ayuda a otros viajeros.</p>
+          <h5 class="fw-bold mb-1"><i class="bi bi-star-half text-success me-2"></i>Nueva Calificación</h5>
+          <p class="text-muted small mb-4">Tu valoración ayuda a otros viajeros a elegir su próxima aventura.</p>
 
-          <form method="post" action="{% url 'mis_resenas' %}" novalidate>
+          <form method="post" action="{% url 'mis_calificaciones' %}" novalidate>
             {% csrf_token %}
 
             <div class="mb-3">
@@ -80,10 +79,10 @@
                   {% endif %}
                 </optgroup>
               </select>
-              <div class="form-text text-muted">Solo puedes reseñar paquetes que hayas reservado y confirmado.</div>
+              <div class="form-text text-muted">Solo puedes calificar paquetes que hayas reservado y confirmado.</div>
               {% if not paquetes_reservados %}
               <div class="alert alert-warning rounded-3 mt-3 mb-0 py-2" role="alert">
-                No tienes paquetes confirmados disponibles para reseñar. Visita <a href="{% url 'mis_reservas_usuario' %}" class="alert-link">Mis Reservas</a> y confirma tu reserva para poder enviar una reseña del paquete correspondiente.
+                No tienes paquetes confirmados disponibles para calificar. Visita <a href="{% url 'mis_reservas_usuario' %}" class="alert-link">Mis Reservas</a> y confirma tu reserva para calificar el servicio.
               </div>
               {% endif %}
             </div>
@@ -91,34 +90,34 @@
             <div class="mb-3">
               <label class="form-label fw-medium small" for="id_titulo">Título</label>
               <input type="text" name="titulo" id="id_titulo" class="form-control rounded-3"
-                placeholder="Resumen de tu experiencia" required maxlength="150">
+                placeholder="Resumen de tu experiencia (ej: ¡Excelente viaje!)" required maxlength="150">
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-medium small" for="id_mensaje">Tu experiencia</label>
+              <label class="form-label fw-medium small" for="id_comentario">Comentario de tu experiencia</label>
               <!-- LÍMITE: max 500 caracteres con contador -->
-              <textarea name="mensaje" id="id_mensaje" class="form-control rounded-3" rows="4"
-                placeholder="Cuéntanos los detalles…" required maxlength="500"></textarea>
+              <textarea name="comentario" id="id_comentario" class="form-control rounded-3" rows="4"
+                placeholder="Cuéntanos los detalles de tu experiencia con Monagua…" required maxlength="500"></textarea>
               <div class="d-flex justify-content-end mt-1">
                 <small class="text-muted" id="char-count">0 / 500</small>
               </div>
             </div>
 
             <div class="mb-4">
-              <label class="form-label fw-medium small d-block">Valoración general</label>
+              <label class="form-label fw-medium small d-block">Puntaje / Valoración</label>
               <div class="d-flex gap-2 fs-3" id="starGeneral">
-                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="1"></i>
-                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="2"></i>
-                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="3"></i>
-                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="4"></i>
-                <i class="bi bi-star text-warning star-btn u-style-b202c6d4" data-val="5"></i>
+                <i class="bi bi-star-fill text-warning star-btn u-style-b202c6d4" data-val="1"></i>
+                <i class="bi bi-star-fill text-warning star-btn u-style-b202c6d4" data-val="2"></i>
+                <i class="bi bi-star-fill text-warning star-btn u-style-b202c6d4" data-val="3"></i>
+                <i class="bi bi-star-fill text-warning star-btn u-style-b202c6d4" data-val="4"></i>
+                <i class="bi bi-star-fill text-warning star-btn u-style-b202c6d4" data-val="5"></i>
               </div>
-              <input type="hidden" name="valoracion" id="id_valoracion" value="5">
+              <input type="hidden" name="puntaje_estrellas" id="id_puntaje_estrellas" value="5">
             </div>
 
-            <button type="submit" class="btn btn-success w-100 rounded-3 py-2 fw-bold" {% if not paquetes_reservados %}disabled title="Para enviar una reseña debes tener al menos una reserva confirmada"{% endif %}>
+            <button type="submit" class="btn btn-success w-100 rounded-3 py-2 fw-bold" {% if not paquetes_reservados %}disabled title="Para enviar una calificación debes tener al menos una reserva confirmada"{% endif %}>
               <i class="bi bi-send-fill me-2"></i>
-              {% if paquetes_reservados %}Enviar Reseña{% else %}No puedes enviar reseña aún{% endif %}
+              {% if paquetes_reservados %}Enviar Calificación{% else %}No puedes calificar aún{% endif %}
             </button>
           </form>
         </div>
@@ -128,47 +127,47 @@
     <div class="col-12 col-lg-5">
       <div class="card border-0 shadow-sm rounded-4 h-100">
         <div class="card-body p-4">
-          <h5 class="fw-bold mb-1"><i class="bi bi-clock-history text-secondary me-2"></i>Mis Reseñas</h5>
-          <p class="text-muted small mb-3">Últimas enviadas.</p>
+          <h5 class="fw-bold mb-1"><i class="bi bi-clock-history text-secondary me-2"></i>Mis Calificaciones</h5>
+          <p class="text-muted small mb-3">Tus valoraciones y comentarios registrados.</p>
 
-          {% if mis_resenas %}
-          {% for r in mis_resenas %}
+          {% if mis_calificaciones %}
+          {% for c in mis_calificaciones %}
           <div class="border-bottom pb-3 mb-3">
             <div class="d-flex justify-content-between align-items-start mb-1 gap-2">
-              <span class="fw-semibold small text-truncate u-style-a497ea78">{{ r.titulo }}</span>
+              <span class="fw-semibold small text-truncate u-style-a497ea78">{{ c.titulo }}</span>
               <span
-                class="badge rounded-pill flex-shrink-0 {% if r.visible %}bg-success bg-opacity-25 text-success{% else %}bg-warning bg-opacity-25 text-warning{% endif %} u-style-8cba01a2">
-                {% if r.visible %}Publicada{% else %}En revisión{% endif %}
+                class="badge rounded-pill flex-shrink-0 {% if c.visible %}bg-success bg-opacity-25 text-success{% else %}bg-warning bg-opacity-25 text-warning{% endif %} u-style-8cba01a2">
+                {% if c.visible %}Publicada{% else %}En revisión{% endif %}
               </span>
             </div>
-            {% if r.paquete %}
+            {% if c.paquete %}
               <div class="small text-success mb-1 u-style-4dc05622">
-                <i class="bi bi-compass-fill me-1"></i>{{ r.paquete.nombre }}
+                <i class="bi bi-compass-fill me-1"></i>{{ c.paquete.nombre }}
               </div>
             {% endif %}
-            <!-- LÍMITE: truncatechars para el mensaje -->
+            <!-- LÍMITE: truncatechars para el comentario -->
             <p class="text-muted small mb-1 u-style-c69eaeed">
-              {{ r.mensaje|truncatechars:90 }}
+              {{ c.comentario|truncatechars:90 }}
             </p>
-            {% if r.admin_respuesta %}
-            <div class="bg-light rounded-3 p-3 mb-2">
-              <strong class="small text-success">Respuesta del administrador:</strong>
-              <p class="small text-secondary mb-0">{{ r.admin_respuesta|truncatechars:140 }}</p>
+            {% if c.admin_respuesta %}
+            <div class="bg-light rounded-3 p-3 mb-2 border-start border-success border-3">
+              <strong class="small text-success"><i class="bi bi-reply-fill me-1"></i>Respuesta del administrador:</strong>
+              <p class="small text-secondary mb-0">{{ c.admin_respuesta|truncatechars:140 }}</p>
             </div>
             {% endif %}
             <div class="d-flex justify-content-between align-items-center">
               <span class="text-warning small">
-                {% for s in r.estrellas %}★{% endfor %}{% for s in r.estrellas_vacias %}<span
+                {% for s in c.estrellas %}★{% endfor %}{% for s in c.estrellas_vacias %}<span
                   class="text-muted">★</span>{% endfor %}
               </span>
-              <span class="text-muted u-style-bc9efe64">{{ r.fecha_creacion|date:"d M Y" }}</span>
+              <span class="text-muted u-style-bc9efe64">{{ c.fecha_calificacion|date:"d M Y" }}</span>
             </div>
           </div>
           {% endfor %}
           {% else %}
           <div class="text-center py-5 text-muted">
             <i class="bi bi-star d-block mb-2 fs-2"></i>
-            <small>Aún no has enviado reseñas.</small>
+            <small>Aún no has enviado calificaciones.</small>
           </div>
           {% endif %}
         </div>
@@ -180,41 +179,47 @@
   <!-- SECCIÓN COMUNIDAD CON PAGINACIÓN JS (cada 5) -->
   <div class="mt-5">
     <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-      <h3 class="fs-4 fw-bold mb-0 text-success">Reseñas de la comunidad</h3>
-      {% if stats.total %}<span class="text-muted small">{{ stats.total }} reseña{{ stats.total|pluralize }}</span>{% endif %}
+      <h3 class="fs-4 fw-bold mb-0 text-success">Calificaciones de la comunidad</h3>
+      {% if stats.total %}<span class="text-muted small">{{ stats.total }} calificación{{ stats.total|pluralize:"es" }}</span>{% endif %}
     </div>
 
-    <div id="resenas-container">
-      {% for r in resenas_publicas %}
-      <div class="resena-item col-12 border-bottom py-4 u-style-cb458930">
+    <div id="calificaciones-container">
+      {% for c in calificaciones_publicas %}
+      <div class="calificacion-item col-12 border-bottom py-4 u-style-cb458930">
         <div class="d-flex gap-3 align-items-center mb-2 flex-wrap">
           <img
-            src="{% if r.usuario.imagen_perfil %}{{ r.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
+            src="{% if c.usuario and c.usuario.imagen_perfil %}{{ c.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
             class="rounded-circle flex-shrink-0 u-style-a2bbb072" width="40" height="40">
           <div class="flex-grow-1 min-width-0">
-            <h6 class="mb-0 fw-bold text-truncate">{{ r.usuario.get_full_name|default:r.usuario.username }}</h6>
-            <small class="text-muted">{{ r.fecha_creacion|date:"d M, Y" }}</small>
+            <h6 class="mb-0 fw-bold text-truncate">{{ c.usuario.get_full_name|default:c.usuario.username|default:"Turista" }}</h6>
+            <small class="text-muted">{{ c.fecha_calificacion|date:"d M, Y" }}</small>
           </div>
           <div class="d-flex align-items-center gap-2 ms-auto flex-shrink-0">
             <span class="text-warning small">
-              {% for s in r.estrellas %}★{% endfor %}{% for s in r.estrellas_vacias %}<span
+              {% for s in c.estrellas %}★{% endfor %}{% for s in c.estrellas_vacias %}<span
                 class="text-muted">★</span>{% endfor %}
             </span>
           </div>
         </div>
-        <h6 class="fw-semibold mb-1">{{ r.titulo }}</h6>
-        <!-- LÍMITE: mensaje cortado con "ver más" si es largo -->
+        <h6 class="fw-semibold mb-1">{{ c.titulo }}</h6>
+        <!-- LÍMITE: comentario cortado -->
         <p class="text-secondary mb-2 u-style-e20e94e2">
-          {{ r.mensaje|truncatechars:200 }}
+          {{ c.comentario|truncatechars:200 }}
         </p>
+        {% if c.admin_respuesta %}
+        <div class="bg-light rounded-3 p-3 mt-2 mb-2 border-start border-success border-3">
+          <strong class="small text-success"><i class="bi bi-reply-fill me-1"></i>Respuesta de Monagua:</strong>
+          <p class="small text-secondary mb-0">{{ c.admin_respuesta }}</p>
+        </div>
+        {% endif %}
         <span class="badge rounded-pill bg-primary bg-opacity-25 text-primary u-style-8cba01a2">
-          {% if r.paquete %}{{ r.paquete.nombre }}{% else %}{{ r.get_tipo_display }}{% endif %}
+          {% if c.paquete %}{{ c.paquete.nombre }}{% else %}{{ c.get_tipo_display|default:c.tipo|title }}{% endif %}
         </span>
       </div>
       {% empty %}
       <div class="text-center py-5">
         <i class="bi bi-star fs-1 text-muted"></i>
-        <p class="text-muted mt-2">Aún no hay reseñas públicas.</p>
+        <p class="text-muted mt-2">Aún no hay calificaciones públicas.</p>
       </div>
       {% endfor %}
     </div>
@@ -231,11 +236,11 @@
   const distribucionData = {
     {% if distribucion %} {% for k, v in distribucion.items %} "{{ k }}": {{ v }} {% if not forloop.last %}, {% endif %} {% endfor %} {% endif %}
   };
-  const totalResenas = {{ stats.total|default:"0" }};
-  if (totalResenas > 0) {
+  const totalCalificaciones = {{ stats.total|default:"0" }};
+  if (totalCalificaciones > 0) {
     for (let i = 1; i <= 5; i++) {
       const cnt = distribucionData[i] || 0;
-      const pct = Math.round((cnt / totalResenas) * 100);
+      const pct = Math.round((cnt / totalCalificaciones) * 100);
       const bar = document.getElementById('bar-' + i);
       const label = document.getElementById('cnt-' + i);
       if (bar) bar.style.width = pct + '%';
@@ -248,18 +253,18 @@
     const container = document.getElementById('starGeneral');
     if (!container) return;
     const stars = container.querySelectorAll('.star-btn');
-    const input = document.getElementById('id_valoracion');
+    const input = document.getElementById('id_puntaje_estrellas');
     const paint = (upTo) => stars.forEach((s, i) => { s.classList.toggle('bi-star-fill', i < upTo); s.classList.toggle('bi-star', i >= upTo); });
-    paint(parseInt(input.value) || 0);
+    paint(parseInt(input.value) || 5);
     stars.forEach((star, idx) => {
       star.addEventListener('click', () => { input.value = idx + 1; paint(idx + 1); });
       star.addEventListener('mouseover', () => paint(idx + 1));
-      star.addEventListener('mouseout', () => paint(parseInt(input.value) || 0));
+      star.addEventListener('mouseout', () => paint(parseInt(input.value) || 5));
     });
   })();
 
   /* ── Contador de caracteres ── */
-  const textarea = document.getElementById('id_mensaje');
+  const textarea = document.getElementById('id_comentario');
   const charCount = document.getElementById('char-count');
   if (textarea && charCount) {
     textarea.addEventListener('input', () => {
@@ -270,10 +275,10 @@
     });
   }
 
-  /* ── Paginación de reseñas (5 por página) ── */
+  /* ── Paginación de calificaciones (5 por página) ── */
   (function () {
     const PER_PAGE = 5;
-    const items = Array.from(document.querySelectorAll('.resena-item'));
+    const items = Array.from(document.querySelectorAll('.calificacion-item'));
     const controls = document.getElementById('pagination-controls');
     if (!items.length || !controls) return;
 
@@ -287,8 +292,6 @@
         el.style.display = (idx >= start && idx < start + PER_PAGE) ? 'block' : 'none';
       });
       renderControls();
-      // Scroll suave al inicio de la sección
-      document.getElementById('resenas-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function renderControls() {
@@ -300,7 +303,10 @@
       prev.className = 'btn btn-sm btn-outline-secondary rounded-3';
       prev.innerHTML = '<i class="bi bi-chevron-left"></i>';
       prev.disabled = currentPage === 1;
-      prev.addEventListener('click', () => showPage(currentPage - 1));
+      prev.addEventListener('click', () => {
+        showPage(currentPage - 1);
+        document.getElementById('calificaciones-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
       controls.appendChild(prev);
 
       // Páginas numeradas
@@ -308,7 +314,10 @@
         const btn = document.createElement('button');
         btn.className = 'btn btn-sm rounded-3 ' + (p === currentPage ? 'btn-success' : 'btn-outline-secondary');
         btn.textContent = p;
-        btn.addEventListener('click', () => showPage(p));
+        btn.addEventListener('click', () => {
+          showPage(p);
+          document.getElementById('calificaciones-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
         controls.appendChild(btn);
       }
 
@@ -317,7 +326,10 @@
       next.className = 'btn btn-sm btn-outline-secondary rounded-3';
       next.innerHTML = '<i class="bi bi-chevron-right"></i>';
       next.disabled = currentPage === totalPages;
-      next.addEventListener('click', () => showPage(currentPage + 1));
+      next.addEventListener('click', () => {
+        showPage(currentPage + 1);
+        document.getElementById('calificaciones-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
       controls.appendChild(next);
     }
 

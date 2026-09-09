@@ -39,14 +39,14 @@
       </li>
       <li>
         <a
-          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
-          href="{##}"
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2 {% if request.resolver_match.url_name == 'mis_calificaciones' %}active text-success{% endif %}"
+          href="{% url 'mis_calificaciones' %}"
           ><i class="bi bi-star-fill me-1"></i>CALIFICACIONES</a
         >
       </li>
       <li>
         <a
-          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2 {% if request.resolver_match.url_name == 'nosotros' %}active text-success{% endif %}"
           href="{% url 'nosotros' %}"
           target="_blank"
           ><i class="bi bi-people me-1"></i>NOSOTROS</a
@@ -54,7 +54,7 @@
       </li>
       <li>
         <a
-          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          class="navbar-glass__link nav-link text-dark small fw-bold px-2 {% if request.resolver_match.url_name == 'blog' %}active text-success{% endif %}"
           href="{% url 'blog' %}"
           ><i class="bi bi-journal-text me-1"></i>BLOG</a
         >
@@ -106,7 +106,7 @@
       {% if not user.is_authenticated or user.rol != 'ADMIN' %}
       <a
         class="btn btn-link text-dark p-2 position-relative shadow-none"
-        href="#"
+        href="{% url 'carrito' %}"
       >
         <i class="bi bi-cart3 fs-5"></i>
       </a>

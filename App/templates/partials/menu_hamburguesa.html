@@ -142,13 +142,29 @@
                 <i class="bi bi-star-fill me-2"></i>Mis Calificaciones
               </a>
             </li>
-            {% endif %} {# Turista / Viajero #} {% if user.rol == 2 %}
+            {% endif %} {# Turista / Viajero #} {% if user.es_turista or user.rol == 2 or user.rol == 'TURISTA' %}
             <li>
               <a
                 class="menu-hamburguesa-premium__secondary-link"
                 href="{% url 'mis_reservas_usuario' %}"
               >
                 <i class="bi bi-calendar2-check me-2"></i>Mis Reservas
+              </a>
+            </li>
+            <li>
+              <a
+                class="menu-hamburguesa-premium__secondary-link"
+                href="{% url 'mis_calificaciones' %}"
+              >
+                <i class="bi bi-star-fill me-2"></i>Mis Calificaciones
+              </a>
+            </li>
+            <li>
+              <a
+                class="menu-hamburguesa-premium__secondary-link"
+                href="{% url 'mis_pqrs' %}"
+              >
+                <i class="bi bi-envelope me-2"></i>Mis PQRS
               </a>
             </li>
             <li>
