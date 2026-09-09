@@ -16,7 +16,7 @@
 
 <!-- Acción Común: Mi Perfil -->
 <li>
-  <a class="dropdown-item py-2 fw-bold text-dark" href="#">
+  <a class="dropdown-item py-2 fw-bold text-dark" href="{% if user.is_staff or user.is_superuser %}{% url 'admin_perfil' %}{% else %}#{% endif %}">
     <i class="bi bi-person-vcard me-2"></i>Mi Perfil
   </a>
 </li>
@@ -25,7 +25,7 @@
 <!-- Opciones por Rol -->
 {% if user.is_staff or user.is_superuser %}
 <li>
-  <a class="dropdown-item py-2 fw-bold text-primary" href="#"
+  <a class="dropdown-item py-2 fw-bold text-primary" href="{% url 'dashboard_admin' %}"
     ><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a
   >
 </li>
