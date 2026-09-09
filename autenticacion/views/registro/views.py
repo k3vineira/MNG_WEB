@@ -23,7 +23,7 @@ def registro_vista(request):
     """
     if request.user.is_authenticated:
         if request.user.is_staff or getattr(request.user, 'rol', None) == Usuario.Roles.ADMIN:
-            return redirect('listar_reservas')
+            return redirect('dashboard_admin')
         elif getattr(request.user, 'es_turista', False):
             return redirect('panel_rapido')
         return redirect('panel_rapido')

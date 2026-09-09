@@ -208,9 +208,15 @@
                                         data-bs-target="#modalActividades-{{ tour.id }}">
                                     Detalles
                                 </button>
-                                <a href="{% url 'reservas' %}?paquete_id={{ tour.id }}" class="btn btn-success btn-lg w-100 rounded-pill fw-bold fs-6">
-                                    RESERVAR
-                                </a>
+                                {% if not user.is_authenticated or user.es_turista %}
+                                    <a href="{% url 'reservas' %}?paquete_id={{ tour.id }}" class="btn btn-success btn-lg w-100 rounded-pill fw-bold fs-6">
+                                        RESERVAR
+                                    </a>
+                                {% elif user.es_admin %}
+                                    <a href="{% url 'editar_paquete' tour.id %}" class="btn btn-outline-primary btn-lg w-100 rounded-pill fw-bold fs-6">
+                                        Editar
+                                    </a>
+                                {% endif %}
                             </div>                 
                         </div>
                     </div>

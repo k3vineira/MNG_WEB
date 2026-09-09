@@ -82,6 +82,11 @@ class Usuario(AbstractUser):
         return f"{self.first_name} {self.last_name}".strip() or self.username
 
     @property
+    def es_admin(self):
+        """Retorna si el usuario tiene el rol de Administrador o permisos de staff."""
+        return bool(self.is_staff or self.rol == self.Roles.ADMIN)
+
+    @property
     def es_guia(self):
         """Retorna si el usuario tiene el rol de Guía Turístico."""
         return self.rol == self.Roles.GUIA

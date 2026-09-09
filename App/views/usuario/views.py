@@ -7,7 +7,9 @@ from App.models import Usuario
 def panel_rapido_view(request):
     if not request.user.es_turista:
         if request.user.is_staff or request.user.rol == Usuario.Roles.ADMIN:
-            return redirect('listar_reservas')
+            return redirect('dashboard_admin')
         return redirect('index')
 
     return render(request, 'partials/panel_rapido.html')
+
+  

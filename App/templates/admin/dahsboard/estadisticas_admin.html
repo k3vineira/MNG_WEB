@@ -1,8 +1,11 @@
+{% extends "admin/base-admin.html" %}
 {% load static %}
 {% load humanize %}
 
-<div class="container-fluid py-4 px-3 px-md-5">
+{% block title %}Estadísticas Administrativas | Monagua{% endblock %}
 
+{% block content %}
+<div class="container-fluid py-4 px-3 px-md-5">
 
     <div class="row align-items-center mb-5 g-3">
         <div class="col-12 col-md-8">
@@ -23,7 +26,6 @@
             </span>
         </div>
     </div>
-
 
     <div class="row g-4 mb-5">
         <div class="col-12 col-sm-6 col-xl-3">
@@ -534,7 +536,7 @@
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="small opacity-75"><i class="bi bi-gear-fill text-warning me-2"></i>En
-                                        Procesamiento:</span>
+                                         Procesamiento:</span>
                                     <span class="badge bg-warning text-dark font-monospace">{{ pqrs_en_gestion|default:"0" }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
@@ -825,8 +827,6 @@
         const destinosDatos = {{ destinos_top_datos|safe }};
         const tasaExito = {{ tasa_exito|default:0 }};
         const progreso = {{ progreso_nivel|default:0 }};
-
-
 
     // ── Colores reutilizables ─────────────────────────────────────────────────
     const rootStyle = getComputedStyle(document.documentElement);
@@ -1128,8 +1128,6 @@
         }
     });
 
-
-
     });
-
 </script>
+{% endblock %}

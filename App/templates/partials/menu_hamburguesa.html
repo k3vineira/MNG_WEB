@@ -112,7 +112,7 @@
             <li>
               <a
                 class="menu-hamburguesa-premium__secondary-link fw-bold text-success"
-                href="#"
+                href="{% if user.is_staff or user.is_superuser %}{% url 'admin_perfil' %}{% else %}#{% endif %}"
               >
                 <i class="bi bi-person-vcard me-2"></i>Mi Perfil
               </a>
@@ -120,6 +120,14 @@
 
             {# Administrador / Staff #}
             {% if user.is_staff or user.is_superuser %}
+            <li>
+              <a
+                class="menu-hamburguesa-premium__secondary-link fw-bold text-success"
+                href="{% url 'dashboard_admin' %}"
+              >
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin
+              </a>
+            </li>
             <li>
               <a
                 class="menu-hamburguesa-premium__secondary-link"
@@ -131,7 +139,7 @@
             {% endif %} {# Guía Turístico #} {% if user.rol == 3 %}
             <li>
               <a class="menu-hamburguesa-premium__secondary-link" href="#">
-                <i class="bi bi-chat-left-text me-2"></i>Mis Reseñas
+                <i class="bi bi-star-fill me-2"></i>Mis Calificaciones
               </a>
             </li>
             {% endif %} {# Turista / Viajero #} {% if user.rol == 2 %}
