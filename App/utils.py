@@ -6,15 +6,33 @@ import base64
 import io
 import os
 from datetime import datetime, time
+from functools import wraps
 
 from django.apps import apps
 from django.conf import settings
+from django.contrib import messages
 from django.core.mail import EmailMultiAlternatives, send_mail
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
 from pypdf import PdfReader, PdfWriter
 import qrcode
 from xhtml2pdf import pisa
+
+
+def solo_turistas_requerido(view_func):
+    """
+    Decorador para vistas públicas de reserva: permite el acceso a usuarios no autenticados
+    (para ver y pedir iniciar sesión) o a clientes/turistas.
+    Redirige a los administradores a su dashboard si intentan reservar.
+    """
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if request.user.is_authenticated and getattr(request.user, 'es_admin', False):
+            messages.info(request, "Los administradores no pueden realizar reservas de tours.")
+            return redirect('dashboard_admin')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
 
 
 def plantilla_reserva_html(

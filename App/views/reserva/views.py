@@ -24,7 +24,8 @@ from App.utils import (
     generar_factura_pdf_bytes,
     enviar_correo_confirmacion_con_factura,
     crear_notificacion_sistema,
-    StaffRequiredMixin
+    StaffRequiredMixin,
+    solo_turistas_requerido
 )
 
 def requiere_administrador(view_func):
@@ -246,6 +247,7 @@ class ReservaDeleteView(DeleteView):
 
 
 @login_required(login_url='login')
+@solo_turistas_requerido
 def mis_reservas_usuario(request):
     mis_reservas = Reserva.objects.filter(usuario=request.user)\
         .select_related('paquete')\
@@ -258,6 +260,7 @@ def mis_reservas_usuario(request):
 
 
 @login_required(login_url='login')
+@solo_turistas_requerido
 def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     """Permite al cliente cancelar su propia reserva dentro del límite de 3 días tras realizarla."""
     real_id = reserva_id or pk
@@ -311,6 +314,7 @@ def enviar_correo_monagua(asunto, mensaje, destinatario):
 # VISTA PÚBLICA
 # =========================
 
+@solo_turistas_requerido
 def reservas_view(request):
     paquetes = Paquete.objects.all()
     paquete_id = request.GET.get('paquete_id')
@@ -331,6 +335,7 @@ def reservas_view(request):
 
 
 @login_required(login_url='login')
+@solo_turistas_requerido
 def carrito_view(request):
     reservas_pendientes = Reserva.objects.filter(usuario=request.user, estado_reserva__in=['pendiente', 'Pendiente']).select_related('paquete').order_by('-id')
     context = {
@@ -340,6 +345,7 @@ def carrito_view(request):
 
 
 @login_required(login_url='login')
+@solo_turistas_requerido
 def comprobante_reserva_html(request, reserva_id):
     reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
     context = {
@@ -349,6 +355,7 @@ def comprobante_reserva_html(request, reserva_id):
 
 
 @login_required(login_url='login')
+@solo_turistas_requerido
 def comprobante_multiple(request):
     if request.method != 'POST':
         return redirect('carrito')
@@ -381,6 +388,7 @@ def comprobante_multiple(request):
 
 
 @login_required
+@solo_turistas_requerido
 def guardar_reserva(request, paquete_id):
     if request.method == 'POST':
         paquete = get_object_or_404(Paquete, id=paquete_id)
