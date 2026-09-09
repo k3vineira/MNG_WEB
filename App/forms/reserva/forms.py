@@ -25,24 +25,29 @@ class ReservaForm(forms.ModelForm):
             fecha_minima = date.today() + timedelta(days=5)
             if 'fecha_inicio' in self.fields:
                 self.fields['fecha_inicio'].widget.attrs['min'] = fecha_minima.strftime('%Y-%m-%d')
-
     def clean_fecha_inicio(self):
         fecha_reserva = self.cleaned_data.get('fecha_inicio')
 
+        if not fecha_reserva:
+            return fecha_reserva
+
+        # Si estás editando una reserva ya guardada y no cambias la fecha, la permite sin exigir los 5 días
         if self.instance.pk and self.instance.fecha_inicio == fecha_reserva:
             return fecha_reserva
 
-        fecha_minima = date.today() + timedelta(days=5)
+        hoy = date.today()
+        fecha_minima = hoy + timedelta(days=5)
 
-        if fecha_reserva:
-            if fecha_reserva < date.today():
-                raise ValidationError("No puedes seleccionar una fecha pasada.")
-            
-            if fecha_reserva < fecha_minima:
-                raise ValidationError(
-                    f"La reserva debe realizarse con al menos 5 días de anticipación "
-                    f"(a partir del {fecha_minima.strftime('%d/%m/%Y')})."
-                )
+        # 1. Validar que no sea fecha pasada
+        if fecha_reserva < hoy:
+            raise ValidationError("No puedes seleccionar una fecha pasada.")
+
+        # 2. Validar mínimo 5 días de anticipación
+        if fecha_reserva < fecha_minima:
+            raise ValidationError(
+                f"La reserva debe realizarse con al menos 5 días de anticipación "
+                f"(a partir del {fecha_minima.strftime('%d/%m/%Y')})."
+            )
 
         return fecha_reserva
 

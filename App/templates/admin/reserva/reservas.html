@@ -129,41 +129,10 @@
             </div>
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
             <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-            <script src="{% static 'js/reserva.js' %}"></script>
-            <script>
-           document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = document.getElementById('fecha_input');
-    if (dateInput) {
-        
-        // Calculamos HOY + 2 días
-        const fechaMinima = new Date();
-        fechaMinima.setDate(fechaMinima.getDate() + 2);
-
-        const fp = flatpickr(dateInput, {
-            locale: 'es',
-            dateFormat: 'Y-m-d',
-            allowInput: false, // 1. Evita que escriban manualmente en el input
-            minDate: fechaMinima,
-            onChange: function(selectedDates, dateStr, instance) {
-                // 2. Si intentan meter una fecha menor manipulando JS
-                if (selectedDates[0] < fechaMinima) {
-                    instance.clear();
-                    alert("Fecha no permitida");
-                    return;
-                }
-                if (typeof window.updatePrice === 'function') {
-                    window.updatePrice();
-                }
-            }
-        });
-    }
-});
-            </script>
-          </form> 
+            <script src="{% static 'js/reserva.js' %}?v=2.0"></script>
+          </form>
         </div>
       </div>
     </div>
   </div>
-
-  </main>
 {% endblock %}
