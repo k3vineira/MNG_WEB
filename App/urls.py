@@ -73,15 +73,12 @@ urlpatterns = [
     path('admin/reservas/agregar/', reserva_views.ReservaCreateView.as_view(), name='agregar_reserva'),
     path('admin/reservas/editar/<int:pk>/', reserva_views.ReservaUpdateView.as_view(), name='editar_reserva'),
     path('admin/reservas/eliminar/<int:pk>/', reserva_views.ReservaDeleteView.as_view(), name='eliminar_reserva'),
+    path('admin/reservas/cambiar-estado/<int:reserva_id>/', reserva_views.cambiar_estado_reserva, name='cambiar_estado_reserva'),
+
     # Dashboard Admin
     path('admin/dashboard/', dashboard_views.dashboard_admin, name='dashboard_admin'),
     path('admin/estadisticas/', dashboard_views.estadisticas_admin, name='estadisticas_admin'),
     path('admin/perfil/', dashboard_views.perfil_admin, name='admin_perfil'),
-]
-    path('admin/reservas/eliminar/<int:pk>/', reserva_views.ReservaDeleteView.as_view(), name='eliminar_reserva'), 
-    path('admin/reservas/cambiar-estado/<int:reserva_id>/', reserva_views.cambiar_estado_reserva, name='cambiar_estado_reserva'),
-
-
 
     # PQRS
     path('gestion/pqrs/', PQRSListView.as_view(), name='listar_pqrs'),
@@ -89,6 +86,5 @@ urlpatterns = [
     path('mis_pqrs/', mis_pqrs_view, name='mis_pqrs'),
     path('pqrs/guardar/', guardar_pqrs, name='guardar_pqrs'),
     path('pqrs/', pqrs, name='pqrs'),
-
 ]
 
