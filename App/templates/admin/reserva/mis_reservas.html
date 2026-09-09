@@ -12,7 +12,7 @@
                 <h2 class="fw-bold text-success mb-1">
                     <i class="bi bi-archive text-success me-2"></i>Mis Aventuras Reservadas
                 </h2>
-                <p class="text-muted mb-0">Puedes cancelar tu reserva antes de 3 días de la fecha de inicio</p>
+                <p class="text-muted mb-0">Puedes cancelar tu reserva 3 dias despues de la fecha de inicio</p>
             </div>
         </div>
     </div>
@@ -130,14 +130,44 @@
                                                 </a>
                                             {% endif %}
                                             
-                                            {# BOTÓN CANCELACIÓN DIRECTA DE RESERVA #}
-                                            {% if estado != 'cancelada' %}
-                                                <a href="{% url 'cancelar_reserva_usuario' reserva.id %}" 
-                                                   class="btn btn-outline-danger rounded-pill px-4 py-2"
-                                                   onclick="return confirm('¿Estás seguro de que deseas cancelar la reserva #{{ reserva.id }}?');">
-                                                    <i class="bi bi-x-lg me-1"></i> Cancelar Reserva
-                                                </a>
-                                            {% endif %}
+                                            <!-- Botón para abrir el Modal -->
+<button type="button" class="btn btn-danger btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#modalCancelar{{ reserva.id }}">
+    Cancelar Reserva
+</button>
+
+<!-- Estructura del Modal -->
+<div class="modal fade" id="modalCancelar{{ reserva.id }}" tabindex="-1" aria-labelledby="modalLabel{{ reserva.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalLabel{{ reserva.id }}">Cancelar Reserva #{{ reserva.id }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form method="POST" action="{% url 'cancelar_reserva_usuario' reserva.id %}">
+                {% csrf_token %}
+                <div class="modal-body text-start">
+                    <div class="alert alert-warning p-2 small">
+                        <strong>Políticas de Cancelación:</strong><br>
+                        • Más de 15 días antes: 90% reembolso.<br>
+                        • Entre 5 y 14 días antes: 50% reembolso.<br>
+                        • Menos de 48 horas: Sin reembolso.
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="motivo_{{ reserva.id }}" class="form-label fw-bold">Ingresa el motivo de la cancelación:</label>
+                        <textarea name="motivo_cancelacion" id="motivo_{{ reserva.id }}" class="form-control" rows="3" placeholder="Escribe la razón aquí..." required></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Volver</button>
+                    <button type="submit" class="btn btn-danger">Confirmar Cancelación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
                                         {% endwith %}
                                     </div>
 
@@ -155,7 +185,7 @@
             </div>
             <h3 class="fw-bold text-dark">Aún no tienes reservas</h3>
             <p class="text-muted">Explora experiencias increíbles y planifica tu próxima aventura en Mongua.</p>
-            <a href="{% url 'tours' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2">Explorar tours</a>
+            <a href="{% url 'tours' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2">Explorar destinos</a>
         </div>
     {% endif %}
 

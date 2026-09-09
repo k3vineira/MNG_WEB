@@ -40,11 +40,11 @@
                             <span class="badge text-bg-light border"><i class="bi bi-tag-fill me-1" style="color: var(--verde-main, #2c6e3c);"></i>{{ pqr.tipo }}</span>
                             <span class="badge text-bg-light border"><i class="bi bi-calendar3 me-1" style="color: var(--verde-main, #2c6e3c);"></i>{{ pqr.fecha|date:"d/m/Y" }}</span>
                             
-                            <!-- MOSTRAR BADGE DE RESERVA DESDE LOS SEGUIMIENTOS -->
+                      
                             {% for s in pqr.seguimientos.all %}
                                 {% if s.reserva %}
                                     <span class="badge text-bg-light border">
-                                        <i class="bi bi-journal-bookmark-fill me-1" style="color: var(--verde-main, #2c6e3c);"></i>Reserva #{{ s.reserva.id }}
+                                        <i class="bi bi-journal-bookmark-fill me-1" style="color: var(--verde-main, #2c6e3c);"></i>Paquete {{ s.reserva.paquete }}
                                     </span>
                                 {% endif %}
                             {% endfor %}
@@ -91,7 +91,7 @@
                                             <i class="bi bi-ticket-perforated-fill fs-5" style="color: var(--verde-main, #2c6e3c);"></i>
                                             <div>
                                                 <span class="d-block text-secondary" style="font-size: 0.75rem;">Reserva vinculada:</span>
-                                                <strong class="text-dark small">Reserva #{{ s.reserva.id }}</strong>
+                                                <strong class="text-dark small">paquete {{ s.reserva.paquete }}</strong>
                                             </div>
                                         </div>
                                     {% endif %}

@@ -1,4 +1,4 @@
-{% extends "private/base_private.html" %}
+{% extends "usuario/base-turista-dashboard.html" %}
 {% load static %}
 {% load humanize %}
 
@@ -146,7 +146,7 @@
       </div>
       <h3 class="fw-bold text-dark">Tu carrito está vacío</h3>
       <p class="text-muted">No tienes reservas pendientes. Explora paquetes y añade tu próxima aventura.</p>
-      <a href="{% url 'destinos' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2">Explorar paquetes</a>
+      <a href="{% url 'tours' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2">Explorar paquetes</a>
     </div>
   {% endif %}
 

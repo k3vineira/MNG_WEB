@@ -81,6 +81,8 @@ urlpatterns = [
     path('mis_pqrs/', mis_pqrs_view, name='mis_pqrs'),
     path('pqrs/guardar/', guardar_pqrs, name='guardar_pqrs'),
     path('pqrs/', pqrs, name='pqrs'),
-
+    
+    #cancelaciones
+    path('mis_cancelaciones/', reserva_views.mis_cancelaciones, name='mis_cancelaciones'),
 ]
 
