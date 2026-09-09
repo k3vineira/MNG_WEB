@@ -13,7 +13,11 @@ def login_vista(request):
     Permite autenticarse utilizando correo electrónico o nombre de usuario.
     """
     if request.user.is_authenticated:
-        return redirect('tours' if not request.user.is_staff else 'listar_reservas')
+        if request.user.is_staff or getattr(request.user, 'rol', None) == Usuario.Roles.ADMIN:
+            return redirect('listar_reservas')
+        elif getattr(request.user, 'es_turista', False):
+            return redirect('panel_rapido')
+        return redirect('tours')
 
     if request.method == 'POST':
         usuario_input = (request.POST.get('username') or request.POST.get('usuario_o_email') or '').strip()
@@ -43,6 +47,8 @@ def login_vista(request):
                         
                         if user.is_staff or getattr(user, 'rol', None) == Usuario.Roles.ADMIN:
                             return redirect('listar_reservas')
+                        elif getattr(user, 'es_turista', False):
+                            return redirect('panel_rapido')
                         return redirect('tours')
                     else:
                         messages.error(request, "Tu cuenta se encuentra desactivada. Por favor contacta al administrador.")

@@ -22,7 +22,11 @@ def registro_vista(request):
     Valida duplicados y envía un código OTP de verificación por correo electrónico.
     """
     if request.user.is_authenticated:
-        return redirect('tours')
+        if request.user.is_staff or getattr(request.user, 'rol', None) == Usuario.Roles.ADMIN:
+            return redirect('listar_reservas')
+        elif getattr(request.user, 'es_turista', False):
+            return redirect('panel_rapido')
+        return redirect('panel_rapido')
 
     if request.method == 'POST':
         form = RegistroForm(request.POST)
@@ -139,7 +143,7 @@ def verificar_otp_registro_vista(request):
                 request.session.pop('registro_email', None)
                 request.session.pop('registro_otp_time', None)
 
-                response = redirect(next_url if next_url else 'tours')
+                response = redirect(next_url if next_url else 'panel_rapido')
                 response.set_cookie('ha_registrado', 'true', max_age=31536000)  # 1 año
                 return response
             else:
