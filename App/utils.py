@@ -4,9 +4,12 @@ Utilidades del núcleo del proyecto: plantillas de correo HTML, envío de emails
 
 import base64
 import io
+import logging
 import os
 from datetime import datetime, time
 from functools import wraps
+
+logger = logging.getLogger(__name__)
 
 from django.apps import apps
 from django.conf import settings
@@ -206,15 +209,22 @@ def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"
 
 
 def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_contenido):
-    """Envía un correo electrónico con contenido HTML desde la cuenta configurada."""
-    send_mail(
-        asunto,
-        mensaje_texto,
-        settings.EMAIL_HOST_USER,
-        [destinatario],
-        fail_silently=False,
-        html_message=html_contenido
-    )
+    """Envía un correo electrónico con contenido HTML desde la cuenta configurada de manera segura."""
+    if not destinatario:
+        return False
+    try:
+        send_mail(
+            asunto,
+            mensaje_texto,
+            settings.EMAIL_HOST_USER,
+            [destinatario],
+            fail_silently=False,
+            html_message=html_contenido
+        )
+        return True
+    except Exception as e:
+        logger.error("Error al enviar correo electrónico a %s: %s", destinatario, e)
+        return False
 
 
 def get_image_base64(relative_path):

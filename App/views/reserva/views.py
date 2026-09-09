@@ -545,11 +545,15 @@ def guardar_reserva(request, paquete_id):
             monto_total=str(reserva.monto_total)
         )
         
-        enviar_correo_html_monagua(
+        correo_enviado = enviar_correo_html_monagua(
             asunto, mensaje_texto, request.user.email, html_bonito)
 
-        messages.success(
-            request, "¡Tu reserva ha sido creada y confirmada por correo electrónico!")
+        if correo_enviado:
+            messages.success(
+                request, "¡Tu reserva ha sido creada exitosamente! Se ha enviado una confirmación a tu correo.")
+        else:
+            messages.success(
+                request, "¡Tu reserva ha sido registrada con éxito en el sistema!")
         return redirect('mis_reservas_usuario')
 
     return redirect('reservas')

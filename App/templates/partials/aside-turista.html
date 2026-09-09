@@ -24,7 +24,7 @@
             <span class="text-secondary text-uppercase fw-bold small px-2 u-style-e8f06dcb">Cuenta</span>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'perfil_detalles' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+            <a href="{% url 'perfil_detalles' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'perfil_detalles' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
               <i class="bi bi-person-gear"></i> Mi Perfil
             </a>
           </li>
@@ -100,13 +100,13 @@
       </nav>
 
       <div class="p-3 border-top border-secondary">
-        <div class="d-flex align-items-center gap-3 mb-3">
+        <a href="{% url 'perfil_detalles' %}" class="d-flex align-items-center gap-3 mb-3 text-decoration-none">
           <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Viajero" class="rounded-circle border border-success flex-shrink-0 u-style-a2bbb072" width="40" height="40">
           <div class="overflow-hidden">
             <div class="fw-bold text-white fs-6 text-truncate">{{ user.first_name|default:'Viajero' }}</div>
             <div class="text-success fw-semibold text-truncate u-style-bc9efe64">Turista</div>
           </div>
-        </div>
+        </a>
         <form action="{% url 'logout' %}" method="post">
           {% csrf_token %}
           <button type="submit" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
@@ -131,7 +131,7 @@
         <ul class="nav flex-column align-items-center w-100 gap-2">
           
           <li class="nav-item w-100 text-center">
-            <a href="#" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'perfil_detalles' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Mi Perfil"><i class="bi bi-person-gear fs-5"></i></a>
+            <a href="{% url 'perfil_detalles' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'perfil_detalles' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" title="Mi Perfil"><i class="bi bi-person-gear fs-5"></i></a>
           </li>
           
           <li class="nav-item w-100 text-center"><hr class="border-secondary mx-2 my-1"></li>
@@ -183,7 +183,9 @@
       </nav>
 
       <div class="p-2 w-100 text-center border-top border-secondary d-flex flex-column align-items-center gap-3">
-        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Viajero" class="rounded-circle border border-success u-style-a2bbb072" width="34" height="34" title="{{ user.first_name|default:'Viajero' }}">
+        <a href="{% url 'perfil_detalles' %}">
+          <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Viajero" class="rounded-circle border border-success u-style-a2bbb072" width="34" height="34" title="{{ user.first_name|default:'Viajero' }}">
+        </a>
         <form action="{% url 'logout' %}" method="post" class="w-100">
           {% csrf_token %}
           <button type="submit" class="btn btn-sm btn-outline-danger border-0 w-100" title="Cerrar Sesión">

@@ -43,6 +43,11 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="{% url 'admin_perfil' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'admin_perfil' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-person-vcard-fill"></i> Mi Perfil
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="{% url 'listar_calificaciones' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'listar_calificaciones' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
               <i class="bi bi-star-fill"></i> Calificaciones
             </a>
@@ -128,13 +133,13 @@
 
       <!-- Footer: Perfil + Logout -->
       <div class="p-3 border-top border-secondary">
-        <div class="d-flex align-items-center gap-3 mb-3">
+        <a href="{% url 'admin_perfil' %}" class="d-flex align-items-center gap-3 mb-3 text-decoration-none">
           <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success flex-shrink-0 u-style-a2bbb072" width="40" height="40">
           <div class="overflow-hidden">
             <div class="fw-bold text-white fs-6 text-truncate">{{ user.first_name|default:'Administrador' }}</div>
             <div class="text-success fw-semibold text-truncate u-style-bc9efe64">Super Admin</div>
           </div>
-        </div>
+        </a>
         <form action="{% url 'logout' %}" method="post">
           {% csrf_token %}
           <button type="submit" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
@@ -166,6 +171,9 @@
           
           <li class="nav-item w-100 text-center">
             <a href="/" class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75" data-bs-toggle="tooltip" title="Volver a la vista pública de Monagua"><i class="bi bi-house-door-fill fs-5"></i></a>
+          </li>
+          <li class="nav-item w-100 text-center">
+            <a href="{% url 'admin_perfil' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'admin_perfil' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Mi Perfil de Administrador"><i class="bi bi-person-vcard-fill fs-5"></i></a>
           </li>
           <li class="nav-item w-100 text-center">
             <a href="{% url 'dashboard_admin' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'dashboard_admin' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Panel general y estado del sistema"><i class="bi bi-grid-1x2-fill fs-5"></i></a>
@@ -240,7 +248,9 @@
 
       <!-- Footer Slim -->
       <div class="p-2 w-100 text-center border-top border-secondary d-flex flex-column align-items-center gap-3">
-        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success u-style-a2bbb072" width="34" height="34" data-bs-toggle="tooltip" title="Perfil de administrador: {{ user.first_name|default:'Administrador' }}">
+        <a href="{% url 'admin_perfil' %}">
+          <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success u-style-a2bbb072" width="34" height="34" data-bs-toggle="tooltip" title="Perfil de administrador: {{ user.first_name|default:'Administrador' }}">
+        </a>
         <form action="{% url 'logout' %}" method="post" class="w-100">
           {% csrf_token %}
           <button type="submit" class="btn btn-sm btn-outline-danger border-0 w-100" data-bs-toggle="tooltip" title="Cerrar la sesión de forma segura">

@@ -16,8 +16,9 @@ from App.views.calificacion import views as calificacion_views
 
 
 urlpatterns = [
-    # Panel Rápido (Turista / Cliente)
+    # Panel Rápido y Perfil (Turista / Cliente)
     path('panel-rapido/', usuario_views.panel_rapido_view, name='panel_rapido'),
+    path('perfil/', usuario_views.perfil_turista_view, name='perfil_detalles'),
 
     # Accesibilidad API
     path('api/accesibilidad/save/', accesibilidad_views.guardar_accesibilidad, name='guardar_accesibilidad'),
