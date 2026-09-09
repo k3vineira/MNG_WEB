@@ -7,7 +7,7 @@ import json
 
 from App.models import (
     Usuario, Reserva, Paquete, Pago, Promocion, 
-    Calificacion, Bitacora
+    Calificacion, Bitacora, PQRS
 )
 
 def _es_admin(user):
@@ -124,7 +124,167 @@ def dashboard_admin(request):
 def estadisticas_admin(request):
     if not _es_admin(request.user):
         return redirect('index')
-    return render(request, 'admin/dahsboard/estadisticas_admin.html')
+
+    now = timezone.now()
+
+    # Métricas consolidadas
+    total_invertido = Pago.objects.filter(estado_transaccion__in=['aprobado', 'APROBADO', 'completado']).aggregate(
+        total=Sum('monto')
+    )['total'] or 0
+
+    total_reservas = Reserva.objects.count()
+    reservas_confirmadas = Reserva.objects.filter(estado_reserva__in=['confirmada', 'CONFIRMADA']).count()
+    reservas_pendientes = Reserva.objects.filter(estado_reserva__in=['pendiente', 'PENDIENTE']).count()
+    reservas_canceladas = Reserva.objects.filter(estado_reserva__in=['cancelada', 'CANCELADA', 'rechazada']).count()
+    reservas_completadas = Reserva.objects.filter(estado_reserva__in=['completada', 'COMPLETADA']).count()
+
+    promedio_por_reserva = round(float(total_invertido) / reservas_confirmadas) if reservas_confirmadas > 0 else 0
+    destinos_total = Paquete.objects.filter(estado=True).count()
+    tasa_exito = round((reservas_confirmadas / total_reservas * 100), 1) if total_reservas > 0 else 0
+
+    # PQRS
+    pqrs_abiertas = PQRS.objects.filter(estado__in=['abierto', 'abierta']).count()
+    pqrs_en_gestion = PQRS.objects.filter(estado__in=['en_proceso', 'en_gestion']).count()
+    pqrs_cerradas = PQRS.objects.filter(estado__in=['cerrado', 'cerrada', 'resuelto']).count()
+    pqrs_total = PQRS.objects.count()
+    pqrs_tasa_resolucion = round((pqrs_cerradas / pqrs_total * 100), 1) if pqrs_total > 0 else 0
+
+    # Calificaciones
+    total_calificaciones = Calificacion.objects.count()
+    dias_como_miembro = (now.date() - request.user.date_joined.date()).days if request.user.date_joined else 0
+
+    # Gráficos de evolución mensual (año actual)
+    meses_labels = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+    meses_datos = [0] * 12
+    meses_inversion = [0] * 12
+
+    for r in Reserva.objects.filter(fecha_registro__year=now.year):
+        if r.fecha_registro:
+            meses_datos[r.fecha_registro.month - 1] += 1
+
+    for p in Pago.objects.filter(fecha_pago__year=now.year, estado_transaccion__in=['aprobado', 'APROBADO', 'completado']):
+        if p.fecha_pago:
+            meses_inversion[p.fecha_pago.month - 1] += float(p.monto or 0)
+
+    # Gráficos anuales (últimos 3 años)
+    anios_labels = [now.year - 2, now.year - 1, now.year]
+    anios_datos = [0, 0, 0]
+    anios_reservas = [0, 0, 0]
+    anios_canceladas = [0, 0, 0]
+
+    for idx, anio in enumerate(anios_labels):
+        pagos_anio_val = Pago.objects.filter(
+            fecha_pago__year=anio,
+            estado_transaccion__in=['aprobado', 'APROBADO', 'completado']
+        ).aggregate(s=Sum('monto'))['s'] or 0
+        anios_datos[idx] = float(pagos_anio_val)
+        anios_reservas[idx] = Reserva.objects.filter(fecha_registro__year=anio).count()
+        anios_canceladas[idx] = Reserva.objects.filter(
+            fecha_registro__year=anio,
+            estado_reserva__in=['cancelada', 'CANCELADA', 'rechazada']
+        ).count()
+
+    # Días de la semana (0=Lun..6=Dom)
+    dias_datos = [0] * 7
+    for r in Reserva.objects.filter(fecha_inicio__isnull=False):
+        dias_datos[r.fecha_inicio.weekday()] += 1
+
+    # Top destinos
+    destinos_top_labels = []
+    destinos_top_datos = []
+    destinos_populares = []
+
+    paquetes_top = Paquete.objects.annotate(
+        total_res=Count('reservas'),
+        inv_total=Sum('reservas__pago__monto', filter=Q(reservas__pago__estado_transaccion__in=['aprobado', 'APROBADO', 'completado']))
+    ).order_by('-total_res')[:5]
+
+    for paq in paquetes_top:
+        destinos_top_labels.append(paq.nombre)
+        destinos_top_datos.append(paq.total_res)
+        ultima_reserva = Reserva.objects.filter(paquete=paq).order_by('-fecha_inicio').first()
+        destinos_populares.append({
+            'nombre': paq.nombre,
+            'total_reservas': paq.total_res,
+            'inversion_total': float(paq.inv_total or 0),
+            'ultima_visita': ultima_reserva.fecha_inicio if ultima_reserva else None
+        })
+
+    # Tablas de detalle
+    historial_pagos = Pago.objects.select_related('reserva', 'reserva__paquete').order_by('-id')[:10]
+    actividad_reciente = Bitacora.objects.select_related('usuario').order_by('-fecha_registro')[:10]
+
+    calificaciones_qs = Calificacion.objects.select_related('reserva', 'reserva__paquete', 'reserva__usuario').order_by('-id')[:10]
+    mis_calificaciones = []
+    for c in calificaciones_qs:
+        mis_calificaciones.append({
+            'destino': c.reserva.paquete.nombre if (c.reserva and c.reserva.paquete) else 'Experiencia Mongua',
+            'calificacion': c.puntaje_estrellas,
+            'puntaje_estrellas': c.puntaje_estrellas,
+            'titulo': c.titulo,
+            'comentario': c.comentario,
+            'publicada': c.visible,
+            'visible': c.visible,
+            'fecha': c.fecha_calificacion,
+            'fecha_calificacion': c.fecha_calificacion
+        })
+
+    # Datos para gráfico radar
+    radar_datos = [
+        min(total_reservas, 100),
+        min(int(total_invertido / 100000), 100) if total_invertido else 0,
+        min(dias_como_miembro, 100),
+        min(total_calificaciones * 10, 100),
+        min(int(pqrs_tasa_resolucion), 100),
+        min(destinos_total * 10, 100)
+    ]
+
+    context = {
+        'analitica_titulo': 'Estadísticas Generales de Administración',
+        'analitica_subtitulo': 'Consolidado métrico y operativo de todas las reservas, finanzas, PQRS y destinos en Monagua.',
+        'admin_mode': True,
+        'total_invertido': total_invertido,
+        'total_reservas': total_reservas,
+        'promedio_por_reserva': promedio_por_reserva,
+        'destinos_total': destinos_total,
+        'tasa_exito': tasa_exito,
+        'pqrs_abiertas': pqrs_abiertas,
+        'pqrs_en_gestion': pqrs_en_gestion,
+        'pqrs_cerradas': pqrs_cerradas,
+        'pqrs_total': pqrs_total,
+        'pqrs_tasa_resolucion': pqrs_tasa_resolucion,
+        'total_calificaciones': total_calificaciones,
+        'total_resenas': total_calificaciones,
+        'dias_como_miembro': dias_como_miembro,
+        'nivel_viajero': 'Administrador General',
+        'descripcion_nivel': 'Acceso y supervisión integral de métricas comerciales y ecológicas del Páramo de Mongua.',
+        'progreso_nivel': 100,
+        'promedio_mensual_reservas': round(total_reservas / 12, 1) if total_reservas else 0,
+        'arboles_conservados': reservas_confirmadas * 3,
+        'reservas_confirmadas': reservas_confirmadas,
+        'reservas_pendientes': reservas_pendientes,
+        'reservas_canceladas': reservas_canceladas,
+        'reservas_completadas': reservas_completadas,
+        'destinos_populares': destinos_populares,
+        'historial_pagos': historial_pagos,
+        'actividad_reciente': actividad_reciente,
+        'mis_calificaciones': mis_calificaciones,
+        'mis_resenas': mis_calificaciones,
+        # Variables JSON para Chart.js
+        'meses_labels': json.dumps(meses_labels),
+        'meses_datos': json.dumps(meses_datos),
+        'meses_inversion': json.dumps(meses_inversion),
+        'anios_labels': json.dumps(anios_labels),
+        'anios_datos': json.dumps(anios_datos),
+        'anios_reservas': json.dumps(anios_reservas),
+        'anios_canceladas': json.dumps(anios_canceladas),
+        'dias_datos': json.dumps(dias_datos),
+        'destinos_top_labels': json.dumps(destinos_top_labels),
+        'destinos_top_datos': json.dumps(destinos_top_datos),
+        'radar_datos': json.dumps(radar_datos),
+    }
+
+    return render(request, 'admin/dahsboard/estadisticas_admin.html', context)
 
 
 @login_required

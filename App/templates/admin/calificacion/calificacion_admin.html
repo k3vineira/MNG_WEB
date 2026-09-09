@@ -1,0 +1,194 @@
+{% extends 'admin/base-admin.html' %}
+{% load static %}
+
+{% block title %}Calificaciones | Monagua Admin{% endblock %}
+
+{% block content %}
+<!-- Top Bar -->
+<div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+  <div>
+    <h2 class="fw-bold mb-0 text-success u-style-4a548d2f">Gestión de Calificaciones</h2>
+    <p class="text-muted mb-0 small">Calificaciones y valoraciones de experiencias registradas por los usuarios.</p>
+  </div>
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <span class="badge bg-white text-secondary border px-3 py-2 d-inline-flex align-items-center gap-1 shadow-sm rounded-pill">
+      <i class="bi bi-star-fill text-warning"></i>
+      <span>Total: <strong>{{ total }}</strong></span>
+    </span>
+    <span class="badge bg-white text-secondary border px-3 py-2 d-inline-flex align-items-center gap-1 shadow-sm rounded-pill">
+      <i class="bi bi-eye-fill text-primary"></i>
+      <span>Públicas: <strong>{{ total_visibles }}</strong></span>
+    </span>
+    <span class="badge bg-white text-secondary border px-3 py-2 d-inline-flex align-items-center gap-1 shadow-sm rounded-pill">
+      <i class="bi bi-graph-up-arrow text-success"></i>
+      <span>Promedio: <strong>{{ promedio }} / 5</strong></span>
+    </span>
+  </div>
+</div>
+
+<!-- Main Table Card -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+  <div class="card-header bg-dark text-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <h5 class="mb-0 fs-6"><i class="bi bi-stars text-warning me-2"></i>Historial de Calificaciones</h5>
+    <div class="d-flex gap-2">
+      <form method="get" class="d-flex gap-2 flex-wrap">
+        <select name="tipo" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">Todos los tipos</option>
+          <option value="experiencia" {% if tipo_filtro == 'experiencia' %}selected{% endif %}>Experiencia</option>
+          <option value="sugerencia" {% if tipo_filtro == 'sugerencia' %}selected{% endif %}>Sugerencia</option>
+          <option value="felicitacion" {% if tipo_filtro == 'felicitacion' %}selected{% endif %}>Felicitación</option>
+          <option value="queja" {% if tipo_filtro == 'queja' %}selected{% endif %}>Queja</option>
+        </select>
+        <select name="valoracion" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">Todas las puntuaciones</option>
+          <option value="5" {% if valoracion_filtro == '5' %}selected{% endif %}>5 Estrellas</option>
+          <option value="4" {% if valoracion_filtro == '4' %}selected{% endif %}>4 Estrellas</option>
+          <option value="3" {% if valoracion_filtro == '3' %}selected{% endif %}>3 Estrellas</option>
+          <option value="2" {% if valoracion_filtro == '2' %}selected{% endif %}>2 Estrellas</option>
+          <option value="1" {% if valoracion_filtro == '1' %}selected{% endif %}>1 Estrella</option>
+        </select>
+        {% if tipo_filtro or valoracion_filtro %}
+        <a href="{% url 'listar_calificaciones' %}" class="btn btn-sm btn-outline-light" title="Limpiar filtros">
+          <i class="bi bi-x-circle"></i>
+        </a>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light text-uppercase tracking-wider u-style-0b04a8e1">
+        <tr>
+          <th class="ps-4 py-3 u-style-e8dbada6">Usuario</th>
+          <th class="py-3 u-style-d9900c66">Destino / Título</th>
+          <th class="py-3 text-center u-style-d9900c66">Puntuación</th>
+          <th class="py-3">Comentario &amp; Respuesta</th>
+          <th class="py-3 text-center u-style-b3a15a8a">Estado</th>
+          <th class="pe-4 py-3 text-end u-style-d9900c66">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for calificacion in calificaciones %}
+        <tr class="border-bottom">
+          <!-- Usuario info with avatar -->
+          <td class="ps-4 py-3">
+            <div class="d-flex align-items-center gap-3">
+              <img src="{% if calificacion.usuario and calificacion.usuario.imagen_perfil %}{{ calificacion.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
+                   alt="{{ calificacion.usuario.get_full_name|default:calificacion.usuario.username|default:'Usuario' }}"
+                   class="rounded-circle border u-style-a2bbb072"
+                   width="40" height="40">
+              <div>
+                <div class="fw-semibold text-dark u-style-8e9648ec">
+                  {{ calificacion.usuario.get_full_name|default:calificacion.usuario.username|default:"Usuario" }}
+                </div>
+                <div class="text-muted small u-style-199b5800">
+                  {{ calificacion.usuario.email|default:"Sin correo registrado" }}
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Paquete & Título -->
+          <td class="py-3">
+            <div class="mb-1">
+              {% if calificacion.paquete %}
+              <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-3 fw-semibold small">
+                <i class="bi bi-geo-alt-fill me-1"></i>{{ calificacion.paquete.nombre }}
+              </span>
+              {% elif calificacion.reserva and calificacion.reserva.paquete %}
+              <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-3 fw-semibold small">
+                <i class="bi bi-geo-alt-fill me-1"></i>{{ calificacion.reserva.paquete.nombre }}
+              </span>
+              {% else %}
+              <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1 rounded-3 fw-semibold small">
+                {{ calificacion.tipo|title }}
+              </span>
+              {% endif %}
+            </div>
+            <div class="fw-semibold text-dark small" title="{{ calificacion.titulo }}">
+              {{ calificacion.titulo }}
+            </div>
+          </td>
+
+          <!-- Calificación (stars) -->
+          <td class="py-3 text-center">
+            <div class="text-warning">
+              {% for s in calificacion.estrellas %}<i class="bi bi-star-fill"></i>{% endfor %}
+              {% for s in calificacion.estrellas_vacias %}<i class="bi bi-star opacity-50"></i>{% endfor %}
+            </div>
+            <span class="text-muted fw-bold small">({{ calificacion.puntaje_estrellas }}/5)</span>
+          </td>
+
+          <!-- Comentario -->
+          <td class="py-3">
+            <div class="text-dark small lh-base">
+              {{ calificacion.comentario|default:"*Sin comentario escrito.*" }}
+            </div>
+            {% if calificacion.admin_respuesta %}
+            <div class="mt-2 bg-light rounded-3 p-2.5 border-start border-3 border-success">
+              <div class="text-success small fw-semibold mb-0.5"><i class="bi bi-reply-fill me-1"></i>Respuesta del administrador:</div>
+              <div class="text-secondary small">{{ calificacion.admin_respuesta }}</div>
+            </div>
+            {% endif %}
+          </td>
+          
+          <!-- Estado -->
+          <td class="py-3 text-center">
+            {% if calificacion.visible %}
+              <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1.5 rounded-pill"><i class="bi bi-eye-fill me-1"></i>Visible</span>
+            {% else %}
+              <span class="badge bg-secondary bg-opacity-10 text-secondary px-2.5 py-1.5 rounded-pill"><i class="bi bi-eye-slash-fill me-1"></i>Oculto</span>
+            {% endif %}
+          </td>
+
+          <!-- Acciones -->
+          <td class="pe-4 py-3 text-end">
+            <div class="text-muted small mb-2">{{ calificacion.fecha_calificacion|date:"d M, Y" }}</div>
+            
+            <div class="d-flex flex-column align-items-end gap-1">
+              <form method="post" action="{% url 'toggle_visible_calificacion' calificacion.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm {% if calificacion.visible %}btn-outline-danger{% else %}btn-outline-success{% endif %} rounded-pill px-3">
+                      {% if calificacion.visible %}
+                          <i class="bi bi-eye-slash-fill me-1"></i>Ocultar
+                      {% else %}
+                          <i class="bi bi-eye-fill me-1"></i>Publicar
+                      {% endif %}
+                  </button>
+              </form>
+              
+              <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 mt-1" data-bs-toggle="collapse" data-bs-target="#responder-{{ calificacion.id }}" aria-expanded="false">
+                <i class="bi bi-chat-left-dots me-1"></i>{% if calificacion.admin_respuesta %}Editar Respuesta{% else %}Responder{% endif %}
+              </button>
+            </div>
+
+            <!-- Formulario colapsable para responder -->
+            <div class="collapse mt-2 text-start" id="responder-{{ calificacion.id }}">
+              <form method="post" action="{% url 'responder_calificacion' calificacion.id %}" class="card card-body p-2 border bg-light shadow-sm rounded-3">
+                  {% csrf_token %}
+                  <label class="small fw-bold text-dark mb-1">Respuesta Oficial:</label>
+                  <textarea name="admin_respuesta" class="form-control form-control-sm mb-2" rows="2" placeholder="Escribe una respuesta para el usuario..." required>{{ calificacion.admin_respuesta|default:'' }}</textarea>
+                  <div class="d-flex justify-content-end gap-1">
+                    <button type="button" class="btn btn-xs btn-light border" data-bs-toggle="collapse" data-bs-target="#responder-{{ calificacion.id }}">Cancelar</button>
+                    <button type="submit" class="btn btn-sm btn-success rounded-pill px-3">Guardar</button>
+                  </div>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center py-5 text-muted">
+            <div class="mb-3 text-secondary">
+              <i class="bi bi-star display-4 text-warning opacity-50"></i>
+            </div>
+            <h6 class="fw-bold">No hay calificaciones todavía</h6>
+            <p class="small text-muted mb-0">Las calificaciones que realicen los turistas se mostrarán en este panel para su moderación.</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

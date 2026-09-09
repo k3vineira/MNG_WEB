@@ -11,3 +11,5 @@ def panel_rapido_view(request):
         return redirect('index')
 
     return render(request, 'partials/panel_rapido.html')
+
+  

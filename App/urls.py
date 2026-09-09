@@ -11,6 +11,8 @@ from App.views.blog import views as blog_views
 from App.views.pqrs.views import PQRSListView, contestar_pqrs, mis_pqrs_view, guardar_pqrs, pqrs
 from App.views.usuario import views as usuario_views
 from App.views.dashboard import views as dashboard_views
+from App.views.calificacion import views as calificacion_views
+
 
 
 urlpatterns = [
@@ -79,6 +81,11 @@ urlpatterns = [
     path('admin/dashboard/', dashboard_views.dashboard_admin, name='dashboard_admin'),
     path('admin/estadisticas/', dashboard_views.estadisticas_admin, name='estadisticas_admin'),
     path('admin/perfil/', dashboard_views.perfil_admin, name='admin_perfil'),
+
+    # Calificaciones (Administración / Staff)
+    path('admin/calificaciones/', calificacion_views.listar_calificaciones_admin, name='listar_calificaciones'),
+    path('admin/calificaciones/toggle-visible/<int:pk>/', calificacion_views.toggle_visible_calificacion, name='toggle_visible_calificacion'),
+    path('admin/calificaciones/responder/<int:pk>/', calificacion_views.responder_calificacion, name='responder_calificacion'),
 
     # PQRS
     path('gestion/pqrs/', PQRSListView.as_view(), name='listar_pqrs'),

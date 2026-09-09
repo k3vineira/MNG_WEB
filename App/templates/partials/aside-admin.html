@@ -43,8 +43,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center gap-2 {% if 'listar_comentarios' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
-              <i class="bi bi-chat-left-dots-fill"></i> Comentarios
+            <a href="{% url 'listar_calificaciones' %}" class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'listar_calificaciones' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}">
+              <i class="bi bi-star-fill"></i> Calificaciones
             </a>
           </li>
 
@@ -174,7 +174,7 @@
             <a href="{% url 'estadisticas_admin' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'estadisticas_admin' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Análisis de datos, finanzas y reportes"><i class="bi bi-graph-up-arrow fs-5"></i></a>
           </li>
           <li class="nav-item w-100 text-center">
-            <a href="#" class="btn w-100 py-2 border-0 rounded-0 {% if 'listar_comentarios' in request.resolver_match.url_name %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Gestionar y moderar las reseñas de los usuarios"><i class="bi bi-chat-left-dots-fill fs-5"></i></a>
+            <a href="{% url 'listar_calificaciones' %}" class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'listar_calificaciones' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}" data-bs-toggle="tooltip" title="Gestionar y moderar las calificaciones de los usuarios"><i class="bi bi-star-fill fs-5"></i></a>
           </li>
 
           <!-- Separador -->
