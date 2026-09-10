@@ -40,7 +40,8 @@
       name="numero_documento"
       class="form-control rounded-pill py-3 px-4"
       placeholder="1000000000"
-      oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+      maxlength="10"
+      oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
       {%
       if
       request.POST.get.numero_documento
