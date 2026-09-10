@@ -6,7 +6,7 @@ from App.utils import crear_notificacion_sistema
 
 
 def es_administrador(user):
-    return user.is_authenticated and user.is_active and (user.is_staff or user.rol == Usuario.Roles.ADMIN)
+    return user.is_authenticated and user.is_active and (user.is_staff or getattr(user, 'rol', None) == Usuario.Roles.ADMIN)
 
 
 # ==============================================================================

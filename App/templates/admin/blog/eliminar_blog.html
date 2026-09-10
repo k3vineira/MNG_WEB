@@ -1,30 +1,30 @@
-{% extends 'base-admin.html' %}
+{% extends 'admin/base-admin.html' %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-danger shadow">
-                <div class="card-header bg-danger text-white text-center">
-                    <h4><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h4>
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card border-danger shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-danger text-white text-center py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i> Confirmar Eliminación</h5>
                 </div>
                 <div class="card-body text-center p-4">
-                    <p class="fs-5">Estás a punto de eliminar un nota del blog :</p>
-                    <h3 class="text-secondary mb-4">"{{ blog.titulo }}"</h3>
+                    <p class="text-muted mb-2">Estás a punto de eliminar la siguiente publicación del blog:</p>
+                    <h4 class="text-dark fw-bold mb-3">"{{ blog.titulo }}"</h4>
                     
                     <div class="p-3 bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-3 mb-4">
-                        <small class="fw-semibold text-warning-emphasis"><i class="bi bi-exclamation-triangle me-1"></i> Esta acción no se puede deshacer.</small>
+                        <small class="fw-semibold text-warning-emphasis"><i class="bi bi-exclamation-triangle me-1"></i> Esta acción es irreversible y eliminará el artículo del sitio web.</small>
                     </div>
 
                     <form method="POST">
                         {% csrf_token %}
-                        <div class="d-grid gap-2 d-md-block">
-                            <button type="submit" class="btn btn-danger px-4">
-                                <i class="bi bi-trash"></i> Sí, eliminar permanentemente
-                            </button>
-                            <a href="#" class="btn btn-secondary px-4">
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'listar_blog' %}" class="btn btn-outline-secondary px-4 rounded-pill">
                                 Cancelar
                             </a>
+                            <button type="submit" class="btn btn-danger px-4 rounded-pill shadow-sm fw-bold">
+                                <i class="bi bi-trash me-1"></i> Sí, eliminar permanentemente
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -33,5 +33,3 @@
     </div>
 </div>
 {% endblock %}
-
-

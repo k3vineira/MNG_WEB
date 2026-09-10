@@ -90,8 +90,8 @@
               <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
                 <li><a href="{% url 'gestion_reservas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'gestion_reservas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar2-check me-1"></i> Reservas</a></li>
                 <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-circle me-1"></i> Cancelaciones</a></li>
-                <li><a href="#" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-receipt me-1"></i> Comprobantes</a></li>
-                <li><a href="#" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon text-danger me-1"></i> Pagos Rechazados</a></li>
+                <li><a href="{% url 'admin_comprobantes' %}" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-receipt me-1"></i> Comprobantes</a></li>
+                <li><a href="{% url 'admin_comprobantes' %}?estado=rechazado" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon text-danger me-1"></i> Pagos Rechazados</a></li>
               </ul>
             </div>
           </li>
@@ -113,16 +113,16 @@
 
           <!-- Contenido -->
           <li class="nav-item">
-            <a href="#menuContenido" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_blog listar_pqrs gestion_promociones' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
-                    aria-expanded="{% if request.resolver_match.url_name in 'listar_blog listar_pqrs gestion_promociones' %}true{% else %}false{% endif %}">
+            <a href="#menuContenido" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if 'blog' not in request.resolver_match.url_name and 'pqrs' not in request.resolver_match.url_name and 'promocion' not in request.resolver_match.url_name %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if 'blog' in request.resolver_match.url_name or 'pqrs' in request.resolver_match.url_name or 'promocion' in request.resolver_match.url_name %}true{% else %}false{% endif %}">
               <div class="d-flex align-items-center gap-2"><i class="bi bi-journal-text"></i> Contenido</div>
               <i class="bi bi-chevron-down small"></i>
             </a>
-            <div class="collapse {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}show{% endif %}" id="menuContenido" data-bs-parent="#adminAccordion">
+            <div class="collapse {% if 'blog' in request.resolver_match.url_name or 'pqrs' in request.resolver_match.url_name or 'promocion' in request.resolver_match.url_name %}show{% endif %}" id="menuContenido" data-bs-parent="#adminAccordion">
               <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
-                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_blog' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-journal-richtext me-1"></i> Blog</a></li>
-                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_pqrs' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-envelope-paper me-1"></i> PQRS</a></li>
-                <li><a href="#" class="nav-link small py-1 {% if 'promociones' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-megaphone me-1"></i> Promociones</a></li>
+                <li><a href="{% url 'listar_blog' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_blog' or request.resolver_match.url_name == 'crear_blog' or request.resolver_match.url_name == 'editar_blog' or request.resolver_match.url_name == 'eliminar_blog' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-journal-richtext me-1"></i> Blog</a></li>
+                <li><a href="{% url 'listar_pqrs' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_pqrs' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-envelope-paper me-1"></i> PQRS</a></li>
+                <li><a href="{% url 'gestion_promociones' %}" class="nav-link small py-1 {% if 'promocion' in request.resolver_match.url_name %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-megaphone me-1"></i> Promociones</a></li>
               </ul>
             </div>
           </li>
@@ -211,8 +211,8 @@
               <li><h6 class="dropdown-header text-success text-uppercase small">Reservas &amp; Pagos</h6></li>
               <li><a class="dropdown-item {% if request.resolver_match.url_name == 'gestion_reservas' %}active bg-success{% endif %}" href="{% url 'gestion_reservas' %}"><i class="bi bi-calendar2-check me-2"></i>Reservas</a></li>
               <li><a class="dropdown-item {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}active bg-success{% endif %}" href="#"><i class="bi bi-x-circle me-2"></i>Cancelaciones</a></li>
-              <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success{% endif %}" href="#"><i class="bi bi-receipt me-2"></i>Comprobantes</a></li>
-              <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger{% endif %}" href="#"><i class="bi bi-x-octagon text-danger me-2"></i>Pagos Rechazados</a></li>
+              <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success{% endif %}" href="{% url 'admin_comprobantes' %}"><i class="bi bi-receipt me-2"></i>Comprobantes</a></li>
+              <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger{% endif %}" href="{% url 'admin_comprobantes' %}?estado=rechazado"><i class="bi bi-x-octagon text-danger me-2"></i>Pagos Rechazados</a></li>
             </ul>
           </li>
 
@@ -224,20 +224,20 @@
             <ul class="dropdown-menu dropdown-menu-dark shadow">
               <li><h6 class="dropdown-header text-success text-uppercase small">Usuarios &amp; Guías</h6></li>
               <li><a class="dropdown-item {% if request.resolver_match.url_name == 'gestion_usuarios' %}active bg-success{% endif %}" href="{% url 'gestion_usuarios' %}"><i class="bi bi-person-fill me-2"></i>Gestionar Usuarios</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'gestion_guias' %}active bg-success{% endif %}" href="{% url 'gestion_guias' %}"><i class="bi bi-person-badge-fill me-2"></i>Gestionar Guías</a></li>
+              <li><a class="dropdown-item {% if 'gestion_guias' in request.resolver_match.url_name %}active bg-success{% endif %}" href="{% url 'gestion_guias' %}"><i class="bi bi-person-badge-fill me-2"></i>Gestionar Guías</a></li>
             </ul>
           </li>
 
           <!-- Contenido (Dropend) -->
           <li class="nav-item w-100 text-center dropend">
-            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_blog' in request.resolver_match.url_name or 'listar_pqrs' in request.resolver_match.url_name or 'gestion_promociones' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Moderación de PQRS, blogs y promociones">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'blog' in request.resolver_match.url_name or 'pqrs' in request.resolver_match.url_name or 'promocion' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Moderación de PQRS, blogs y promociones">
               <i class="bi bi-journal-text fs-5"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-dark shadow">
               <li><h6 class="dropdown-header text-success text-uppercase small">Contenido</h6></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_blog' %}active bg-success{% endif %}" href="#"><i class="bi bi-journal-richtext me-2"></i>Blog</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_pqrs' %}active bg-success{% endif %}" href="#"><i class="bi bi-envelope-paper me-2"></i>PQRS</a></li>
-              <li><a class="dropdown-item {% if 'promociones' in request.resolver_match.url_name %}active bg-success{% endif %}" href="#"><i class="bi bi-megaphone me-2"></i>Promociones</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_blog' or request.resolver_match.url_name == 'crear_blog' or request.resolver_match.url_name == 'editar_blog' or request.resolver_match.url_name == 'eliminar_blog' %}active bg-success{% endif %}" href="{% url 'listar_blog' %}"><i class="bi bi-journal-richtext me-2"></i>Blog</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_pqrs' %}active bg-success{% endif %}" href="{% url 'listar_pqrs' %}"><i class="bi bi-envelope-paper me-2"></i>PQRS</a></li>
+              <li><a class="dropdown-item {% if 'promocion' in request.resolver_match.url_name %}active bg-success{% endif %}" href="{% url 'gestion_promociones' %}"><i class="bi bi-megaphone me-2"></i>Promociones</a></li>
             </ul>
           </li>
 

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -282,6 +283,37 @@ class Paquete(models.Model):
         if all_actividades:
             return not any(not getattr(a, 'apto_menores', True) for a in all_actividades)
         return True
+
+    @property
+    def paquete_promocion_activo(self):
+        from django.utils import timezone
+        hoy = timezone.now().date()
+        for pp in self.paquetepromocion_set.all():
+            p = getattr(pp, 'promocion', None)
+            if p and getattr(p, 'activa', False) and p.fecha_inicio <= hoy <= p.fecha_fin:
+                return pp
+        return None
+
+    @property
+    def promocion_activa(self):
+        pp = self.paquete_promocion_activo
+        return pp.promocion if pp else None
+
+    @property
+    def tiene_promocion(self):
+        return self.promocion_activa is not None
+
+    @property
+    def precio_final(self):
+        pp = self.paquete_promocion_activo
+        precio_base = Decimal(self.precio_minimo or 0)
+        if pp:
+            if pp.valor_adulto_condescuento and pp.valor_adulto_condescuento > 0:
+                return pp.valor_adulto_condescuento
+            elif pp.promocion and pp.promocion.porcentaje_descuento:
+                desc = Decimal(pp.promocion.porcentaje_descuento) / Decimal(100)
+                return round(precio_base * (Decimal(1) - desc), 2)
+        return precio_base
 
 # ==============================================================================
 # TARIFA
@@ -605,6 +637,22 @@ class Pago(models.Model):
     def usuario(self):
         """Retorna el usuario de la reserva asociada."""
         return self.reserva.usuario if self.reserva else None
+
+    @property
+    def banco_origen_pago(self):
+        return self.banco_origen
+
+    @property
+    def monto_pagado(self):
+        return self.monto
+
+    @property
+    def estado_pago(self):
+        return self.estado_transaccion
+
+    @property
+    def nota_admin_pago(self):
+        return self.nota_admin
 
     def __str__(self):
         """Retorna el ID, usuario y estado del pago como representación textual."""

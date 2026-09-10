@@ -17,6 +17,8 @@ from App.views.temporada import views as temporada_views
 from App.views.actividades import views as actividades_views
 from App.views.tarifa import views as tarifa_views
 from App.views.guias import views as guias_views
+from App.views.promocion import views as promocion_views
+from App.views.comprobante_pago import views as comprobante_pago_views
 
 
 
@@ -76,6 +78,9 @@ urlpatterns = [
     path('reservas/cancelar/<int:reserva_id>/', reserva_views.cancelar_reserva_usuario, name='cancelar_reserva_usuario'),
     path('reservas/comprobante/<int:reserva_id>/', reserva_views.comprobante_reserva_html, name='comprobante_reserva'),
     path('reservas/comprobante-multiple/', reserva_views.comprobante_multiple, name='comprobante_multiple'),
+    path('reservas/factura/<int:reserva_id>/', reserva_views.ver_factura, name='ver_factura'),
+    path('reservas/factura/<int:reserva_id>/descargar/', reserva_views.descargar_factura, name='descargar_factura'),
+    path('reservas/mis-facturas/', reserva_views.mis_facturas, name='mis_facturas'),
 
     # Blog
     path('blog/', blog_views.blog, name='blog'),
@@ -87,9 +92,22 @@ urlpatterns = [
     path('admin/blog/editar/<int:pk>/', blog_views.BlogUpdateView.as_view(), name='editar_blog'),
     path('admin/blog/eliminar/<int:pk>/', blog_views.BlogDeleteView.as_view(), name='eliminar_blog'),
 
+    # Promociones (Administración / Staff)
+    path('admin/promociones/', promocion_views.PromocionListView.as_view(), name='gestion_promociones'),
+    path('admin/promociones/listar/', promocion_views.PromocionListView.as_view(), name='listar_promociones'),
+    path('admin/promociones/agregar/', promocion_views.PromocionCreateView.as_view(), name='agregar_promocion'),
+    path('admin/promociones/editar/<int:pk>/', promocion_views.PromocionUpdateView.as_view(), name='editar_promocion'),
+    path('admin/promociones/eliminar/<int:pk>/', promocion_views.PromocionDeleteView.as_view(), name='eliminar_promocion'),
+    path('admin/promociones/toggle-estado/<int:pk>/', promocion_views.toggle_estado_promocion, name='toggle_estado_promocion'),
+
     # Pagos (Usuario / Turista)
     path('pagos/enviar-comprobante/', pago_views.enviar_comprobante, name='enviar_comprobante'),
     path('pagos/mis-comprobantes/', pago_views.mis_comprobantes, name='mis_comprobantes'),
+
+    # Comprobantes de Pago (Administración / Staff)
+    path('admin/comprobantes/', comprobante_pago_views.admin_comprobantes, name='admin_comprobantes'),
+    path('admin/comprobantes/revisar/<int:pk>/', comprobante_pago_views.admin_revisar_comprobante, name='admin_revisar_comprobante'),
+    path('admin/comprobantes/eliminar/<int:pk>/', comprobante_pago_views.admin_eliminar_comprobante, name='admin_eliminar_comprobante'),
 
     # Notificaciones
     path('notificaciones/', notificacion_views.listar_notificaciones, name='listar_notificaciones'),
@@ -122,7 +140,6 @@ urlpatterns = [
     path('admin/guias/', guias_views.gestion_guias_view, name='gestion_guias'),
     path('admin/guias/guardar/', guias_views.guias_guardar, name='guias_guardar'),
     path('admin/guias/asignar-rol/<int:id>/', guias_views.asignar_rol_guia, name='asignar_rol_guia'),
-
 
     # Calificaciones (Administración / Staff & Turista / Cliente)
     path('admin/calificaciones/', calificacion_views.listar_calificaciones_admin, name='listar_calificaciones'),

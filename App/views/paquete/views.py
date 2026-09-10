@@ -61,7 +61,7 @@ def tours(request):
         except (ValueError, TypeError):
             pass
 
-    lista_tours = lista_tours.select_related('categoria').prefetch_related('actividades', 'tarifas__temporada')
+    lista_tours = lista_tours.select_related('categoria').prefetch_related('actividades', 'tarifas__temporada', 'paquetepromocion_set__promocion')
     lista_categorias = Categoria.objects.filter(estado=True)
 
     contexto = {
