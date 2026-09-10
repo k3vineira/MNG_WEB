@@ -158,8 +158,13 @@
                             {% else %}
                                 <img src="{% static 'img/lagunanegra.webp' %}" class="card-img-top object-fit-cover" alt="Imagen por defecto">
                             {% endif %}
-                            <div class="position-absolute top-0 start-0 m-2">
+                            <div class="position-absolute top-0 start-0 m-2 d-flex flex-column align-items-start gap-1">
                                 <span class="badge bg-dark bg-opacity-75 text-white small px-2 py-1 rounded-pill"><i class="bi bi-geo-alt-fill me-1"></i>Tour</span>
+                                {% if tour.tiene_promocion %}
+                                    <span class="badge bg-danger text-white small px-2 py-1 rounded-pill shadow-sm">
+                                        <i class="bi bi-percent me-1"></i>-{{ tour.promocion_activa.porcentaje_descuento }}% OFF
+                                    </span>
+                                {% endif %}
                             </div>
                             {% if not tour.apto_para_menores %}
                             <div class="position-absolute top-0 end-0 m-2">
@@ -190,7 +195,23 @@
 
                             <div class="d-flex align-items-center justify-content-between py-2">
                                 <div>
-                                    <span class="text-success fw-black fs-4" style="font-weight: 800; letter-spacing: -0.5px;">COP ${{ tour.precio_minimo|floatformat:0|intcomma }}</span>
+                                    {% if tour.tiene_promocion %}
+                                        <div class="d-flex flex-column">
+                                            <span class="text-muted text-decoration-line-through small fw-semibold" style="font-size: 0.85rem;">
+                                                COP ${{ tour.precio_minimo|floatformat:0|intcomma }}
+                                            </span>
+                                            <span class="text-danger fw-black fs-4" style="font-weight: 800; letter-spacing: -0.5px;">
+                                                COP ${{ tour.precio_final|floatformat:0|intcomma }}
+                                            </span>
+                                            <span class="badge bg-danger bg-opacity-10 text-danger small border border-danger-subtle mt-1 text-start" style="width: fit-content;">
+                                                <i class="bi bi-megaphone me-1"></i>{{ tour.promocion_activa.nombre }}
+                                            </span>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-success fw-black fs-4" style="font-weight: 800; letter-spacing: -0.5px;">
+                                            COP ${{ tour.precio_minimo|floatformat:0|intcomma }}
+                                        </span>
+                                    {% endif %}
                                 </div>
                                 
                                 {% if tour.categoria %}

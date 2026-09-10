@@ -1,0 +1,353 @@
+{% extends 'admin/base-admin.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <!-- 1. Mensajes de alerta -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm rounded-4 mb-4" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- 2. Encabezado Principal -->
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="display-6 text-success fw-bold mb-1 d-flex align-items-center">
+                    <i class="bi bi-megaphone me-3"></i>Gestión de Promociones
+                </h1>
+                <p class="text-muted mb-0">Configura descuentos, códigos promocionales, cupones y asignación directa a paquetes turísticos.</p>
+            </div>
+            <a href="{% url 'agregar_promocion' %}" class="btn btn-success fw-bold rounded-pill shadow-sm px-4 py-2">
+                <i class="bi bi-plus-circle me-2"></i>Nueva Promoción
+            </a>
+        </div>
+    </div>
+
+    <!-- 3. Tarjetas de Estadísticas -->
+    <div class="row g-3 mb-4">
+        {% for label, count, color, icon in stats_list %}
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="card-body d-flex align-items-center p-3 p-md-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm
+                        {% if color == 'text-success' %} bg-success bg-opacity-10 text-success
+                        {% elif color == 'text-danger' %} bg-danger bg-opacity-10 text-danger
+                        {% elif color == 'text-primary' %} bg-primary bg-opacity-10 text-primary
+                        {% else %} bg-light text-dark {% endif %}" style="width: 52px; height: 52px; font-size: 1.5rem; flex-shrink: 0;">
+                        <i class="bi {{ icon }}"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 small">{{ label }}</h6>
+                        <h3 class="fw-black mb-0 {{ color }}">{{ count }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 4. Barra de Búsqueda y Filtros Rápidos -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
+        <div class="card-body p-3">
+            <form method="GET" class="row g-2 align-items-center">
+                
+                <!-- Búsqueda por texto -->
+                <div class="col-12 col-md-4">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light border-end-0 text-success"><i class="bi bi-search"></i></span>
+                        <input type="text" name="q" class="form-control border-start-0 bg-light" placeholder="Buscar por nombre, código o cupón..." value="{{ q }}">
+                    </div>
+                </div>
+
+                <!-- Filtro de Estado -->
+                <div class="col-12 col-sm-6 col-md-2">
+                    <select name="estado" class="form-select form-select-sm bg-light">
+                        <option value="" {% if not estado_filtro %}selected{% endif %}>Todos los estados</option>
+                        <option value="activas" {% if estado_filtro == 'activas' %}selected{% endif %}>Solo Activas</option>
+                        <option value="inactivas" {% if estado_filtro == 'inactivas' %}selected{% endif %}>Solo Inactivas</option>
+                    </select>
+                </div>
+
+                <!-- Fecha Desde -->
+                <div class="col-6 col-sm-3 col-md-2">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light small text-muted">Desde</span>
+                        <input type="date" name="fecha_inicio" class="form-control bg-light" value="{{ fecha_inicio }}">
+                    </div>
+                </div>
+
+                <!-- Fecha Hasta -->
+                <div class="col-6 col-sm-3 col-md-2">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light small text-muted">Hasta</span>
+                        <input type="date" name="fecha_fin" class="form-control bg-light" value="{{ fecha_fin }}">
+                    </div>
+                </div>
+
+                <!-- Botones Filtrar y Limpiar -->
+                <div class="col-12 col-md-2 d-flex gap-2 justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold flex-fill">
+                        <i class="bi bi-funnel-fill me-1"></i>Filtrar
+                    </button>
+                    <a href="{% url 'gestion_promociones' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="Limpiar Filtros">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. Tabla de Promociones (Desktop) -->
+    <div class="card border-0 shadow-sm p-3 mb-4 rounded-4 bg-white">
+        
+        <div class="table-responsive d-none d-lg-block">
+            <table id="tablaPromociones" class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th scope="col" class="fw-bold">Código / Cupón</th>
+                        <th scope="col" class="fw-bold">Promoción</th>
+                        <th scope="col" class="fw-bold text-center">Descuento</th>
+                        <th scope="col" class="fw-bold text-center">Vigencia</th>
+                        <th scope="col" class="fw-bold text-center">Paquetes</th>
+                        <th scope="col" class="fw-bold text-center">Estado</th>
+                        <th scope="col" class="fw-bold text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for promo in promociones %}
+                    <tr>
+                        <!-- Código y Cupón -->
+                        <td>
+                            <div class="fw-bold text-dark font-monospace">
+                                <i class="bi bi-tag-fill text-success me-1"></i>{{ promo.codigo_promocion }}
+                            </div>
+                            {% if promo.codigo_cupon %}
+                                <span class="badge bg-light text-secondary border mt-1">
+                                    <i class="bi bi-ticket-perforated me-1"></i>{{ promo.codigo_cupon }}
+                                </span>
+                            {% else %}
+                                <small class="text-muted fst-italic">Sin cupón</small>
+                            {% endif %}
+                        </td>
+
+                        <!-- Nombre y Descripción -->
+                        <td>
+                            <div class="fw-bold text-dark">{{ promo.nombre }}</div>
+                            <div class="text-muted small text-truncate" style="max-width: 260px;" title="{{ promo.descripcion }}">
+                                {{ promo.descripcion }}
+                            </div>
+                        </td>
+
+                        <!-- Descuento -->
+                        <td class="text-center">
+                            <span class="badge bg-danger bg-opacity-10 text-danger fs-6 px-3 py-2 rounded-pill fw-bold">
+                                -{{ promo.porcentaje_descuento }}%
+                            </span>
+                        </td>
+
+                        <!-- Vigencia -->
+                        <td class="text-center">
+                            <div class="small fw-semibold text-secondary">
+                                <i class="bi bi-calendar-check text-success me-1"></i>{{ promo.fecha_inicio|date:"d M, Y" }}
+                            </div>
+                            <div class="small fw-semibold text-secondary">
+                                <i class="bi bi-calendar-x text-danger me-1"></i>{{ promo.fecha_fin|date:"d M, Y" }}
+                            </div>
+                        </td>
+
+                        <!-- Paquetes Asociados -->
+                        <td class="text-center">
+                            {% with total_paquetes=promo.paquetepromocion_set.count %}
+                                {% if total_paquetes > 0 %}
+                                    <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalPaquetes{{ promo.id }}">
+                                        <i class="bi bi-box-seam me-1"></i>{{ total_paquetes }} paquete{{ total_paquetes|pluralize }}
+                                    </button>
+                                {% else %}
+                                    <span class="badge bg-light text-muted border">Ninguno</span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+
+                        <!-- Estado con Toggle rápido -->
+                        <td class="text-center">
+                            <a href="{% url 'toggle_estado_promocion' promo.id %}" class="text-decoration-none" title="Haz clic para cambiar estado">
+                                {% if promo.activa %}
+                                    <span class="badge bg-success bg-opacity-75 px-3 py-2 rounded-pill shadow-sm">
+                                        <i class="bi bi-play-circle-fill me-1"></i> Activa
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary bg-opacity-75 px-3 py-2 rounded-pill shadow-sm">
+                                        <i class="bi bi-stop-circle-fill me-1"></i> Inactiva
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </td>
+
+                        <!-- Acciones -->
+                        <td class="text-center">
+                            <div class="btn-group shadow-sm">
+                                <a href="{% url 'editar_promocion' promo.id %}" class="btn btn-sm btn-outline-secondary px-3 rounded-pill fw-semibold" title="Editar Promoción">
+                                    <i class="bi bi-pencil me-1"></i>Editar
+                                </a>
+                                <a href="{% url 'eliminar_promocion' promo.id %}" class="btn btn-sm btn-outline-danger px-3 rounded-pill fw-semibold ms-1" title="Eliminar Promoción">
+                                    <i class="bi bi-trash me-1"></i>Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-megaphone fs-1 d-block text-secondary opacity-50 mb-2"></i>
+                            No se encontraron promociones registradas.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 6. Vista Móvil (Cards) -->
+        <div class="d-lg-none">
+            <div class="row g-3">
+                {% for promo in promociones %}
+                <div class="col-12">
+                    <div class="card border border-light shadow-sm rounded-4 p-3 bg-white">
+                        <div class="d-flex justify-content-between align-items-start mb-2 border-bottom pb-2">
+                            <div>
+                                <span class="badge bg-success bg-opacity-10 text-success font-monospace mb-1">{{ promo.codigo_promocion }}</span>
+                                <h5 class="fw-bold text-dark mb-0">{{ promo.nombre }}</h5>
+                            </div>
+                            <div>
+                                <span class="badge bg-danger fs-6 rounded-pill">-{{ promo.porcentaje_descuento }}%</span>
+                            </div>
+                        </div>
+
+                        <p class="small text-muted mb-2">{{ promo.descripcion|truncatewords:20 }}</p>
+
+                        <div class="row g-2 small mb-3">
+                            <div class="col-6">
+                                <span class="text-muted d-block">Vigencia</span>
+                                <span class="fw-semibold text-secondary">{{ promo.fecha_inicio|date:"d/m/Y" }} - {{ promo.fecha_fin|date:"d/m/Y" }}</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted d-block">Cupón</span>
+                                <span class="fw-semibold text-secondary">{{ promo.codigo_cupon|default:"N/A" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span class="small text-muted me-1">Paquetes:</span>
+                                <span class="badge bg-light text-dark border">{{ promo.paquetepromocion_set.count }}</span>
+                            </div>
+                            <div>
+                                <a href="{% url 'toggle_estado_promocion' promo.id %}" class="text-decoration-none">
+                                    {% if promo.activa %}
+                                        <span class="badge bg-success rounded-pill">Activa</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary rounded-pill">Inactiva</span>
+                                    {% endif %}
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'editar_promocion' promo.id %}" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill">
+                                <i class="bi bi-pencil me-1"></i>Editar
+                            </a>
+                            <a href="{% url 'eliminar_promocion' promo.id %}" class="btn btn-sm btn-outline-danger flex-fill fw-bold rounded-pill">
+                                <i class="bi bi-trash me-1"></i>Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center p-4 text-muted border rounded shadow-sm bg-light">
+                    No se encontraron promociones.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 7. Modales de Detalle de Paquetes por Promoción -->
+{% for promo in promociones %}
+{% if promo.paquetepromocion_set.exists %}
+<div class="modal fade" id="modalPaquetes{{ promo.id }}" tabindex="-1" aria-labelledby="modalLabel{{ promo.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header bg-success bg-opacity-10 border-0 p-4">
+                <div>
+                    <h5 class="modal-title fw-bold text-success mb-0" id="modalLabel{{ promo.id }}">
+                        <i class="bi bi-box-seam me-2"></i>Paquetes con Descuento: {{ promo.nombre }}
+                    </h5>
+                    <small class="text-muted">Código: {{ promo.codigo_promocion }} | Descuento aplicado: {{ promo.porcentaje_descuento }}%</small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-4">
+                
+                {% if promo.condiciones %}
+                <div class="alert alert-warning border-0 bg-warning bg-opacity-10 small mb-3">
+                    <strong><i class="bi bi-info-circle me-1"></i>Condiciones:</strong> {{ promo.condiciones }}
+                </div>
+                {% endif %}
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light text-muted">
+                            <tr>
+                                <th>Paquete Turístico</th>
+                                <th>Categoría</th>
+                                <th class="text-end">Adulto con Descuento</th>
+                                <th class="text-end">Menor con Descuento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pp in promo.paquetepromocion_set.all %}
+                            <tr>
+                                <td class="fw-bold text-dark">{{ pp.paquete.nombre }}</td>
+                                <td><span class="badge bg-light text-secondary border">{{ pp.paquete.categoria.nombre }}</span></td>
+                                <td class="text-end text-success fw-bold">${{ pp.valor_adulto_condescuento|floatformat:0|intcomma }}</td>
+                                <td class="text-end text-success fw-bold">${{ pp.valor_menor_condescuento|floatformat:0|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer border-0 p-3">
+                <a href="{% url 'editar_promocion' promo.id %}" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                    <i class="bi bi-pencil me-1"></i>Modificar Paquetes
+                </a>
+                <button type="button" class="btn btn-sm btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
+<script src="{% static 'js/tconf/tconf-tablaPromociones.js' %}"></script>
+{% endblock %}

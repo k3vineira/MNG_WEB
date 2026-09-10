@@ -17,6 +17,7 @@ from App.views.temporada import views as temporada_views
 from App.views.actividades import views as actividades_views
 from App.views.tarifa import views as tarifa_views
 from App.views.guias import views as guias_views
+from App.views.promocion import views as promocion_views
 
 
 
@@ -86,6 +87,14 @@ urlpatterns = [
     path('admin/blog/agregar/', blog_views.BlogCreateView.as_view(), name='crear_blog'),
     path('admin/blog/editar/<int:pk>/', blog_views.BlogUpdateView.as_view(), name='editar_blog'),
     path('admin/blog/eliminar/<int:pk>/', blog_views.BlogDeleteView.as_view(), name='eliminar_blog'),
+
+    # Promociones (Administración / Staff)
+    path('admin/promociones/', promocion_views.PromocionListView.as_view(), name='gestion_promociones'),
+    path('admin/promociones/listar/', promocion_views.PromocionListView.as_view(), name='listar_promociones'),
+    path('admin/promociones/agregar/', promocion_views.PromocionCreateView.as_view(), name='agregar_promocion'),
+    path('admin/promociones/editar/<int:pk>/', promocion_views.PromocionUpdateView.as_view(), name='editar_promocion'),
+    path('admin/promociones/eliminar/<int:pk>/', promocion_views.PromocionDeleteView.as_view(), name='eliminar_promocion'),
+    path('admin/promociones/toggle-estado/<int:pk>/', promocion_views.toggle_estado_promocion, name='toggle_estado_promocion'),
 
     # Pagos (Usuario / Turista)
     path('pagos/enviar-comprobante/', pago_views.enviar_comprobante, name='enviar_comprobante'),

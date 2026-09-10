@@ -128,11 +128,11 @@
             <i class="bi bi-megaphone-fill"></i>
           </span>
         </div>
-        <div class="text-muted small">Anuncios / Banners</div>
+        <div class="text-muted small">Promociones Activas</div>
         <div class="fw-bold fs-5 u-style-bcd9f448">{{ total_promociones|intcomma|default:"0" }}</div>
         <div class="u-style-640fb1f6">
-          <a href="#" class="text-decoration-none text-muted">
-            Configurar <i class="bi bi-arrow-right"></i>
+          <a href="{% url 'gestion_promociones' %}" class="text-decoration-none text-muted">
+            Gestionar <i class="bi bi-arrow-right"></i>
           </a>
         </div>
       </div>
