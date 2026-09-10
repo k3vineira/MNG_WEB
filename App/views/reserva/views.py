@@ -41,12 +41,12 @@ def requiere_autenticacion(view_func):
 
 
 # =========================
-# RESERVAS ADMIN 
+# GESTIÓN DE RESERVAS (ADMIN)
 # =========================
 
 @method_decorator(requiere_administrador, name='dispatch')
-@method_decorator(requiere_administrador, name='dispatch')
-class ReservaListView(ListView):
+class GestionReservasListView(ListView):
+    """Vista administrativa para la gestión, filtrado y monitoreo de reservas."""
     model = Reserva
     template_name = 'admin/reserva/reservas_admin.html'
     context_object_name = 'reservas'
@@ -65,6 +65,7 @@ class ReservaListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['titulo'] = 'Gestión de Reservas'
         
         stats = Reserva.objects.aggregate(
             total=Count('id'),
@@ -118,16 +119,14 @@ def cambiar_estado_reserva(request, reserva_id):
     return JsonResponse({'success': False, 'error': 'Método no permitido.'}, status=405)
 
 
-    
 @method_decorator(requiere_administrador, name='dispatch')
-class ReservaCreateView(SuccessMessageMixin, CreateView):
+class CrearReservaAdminView(SuccessMessageMixin, CreateView):
     model = Reserva
     form_class = ReservaForm
     template_name = 'admin/reserva/agregar_reserva.html'
-    success_url = reverse_lazy('listar_reservas')
+    success_url = reverse_lazy('gestion_reservas')
     success_message = "¡La reserva ha sido creada con éxito!"
 
- 
     def form_valid(self, form):
         adultos = form.cleaned_data.get('numero_adultos', 0)
         menores = form.cleaned_data.get('numero_menores', 0)
@@ -160,13 +159,12 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
 
 
 @method_decorator(requiere_administrador, name='dispatch')
-class ReservaUpdateView(UpdateView):
+class EditarReservaAdminView(UpdateView):
     model = Reserva
     form_class = ReservaForm
     template_name = 'admin/reserva/editar_reserva.html'
-    success_url = reverse_lazy('listar_reservas')
+    success_url = reverse_lazy('gestion_reservas')
 
-    # --- VALIDACIÓN AGREGADA ---
     def form_valid(self, form):
         adultos = form.cleaned_data.get('numero_adultos', 0)
         menores = form.cleaned_data.get('numero_menores', 0)
@@ -224,10 +222,11 @@ class ReservaUpdateView(UpdateView):
                 
         return response
 
-class ReservaDeleteView(DeleteView):
+@method_decorator(requiere_administrador, name='dispatch')
+class EliminarReservaAdminView(DeleteView):
     model = Reserva
     template_name = 'admin/reserva/eliminar_reserva.html'
-    success_url = reverse_lazy('listar_reservas')
+    success_url = reverse_lazy('gestion_reservas')
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -597,7 +596,7 @@ def ver_factura(request, reserva_id):
         'nro_factura': f"FAC-1000{reserva.id}",
         'cliente_nombre': reserva.usuario.nombre_completo,
         'cliente_email': reserva.usuario.email,
-        'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else reserva.fecha.strftime('%d/%m/%Y'),
+        'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else (reserva.fecha_inicio.strftime('%d/%m/%Y') if reserva.fecha_inicio else ''),
         'metodo_pago': metodo_pago,
         'paquete_nombre': reserva.paquete.nombre,
         'subtotal': reserva.monto_total,
@@ -616,7 +615,7 @@ def descargar_factura(request, reserva_id):
         messages.error(request, "No tienes permiso para descargar esta factura.")
         return redirect('mis_reservas_usuario')
     
-    if reserva.estado != 'confirmada':
+    if reserva.estado_reserva != 'confirmada':
         messages.error(request, "La factura solo se puede descargar para reservas confirmadas.")
         return redirect('mis_reservas_usuario')
         

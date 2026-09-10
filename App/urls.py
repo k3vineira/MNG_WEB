@@ -71,12 +71,12 @@ urlpatterns = [
     path('bitacora/', bitacora_views.listar_bitacora, name='listar_bitacora'),
     path('bitacora/<int:bitacora_id>/', bitacora_views.detalle_bitacora, name='detalle_bitacora'),
 
-    # Reservas (Administración / Staff)
-    path('admin/reservas/', reserva_views.ReservaListView.as_view(), name='listar_reservas'),
-    path('admin/reservas/agregar/', reserva_views.ReservaCreateView.as_view(), name='agregar_reserva'),
-    path('admin/reservas/crear/', reserva_views.ReservaCreateView.as_view(), name='crear_reserva'),
-    path('admin/reservas/editar/<int:pk>/', reserva_views.ReservaUpdateView.as_view(), name='editar_reserva'),
-    path('admin/reservas/eliminar/<int:pk>/', reserva_views.ReservaDeleteView.as_view(), name='eliminar_reserva'),
+    # Gestión de Reservas (Administración / Staff)
+    path('admin/reservas/', reserva_views.GestionReservasListView.as_view(), name='gestion_reservas'),
+    path('admin/reservas/agregar/', reserva_views.CrearReservaAdminView.as_view(), name='agregar_reserva'),
+    path('admin/reservas/crear/', reserva_views.CrearReservaAdminView.as_view(), name='crear_reserva'),
+    path('admin/reservas/editar/<int:pk>/', reserva_views.EditarReservaAdminView.as_view(), name='editar_reserva'),
+    path('admin/reservas/eliminar/<int:pk>/', reserva_views.EliminarReservaAdminView.as_view(), name='eliminar_reserva'),
     path('admin/reservas/cambiar-estado/<int:reserva_id>/', reserva_views.cambiar_estado_reserva, name='cambiar_estado_reserva'),
 
     # Dashboard Admin

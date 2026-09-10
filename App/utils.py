@@ -277,7 +277,7 @@ def generar_factura_pdf_bytes(reserva, request=None, password=None):
     if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro:
         fecha_emision = reserva.fecha_registro.strftime('%d/%m/%Y')
     else:
-        fecha_emision = reserva.fecha.strftime('%d/%m/%Y')
+        fecha_emision = reserva.fecha_inicio.strftime('%d/%m/%Y') if getattr(reserva, 'fecha_inicio', None) else ""
 
     context = {
         'nro_factura': f"FAC-1000{reserva.id}",
@@ -335,7 +335,7 @@ def enviar_correo_confirmacion_con_factura(reserva, request=None):
         'nombre_cliente': nombre_cliente,
         'reserva_id': reserva.id,
         'paquete': reserva.paquete.nombre,
-        'fecha': reserva.fecha.strftime('%d/%m/%Y') if reserva.fecha else "",
+        'fecha': reserva.fecha_inicio.strftime('%d/%m/%Y') if getattr(reserva, 'fecha_inicio', None) else "",
         'adultos': reserva.numero_adultos,
         'menores': reserva.numero_menores,
         'monto_total': str(reserva.monto_total),

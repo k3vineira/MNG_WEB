@@ -81,14 +81,14 @@
 
           <!-- Reservas & Pagos -->
           <li class="nav-item">
-            <a href="#menuReservas" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
-                    aria-expanded="{% if request.resolver_match.url_name in 'listar_reservas administrar_cancelaciones admin_comprobantes' %}true{% else %}false{% endif %}">
+            <a href="#menuReservas" data-bs-toggle="collapse" role="button" class="nav-link text-white text-decoration-none w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'gestion_reservas administrar_cancelaciones admin_comprobantes' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}" 
+                    aria-expanded="{% if request.resolver_match.url_name in 'gestion_reservas administrar_cancelaciones admin_comprobantes' %}true{% else %}false{% endif %}">
               <div class="d-flex align-items-center gap-2"><i class="bi bi-calendar-check-fill"></i> Reservas &amp; Pagos</div>
               <i class="bi bi-chevron-down small"></i>
             </a>
-            <div class="collapse {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}show{% endif %}" id="menuReservas" data-bs-parent="#adminAccordion">
+            <div class="collapse {% if request.resolver_match.url_name in 'gestion_reservas administrar_cancelaciones admin_comprobantes' %}show{% endif %}" id="menuReservas" data-bs-parent="#adminAccordion">
               <ul class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1">
-                <li><a href="{% url 'listar_reservas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'listar_reservas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar2-check me-1"></i> Reservas</a></li>
+                <li><a href="{% url 'gestion_reservas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'gestion_reservas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar2-check me-1"></i> Reservas</a></li>
                 <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-circle me-1"></i> Cancelaciones</a></li>
                 <li><a href="#" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-receipt me-1"></i> Comprobantes</a></li>
                 <li><a href="#" class="nav-link small py-1 {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon text-danger me-1"></i> Pagos Rechazados</a></li>
@@ -205,12 +205,12 @@
 
           <!-- Reservas & Pagos (Dropend) -->
           <li class="nav-item w-100 text-center dropend">
-            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'listar_reservas' in request.resolver_match.url_name or 'administrar_cancelaciones' in request.resolver_match.url_name or 'admin_comprobantes' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Control de ventas, facturación y cancelaciones">
+            <button class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name in 'gestion_reservas administrar_cancelaciones admin_comprobantes' %}text-success fw-bold{% else %}text-white opacity-75{% endif %}" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Control de ventas, facturación y cancelaciones">
               <i class="bi bi-calendar-check-fill fs-5"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-dark shadow">
               <li><h6 class="dropdown-header text-success text-uppercase small">Reservas &amp; Pagos</h6></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'listar_reservas' %}active bg-success{% endif %}" href="{% url 'listar_reservas' %}"><i class="bi bi-calendar2-check me-2"></i>Reservas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'gestion_reservas' %}active bg-success{% endif %}" href="{% url 'gestion_reservas' %}"><i class="bi bi-calendar2-check me-2"></i>Reservas</a></li>
               <li><a class="dropdown-item {% if request.resolver_match.url_name == 'administrar_cancelaciones' %}active bg-success{% endif %}" href="#"><i class="bi bi-x-circle me-2"></i>Cancelaciones</a></li>
               <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}active bg-success{% endif %}" href="#"><i class="bi bi-receipt me-2"></i>Comprobantes</a></li>
               <li><a class="dropdown-item {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}active bg-danger{% endif %}" href="#"><i class="bi bi-x-octagon text-danger me-2"></i>Pagos Rechazados</a></li>
