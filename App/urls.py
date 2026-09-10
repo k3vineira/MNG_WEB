@@ -18,6 +18,7 @@ from App.views.actividades import views as actividades_views
 from App.views.tarifa import views as tarifa_views
 from App.views.guias import views as guias_views
 from App.views.promocion import views as promocion_views
+from App.views.comprobante_pago import views as comprobante_pago_views
 
 
 
@@ -77,6 +78,9 @@ urlpatterns = [
     path('reservas/cancelar/<int:reserva_id>/', reserva_views.cancelar_reserva_usuario, name='cancelar_reserva_usuario'),
     path('reservas/comprobante/<int:reserva_id>/', reserva_views.comprobante_reserva_html, name='comprobante_reserva'),
     path('reservas/comprobante-multiple/', reserva_views.comprobante_multiple, name='comprobante_multiple'),
+    path('reservas/factura/<int:reserva_id>/', reserva_views.ver_factura, name='ver_factura'),
+    path('reservas/factura/<int:reserva_id>/descargar/', reserva_views.descargar_factura, name='descargar_factura'),
+    path('reservas/mis-facturas/', reserva_views.mis_facturas, name='mis_facturas'),
 
     # Blog
     path('blog/', blog_views.blog, name='blog'),
@@ -99,6 +103,11 @@ urlpatterns = [
     # Pagos (Usuario / Turista)
     path('pagos/enviar-comprobante/', pago_views.enviar_comprobante, name='enviar_comprobante'),
     path('pagos/mis-comprobantes/', pago_views.mis_comprobantes, name='mis_comprobantes'),
+
+    # Comprobantes de Pago (Administración / Staff)
+    path('admin/comprobantes/', comprobante_pago_views.admin_comprobantes, name='admin_comprobantes'),
+    path('admin/comprobantes/revisar/<int:pk>/', comprobante_pago_views.admin_revisar_comprobante, name='admin_revisar_comprobante'),
+    path('admin/comprobantes/eliminar/<int:pk>/', comprobante_pago_views.admin_eliminar_comprobante, name='admin_eliminar_comprobante'),
 
     # Notificaciones
     path('notificaciones/', notificacion_views.listar_notificaciones, name='listar_notificaciones'),

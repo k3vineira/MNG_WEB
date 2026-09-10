@@ -61,8 +61,8 @@
                 <li><a href="{% url 'mis_reservas_usuario' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_reservas_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-calendar-check-fill me-1"></i> Mis Reservas</a></li>
                 <li><a href="{% url 'mis_cancelaciones' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_cancelaciones_usuario' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon-fill text-danger me-1"></i> Mis Cancelaciones</a></li>
                 <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_rechazos' %}active bg-danger text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-x-octagon-fill text-danger me-1"></i> Mis Rechazos</a></li>
-                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_comprobantes' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-wallet2 me-1"></i> Mis Comprobantes</a></li>
-                <li><a href="#" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_facturas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-file-earmark-ruled me-1"></i> Mis Facturas</a></li>
+                <li><a href="{% url 'mis_comprobantes' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_comprobantes' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-wallet2 me-1"></i> Mis Comprobantes</a></li>
+                <li><a href="{% url 'mis_facturas' %}" class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_facturas' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"><i class="bi bi-file-earmark-ruled me-1"></i> Mis Facturas</a></li>
               </ul>
             </div>
           </li>
@@ -152,10 +152,10 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-dark shadow">
               <li><h6 class="dropdown-header text-success text-uppercase small">Mis Viajes</h6></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_reservas_usuario' %}active bg-success{% endif %}" href="#"><i class="bi bi-calendar-check-fill me-2"></i>Mis Reservas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_reservas_usuario' %}active bg-success{% endif %}" href="{% url 'mis_reservas_usuario' %}"><i class="bi bi-calendar-check-fill me-2"></i>Mis Reservas</a></li>
               <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_rechazos' %}active bg-danger{% endif %}" href="#"><i class="bi bi-x-octagon-fill text-danger me-2"></i>Mis Rechazos</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_comprobantes' %}active bg-success{% endif %}" href="#"><i class="bi bi-wallet2 me-2"></i>Mis Comprobantes</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_facturas' %}active bg-success{% endif %}" href="#"><i class="bi bi-file-earmark-ruled me-2"></i>Mis Facturas</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_comprobantes' %}active bg-success{% endif %}" href="{% url 'mis_comprobantes' %}"><i class="bi bi-wallet2 me-2"></i>Mis Comprobantes</a></li>
+              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'mis_facturas' %}active bg-success{% endif %}" href="{% url 'mis_facturas' %}"><i class="bi bi-file-earmark-ruled me-2"></i>Mis Facturas</a></li>
             </ul>
           </li>
 

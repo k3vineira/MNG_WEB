@@ -573,9 +573,9 @@ def mis_facturas(request):
 @login_required(login_url='login')
 def ver_factura(request, reserva_id):
     from django.urls import reverse
-    reserva = get_object_or_404(Reserva, id=reserva_id)
+    reserva = get_object_or_404(Reserva.objects.select_related('usuario', 'paquete'), id=reserva_id)
     
-    if not request.user.is_staff and reserva.usuario != request.user:
+    if not request.user.is_staff and getattr(request.user, 'rol', None) not in [1, 'ADMIN'] and reserva.usuario != request.user:
         messages.error(request, "No tienes permiso para acceder a esta factura.")
         return redirect('mis_reservas_usuario')
     
@@ -583,28 +583,32 @@ def ver_factura(request, reserva_id):
         messages.error(request, "La factura solo está disponible para reservas confirmadas y pagadas.")
         return redirect('mis_reservas_usuario')
         
-    comprobante = reserva if reserva.estado_pago == 'aprobado' else None
-    metodo_pago = comprobante.banco_origen_pago if comprobante else "Transferencia Bancaria"
+    pago = getattr(reserva, 'pago', None)
+    metodo_pago = (pago.banco_origen or pago.metodo_pago) if pago else "Transferencia Bancaria"
     
     abs_url = request.build_absolute_uri(reverse('ver_factura', args=[reserva.id]))
     qr_base64 = get_qr_base64(abs_url)
     
     logo_base64 = get_image_base64('static/img/logo_monagua.webp')
     
+    cliente_nombre = getattr(reserva.usuario, 'nombre_completo', None)
+    if not cliente_nombre and reserva.usuario:
+        cliente_nombre = reserva.usuario.get_full_name() or reserva.usuario.username
+    
     context = {
         'reserva_id': reserva.id,
         'nro_factura': f"FAC-1000{reserva.id}",
-        'cliente_nombre': reserva.usuario.nombre_completo,
-        'cliente_email': reserva.usuario.email,
+        'cliente_nombre': cliente_nombre or 'Cliente',
+        'cliente_email': reserva.usuario.email if reserva.usuario else '',
         'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else (reserva.fecha_inicio.strftime('%d/%m/%Y') if reserva.fecha_inicio else ''),
         'metodo_pago': metodo_pago,
-        'paquete_nombre': reserva.paquete.nombre,
+        'paquete_nombre': reserva.paquete.nombre if reserva.paquete else 'Aventura Mongua',
         'subtotal': reserva.monto_total,
         'total': reserva.monto_total,
         'logo_base64': logo_base64,
         'qr_base64': qr_base64,
     }
-    return render(request, 'private/factura.html', context)
+    return render(request, 'usuario/factura.html', context)
 
 
 @login_required(login_url='login')

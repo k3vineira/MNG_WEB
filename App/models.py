@@ -633,6 +633,22 @@ class Pago(models.Model):
         """Retorna el usuario de la reserva asociada."""
         return self.reserva.usuario if self.reserva else None
 
+    @property
+    def banco_origen_pago(self):
+        return self.banco_origen
+
+    @property
+    def monto_pagado(self):
+        return self.monto
+
+    @property
+    def estado_pago(self):
+        return self.estado_transaccion
+
+    @property
+    def nota_admin_pago(self):
+        return self.nota_admin
+
     def __str__(self):
         """Retorna el ID, usuario y estado del pago como representación textual."""
         username = self.usuario.username if self.usuario else "N/A"
