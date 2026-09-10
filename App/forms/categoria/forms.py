@@ -10,7 +10,12 @@ class CategoriaForm(ModelForm):
 
     class Meta:
         model = Categoria
-        exclude = ['estado']
+        fields = ['nombre', 'descripcion', 'estado']
+        labels = {
+            'nombre': 'Nombre de la Categoría',
+            'descripcion': 'Descripción',
+            'estado': '¿Está Activa?',
+        }
         widgets = {
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -18,6 +23,7 @@ class CategoriaForm(ModelForm):
                 'title': 'El nombre de la categoría solo debe contener letras, no números.'
             }),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def clean_nombre(self):

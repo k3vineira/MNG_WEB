@@ -12,6 +12,7 @@ from App.views.pqrs.views import PQRSListView, contestar_pqrs, mis_pqrs_view, gu
 from App.views.usuario import views as usuario_views
 from App.views.dashboard import views as dashboard_views
 from App.views.calificacion import views as calificacion_views
+from App.views.categoria import views as categoria_views
 
 
 
@@ -32,6 +33,12 @@ urlpatterns = [
 
     # Tours / Paquetes públicos
     path('tours/', paquete_views.tours, name='tours'),
+
+    # Categorías (Administración / Staff)
+    path('admin/categorias/', categoria_views.CategoriaListView.as_view(), name='listar_categorias'),
+    path('admin/categorias/agregar/', categoria_views.CategoriaCreateView.as_view(), name='agregar_categoria'),
+    path('admin/categorias/editar/<int:pk>/', categoria_views.CategoriaUpdateView.as_view(), name='editar_categoria'),
+    path('admin/categorias/eliminar/<int:pk>/', categoria_views.CategoriaDeleteView.as_view(), name='eliminar_categoria'),
 
     # Tours / Paquetes (Administración / Staff)
     path('admin/paquetes/', paquete_views.PaqueteListView.as_view(), name='listar_paquetes'),
