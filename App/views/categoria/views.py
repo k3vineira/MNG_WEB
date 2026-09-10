@@ -5,10 +5,9 @@ from django.contrib import messages
 from django import forms
 from django.db.models import Count, Q
 from App.forms.categoria.forms import CategoriaForm
-from App.models import*
+from App.models import Categoria, Paquete
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from App.utils import crear_notificacion_sistema
-from django.views.generic.edit import DeleteView
 
 class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     """

@@ -1,12 +1,11 @@
 from App.forms.temporada.forms import TemporadaForm
-from django.views.generic import ListView
 from django.db.models import Count, Q
-from App.models import *
+from App.models import Temporada, Tarifa
 from App.utils import crear_notificacion_sistema
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from datetime import datetime
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from datetime import datetime
 
 
 # Create your views here.
@@ -49,16 +48,14 @@ class TemporadaListView(StaffRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         stats = Temporada.objects.aggregate(
             total=Count('id'),
-            programadas=Count('id', filter=Q(estado='programada')),
-            activas=Count('id', filter=Q(estado='activa')),
-            finalizadas=Count('id', filter=Q(estado='finalizada'))
+            activas=Count('id', filter=Q(estado=True)),
+            inactivas=Count('id', filter=Q(estado=False))
         )
         context.update(stats)
         context['stats_list'] = [
-            ('Total', stats['total'], 'text-dark'),
-            ('Programadas', stats['programadas'], 'text-secondary'),
+            ('Total Temporadas', stats['total'], 'text-dark'),
             ('Activas', stats['activas'], 'text-success'),
-            ('Finalizadas', stats['finalizadas'], 'text-info'),
+            ('Inactivas', stats['inactivas'], 'text-danger'),
         ]
         return context
 
@@ -70,7 +67,6 @@ class TemporadaCreateView(StaffRequiredMixin, CreateView):
     success_url = reverse_lazy('listar_temporadas')
 
     def form_valid(self, form):
-        # Validar que fecha_fin no sea anterior a fecha_inicio
         fecha_inicio = form.cleaned_data.get('fecha_inicio')
         fecha_fin = form.cleaned_data.get('fecha_fin')
 
@@ -118,5 +114,36 @@ class TemporadaUpdateView(StaffRequiredMixin, UpdateView):
             observacion=f"La temporada '{self.object.nombre}' ha sido actualizada correctamente.",
             valor_anterior=valor_viejo,
             nuevo_valor=valor_nuevo
+        )
+        return response
+
+
+class TemporadaDeleteView(StaffRequiredMixin, DeleteView):
+    model = Temporada
+    template_name = 'admin/temporada/eliminar_temporada.html'
+    success_url = reverse_lazy('listar_temporadas')
+
+    def delete(self, request, *args, **kwargs):
+        from django.contrib import messages
+        from django.shortcuts import render
+
+        self.object = self.get_object()
+
+        if self.object.tarifa_set.exists():
+            messages.error(request, f"No se puede eliminar la temporada '{self.object.nombre}' porque contiene tarifas asociadas.")
+            return render(request, self.template_name, {'object': self.object, 'temporada': self.object})
+
+        nombre_temporada = self.object.nombre
+        valor_viejo = f"ID: {self.object.id}, Nombre: {self.object.nombre}"
+
+        response = super().delete(request, *args, **kwargs)
+
+        crear_notificacion_sistema(
+            usuario=request.user,
+            accion="TEMPORADA ELIMINADA",
+            tabla_afectada="Temporadas",
+            observacion=f"Se ha eliminado del sistema la temporada: '{nombre_temporada}'.",
+            valor_anterior=valor_viejo,
+            nuevo_valor="Registro Eliminado"
         )
         return response
