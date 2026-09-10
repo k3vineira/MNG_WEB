@@ -16,6 +16,7 @@ from App.views.categoria import views as categoria_views
 from App.views.temporada import views as temporada_views
 from App.views.actividades import views as actividades_views
 from App.views.tarifa import views as tarifa_views
+from App.views.guias import views as guias_views
 
 
 
@@ -111,6 +112,17 @@ urlpatterns = [
     path('admin/dashboard/', dashboard_views.dashboard_admin, name='dashboard_admin'),
     path('admin/estadisticas/', dashboard_views.estadisticas_admin, name='estadisticas_admin'),
     path('admin/perfil/', dashboard_views.perfil_admin, name='admin_perfil'),
+
+    # Gestión de Usuarios (Administración / Staff)
+    path('admin/usuarios/', usuario_views.gestion_usuarios_admin, name='gestion_usuarios'),
+    path('admin/usuarios/guardar/', usuario_views.usuarios_guardar, name='usuarios_guardar'),
+    path('admin/usuarios/toggle-estado/<int:id>/', usuario_views.usuarios_toggle_estado, name='usuarios_toggle_estado'),
+
+    # Gestión de Guías Turísticos (Administración / Staff)
+    path('admin/guias/', guias_views.gestion_guias_view, name='gestion_guias'),
+    path('admin/guias/guardar/', guias_views.guias_guardar, name='guias_guardar'),
+    path('admin/guias/asignar-rol/<int:id>/', guias_views.asignar_rol_guia, name='asignar_rol_guia'),
+
 
     # Calificaciones (Administración / Staff & Turista / Cliente)
     path('admin/calificaciones/', calificacion_views.listar_calificaciones_admin, name='listar_calificaciones'),

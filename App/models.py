@@ -102,6 +102,11 @@ class Usuario(AbstractUser):
         return self
 
     @property
+    def guia(self):
+        """Retorna la instancia de usuario como guía para compatibilidad con plantillas."""
+        return self
+
+    @property
     def nombre_pais(self):
         """Retorna el nombre legible del país según dr5hn."""
         if not self.pais:
