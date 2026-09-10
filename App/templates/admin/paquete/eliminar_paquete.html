@@ -9,8 +9,17 @@
                     <h4><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h4>
                 </div>
                 <div class="card-body text-center p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags|default:'danger' }} alert-dismissible fade show text-start mb-3" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
                     <p class="fs-5">Estás a punto de eliminar el paquete:</p>
-                    <h3 class="text-secondary mb-4">"{{ paquete.nombre }}"</h3>
+                    <h3 class="text-secondary mb-4">"{{ object.nombre|default:paquete.nombre }}"</h3>
                     
                     <div class="p-3 bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-3 mb-4">
                         <small class="fw-semibold text-warning-emphasis"><i class="bi bi-exclamation-triangle me-1"></i> Esta acción no se puede deshacer.</small>
@@ -22,7 +31,7 @@
                             <button type="submit" class="btn btn-danger px-4">
                                 <i class="bi bi-trash"></i> Sí, eliminar permanentemente
                             </button>
-                            <a href="#" class="btn btn-secondary px-4">
+                            <a href="{% url 'listar_paquetes' %}" class="btn btn-secondary px-4">
                                 Cancelar
                             </a>
                         </div>

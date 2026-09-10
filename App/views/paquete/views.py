@@ -7,11 +7,9 @@ from App.forms.paquete.forms import PaqueteForm
 from App.utils import crear_notificacion_sistema
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django import forms
-from App.models import *
+from App.models import Paquete, Categoria, Actividades, Tarifa, Temporada
 from decimal import Decimal, InvalidOperation
 
-
-# Create your views here.
 
 class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     """
@@ -26,7 +24,6 @@ def tours(request):
     Vista pública que filtra y devuelve el catálogo de tours y paquetes turísticos disponibles.
     Aplica sanitización y validaciones exhaustivas a los parámetros de búsqueda y filtrado GET.
     """
-    # Consulta base: solo paquetes/tours en estado activo
     lista_tours = Paquete.objects.filter(estado=True)
     sugerencias_tours = Paquete.objects.filter(estado=True).values('nombre').distinct()
 
@@ -45,7 +42,6 @@ def tours(request):
                     tarifas__precio_adulto__lte=precio_decimal
                 ).distinct()
         except (InvalidOperation, TypeError):
-            # Se ignora el filtro si se ingresa un valor no numérico
             pass
 
     # 3. Filtro según aptitud para menores de edad
@@ -63,10 +59,8 @@ def tours(request):
             if cat_id > 0:
                 lista_tours = lista_tours.filter(categoria_id=cat_id)
         except (ValueError, TypeError):
-            # Se ignora si el ID de categoría no es un entero válido
             pass
 
-    # Optimización de consultas a la base de datos (evitar consultas N+1)
     lista_tours = lista_tours.select_related('categoria').prefetch_related('actividades', 'tarifas__temporada')
     lista_categorias = Categoria.objects.filter(estado=True)
 
@@ -79,7 +73,7 @@ def tours(request):
 
 
 # ==========================================
-# PAQUETES
+# PAQUETES (ADMINISTRACIÓN)
 # ==========================================
 
 class PaqueteListView(StaffRequiredMixin, ListView):
@@ -193,8 +187,12 @@ class PaqueteDeleteView(StaffRequiredMixin, DeleteView):
         
         # Validar integridad referencial: Prevenir borrado si el paquete tiene tarifas asociadas
         if self.object.tarifas.exists():
-            messages.error(request, f"No se puede eliminar el paquete '{self.object.nombre}' porque tiene tarifas registradas.")
-            return render(request, self.template_name, {'object': self.object})
+            messages.error(request, f"No se puede eliminar el paquete '{self.object.nombre}' porque tiene tarifas asociadas. Elimina las tarifas primero.")
+            return render(request, self.template_name, {'object': self.object, 'paquete': self.object})
+
+        if hasattr(self.object, 'reservas') and self.object.reservas.exists():
+            messages.error(request, f"No se puede eliminar el paquete '{self.object.nombre}' porque tiene reservas vinculadas.")
+            return render(request, self.template_name, {'object': self.object, 'paquete': self.object})
 
         nombre_paquete = self.object.nombre
         valor_viejo = f"ID: {self.object.id}, Nombre: {self.object.nombre}, Categoría: {self.object.categoria}"
@@ -211,12 +209,4 @@ class PaqueteDeleteView(StaffRequiredMixin, DeleteView):
         )
         return response
 
-
-# ==========================================
-# ALIASES DE CLASES (NOMENCLATURA TOURS)
-# ==========================================
-TourListView = PaqueteListView
-TourCreateView = PaqueteCreateView
-TourUpdateView = PaqueteUpdateView
-TourDeleteView = PaqueteDeleteView
 
