@@ -12,7 +12,7 @@ class ActividadesForm(ModelForm):
         exclude = ['estado']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'nivel_dificultad': forms.Select(attrs={'class': 'form-select'}),
             'apto_menores': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'equipo_requerimiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),

@@ -34,21 +34,30 @@ class TarifaListView(StaffRequiredMixin, ListView):
         return queryset.order_by('-id')
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        stats = Tarifa.objects.aggregate(
-            total=Count('id'),
-            activas=Count('id', filter=Q(estado='activa')),
-            inactivas=Count('id', filter=Q(estado='inactiva'))
-        )
-        context.update(stats)
-        context['stats_list'] = [
-            ('Total', stats['total'], 'text-dark'),
-            ('Activas', stats['activas'], 'text-success'),
-            ('Inactivas', stats['inactivas'], 'text-danger'),
-        ]
-        context['paquetes'] = Paquete.objects.all()
-        context['paquete_seleccionado'] = self.request.GET.get('paquete', '')
-        return context
+     context = super().get_context_data(**kwargs)
+    
+    # Cálculo de métricas generales sobre todas las tarifas
+     stats = Tarifa.objects.aggregate(
+        total=Count('id'),
+        activas=Count('id', filter=Q(estado=True)),
+        inactivas=Count('id', filter=Q(estado=False))
+    )
+    
+     context.update(stats)
+    
+    # Estructura limpia para renderizar las tarjetas en la plantilla HTML
+     context['stats_list'] = [
+        ('Total', stats['total'] or 0, 'text-dark'),
+        ('Activas', stats['activas'] or 0, 'text-success'),
+        ('Inactivas', stats['inactivas'] or 0, 'text-danger'),
+    ]
+    
+    # Mantiene el estado de los filtros seleccionados en la interfaz
+     context['paquetes'] = Paquete.objects.all()
+     context['paquete_seleccionado'] = self.request.GET.get('paquete', '')
+     context['estado_seleccionado'] = self.request.GET.get('estado', '')
+    
+     return context
 
 
 class TarifaCreateView(StaffRequiredMixin, CreateView):

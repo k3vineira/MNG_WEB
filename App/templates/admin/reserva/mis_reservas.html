@@ -12,7 +12,7 @@
                 <h2 class="fw-bold text-success mb-1">
                     <i class="bi bi-archive text-success me-2"></i>Mis Aventuras Reservadas
                 </h2>
-                <p class="text-muted mb-0">Puedes cancelar tu reserva 3 dias despues de la fecha de inicio</p>
+                <p class="text-muted mb-0">Puedes cancelar tu reserva 3 días antes de la fecha de inicio</p>
             </div>
         </div>
     </div>
@@ -114,60 +114,75 @@
                                         </div>
                                     {% endif %}
 
-                                    <div class="mt-auto d-flex gap-2 flex-wrap pt-2 border-top">
+                                    <!-- ACCIONES Y MODAL DE CANCELACIÓN -->
+                                    <div class="mt-auto d-flex gap-2 flex-wrap pt-2 border-top align-items-center">
                                         {% with estado=reserva.estado_reserva %}
-                                            {# BOTÓN ENVIAR PAGO #}
-                                            {% if estado == 'pendiente' and not reserva.pago %}
-                                                <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
-                                                    <i class="bi bi-wallet2 me-1"></i> Enviar pago
-                                                </a>
-                                            {% endif %}
                                             
-                                            {# BOTÓN FACTURA #}
+                                            {# OPCIONES CUANDO LA RESERVA ESTÁ PENDIENTE #}
+                                            {% if estado == 'pendiente' %}
+                                                {% if not reserva.pago %}
+                                                    <a href="{% url 'enviar_comprobante' %}?reserva_id={{ reserva.id }}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
+                                                        <i class="bi bi-wallet2 me-1"></i> Enviar pago
+                                                    </a>
+                                                {% endif %}
+
+                                                <!-- Botón para abrir el Modal de Cancelación -->
+                                                <button type="button" class="btn btn-danger rounded-pill px-4 py-2 shadow-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#modalCancelar{{ reserva.id }}">
+                                                    <i class="bi bi-x-circle me-1"></i> Cancelar Reserva
+                                                </button>
+
+                                                <!-- Estructura del Modal -->
+                                                <div class="modal fade" id="modalCancelar{{ reserva.id }}" tabindex="-1" aria-labelledby="modalLabel{{ reserva.id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content border-0 shadow rounded-4">
+                                                            <div class="modal-header bg-danger text-white border-0 py-3">
+                                                                <h5 class="modal-title fw-bold" id="modalLabel{{ reserva.id }}">
+                                                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Cancelar Reserva #{{ reserva.id }}
+                                                                </h5>
+                                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            
+                                                            <form method="POST" action="{% url 'cancelar_reserva_usuario' reserva.id %}">
+                                                                {% csrf_token %}
+                                                                <div class="modal-body text-start p-4">
+                                                                    <div class="alert alert-warning p-3 rounded-3 small mb-3">
+                                                                        <strong>Políticas de Cancelación:</strong><br>
+                                                                        • Más de 15 días antes: 90% reembolso.<br>
+                                                                        • Entre 5 y 14 días antes: 50% reembolso.<br>
+                                                                        • Menos de 48 horas: Sin reembolso.
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label for="motivo_{{ reserva.id }}" class="form-label fw-bold">Ingresa el motivo de la cancelación <span class="text-danger">*</span></label>
+                                                                        <textarea name="motivo_cancelacion" id="motivo_{{ reserva.id }}" class="form-control rounded-3" rows="3" placeholder="Escribe la razón aquí..." required></textarea>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="modal-footer border-0 bg-light rounded-bottom-4 py-3">
+                                                                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Volver</button>
+                                                                    <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">Confirmar Cancelación</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+
+                                            {# OPCIONES CUANDO LA RESERVA ESTÁ CONFIRMADA #}
                                             {% if estado == 'confirmada' %}
-                                                <a href="{% url 'ver_factura' reserva.id %}" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
+                                                <a href="#" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-semibold">
                                                     <i class="bi bi-file-earmark-ruled me-1"></i> Ver Factura
                                                 </a>
+                                                <span class="text-muted small ms-2"><i class="bi bi-shield-check me-1 text-success"></i> Reserva confirmada</span>
                                             {% endif %}
-                                            
-                                            <!-- Botón para abrir el Modal -->
-<button type="button" class="btn btn-danger btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#modalCancelar{{ reserva.id }}">
-    Cancelar Reserva
-</button>
 
-<!-- Estructura del Modal -->
-<div class="modal fade" id="modalCancelar{{ reserva.id }}" tabindex="-1" aria-labelledby="modalLabel{{ reserva.id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="modalLabel{{ reserva.id }}">Cancelar Reserva #{{ reserva.id }}</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <form method="POST" action="{% url 'cancelar_reserva_usuario' reserva.id %}">
-                {% csrf_token %}
-                <div class="modal-body text-start">
-                    <div class="alert alert-warning p-2 small">
-                        <strong>Políticas de Cancelación:</strong><br>
-                        • Más de 15 días antes: 90% reembolso.<br>
-                        • Entre 5 y 14 días antes: 50% reembolso.<br>
-                        • Menos de 48 horas: Sin reembolso.
-                    </div>
+                                            {# OPCIONES CUANDO LA RESERVA ESTÁ CANCELADA #}
+                                            {% if estado == 'cancelada' %}
+                                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
+                                                    <i class="bi bi-x-circle-fill me-1"></i> Reserva Cancelada
+                                                </span>
+                                            {% endif %}
 
-                    <div class="mb-3">
-                        <label for="motivo_{{ reserva.id }}" class="form-label fw-bold">Ingresa el motivo de la cancelación:</label>
-                        <textarea name="motivo_cancelacion" id="motivo_{{ reserva.id }}" class="form-control" rows="3" placeholder="Escribe la razón aquí..." required></textarea>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Volver</button>
-                    <button type="submit" class="btn btn-danger">Confirmar Cancelación</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
                                         {% endwith %}
                                     </div>
 

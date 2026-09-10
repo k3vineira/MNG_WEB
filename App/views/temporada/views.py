@@ -44,24 +44,17 @@ class TemporadaListView(StaffRequiredMixin, ListView):
                 pass
 
         return queryset.order_by('-id')
-
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        stats = Temporada.objects.aggregate(
-            total=Count('id'),
-            programadas=Count('id', filter=Q(estado='programada')),
-            activas=Count('id', filter=Q(estado='activa')),
-            finalizadas=Count('id', filter=Q(estado='finalizada'))
-        )
-        context.update(stats)
-        context['stats_list'] = [
-            ('Total', stats['total'], 'text-dark'),
-            ('Programadas', stats['programadas'], 'text-secondary'),
-            ('Activas', stats['activas'], 'text-success'),
-            ('Finalizadas', stats['finalizadas'], 'text-info'),
-        ]
-        return context
+     context = super().get_context_data(**kwargs)
+     hoy = timezone.now().date()
 
+     stats = Temporada.objects.aggregate(
+        total=Count('id'),
+        activas=Count('id', filter=Q(estado=True)),
+        programadas=Count('id', filter=Q(fecha_inicio__gt=hoy)),
+        finalizadas=Count('id', filter=Q(fecha_fin__lt=hoy)))
+     context.update(stats)
+     return context
 
 class TemporadaCreateView(StaffRequiredMixin, CreateView):
     model = Temporada

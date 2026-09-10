@@ -12,7 +12,7 @@ from App.forms.blog.forms import BlogForm
  
 def blog(request):
     blogs_list = Blog.objects.filter(estado=True).order_by('-fecha_publicacion')
-    paginator = Paginator(blogs_list, 6)  # Mostrar 6 blogs por página
+    paginator = Paginator(blogs_list, 6)  
     page_number = request.GET.get('page')
     blogs = paginator.get_page(page_number)
     context = {'blogs': blogs}

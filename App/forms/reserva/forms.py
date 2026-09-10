@@ -6,7 +6,7 @@ from App.models import Reserva
 class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
-        fields = ['usuario', 'paquete', 'fecha_inicio', 'numero_adultos', 'numero_menores']
+        fields = ['usuario', 'paquete', 'fecha_inicio', 'numero_adultos', 'numero_menores','estado_reserva']
         widgets = {
             'usuario': forms.Select(attrs={'class': 'form-select'}),
             'paquete': forms.Select(attrs={'class': 'form-select'}),
@@ -16,6 +16,7 @@ class ReservaForm(forms.ModelForm):
             ),
             'numero_adultos': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
             'numero_menores': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'estado_reserva': forms.Select(attrs={'class': 'form-select'}),
         }
 
     def __init__(self, *args, **kwargs):

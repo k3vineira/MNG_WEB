@@ -2,9 +2,8 @@
 {% load static %}
 
 {% block content %}
-<div class="container py-4" >
+<div class="container py-4">
     <div class="row justify-content-center">
-       
         <div class="col-12 col-lg-10" style="max-width: 880px;">
             
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
@@ -23,11 +22,9 @@
                     <form method="POST" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
 
-                       
+                        <!-- Nombre y Nivel de Dificultad -->
                         <div class="row g-3 mb-3">
-
-
-                            <div class="col-md-12">
+                            <div class="col-md-8">
                                 <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold text-dark">
                                     {{ form.nombre.label }}{% if form.nombre.field.required %}<span class="text-danger">*</span>{% endif %}
                                 </label>
@@ -36,9 +33,19 @@
                                     <div class="invalid-feedback">{{ error }}</div>
                                 {% endfor %}
                             </div>
+
+                            <div class="col-md-4">
+                                <label for="{{ form.nivel_dificultad.id_for_label }}" class="form-label fw-semibold text-dark">
+                                    {{ form.nivel_dificultad.label }}{% if form.nivel_dificultad.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ form.nivel_dificultad }}
+                                {% for error in form.nivel_dificultad.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
                         </div>
 
-                    
+                        <!-- Descripción y Equipo Requerido -->
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-semibold text-dark">
@@ -51,29 +58,29 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="{{ form.equipo_requerido.id_for_label }}" class="form-label fw-semibold text-dark">
-                                    {{ form.equipo_requerido.label }}{% if form.equipo_requerido.field.required %}<span class="text-danger">*</span>{% endif %}
+                                <label for="{{ form.equipo_requerimiento.id_for_label }}" class="form-label fw-semibold text-dark">
+                                    {{ form.equipo_requerimiento.label }}{% if form.equipo_requerimiento.field.required %}<span class="text-danger">*</span>{% endif %}
                                 </label>
-                                <textarea name="{{ form.equipo_requerido.name }}" id="{{ form.equipo_requerido.id_for_label }}" class="form-control {% if form.equipo_requerido.errors %}is-invalid{% endif %}" rows="3">{{ form.equipo_requerido.value|default:'' }}</textarea>
-                                {% for error in form.equipo_requerido.errors %}
+                                <textarea name="{{ form.equipo_requerimiento.name }}" id="{{ form.equipo_requerimiento.id_for_label }}" class="form-control {% if form.equipo_requerimiento.errors %}is-invalid{% endif %}" rows="3">{{ form.equipo_requerimiento.value|default:'' }}</textarea>
+                                {% for error in form.equipo_requerimiento.errors %}
                                     <div class="invalid-feedback">{{ error }}</div>
                                 {% endfor %}
                             </div>
                         </div>
 
-                  
+                        <!-- Recomendaciones y Checkbox Apto Menores -->
                         <div class="row g-3 mb-3 align-items-center">
                             <div class="col-md-6">
-                                <label for="{{ form.recomendaciones_salud.id_for_label }}" class="form-label fw-semibold text-dark">
-                                    {{ form.recomendaciones_salud.label }}{% if form.recomendaciones_salud.field.required %}<span class="text-danger">*</span>{% endif %}
+                                <label for="{{ form.recomendaciones.id_for_label }}" class="form-label fw-semibold text-dark">
+                                    {{ form.recomendaciones.label }}{% if form.recomendaciones.field.required %}<span class="text-danger">*</span>{% endif %}
                                 </label>
-                                <textarea name="{{ form.recomendaciones_salud.name }}" id="{{ form.recomendaciones_salud.id_for_label }}" class="form-control {% if form.recomendaciones_salud.errors %}is-invalid{% endif %}" rows="3">{{ form.recomendaciones_salud.value|default:'' }}</textarea>
-                                {% for error in form.recomendaciones_salud.errors %}
+                                <textarea name="{{ form.recomendaciones.name }}" id="{{ form.recomendaciones.id_for_label }}" class="form-control {% if form.recomendaciones.errors %}is-invalid{% endif %}" rows="3">{{ form.recomendaciones.value|default:'' }}</textarea>
+                                {% for error in form.recomendaciones.errors %}
                                     <div class="invalid-feedback">{{ error }}</div>
                                 {% endfor %}
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-md-4">
                                 {% if form.apto_menores %}
                                 <div class="form-check p-3 bg-light rounded-3 border">
                                     <input type="checkbox" name="{{ form.apto_menores.name }}" id="{{ form.apto_menores.id_for_label }}" class="form-check-input me-2" {% if form.apto_menores.value %}checked{% endif %}>
@@ -85,9 +92,9 @@
                             </div>
                         </div>
 
-                      
+                        <!-- Botones de Acción -->
                         <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
-                            <a href="#" class="btn btn-outline-secondary px-4 rounded-pill">
+                            <a href="{% url 'listar_actividades' %}" class="btn btn-outline-secondary px-4 rounded-pill">
                                 Cancelar
                             </a>
                             <button type="submit" class="btn text-white px-4 rounded-pill shadow-sm fw-bold" style="background-color: var(--verde-main); border-color: var(--verde-oscuro);">

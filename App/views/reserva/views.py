@@ -47,7 +47,7 @@ def requiere_autenticacion(view_func):
 @method_decorator(requiere_administrador, name='dispatch')
 class ReservaListView(ListView):
     model = Reserva
-    template_name = 'admin/reservas/reservas.html'
+    template_name = 'admin/reserva/reservas_admin.html'
     context_object_name = 'reservas'
 
     def get_queryset(self):
@@ -122,7 +122,7 @@ def cambiar_estado_reserva(request, reserva_id):
 class ReservaCreateView(SuccessMessageMixin, CreateView):
     model = Reserva
     form_class = ReservaForm
-    template_name = 'admin/reservas/agregar_reserva.html'
+    template_name = 'admin/reserva/agregar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
     success_message = "¡La reserva ha sido creada con éxito!"
 
@@ -162,7 +162,7 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
 class ReservaUpdateView(UpdateView):
     model = Reserva
     form_class = ReservaForm
-    template_name = 'admin/reservas/editar_reserva.html'
+    template_name = 'admin/reserva/editar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 
     # --- VALIDACIÓN AGREGADA ---
@@ -225,7 +225,7 @@ class ReservaUpdateView(UpdateView):
 
 class ReservaDeleteView(DeleteView):
     model = Reserva
-    template_name = 'admin/reservas/eliminar_reserva.html'
+    template_name = 'admin/reserva/eliminar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 
     def delete(self, request, *args, **kwargs):
@@ -249,12 +249,12 @@ class ReservaDeleteView(DeleteView):
 @login_required(login_url='login')
 @solo_turistas_requerido
 def mis_reservas_usuario(request):
-    mis_reservas = Reserva.objects.filter(usuario=request.user)\
-        .select_related('paquete')\
-                .order_by('-id')
+    reservas = Reserva.objects.filter(
+        usuario=request.user
+    ).exclude(estado_reserva='cancelada').order_by('-fecha_registro')
 
     context = {
-        'reservas': mis_reservas
+        'reservas': reservas
     }
     return render(request, 'admin/reserva/mis_reservas.html', context)
 
@@ -264,19 +264,19 @@ def mis_reservas_usuario(request):
 def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     """Procesa la cancelación enviada desde el modal, calcula la penalidad numérica y aplica políticas."""
     
-    # 1. Validación de método HTTP (Redirige a la lista si no es POST)
+    # 1. Validación de método HTTP
     if request.method != 'POST':
         return redirect('mis_reservas_usuario')
 
     real_id = reserva_id or pk
     reserva = get_object_or_404(Reserva, id=real_id, usuario=request.user)
 
-    # 2. Validar si ya se encuentra cancelada o en proceso
-    if reserva.estado_reserva in ['cancelada', 'pendiente']:
-        messages.warning(request, "Esta reserva ya cuenta con una solicitud de cancelación procesada o en revisión.")
+    # 2. Validar si YA se encuentra cancelada (Se quitó 'pendiente' para permitir cancelar)
+    if reserva.estado_reserva == 'cancelada':
+        messages.warning(request, "Esta reserva ya se encuentra cancelada.")
         return redirect('mis_cancelaciones')
 
-    # 3. Control de días desde el registro (Usando el campo 'fecha_registro' del modelo)
+    # 3. Control de días desde el registro (máximo 3 días para cancelar)
     fecha_reg = getattr(reserva, 'fecha_registro', None)
     if fecha_reg:
         fecha_reg_date = fecha_reg.date() if hasattr(fecha_reg, 'date') else fecha_reg
@@ -293,7 +293,7 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
         messages.error(request, "Debes ingresar un motivo válido para solicitar la cancelación.")
         return redirect('mis_reservas_usuario')
 
-    # 5. Cálculo dinámico y numérico de la penalidad según la fecha de inicio del tour
+    # 5. Cálculo dinámico y numérico de la penalidad
     monto_total = float(reserva.monto_total or 0)
     fecha_tour = getattr(reserva, 'fecha_inicio', None)
     
@@ -312,11 +312,14 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
             penalidad_calculada = monto_total * 1.00
             politica_reembolso = "Sin reembolso (Menos de 5 días / No-Show)."
 
-    # 6. Actualización del objeto Reserva
+    # 6. Actualización del objeto Reserva (CAMBIO A ESTADO 'cancelada')
     estado_anterior = reserva.estado_reserva
     reserva.motivo_cancelacion = motivo
-    reserva.penalidad = penalidad_calculada
-    reserva.estado_reserva = 'pendiente'  # Queda en revisión por el administrador
+    
+    if hasattr(reserva, 'penalidad'):
+        reserva.penalidad = penalidad_calculada
+        
+    reserva.estado_reserva = 'cancelada'  # Actualización real a la base de datos
     reserva.save()
 
     # 7. Notificación en bitácora / sistema
@@ -325,30 +328,29 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
             usuario=request.user,
             accion="CANCELACIÓN DE RESERVA POR CLIENTE",
             tabla_afectada="Reservas",
-            observacion=f"Solicitud de cancelación reserva #{reserva.id}. Motivo: '{motivo}'. Penalidad calculada: COP ${penalidad_calculada:,.0f}",
+            observacion=f"Cancelación de reserva #{reserva.id}. Motivo: '{motivo}'. Penalidad: COP ${penalidad_calculada:,.0f}",
             valor_anterior=f"Estado: {estado_anterior}",
-            nuevo_valor="Estado: pendiente"
+            nuevo_valor="Estado: cancelada"
         )
     except Exception:
-        pass  # Evita interrumpir el flujo si falla el registro de auditoría
+        pass 
 
     # 8. Envío de correo de confirmación
     try:
-        asunto = f"Solicitud de Cancelación - Reserva #{reserva.id} | Monagua"
+        asunto = f"Confirmación de Cancelación - Reserva #{reserva.id} | Monagua"
         mensaje = (
             f"Hola {request.user.get_full_name() or request.user.username},\n\n"
-            f"Hemos recibido tu solicitud de cancelación para la reserva #{reserva.id}.\n\n"
+            f"Tu reserva #{reserva.id} ha sido cancelada exitosamente.\n\n"
             f"- Motivo: {motivo}\n"
-            f"- Penalidad estimada: COP ${penalidad_calculada:,.0f}\n"
+            f"- Penalidad calculada: COP ${penalidad_calculada:,.0f}\n"
             f"- Política aplicada: {politica_reembolso}\n\n"
-            f"Tu solicitud está en estado 'Pendiente' mientras el administrador valida la penalidad y los comprobantes.\n\n"
             f"Atentamente,\nEquipo Monagua"
         )
         send_mail(asunto, mensaje, None, [request.user.email], fail_silently=True)
     except Exception:
         pass
 
-    messages.success(request, f"Solicitud enviada exitosamente para la reserva #{reserva.id}. Está pendiente de revisión.")
+    messages.success(request, f"La reserva #{reserva.id} fue cancelada exitosamente.")
     return redirect('mis_cancelaciones')
 @login_required(login_url='login')
 def mis_cancelaciones(request):
@@ -628,3 +630,8 @@ def descargar_factura(request, reserva_id):
     except Exception as e:
         print(f"Error al descargar la factura PDF: {e}")
         return HttpResponse("Error al generar el PDF de la factura.", status=500)
+    
+    
+    
+    
+
