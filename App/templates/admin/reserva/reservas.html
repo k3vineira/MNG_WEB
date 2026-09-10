@@ -23,6 +23,18 @@
             <p class="text-success fw-semibold mb-0 mt-2 small bg-success bg-opacity-10 d-inline-block px-3 py-1 rounded-pill">
               <i class="bi bi-geo-alt-fill me-1"></i>{{ paquete.nombre }}
             </p>
+            {% for pp in paquete.paquetepromocion_set.all %}
+              {% if pp.promocion.activa %}
+                <div class="alert alert-success d-flex align-items-center gap-2 rounded-4 py-2 px-3 mt-3 mb-0 text-start shadow-sm" style="background-color: #e8f5e9; border: 1px solid #c8e6c9;">
+                  <i class="bi bi-percent fs-3 text-success"></i>
+                  <div>
+                    <strong class="d-block text-dark">{{ pp.promocion.nombre }}</strong>
+                    <span class="badge bg-danger me-1">-{{ pp.promocion.porcentaje_descuento }}% OFF</span>
+                    <small class="text-muted">Válido para viajes del {{ pp.promocion.fecha_inicio|date:"d/m/Y" }} al {{ pp.promocion.fecha_fin|date:"d/m/Y" }}</small>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
           {% endif %}
         </div>
         
@@ -125,6 +137,20 @@
                       data-adulto="{{ tarifa.precio_adulto }}" 
                       data-menor="{{ tarifa.precio_menor }}">
                 </span>
+              {% endfor %}
+            </div>
+            <div class="d-none" id="contenedor-promociones">
+              {% for pp in paquete.paquetepromocion_set.all %}
+                {% if pp.promocion.activa %}
+                  <span class="promocion-item"
+                        data-nombre="{{ pp.promocion.nombre }}"
+                        data-inicio="{{ pp.promocion.fecha_inicio|date:'Y-m-d' }}"
+                        data-fin="{{ pp.promocion.fecha_fin|date:'Y-m-d' }}"
+                        data-porcentaje="{{ pp.promocion.porcentaje_descuento }}"
+                        data-val-adulto="{{ pp.valor_adulto_condescuento|default:0 }}"
+                        data-val-menor="{{ pp.valor_menor_condescuento|default:0 }}">
+                  </span>
+                {% endif %}
               {% endfor %}
             </div>
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

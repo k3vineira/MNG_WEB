@@ -62,13 +62,59 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (tarifa_encontrada) {
-            const total = (adultos * precio_adulto) + (menores * precio_menor);
-            displayTotal.innerHTML = `
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-secondary fw-semibold">Total estimado:</span>
-                    <h4 class="text-success fw-bold mb-0">$${total.toLocaleString('es-CO')}</h4>
-                </div>
-            `;
+            const base_total = (adultos * precio_adulto) + (menores * precio_menor);
+            let total_final = base_total;
+            let promo_aplicada = null;
+
+            const elementosPromociones = document.querySelectorAll('.promocion-item');
+            for (let el of elementosPromociones) {
+                const pInicio = el.getAttribute('data-inicio');
+                const pFin = el.getAttribute('data-fin');
+
+                if (fecha >= pInicio && fecha <= pFin) {
+                    const porcentaje = parseFloat(el.getAttribute('data-porcentaje')) || 0;
+                    const valAdulto = parseFloat(el.getAttribute('data-val-adulto')) || 0;
+                    const valMenor = parseFloat(el.getAttribute('data-val-menor')) || 0;
+
+                    if (valAdulto > 0 && valMenor > 0) {
+                        total_final = (adultos * valAdulto) + (menores * valMenor);
+                    } else if (porcentaje > 0) {
+                        total_final = Math.round(base_total * (1 - porcentaje / 100));
+                    }
+
+                    promo_aplicada = {
+                        nombre: el.getAttribute('data-nombre'),
+                        porcentaje: porcentaje,
+                        descuentoMonto: base_total - total_final
+                    };
+                    break;
+                }
+            }
+
+            if (promo_aplicada && promo_aplicada.descuentoMonto > 0) {
+                displayTotal.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-secondary fw-semibold">Precio regular:</span>
+                        <span class="text-muted text-decoration-line-through fw-bold">$${base_total.toLocaleString('es-CO')}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-success fw-bold"><i class="bi bi-tag-fill me-1"></i>Total con Descuento:</span>
+                        <h4 class="text-success fw-bold mb-0">$${total_final.toLocaleString('es-CO')}</h4>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill fw-semibold">
+                            <i class="bi bi-gift-fill me-1"></i>${promo_aplicada.nombre} (${promo_aplicada.porcentaje}% OFF)
+                        </span>
+                    </div>
+                `;
+            } else {
+                displayTotal.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-secondary fw-semibold">Total estimado:</span>
+                        <h4 class="text-success fw-bold mb-0">$${total_final.toLocaleString('es-CO')}</h4>
+                    </div>
+                `;
+            }
             
             if (submitBtn && submitBtn.getAttribute('data-auth') === 'true') {
                 submitBtn.disabled = false;
