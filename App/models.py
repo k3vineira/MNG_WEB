@@ -52,7 +52,7 @@ class Usuario(AbstractUser):
     last_login = models.DateTimeField(blank=True, null=True, verbose_name='Último inicio de sesión')
     rol = models.PositiveSmallIntegerField(choices=Roles.choices, default=Roles.CLIENTE, verbose_name='Rol')
     tipo_documento = models.CharField(max_length=20, choices=TipoDocumento.choices, verbose_name='Tipo de Documento')
-    numero_documento = models.CharField(max_length=20, unique=True, verbose_name='Número de Documento')
+    numero_documento = models.CharField(max_length=10, unique=True, verbose_name='Número de Documento')
     telefono = models.CharField(max_length=15, verbose_name='Teléfono')
     residencia = models.CharField(max_length=100, blank=True, verbose_name='Residencia de Origen')
     imagen_perfil = models.ImageField(upload_to='perfiles/', null=True, blank=True, verbose_name='Imagen de Perfil')
@@ -64,6 +64,8 @@ class Usuario(AbstractUser):
     experiencia_fecha = models.DateField(null=True, blank=True, verbose_name='Fecha de Inicio de Experiencia')
     descripcion_experiencia = models.TextField(blank=True, null=True, verbose_name='Descripción de la Experiencia')
     entidad_salud = models.CharField(max_length=100, blank=True, null=True, verbose_name='Entidad de Salud')
+
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'tipo_documento', 'numero_documento', 'telefono']
 
     def clean(self):
         super().clean()

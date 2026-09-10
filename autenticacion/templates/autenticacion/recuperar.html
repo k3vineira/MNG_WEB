@@ -93,8 +93,9 @@
           value="{{ form.numero_documento.value|default:'' }}"
           class="form-control rounded-pill py-3 px-4 {% if form.numero_documento.errors %}is-invalid{% endif %}"
           placeholder="1000000000"
+          maxlength="10"
           required
-          oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+          oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
         />
         {% if form.numero_documento.errors %}
         <div class="invalid-feedback ms-3">{{ form.numero_documento.errors.0 }}</div>
