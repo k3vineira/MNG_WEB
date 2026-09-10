@@ -14,6 +14,7 @@ from App.views.dashboard import views as dashboard_views
 from App.views.calificacion import views as calificacion_views
 from App.views.categoria import views as categoria_views
 from App.views.temporada import views as temporada_views
+from App.views.actividades import views as actividades_views
 
 
 
@@ -46,6 +47,12 @@ urlpatterns = [
     path('admin/temporadas/agregar/', temporada_views.TemporadaCreateView.as_view(), name='agregar_temporada'),
     path('admin/temporadas/editar/<int:pk>/', temporada_views.TemporadaUpdateView.as_view(), name='editar_temporada'),
     path('admin/temporadas/eliminar/<int:pk>/', temporada_views.TemporadaDeleteView.as_view(), name='eliminar_temporada'),
+
+    # Actividades (Administración / Staff)
+    path('admin/actividades/', actividades_views.ActividadesListView.as_view(), name='listar_actividades'),
+    path('admin/actividades/agregar/', actividades_views.ActividadesCreateView.as_view(), name='agregar_actividad'),
+    path('admin/actividades/editar/<int:pk>/', actividades_views.ActividadesUpdateView.as_view(), name='editar_actividad'),
+    path('admin/actividades/eliminar/<int:pk>/', actividades_views.ActividadesDeleteView.as_view(), name='eliminar_actividad'),
 
     # Tours / Paquetes (Administración / Staff)
     path('admin/paquetes/', paquete_views.PaqueteListView.as_view(), name='listar_paquetes'),

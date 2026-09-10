@@ -9,14 +9,22 @@ class ActividadesForm(ModelForm):
 
     class Meta:
         model = Actividades
-        exclude = ['estado']
+        fields = ['nombre', 'descripcion', 'equipo_requerimiento', 'recomendaciones', 'apto_menores', 'estado']
+        labels = {
+            'nombre': 'Nombre de la Actividad',
+            'descripcion': 'Descripción',
+            'equipo_requerimiento': 'Equipo Requerido',
+            'recomendaciones': 'Recomendaciones / Salud',
+            'apto_menores': '¿Apto para Menores?',
+            'estado': '¿Está Activa?',
+        }
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'nivel_dificultad': forms.Select(attrs={'class': 'form-select'}),
-            'apto_menores': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'equipo_requerimiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'recomendaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'apto_menores': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def clean_nombre(self):

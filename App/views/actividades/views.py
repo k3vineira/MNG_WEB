@@ -7,7 +7,7 @@ from App.forms.actividades.forms import ActividadesForm
 from App.utils import crear_notificacion_sistema
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django import forms
-from App.models import *
+from App.models import Actividades, PaqueteActividad
 
 # Create your views here.
 
@@ -79,7 +79,7 @@ class ActividadesCreateView(StaffRequiredMixin, CreateView):
             tabla_afectada="Actividades",
             observacion=f"Se ha registrado con éxito la actividad: '{self.object.nombre}'.",
             valor_anterior="Ninguno (Registro Nuevo)",
-            nuevo_valor=f"Nombre: {self.object.nombre}, Dificultad: {self.object.nivel_dificultad}"
+            nuevo_valor=f"Nombre: {self.object.nombre}, Apto menores: {'Sí' if self.object.apto_menores else 'No'}"
         )
         return response
 
@@ -103,11 +103,11 @@ class ActividadesUpdateView(StaffRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         actividad_antigua = self.get_object()
-        valor_viejo = f"Nombre: {actividad_antigua.nombre}, Dificultad: {actividad_antigua.nivel_dificultad}, Estado: {'Activa' if actividad_antigua.estado else 'Inactiva'}"
+        valor_viejo = f"Nombre: {actividad_antigua.nombre}, Apto menores: {'Sí' if actividad_antigua.apto_menores else 'No'}, Estado: {'Activa' if actividad_antigua.estado else 'Inactiva'}"
 
         response = super().form_valid(form)
 
-        valor_nuevo = f"Nombre: {self.object.nombre}, Dificultad: {self.object.nivel_dificultad}, Estado: {'Activa' if self.object.estado else 'Inactiva'}"
+        valor_nuevo = f"Nombre: {self.object.nombre}, Apto menores: {'Sí' if self.object.apto_menores else 'No'}, Estado: {'Activa' if self.object.estado else 'Inactiva'}"
 
         crear_notificacion_sistema(
             usuario=self.request.user,
@@ -128,13 +128,14 @@ class ActividadesDeleteView(StaffRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         
-        # Validar integridad: Prevenir eliminación si pertenece a paquetes activos
-        if self.object.paquete_set.exists():
-            messages.error(request, f"No se puede eliminar la actividad '{self.object.nombre}' porque está vinculada a uno o más paquetes.")
-            return render(request, self.template_name, {'object': self.object})
+        # Validar integridad: Prevenir eliminación si está vinculada a paquetes
+        tiene_paquetes = PaqueteActividad.objects.filter(actividad=self.object).exists()
+        if tiene_paquetes:
+            messages.error(request, f"No se puede eliminar la actividad '{self.object.nombre}' porque está vinculada a uno o más paquetes turísticos.")
+            return render(request, self.template_name, {'object': self.object, 'actividad': self.object})
 
         nombre_actividad = self.object.nombre
-        valor_viejo = f"ID: {self.object.id}, Nombre: {self.object.nombre}, Dificultad: {self.object.nivel_dificultad}"
+        valor_viejo = f"ID: {self.object.id}, Nombre: {self.object.nombre}"
 
         response = super().delete(request, *args, **kwargs)
 
