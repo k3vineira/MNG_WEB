@@ -15,6 +15,7 @@ from App.views.calificacion import views as calificacion_views
 from App.views.categoria import views as categoria_views
 from App.views.temporada import views as temporada_views
 from App.views.actividades import views as actividades_views
+from App.views.tarifa import views as tarifa_views
 
 
 
@@ -59,6 +60,12 @@ urlpatterns = [
     path('admin/paquetes/agregar/', paquete_views.PaqueteCreateView.as_view(), name='agregar_paquete'),
     path('admin/paquetes/editar/<int:pk>/', paquete_views.PaqueteUpdateView.as_view(), name='editar_paquete'),
     path('admin/paquetes/eliminar/<int:pk>/', paquete_views.PaqueteDeleteView.as_view(), name='eliminar_paquete'),
+
+    # Tarifas (Administración / Staff)
+    path('admin/tarifas/', tarifa_views.TarifaListView.as_view(), name='listar_tarifas'),
+    path('admin/tarifas/agregar/', tarifa_views.TarifaCreateView.as_view(), name='agregar_tarifa'),
+    path('admin/tarifas/editar/<int:pk>/', tarifa_views.TarifaUpdateView.as_view(), name='editar_tarifa'),
+    path('admin/tarifas/eliminar/<int:pk>/', tarifa_views.TarifaDeleteView.as_view(), name='eliminar_tarifa'),
 
     # Reservas (Usuario / Turista)
     path('reservas/reservar/', reserva_views.reservas_view, name='reservas'),

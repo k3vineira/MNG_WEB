@@ -1,0 +1,45 @@
+{% extends 'admin/base-admin.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger shadow">
+                <div class="card-header bg-danger text-white text-center">
+                    <h4><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h4>
+                </div>
+                <div class="card-body text-center p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags|default:'danger' }} alert-dismissible fade show text-start mb-3" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <p class="fs-5">Estás a punto de eliminar la tarifa para:</p>
+                    <h3 class="text-secondary mb-2">"{{ tarifa.paquete.nombre }}"</h3>
+                    <h5 class="text-muted mb-4"><i class="bi bi-calendar-range me-1"></i> Temporada: {{ tarifa.temporada.nombre }}</h5>
+                    
+                    <div class="p-3 bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-3 mb-4">
+                        <small class="fw-semibold text-warning-emphasis"><i class="bi bi-exclamation-triangle me-1"></i> Esta acción no se puede deshacer.</small>
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="bi bi-trash"></i> Sí, eliminar permanentemente
+                            </button>
+                            <a href="{% url 'listar_tarifas' %}" class="btn btn-secondary px-4">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

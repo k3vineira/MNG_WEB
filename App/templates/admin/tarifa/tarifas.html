@@ -18,7 +18,7 @@
                 </h1>
                 <p class="text-muted mb-0">Gestiona los precios diferenciados por temporada para cada paquete turístico.</p>
             </div>
-            <a href="#" class="btn btn-success fw-bold rounded-pill shadow-sm px-4 py-2">
+            <a href="{% url 'agregar_tarifa' %}" class="btn btn-success fw-bold rounded-pill shadow-sm px-4 py-2">
                 <i class="bi bi-plus-circle me-2"></i>Nueva Tarifa
             </a>
         </div>
@@ -75,7 +75,7 @@
                         <i class="bi bi-search fs-6"></i>
                     </button>
                     
-                    <a href="#" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 34px; height: 34px;" title="Limpiar Filtro">
+                    <a href="{% url 'listar_tarifas' %}" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 34px; height: 34px;" title="Limpiar Filtro">
                         <i class="bi bi-arrow-clockwise fs-6"></i>
                     </a>
                 </div>
@@ -126,9 +126,14 @@
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            <a href="#" class="btn btn-sm btn-outline-secondary px-3 rounded-pill fw-bold" title="Editar Tarifa">
-                                <i class="bi bi-pencil me-1"></i> Editar
-                            </a>
+                            <div class="btn-group shadow-sm">
+                                <a href="{% url 'editar_tarifa' tarifa.id %}" class="btn btn-sm btn-outline-secondary" title="Editar Tarifa">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'eliminar_tarifa' tarifa.id %}" class="btn btn-sm btn-outline-danger" title="Eliminar Tarifa">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
@@ -175,9 +180,12 @@
                             </div>
                         </div>
 
-                        <div class="d-grid pt-2">
-                            <a href="#" class="btn btn-sm btn-outline-secondary fw-bold rounded-pill">
-                                <i class="bi bi-pencil me-1"></i> Editar Tarifa
+                        <div class="d-flex gap-2 pt-2">
+                            <a href="{% url 'editar_tarifa' tarifa.id %}" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill">
+                                <i class="bi bi-pencil me-1"></i> Editar
+                            </a>
+                            <a href="{% url 'eliminar_tarifa' tarifa.id %}" class="btn btn-sm btn-outline-danger flex-fill fw-bold rounded-pill">
+                                <i class="bi bi-trash me-1"></i> Eliminar
                             </a>
                         </div>
                     </div>
