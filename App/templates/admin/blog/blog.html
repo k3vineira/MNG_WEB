@@ -17,7 +17,7 @@
                 <p class="text-muted mb-0">Gestiona las entradas de blog, artículos informativos y noticias del sitio web.</p>
             </div>
             <a href="{% url 'crear_blog' %}" class="btn btn-success fw-bold rounded-pill shadow-sm px-4 py-2">
-                <i class="bi bi-plus-circle me-2"></i>Nuevo Blog
+                <i class="bi bi-plus-circle me-2"></i>Nueva Publicación
             </a>
         </div>
     </div>
@@ -30,7 +30,8 @@
                     <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm
                         {% if color == 'text-success' %} bg-success bg-opacity-10 text-success
                         {% elif color == 'text-danger' %} bg-danger bg-opacity-10 text-danger
-                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} u-style-c5b9e7ac">
+                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %}"
+                        style="width: 52px; height: 52px; font-size: 1.4rem;">
                         
                         {% if color == 'text-dark' %}
                             <i class="bi bi-journal-text"></i>
@@ -41,7 +42,7 @@
                         {% endif %}
                     </div>
                     <div>
-                        <h6 class="text-muted text-uppercase fw-bold mb-1 u-style-75b54407">{{ label }}</h6>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 small">{{ label }}</h6>
                         <h3 class="fw-black mb-0 {{ color }}">{{ count|default:0 }}</h3>
                     </div>
                 </div>
@@ -52,10 +53,13 @@
 
     <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
         <div class="table-responsive d-none d-lg-block">
-            <table id="tablaBlogs" class="table table-hover align-middle mb-0 u-style-6d567387">
+            <table id="tablaBlogs" class="table table-hover align-middle mb-0 w-100">
                 <thead class="table-light text-muted">
                     <tr>
-                        <th scope="col" class="fw-bold ps-3">Título</th>
+                        <th scope="col" class="fw-bold ps-3">Portada</th>
+                        <th scope="col" class="fw-bold">Título</th>
+                        <th scope="col" class="fw-bold">Autor</th>
+                        <th scope="col" class="fw-bold">Fecha</th>
                         <th scope="col" class="fw-bold text-center">Estado</th>
                         <th scope="col" class="fw-bold text-center">Acciones</th>
                     </tr>
@@ -63,8 +67,26 @@
                 <tbody>
                     {% for entrada in blogs %}
                     <tr>
-                        <td class="ps-3">
-                            <h6 class="fw-bold text-dark mb-0">{{ entrada.titulo }}</h6>
+                        <td class="ps-3" style="width: 80px;">
+                            {% if entrada.imagen_destacada %}
+                                <img src="{{ entrada.imagen_destacada.url }}" alt="{{ entrada.titulo }}" class="rounded-3 object-fit-cover shadow-sm" style="width: 60px; height: 45px;">
+                            {% else %}
+                                <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border shadow-sm" style="width: 60px; height: 45px;">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <h6 class="fw-bold text-dark mb-1">{{ entrada.titulo }}</h6>
+                            <small class="text-muted text-truncate d-inline-block" style="max-width: 320px;">{{ entrada.contenido|striptags|truncatewords:10 }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">
+                                <i class="bi bi-person me-1"></i>{{ entrada.usuario.get_full_name|default:entrada.usuario.username }}
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ entrada.fecha_publicacion|date:"d/m/Y H:i" }}</small>
                         </td>
                         <td class="text-center">
                             {% if entrada.estado %}
@@ -72,17 +94,17 @@
                                     <i class="bi bi-check-circle-fill me-1"></i> Publicado
                                 </span>
                             {% else %}
-                                <span class="badge bg-danger bg-opacity-75 px-3 py-2 rounded-pill shadow-sm">
-                                    <i class="bi bi-exclamation-circle-fill me-1"></i> Borrador
+                                <span class="badge bg-secondary bg-opacity-75 px-3 py-2 rounded-pill shadow-sm">
+                                    <i class="bi bi-pencil-square me-1"></i> Borrador
                                 </span>
                             {% endif %}
                         </td>
                         <td class="text-center">
                             <div class="btn-group shadow-sm">
-                                <a href="#" class="btn btn-sm btn-outline-secondary" title="Editar Blog">
+                                <a href="{% url 'editar_blog' entrada.id %}" class="btn btn-sm btn-outline-secondary" title="Editar Publicación">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm btn-outline-danger" title="Eliminar Blog">
+                                <a href="{% url 'eliminar_blog' entrada.id %}" class="btn btn-sm btn-outline-danger" title="Eliminar Publicación">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>
@@ -90,7 +112,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center py-5 text-muted">No hay entradas de blog registradas.</td>
+                        <td colspan="6" class="text-center py-5 text-muted">No hay entradas de blog registradas.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -102,24 +124,32 @@
                 {% for entrada in blogs %}
                 <div class="col-12">
                     <div class="card border border-light shadow-sm rounded-4 p-3">
-                        <div class="d-flex justify-content-between align-items-start mb-2 border-bottom pb-2">
-                            <div>
-                                <h5 class="fw-bold text-dark mb-0">{{ entrada.titulo }}</h5>
-                            </div>
-                            <div>
-                                {% if entrada.estado %}
-                                    <span class="badge bg-success bg-opacity-75 rounded-pill shadow-sm">Publicado</span>
-                                {% else %}
-                                    <span class="badge bg-danger bg-opacity-75 rounded-pill shadow-sm">Borrador</span>
-                                {% endif %}
+                        <div class="d-flex gap-3 align-items-center mb-2 border-bottom pb-2">
+                            {% if entrada.imagen_destacada %}
+                                <img src="{{ entrada.imagen_destacada.url }}" alt="{{ entrada.titulo }}" class="rounded-3 object-fit-cover shadow-sm flex-shrink-0" style="width: 65px; height: 50px;">
+                            {% else %}
+                                <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border shadow-sm flex-shrink-0" style="width: 65px; height: 50px;">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-grow-1 overflow-hidden">
+                                <h6 class="fw-bold text-dark mb-1 text-truncate">{{ entrada.titulo }}</h6>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted"><i class="bi bi-person me-1"></i>{{ entrada.usuario.get_full_name|default:entrada.usuario.username }}</small>
+                                    {% if entrada.estado %}
+                                        <span class="badge bg-success bg-opacity-75 rounded-pill shadow-sm">Publicado</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary bg-opacity-75 rounded-pill shadow-sm">Borrador</span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
 
                         <div class="d-flex gap-2 pt-2">
-                            <a href="#" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill">
+                            <a href="{% url 'editar_blog' entrada.id %}" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill">
                                 <i class="bi bi-pencil me-1"></i> Editar
                             </a>
-                            <a href="#" class="btn btn-sm btn-outline-danger flex-fill fw-bold rounded-pill">
+                            <a href="{% url 'eliminar_blog' entrada.id %}" class="btn btn-sm btn-outline-danger flex-fill fw-bold rounded-pill">
                                 <i class="bi bi-trash me-1"></i> Eliminar
                             </a>
                         </div>
@@ -137,5 +167,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/datatables.min.js' %}"></script>
 <script src="{% static 'js/tconf/tconf-tablaBlogs.js' %}"></script>
 {% endblock %}

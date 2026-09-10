@@ -1,36 +1,34 @@
-{% extends 'base-admin.html' %}
+{% extends "admin/base-admin.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-12 col-md-5">
-            <div class="card shadow-sm border-0">
+        <div class="col-12 col-md-10 col-lg-8" style="max-width: 720px;">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                 
-                <div class="card-header text-white text-center u-style-ffabe4e0" style="background-color: var(--verde-main);">
-                    <h5 class="mb-0 fs-6 fw-bold text-uppercase">
-                        <i class="bi bi-pencil-square me-2"></i>Editar Registro
+                <div class="card-header py-3 px-4 text-white bg-success d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0 fw-bold d-flex align-items-center">
+                        <i class="bi bi-pencil-square me-2"></i>Editar Publicación de Blog
                     </h5>
+                    <a href="{% url 'listar_blog' %}" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                        <i class="bi bi-arrow-left me-1"></i>Volver
+                    </a>
                 </div>
 
-                <div class="card-body p-4">
+                <div class="card-body p-4 bg-white">
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         
-                        <div class="small text-dark">
-                            {{ form.as_p }}
-                        </div>
+                        {{ form|crispy }}
 
-                        <hr class="my-4 opacity-25">
-
-                        <div class="d-flex justify-content-center gap-3 ">
-                             <a href="#" class="btn btn-outline-secondary px-4 rounded-pill">
+                        <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
+                            <a href="{% url 'listar_blog' %}" class="btn btn-outline-secondary px-4 rounded-pill">
                                 Cancelar
                             </a>
-                        
-                            <button type="submit" class="btn btn-light btn-sm border px-4 text-white u-style-ffabe4e0" style="background-color: var(--verde-main); border-color: var(--verde-main);">
-                                Guardar cambios
+                            <button type="submit" class="btn btn-success px-4 rounded-pill shadow-sm fw-bold">
+                                <i class="bi bi-save me-1"></i>Guardar Cambios
                             </button>
-
                         </div>
                     </form>
                 </div>
