@@ -327,14 +327,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-// Búsqueda en vivo
-document.getElementById('buscarComprobante').addEventListener('input', function () {
-    var q = this.value.toLowerCase().trim();
-    document.querySelectorAll('.comp-row').forEach(function (row) {
-        var texto = row.getAttribute('data-buscar') || '';
-        row.style.display = texto.includes(q) ? '' : 'none';
-    });
-});
-</script>
+<script src="{% static 'js/admin_comprobantes.js' %}"></script>
 {% endblock %}
