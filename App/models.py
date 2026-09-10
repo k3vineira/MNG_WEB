@@ -65,6 +65,8 @@ class Usuario(AbstractUser):
     descripcion_experiencia = models.TextField(blank=True, null=True, verbose_name='Descripción de la Experiencia')
     entidad_salud = models.CharField(max_length=100, blank=True, null=True, verbose_name='Entidad de Salud')
 
+    REQUIRED_FIELDS = ['email', 'tipo_documento', 'numero_documento', 'telefono']
+
     def clean(self):
         super().clean()
 

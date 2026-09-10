@@ -12,7 +12,7 @@
         <i class="bi bi-bell-fill text-white fs-4"></i>
         
         {% if contador_notificaciones > 0 %}
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white fw-bold shadow d-flex align-items-center justify-content-center animate-pulse">
+            <span id="badgeCampanaNotif" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white fw-bold shadow d-flex align-items-center justify-content-center animate-pulse">
                 {{ contador_notificaciones }}
             </span>
         {% endif %}
@@ -25,7 +25,7 @@
         <li class="dropdown-header text-white fw-bold py-3 fs-6 bg-success d-flex align-items-center justify-content-between px-3 m-0">
             <span><i class="bi bi-bell me-2"></i>Notificaciones</span>
             {% if contador_notificaciones > 0 %}
-                <span class="badge bg-white text-success small rounded-pill px-2">{{ contador_notificaciones }} registros</span>
+                <span id="badgeDropdownNotif" class="badge bg-white text-success small rounded-pill px-2">{{ contador_notificaciones }} registros</span>
             {% endif %}
         </li>
 
@@ -61,7 +61,7 @@
                                 </small>
 
                                 <button type="button" 
-                                        class="btn btn-outline-success btn-sm py-0 px-2 rounded-pill fs-7 fw-bold" 
+                                        class="btn btn-outline-success btn-sm py-0 px-2 rounded-pill fs-7 fw-bold btn-marcar-visto" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#modalDetalleBitacora{{ noti.id }}">
                                     Detalles <i class="bi bi-eye ms-1"></i>
@@ -163,6 +163,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const notifContainer = document.getElementById('contenedorCampanaNotif');
     if (!notifBtn || !notifContainer) return;
     
+    // Logic for hiding the notification badge using localStorage
+    const currentNotifCount = parseInt("{{ contador_notificaciones|default:0 }}", 10) || 0;
+    const lastSeenCount = parseInt(localStorage.getItem('notificaciones_vistas'), 10) || 0;
+    const badgeCampana = document.getElementById('badgeCampanaNotif');
+    const badgeDropdown = document.getElementById('badgeDropdownNotif');
+    
+    function hideBadges() {
+        if (badgeCampana) {
+            badgeCampana.classList.remove('d-flex');
+            badgeCampana.classList.add('d-none');
+        }
+        if (badgeDropdown) {
+            badgeDropdown.classList.add('d-none');
+        }
+    }
+
+    // Hide badge on load if we have already seen these notifications
+    if (currentNotifCount > 0 && currentNotifCount <= lastSeenCount) {
+        hideBadges();
+    }
+    
     notifBtn.style.cursor = 'grab';
     
     let isDragging = false;
@@ -240,5 +261,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (bsDropdown) bsDropdown.hide();
         }
     }, true);
+
+    // Only hide badges and mark as seen when a 'Detalles' button is clicked
+    document.querySelectorAll('.btn-marcar-visto').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            if (currentNotifCount > 0) {
+                localStorage.setItem('notificaciones_vistas', currentNotifCount);
+                hideBadges();
+            }
+        });
+    });
 });
 </script>
