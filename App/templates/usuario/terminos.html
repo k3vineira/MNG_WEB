@@ -5,143 +5,245 @@
 
 {% block content %}
 
-<section class="pt-5 pb-4 text-center u-style-a78d1879">
-  <div class="container mt-5 mb-4">
-    <span class="badge rounded-pill border border-light border-opacity-25 text-white-50 fw-normal px-3 py-2 mb-3 u-style-7c27b441">
-      LEGAL
-    </span>
-    <h1 class="fw-bold mb-2 text-white">Términos y Condiciones</h1>
-    <p class="text-white-50 mb-0">Tu seguridad y confianza son nuestra prioridad en cada destino</p>
+<style>
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+  }
+  .condy-mascot {
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.2));
+  }
+  .chat-bubble {
+    position: absolute;
+    top: 10px;
+    left: -140px;
+    width: 160px;
+    background: #fff;
+    border-radius: 1rem;
+    border-bottom-right-radius: 0;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    border: 2px solid #198754;
+    z-index: 2;
+    animation: fadeIn 1s ease-out;
+  }
+  .nav-pills-custom .nav-link {
+    color: #6c757d;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+  }
+  .nav-pills-custom .nav-link:hover, .nav-pills-custom .nav-link.active {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+    transform: translateX(5px);
+  }
+  .section-card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+  .section-card:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+  }
+  .icon-circle {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #198754, #20c997);
+    color: white;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 10px rgba(25, 135, 84, 0.3);
+  }
+</style>
+
+<section class="pt-5 pb-5 position-relative overflow-hidden bg-dark" style="background: linear-gradient(135deg, #1a1e21 0%, #111 100%);">
+  <!-- Subtle pattern/glow -->
+  <div class="position-absolute top-50 start-50 translate-middle w-100 h-100" style="background: radial-gradient(circle, rgba(25,135,84,0.15) 0%, rgba(0,0,0,0) 70%); z-index: 0;"></div>
+  
+  <div class="container mt-5 mb-2 position-relative z-1">
+    <div class="row align-items-center">
+      <div class="col-lg-7 text-center text-lg-start mb-4 mb-lg-0">
+        <span class="badge rounded-pill border border-success border-opacity-50 text-success bg-success bg-opacity-10 fw-bold px-3 py-2 mb-3 shadow-sm">
+          <i class="bi bi-shield-lock-fill me-2"></i> POLÍTICAS LEGALES
+        </span>
+        <h1 class="fw-bolder mb-3 text-white display-4" style="letter-spacing: -1px;">Términos y Condiciones</h1>
+        <p class="text-white-50 fs-5 mb-0 fw-light lh-base">Tu seguridad y confianza son nuestra prioridad.<br class="d-none d-lg-block"> Conoce las reglas claras para disfrutar cada experiencia al máximo.</p>
+      </div>
+      
+      <div class="col-lg-5 position-relative text-center d-none d-md-block">
+        <div class="position-relative d-inline-block mt-4">
+            <div class="chat-bubble">
+                <p class="mb-0 fw-bold text-dark small"><span class="text-success fs-5">¡Hola! Soy Condy.</span> <br> Siempre es bueno leer la <br>letra pequeña. 👇</p>
+            </div>
+            <img src="{% static 'img/mascota/condor1.webp' %}" alt="Condy - Mascota de Monagua" class="img-fluid condy-mascot" style="max-height: 260px;">
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- CONTENIDO -->
 <div class="container py-5">
-  <div class="row g-4">
+  <div class="row g-5">
 
-    <!-- Sidebar -->
+    <!-- Sidebar Sticky -->
     <div class="col-lg-3 d-none d-lg-block">
-      <div class="card border-0 shadow-sm rounded-3 p-3 u-style-be2d3229">
-        <p class="fw-semibold small text-uppercase text-muted mb-3 u-style-7cc76d3d">Contenido</p>
-        <nav class="nav flex-column gap-1">
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#introduccion">1. Introducción</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#reservas">2. Reservas y Pagos</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#cancelaciones">3. Cancelaciones</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#responsabilidades">4. Responsabilidades</a>
-          <a class="nav-link text-muted rounded-2 px-3 py-2 u-style-58180d3d" href="#privacidad">5. Protección de Datos</a>
-        </nav>
+      <div class="position-sticky" style="top: 100px;">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+          <div class="d-flex align-items-center gap-2 mb-4 pb-3 border-bottom">
+            <i class="bi bi-list-stars fs-4 text-success"></i>
+            <h6 class="fw-bold mb-0 text-uppercase">Contenido</h6>
+          </div>
+          <nav class="nav flex-column nav-pills-custom gap-2">
+            <a class="nav-link px-3 py-2" href="#introduccion"><i class="bi bi-1-circle me-2"></i> Introducción</a>
+            <a class="nav-link px-3 py-2" href="#reservas"><i class="bi bi-2-circle me-2"></i> Reservas y Pagos</a>
+            <a class="nav-link px-3 py-2" href="#cancelaciones"><i class="bi bi-3-circle me-2"></i> Cancelaciones</a>
+            <a class="nav-link px-3 py-2" href="#responsabilidades"><i class="bi bi-4-circle me-2"></i> Responsabilidades</a>
+            <a class="nav-link px-3 py-2" href="#privacidad"><i class="bi bi-5-circle me-2"></i> Privacidad</a>
+          </nav>
+        </div>
       </div>
     </div>
 
     <!-- Main -->
     <div class="col-lg-9">
-      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
-
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+      
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 p-4 bg-white shadow-sm rounded-4 border-0">
+        <div class="d-flex align-items-center gap-3">
+          <div class="bg-light rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+             <img src="{% static 'img/Logo.webp' %}" alt="Monagua" class="img-fluid opacity-75">
+          </div>
           <div>
-            <div class="fw-semibold u-style-40db361c">Monagua Agencia de Viajes</div>
-            <small class="text-muted">Sogamoso, Boyacá — Colombia</small>
-          </div>
-          <span class="badge bg-light text-muted border px-3 py-2">Actualizado: 26 de marzo, 2026</span>
-        </div>
-
-        <!-- 1 -->
-        <div id="introduccion" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">1</span>
-            Introducción
-          </h4>
-          <p class="text-muted lh-lg">Bienvenido a <strong>Monagua Agencia de Viajes y Turismo</strong>. Al utilizar nuestros servicios y plataforma web, usted acepta cumplir con los términos detallados a continuación. Estos términos regulan la relación contractual entre el cliente y nuestra agencia radicada en Sogamoso, Boyacá.</p>
-        </div>
-
-        <hr class="my-4">
-
-        <!-- 2 -->
-        <div id="reservas" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">2</span>
-            Reservas y Pagos
-          </h4>
-          <p class="text-muted lh-lg">Toda reserva se confirma tras el pago del anticipo mínimo del <strong>30%</strong> del valor total. Monagua se reserva el derecho de ajustar precios ante cambios en tasas gubernamentales o costos de proveedores.</p>
-          <ul class="text-muted small lh-lg">
-            <li>Pagos vía PSE, transferencia bancaria o en nuestros puntos físicos.</li>
-            <li>El saldo debe cancelarse <strong>48 horas antes</strong> de iniciar la experiencia.</li>
-          </ul>
-        </div>
-
-        <hr class="my-4">
-
-        <!-- 3 -->
-        <div id="cancelaciones" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">3</span>
-            Políticas de Cancelación
-          </h4>
-          <p class="text-muted lh-lg">Para mantener la logística con nuestros guías y transportadores, aplicamos las siguientes condiciones:</p>
-          <div class="table-responsive mt-3">
-            <table class="table table-bordered table-sm text-center align-middle">
-              <thead class="table-light">
-                <tr>
-                  <th class="text-start">Antelación de cancelación</th>
-                  <th>Reembolso aplicable</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="text-start">Más de 15 días</td>
-                  <td class="fw-semibold">90% del valor pagado</td>
-                  <td><span class="badge bg-success bg-opacity-10 text-success border border-success-subtle">Favorable</span></td>
-                </tr>
-                <tr>
-                  <td class="text-start">Entre 5 y 14 días</td>
-                  <td class="fw-semibold text-warning">50% del valor pagado</td>
-                  <td><span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle">Parcial</span></td>
-                </tr>
-                <tr>
-                  <td class="text-start">Menos de 48 horas</td>
-                  <td class="fw-semibold text-danger">Sin reembolso (No-Show)</td>
-                  <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle">Sin reembolso</span></td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="fw-bold fs-5 text-dark">Monagua Agencia de Viajes</div>
+            <small class="text-muted"><i class="bi bi-geo-alt-fill text-danger me-1"></i>Sogamoso, Boyacá — Colombia</small>
           </div>
         </div>
-
-        <hr class="my-4">
-
-        <!-- 4 -->
-        <div id="responsabilidades" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">4</span>
-            Responsabilidades
-          </h4>
-          <p class="text-muted lh-lg">Monagua actúa como intermediario entre el cliente y los prestadores de servicios (hoteles, transporte, guías). No nos hacemos responsables por retrasos climáticos, cierres viales o situaciones de fuerza mayor que alteren el itinerario original, aunque brindaremos asistencia total para reprogramaciones.</p>
-        </div>
-
-        <hr class="my-4">
-
-        <!-- 5 -->
-        <div id="privacidad" class="mb-4">
-          <h4 class="fw-semibold mb-3 d-flex align-items-center gap-2 u-style-40db361c">
-            <span class="d-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0 u-style-8897d180">5</span>
-            Protección de Datos
-          </h4>
-          <p class="text-muted lh-lg">Sus datos personales son tratados conforme a la Ley 1581 de 2012 de Colombia. No compartimos su información con terceros sin consentimiento previo. Puede solicitar acceso, corrección o eliminación escribiendo a <strong>contacto@monagua.com</strong>.</p>
-        </div>
-
-        <div class="rounded-3 p-4 text-center mt-2 u-style-0300d8ca">
-          <p class="mb-2 text-muted small">¿Tiene dudas sobre nuestros términos?</p>
-          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vt74117@gmail.com&su=Dudas%20sobre%20los%20términos%20legales"
-             target="_blank"
-             class="btn btn-sm fw-semibold rounded-pill px-4 text-white u-style-96ada96c">
-            <i class="bi bi-envelope me-2"></i>Contactar soporte jurídico
-          </a>
-        </div>
-
+        <span class="badge bg-light text-muted border px-3 py-2 rounded-pill"><i class="bi bi-calendar-check me-2"></i>Actualizado: 26 de marzo, 2026</span>
       </div>
+
+      <!-- 1 -->
+      <div id="introduccion" class="card section-card rounded-4 p-4 p-md-5 mb-4 shadow-sm">
+        <h3 class="fw-bold mb-4 d-flex align-items-center gap-3 text-dark">
+          <div class="icon-circle"><i class="bi bi-info-lg"></i></div>
+          1. Introducción
+        </h3>
+        <p class="text-secondary lh-lg mb-0 fs-6">Bienvenido a <strong>Monagua Agencia de Viajes y Turismo</strong>. Al utilizar nuestros servicios y plataforma web, usted acepta cumplir con los términos detallados a continuación. Estos términos regulan la relación contractual entre el cliente y nuestra agencia radicada en Sogamoso, Boyacá. Nos enorgullece ofrecer experiencias inolvidables respaldadas por un compromiso legal firme con nuestros viajeros.</p>
+      </div>
+
+      <!-- 2 -->
+      <div id="reservas" class="card section-card rounded-4 p-4 p-md-5 mb-4 shadow-sm">
+        <h3 class="fw-bold mb-4 d-flex align-items-center gap-3 text-dark">
+          <div class="icon-circle"><i class="bi bi-credit-card-fill"></i></div>
+          2. Reservas y Pagos
+        </h3>
+        <div class="alert alert-success bg-opacity-10 border-0 rounded-3 mb-4 d-flex align-items-start gap-3">
+          <i class="bi bi-exclamation-circle-fill text-success fs-4 mt-1"></i>
+          <p class="mb-0 text-dark lh-base">Toda reserva se confirma tras el pago del anticipo mínimo del <strong>30%</strong> del valor total. Monagua se reserva el derecho de ajustar precios ante cambios en tasas gubernamentales o costos de proveedores.</p>
+        </div>
+        <div class="row g-4 mt-1">
+          <div class="col-md-6">
+            <div class="d-flex gap-3">
+              <i class="bi bi-wallet2 text-success fs-3"></i>
+              <div>
+                <h6 class="fw-bold">Métodos Aceptados</h6>
+                <p class="text-muted small mb-0 lh-base">Se reciben pagos vía PSE, transferencia bancaria directa o directamente en nuestros puntos físicos autorizados.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex gap-3">
+              <i class="bi bi-clock-history text-danger fs-3"></i>
+              <div>
+                <h6 class="fw-bold">Plazo de Saldo</h6>
+                <p class="text-muted small mb-0 lh-base">El saldo total de la reserva debe cancelarse al menos <strong>48 horas antes</strong> de iniciar la experiencia programada.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div id="cancelaciones" class="card section-card rounded-4 p-4 p-md-5 mb-4 shadow-sm">
+        <h3 class="fw-bold mb-4 d-flex align-items-center gap-3 text-dark">
+          <div class="icon-circle"><i class="bi bi-x-circle-fill"></i></div>
+          3. Políticas de Cancelación
+        </h3>
+        <p class="text-secondary lh-lg mb-4">Para mantener la logística impecable con nuestros guías, hospedajes y transportadores, aplicamos estrictamente las siguientes condiciones de cancelación:</p>
+        
+        <div class="table-responsive rounded-3 border overflow-hidden">
+          <table class="table table-hover table-borderless align-middle mb-0 text-center">
+            <thead class="table-light border-bottom">
+              <tr>
+                <th class="text-start py-3 px-4 text-uppercase small fw-bold text-muted">Antelación de cancelación</th>
+                <th class="py-3 text-uppercase small fw-bold text-muted">Reembolso aplicable</th>
+                <th class="py-3 text-uppercase small fw-bold text-muted">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-start py-3 px-4 fw-medium text-dark">Más de 15 días</td>
+                <td class="fw-bold text-dark">90% del valor pagado</td>
+                <td><span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-3 py-2 rounded-pill">Favorable</span></td>
+              </tr>
+              <tr class="border-top border-light">
+                <td class="text-start py-3 px-4 fw-medium text-dark">Entre 5 y 14 días</td>
+                <td class="fw-bold text-warning">50% del valor pagado</td>
+                <td><span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle px-3 py-2 rounded-pill">Parcial</span></td>
+              </tr>
+              <tr class="border-top border-light">
+                <td class="text-start py-3 px-4 fw-medium text-dark">Menos de 48 horas</td>
+                <td class="fw-bold text-danger">Sin reembolso (No-Show)</td>
+                <td><span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle px-3 py-2 rounded-pill">Penalidad total</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div id="responsabilidades" class="card section-card rounded-4 p-4 p-md-5 mb-4 shadow-sm">
+        <h3 class="fw-bold mb-4 d-flex align-items-center gap-3 text-dark">
+          <div class="icon-circle"><i class="bi bi-shield-shaded"></i></div>
+          4. Responsabilidades
+        </h3>
+        <p class="text-secondary lh-lg mb-0 fs-6">Monagua actúa exclusivamente como intermediario entre el cliente y los prestadores de servicios de terceros (hoteles, transporte, alimentación y atracciones adicionales). No nos hacemos responsables por retrasos climáticos, cierres viales o situaciones de fuerza mayor que alteren el itinerario original. No obstante, nuestro compromiso es brindar asistencia total y gestión expedita para lograr reprogramaciones justas.</p>
+      </div>
+
+      <!-- 5 -->
+      <div id="privacidad" class="card section-card rounded-4 p-4 p-md-5 mb-4 shadow-sm">
+        <h3 class="fw-bold mb-4 d-flex align-items-center gap-3 text-dark">
+          <div class="icon-circle"><i class="bi bi-lock-fill"></i></div>
+          5. Protección de Datos
+        </h3>
+        <p class="text-secondary lh-lg mb-0 fs-6">Sus datos personales, financieros y de registro son tratados con estricta confidencialidad conforme a la <strong>Ley 1581 de 2012</strong> de la República de Colombia. No compartimos, vendemos ni alquilamos su información con terceros sin su consentimiento explícito y previo. Como titular de sus datos, usted puede solicitar acceso, corrección o eliminación definitiva escribiendo a nuestro canal oficial: <a href="mailto:contacto@monagua.com" class="text-success fw-bold text-decoration-none">contacto@monagua.com</a>.</p>
+      </div>
+
+      <!-- Soporte Banner -->
+      <div class="card border-0 bg-success bg-opacity-10 rounded-4 p-4 p-md-5 text-center mt-5 shadow-sm position-relative overflow-hidden">
+        <div class="position-absolute top-0 end-0 opacity-25" style="transform: translate(20%, -30%) rotate(15deg);">
+            <i class="bi bi-chat-quote-fill" style="font-size: 10rem; color: #198754;"></i>
+        </div>
+        <div class="position-relative z-1">
+            <h4 class="fw-bold text-dark mb-2">¿Tienes alguna duda adicional?</h4>
+            <p class="text-muted mb-4 fs-6">Condy y nuestro equipo de soporte jurídico están listos para resolver cualquier inquietud sobre nuestros términos.</p>
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=vt74117@gmail.com&su=Dudas%20sobre%20los%20términos%20legales"
+               target="_blank"
+               class="btn btn-success btn-lg fw-bold rounded-pill px-5 shadow-sm" style="transition: all 0.3s ease;">
+              <i class="bi bi-envelope-paper-fill me-2"></i> Contactar Soporte
+            </a>
+        </div>
+      </div>
+
     </div>
   </div>
+</div>
+
+<script src="{% static 'js/terminos.js' %}"></script>
 </div>
 
 {% endblock %}
