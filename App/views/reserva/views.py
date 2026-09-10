@@ -45,9 +45,10 @@ def requiere_autenticacion(view_func):
 # =========================
 
 @method_decorator(requiere_administrador, name='dispatch')
+@method_decorator(requiere_administrador, name='dispatch')
 class ReservaListView(ListView):
     model = Reserva
-    template_name = 'admin/reservas/reservas.html'
+    template_name = 'admin/reserva/reservas_admin.html'
     context_object_name = 'reservas'
 
     def get_queryset(self):
@@ -122,7 +123,7 @@ def cambiar_estado_reserva(request, reserva_id):
 class ReservaCreateView(SuccessMessageMixin, CreateView):
     model = Reserva
     form_class = ReservaForm
-    template_name = 'admin/reservas/agregar_reserva.html'
+    template_name = 'admin/reserva/agregar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
     success_message = "¡La reserva ha sido creada con éxito!"
 
@@ -162,7 +163,7 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
 class ReservaUpdateView(UpdateView):
     model = Reserva
     form_class = ReservaForm
-    template_name = 'admin/reservas/editar_reserva.html'
+    template_name = 'admin/reserva/editar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 
     # --- VALIDACIÓN AGREGADA ---
@@ -225,14 +226,13 @@ class ReservaUpdateView(UpdateView):
 
 class ReservaDeleteView(DeleteView):
     model = Reserva
-    template_name = 'admin/reservas/eliminar_reserva.html'
+    template_name = 'admin/reserva/eliminar_reserva.html'
     success_url = reverse_lazy('listar_reservas')
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         reserva_id = self.object.id
-        valor_viejo = f"ID: {self.object.id}, Cliente: {self.object.usuario}, Paquete: {self.object.paquete.nombre}, Estado: {self.object.estado}"
-
+        valor_viejo = f"ID: {self.object.id}, Cliente: {self.object.usuario}, Paquete: {self.object.paquete.nombre if self.object.paquete else 'N/A'}, Estado: {self.object.estado_reserva}"
         response = super().delete(request, *args, **kwargs)
 
         crear_notificacion_sistema(

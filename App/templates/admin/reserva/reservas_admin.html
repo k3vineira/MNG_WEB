@@ -115,17 +115,17 @@
                             <small class="text-muted d-block fw-normal">Reserva #{{ reserva.id }}</small>
                         </td>
                         <td class="py-3 text-dark">
-                            {{ reserva.fecha }}
+                            {{ reserva.fecha_inicio|date:"d/m/Y" }}
                         </td>
                         <td class="py-3 text-success fw-bold">
                             COP ${{ reserva.monto_total|floatformat:0|intcomma }}
                         </td>
                         <td class="text-center py-3">
-                            {% if reserva.estado == 'pendiente' %}
+                            {% if reserva.estado_reserva == 'pendiente' %}
                                 <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
                                     <i class="bi bi-hourglass-split me-1"></i>Pendiente
                                 </span>
-                            {% elif reserva.estado == 'confirmada' %}
+                            {% elif reserva.estado_reserva == 'confirmada' %}
                                 <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
                                     <i class="bi bi-check-circle-fill me-1"></i>Confirmada
                                 </span>
@@ -136,18 +136,14 @@
                             {% endif %}
                         </td>
                         <td class="text-end pe-4 py-3">
-                            {% if reserva.estado == 'confirmada' %}
-                                <span class="text-muted small fw-semibold"><i class="bi bi-lock-fill me-1"></i>Bloqueada</span>
-                            {% else %}
-                                <div class="d-inline-flex gap-2">
-                                    <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-outline-primary px-3 rounded-pill fw-semibold shadow-sm">
-                                        <i class="bi bi-pencil-square me-1"></i> Editar
-                                    </a>
-                                    <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-sm btn-outline-danger px-3 rounded-pill fw-semibold shadow-sm">
-                                        <i class="bi bi-trash me-1"></i> Eliminar
-                                    </a>
-                                </div>
-                            {% endif %}
+                            <div class="d-inline-flex gap-2">
+                                <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-outline-primary px-3 rounded-pill fw-semibold shadow-sm">
+                                    <i class="bi bi-pencil-square me-1"></i> Editar
+                                </a>
+                                <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-sm btn-outline-danger px-3 rounded-pill fw-semibold shadow-sm">
+                                    <i class="bi bi-trash me-1"></i> Eliminar
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
@@ -169,9 +165,9 @@
             <div class="card border border-light shadow-sm rounded-4 mb-3 bg-white overflow-hidden">
                 <div class="card-header bg-light border-0 py-2 px-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small fw-bold">Reserva #{{ reserva.id }}</span>
-                    {% if reserva.estado == 'pendiente' %}
+                    {% if reserva.estado_reserva == 'pendiente' %}
                         <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-2 py-1 small fw-bold">Pendiente</span>
-                    {% elif reserva.estado == 'confirmada' %}
+                    {% elif reserva.estado_reserva == 'confirmada' %}
                         <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1 small fw-bold">Confirmada</span>
                     {% else %}
                         <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2 py-1 small fw-bold">Cancelada</span>
@@ -181,7 +177,7 @@
                     <div class="mb-3">
                         <h6 class="fw-bold text-dark mb-1">{{ reserva.usuario.get_full_name|default:reserva.usuario.username }}</h6>
                         <small class="text-secondary fw-semibold d-block">{{ reserva.paquete.nombre }}</small>
-                        <small class="text-muted d-block">Fecha: {{ reserva.fecha }}</small>
+                        <small class="text-muted d-block">Fecha: {{ reserva.fecha_inicio|date:"d/m/Y" }}</small>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center border-top pt-2 small mb-3">
@@ -190,24 +186,18 @@
                     </div>
 
                     <div class="border-top pt-2">
-                        {% if reserva.estado == 'confirmada' %}
-                            <div class="text-center text-muted small py-1 fw-semibold">
-                                <i class="bi bi-lock-fill me-1"></i> Reserva bloqueada para edición
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-outline-primary w-100 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
                             </div>
-                        {% else %}
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-outline-primary w-100 py-2 rounded-pill fw-semibold">
-                                        <i class="bi bi-pencil-square"></i> Editar
-                                    </a>
-                                </div>
-                                <div class="col-6">
-                                    <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-sm btn-outline-danger w-100 py-2 rounded-pill fw-semibold">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </a>
-                                </div>
+                            <div class="col-6">
+                                <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-sm btn-outline-danger w-100 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
                             </div>
-                        {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
