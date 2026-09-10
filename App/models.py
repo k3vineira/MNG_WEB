@@ -462,10 +462,23 @@ class Reserva(models.Model):
                         num_adultos = self.numero_adultos or 0
                         num_menores = self.numero_menores or 0
                         base_monto = (tarifa.precio_adulto * num_adultos) + (tarifa.precio_menor * num_menores)
-                        descuento = 0
 
-                        if descuento > 0:
-                            self.monto_total = base_monto * (100 - descuento) / 100
+                        # Buscar si existe una promoción activa para este paquete y fecha
+                        pp = PaquetePromocion.objects.filter(
+                            paquete=self.paquete,
+                            promocion__activa=True,
+                            promocion__fecha_inicio__lte=self.fecha_inicio,
+                            promocion__fecha_fin__gte=self.fecha_inicio
+                        ).select_related('promocion').first()
+
+                        if pp:
+                            if pp.valor_adulto_condescuento and pp.valor_adulto_condescuento > 0 and pp.valor_menor_condescuento and pp.valor_menor_condescuento > 0:
+                                self.monto_total = (pp.valor_adulto_condescuento * num_adultos) + (pp.valor_menor_condescuento * num_menores)
+                            elif pp.promocion and pp.promocion.porcentaje_descuento:
+                                desc = Decimal(pp.promocion.porcentaje_descuento) / Decimal(100)
+                                self.monto_total = round(base_monto * (Decimal(1) - desc), 2)
+                            else:
+                                self.monto_total = base_monto
                         else:
                             self.monto_total = base_monto
                     else:
