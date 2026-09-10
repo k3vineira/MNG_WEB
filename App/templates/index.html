@@ -35,7 +35,7 @@
       </p>
       
       <!-- Botón de acción transparente y redondeado -->
-      <a href="#destinos" class="btn rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 hover-slide-right" 
+      <a href="{% url 'tours' %}" class="btn rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 hover-slide-right" 
          style="font-size: 0.95rem; font-weight: 500; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);" data-aos="zoom-in" data-aos-delay="500">
         Conocer más <span style="font-size: 1.1rem; vertical-align: middle;">→</span>
       </a>
@@ -401,7 +401,7 @@
     </section>
 </div>
 
-<!-- SECCIÓN DE NOVEDADES (ESTILO PREMIUM - BOOTSTRAP 5) -->
+<!-- SECCIÓN DE BLOG (ESTILO PREMIUM - BOOTSTRAP 5) -->
 <section class="py-5" style="background-color: #ffffffff; color: #1c1c1a;">
     <div class="container py-4">
         
@@ -409,19 +409,67 @@
         <div class="row mb-5" data-aos="fade-up">
             <div class="col-12 text-center">
                 <!-- fw-normal para un acabado más elegante -->
-                <h2 class="display-5 fw-normal mb-0" style="letter-spacing: -0.5px;">Últimas novedades en Monagua</h2>
+                <h2 class="display-5 fw-normal mb-0" style="letter-spacing: -0.5px;">Últimas publicaciones del Blog</h2>
             </div>
         </div>
         <!-- Grid de Tarjetas -->
         <div class="row g-4 justify-content-center">
-            
-            <!-- Tarjeta 1 -->
+            {% for post in blogs %}
+            <!-- Tarjeta {{ forloop.counter }} -->
+            <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter }}00">
+                <div class="card h-100 border-0 rounded-4 p-3 text-white shadow-sm" 
+                     style="background-color: #1A261F; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;" 
+                     onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
+                     onmouseout="this.style.transform='none'; this.style.boxShadow='none';" 
+                     onclick="location.href='{{ post.get_absolute_url }}'">
+                    <div class="ratio ratio-1x1 mb-3 rounded-3 overflow-hidden">
+                        {% if post.imagen_destacada %}
+                            <img src="{{ post.imagen_destacada.url }}" 
+                                 class="img-fluid w-100 h-100" 
+                                 alt="{{ post.titulo }}" 
+                                 style="object-fit: cover;">
+                        {% else %}
+                            {% if forloop.counter == 1 %}
+                                <img src="{% static 'img/lagunanegra.webp' %}" 
+                                     class="img-fluid w-100 h-100" 
+                                     alt="{{ post.titulo }}" 
+                                     style="object-fit: cover;">
+                            {% elif forloop.counter == 2 %}
+                                <img src="{% static 'img/paramo.webp' %}" 
+                                     class="img-fluid w-100 h-100" 
+                                     alt="{{ post.titulo }}" 
+                                     style="object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'img/artesanias_1.webp' %}" 
+                                     class="img-fluid w-100 h-100" 
+                                     alt="{{ post.titulo }}" 
+                                     style="object-fit: cover;">
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-0 d-flex flex-column justify-content-between flex-grow-1">
+                        <div>
+                            {% if post.informacion_adicional %}
+                                <span class="badge bg-white bg-opacity-10 mb-2 px-2.5 py-1.5 rounded" style="font-size: 0.72rem; letter-spacing: 0.5px; color: #a3c9b1;">{{ post.informacion_adicional }}</span>
+                            {% else %}
+                                <span class="badge bg-white bg-opacity-10 mb-2 px-2.5 py-1.5 rounded" style="font-size: 0.72rem; letter-spacing: 0.5px; color: #a3c9b1;">Blog</span>
+                            {% endif %}
+                            <h3 class="h6 fw-normal mb-2 text-white" style="line-height: 1.45;">{{ post.titulo }}</h3>
+                        </div>
+                        <div class="mt-auto pt-3">
+                            <span class="text-white-50" style="font-size: 0.78rem;">{{ post.fecha_publicacion|date:"d \d\e F, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Tarjeta 1 por defecto -->
             <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="card h-100 border-0 rounded-4 p-3 text-white shadow-sm" 
                      style="background-color: #1A261F; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;" 
                      onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
                      onmouseout="this.style.transform='none'; this.style.boxShadow='none';" 
-                     onclick="location.href="#"">
+                     onclick="location.href='{% url 'blog' %}'">
                     <div class="ratio ratio-1x1 mb-3 rounded-3 overflow-hidden">
                         <img src="{% static 'img/lagunanegra.webp' %}" 
                              class="img-fluid w-100 h-100" 
@@ -440,13 +488,13 @@
                 </div>
             </div>
 
-            <!-- Tarjeta 2 -->
+            <!-- Tarjeta 2 por defecto -->
             <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="card h-100 border-0 rounded-4 p-3 text-white shadow-sm" 
                      style="background-color: #1A261F; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;" 
                      onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
                      onmouseout="this.style.transform='none'; this.style.boxShadow='none';" 
-                     onclick="location.href="#"">
+                     onclick="location.href='{% url 'blog' %}'">
                     <div class="ratio ratio-1x1 mb-3 rounded-3 overflow-hidden">
                         <img src="{% static 'img/paramo.webp' %}" 
                              class="img-fluid w-100 h-100" 
@@ -465,13 +513,13 @@
                 </div>
             </div>
 
-            <!-- Tarjeta 3 -->
+            <!-- Tarjeta 3 por defecto -->
             <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="card h-100 border-0 rounded-4 p-3 text-white shadow-sm" 
                      style="background-color: #1A261F; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;" 
                      onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
                      onmouseout="this.style.transform='none'; this.style.boxShadow='none';" 
-                     onclick="location.href="#"">
+                     onclick="location.href='{% url 'blog' %}'">
                     <div class="ratio ratio-1x1 mb-3 rounded-3 overflow-hidden">
                         <img src="{% static 'img/artesanias_1.webp' %}" 
                              class="img-fluid w-100 h-100" 
@@ -489,15 +537,15 @@
                     </div>
                 </div>
             </div>
-
+            {% endfor %}
         </div>
 
         <!-- Botón Inferior -->
         <div class="row mt-5" data-aos="zoom-in" data-aos-delay="400">
             <div class="col-12 text-center">
-                <a href="#" class="btn rounded-pill px-4 py-2 text-uppercase fw-normal hover-slide-right" 
+                <a href="{% url 'blog' %}" class="btn rounded-pill px-4 py-2 text-uppercase fw-normal hover-slide-right" 
                    style="font-size: 0.7rem; letter-spacing: 1.2px; border: 1px solid #bcbbb4; color: #1c1c1a; background-color: transparent;">
-                    Más noticias <span class="ms-1" style="font-size: 0.85rem; vertical-align: middle;">→</span>
+                    Ver más en el blog <span class="ms-1" style="font-size: 0.85rem; vertical-align: middle;">→</span>
                 </a>
             </div>
         </div>
