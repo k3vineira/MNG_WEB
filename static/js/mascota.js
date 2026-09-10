@@ -32,4 +32,69 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+});
 
+document.addEventListener("DOMContentLoaded", function() {
+    const mascot = document.getElementById('condor-mascot-container');
+    const bubble = document.getElementById('condor-speech-bubble');
+    const text = document.getElementById('condor-speech-text');
+    const img = document.getElementById('condor-img');
+    const toggleBtn = document.getElementById('condor-toggle-btn');
+    
+    if (!mascot || !toggleBtn || !img) return;
+
+    const tips = [
+        "¡Hola! Soy Cóndy, tu guía en Monagua. ¡Exploremos el Páramo de Mongua juntos!",
+        "¡No dejes basura en los senderos! Mantengamos el páramo limpio.",
+        "¡Lleva siempre ropa abrigada e impermeable! El clima del páramo cambia rápido.",
+        "¡El cóndor andino es el rey de los Andes! ¿Sabías que está en peligro de extinción?",
+        "¡Sigue siempre el sendero demarcado para proteger los frailejones!",
+        "¡Si tienes dudas sobre tus reservas, escríbenos a través de las PQRS!",
+        "¿Sabías que la Laguna Negra es un sitio sagrado lleno de leyendas?",
+        "¡El agua del páramo es vida! Respeta las fuentes hídricas naturales.",
+        "Planifica tu visita con guías autorizados en nuestra pestaña de Guías y Usuarios."
+    ];
+    
+    // Activate bouncing animation
+    img.classList.add('condor-bounce');
+    
+    // Start collapsed on mobile devices
+    if (window.innerWidth <= 768) {
+        mascot.classList.add('collapsed');
+    }
+
+    // Toggle button handler
+    toggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        mascot.classList.toggle('collapsed');
+        bubble.classList.add('d-none');
+        img.classList.add('condor-bounce');
+    });
+    
+    mascot.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        // If collapsed, clicking the mascot expands it instead of showing speech bubble
+        if (mascot.classList.contains('collapsed')) {
+            mascot.classList.remove('collapsed');
+            return;
+        }
+
+        if (bubble.classList.contains('d-none')) {
+            // Pick a random tip
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            text.textContent = randomTip;
+            bubble.classList.remove('d-none');
+            img.classList.remove('condor-bounce');
+        } else {
+            bubble.classList.add('d-none');
+            img.classList.add('condor-bounce');
+        }
+    });
+    
+    // Close bubble when clicking anywhere else
+    document.addEventListener('click', function() {
+        if (bubble) bubble.classList.add('d-none');
+        if (img) img.classList.add('condor-bounce');
+    });
+});

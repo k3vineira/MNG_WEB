@@ -17,7 +17,7 @@
   </div>
 
   {% if reservas %}
-    <form method="post" action="{% url 'comprobante_multiple' %}">
+    <form id="carritoForm" method="post" action="{% url 'comprobante_multiple' %}">
       {% csrf_token %}
       <div class="d-flex align-items-center justify-content-between mb-3">
         <div class="form-check">
@@ -89,56 +89,7 @@
       </div>
     </div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const selectAll = document.getElementById('selectAll');
-        const checkboxes = Array.from(document.querySelectorAll('input[name="reservas"]'));
-        const selectedCount = document.getElementById('selectedCount');
-        const generateBtn = document.getElementById('generateBtn');
-        const toastEl = document.getElementById('cartToast');
-        const toast = toastEl ? new bootstrap.Toast(toastEl) : null;
-
-        function updateState() {
-          const selected = checkboxes.filter(cb => cb.checked).length;
-          selectedCount.textContent = selected;
-          generateBtn.disabled = selected === 0;
-          // update selectAll checkbox state
-          if (selected === checkboxes.length) {
-            selectAll.checked = true;
-            selectAll.indeterminate = false;
-          } else if (selected === 0) {
-            selectAll.checked = false;
-            selectAll.indeterminate = false;
-          } else {
-            selectAll.checked = false;
-            selectAll.indeterminate = true;
-          }
-        }
-
-        // bind change events
-        checkboxes.forEach(cb => cb.addEventListener('change', updateState));
-
-        selectAll.addEventListener('change', function() {
-          const checked = this.checked;
-          checkboxes.forEach(cb => cb.checked = checked);
-          updateState();
-        });
-
-        // form validation on submit
-        const form = document.querySelector('form[action="{% url 'comprobante_multiple' %}"]');
-        if (form) {
-          form.addEventListener('submit', function(e) {
-            const anySelected = checkboxes.some(cb => cb.checked);
-            if (!anySelected) {
-              e.preventDefault();
-              if (toast) toast.show();
-            }
-          });
-        }
-
-        updateState();
-      });
-    </script>
+    <script src="{% static 'js/carrito.js' %}"></script>
   {% else %}
     <div class="card border-0 shadow-sm rounded-4 bg-white text-center py-5">
       <div class="mb-3 text-muted">
