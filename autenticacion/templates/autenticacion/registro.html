@@ -70,7 +70,7 @@ Monagua{% endblock %} {% block content %}
               id="id_first_name"
               value="{{ form.first_name.value|default:'' }}"
               class="form-control rounded-pill py-3 px-4 {% if form.first_name.errors %}is-invalid{% endif %}"
-              placeholder="Nombre"
+              placeholder="Nombres"
               required
             />
             {% if form.first_name.errors %}
@@ -86,7 +86,7 @@ Monagua{% endblock %} {% block content %}
               id="id_last_name"
               value="{{ form.last_name.value|default:'' }}"
               class="form-control rounded-pill py-3 px-4 {% if form.last_name.errors %}is-invalid{% endif %}"
-              placeholder="Apellido"
+              placeholder="Apellidos"
               required
             />
             {% if form.last_name.errors %}

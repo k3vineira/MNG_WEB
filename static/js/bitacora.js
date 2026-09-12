@@ -40,12 +40,28 @@
         colorIcono: '#0284c7',
         icono: 'bi-info-circle-fill',
         colorBarra: '#0284c7'
+      },
+      offline: {
+        titulo: 'Sin conexión',
+        colorTexto: '#991b1b',
+        colorFondoIcono: 'rgba(220, 53, 69, 0.12)',
+        colorIcono: '#dc3545',
+        icono: 'bi-wifi-off',
+        colorBarra: '#dc3545'
+      },
+      online: {
+        titulo: 'Conexión restablecida',
+        colorTexto: '#1e4a2a',
+        colorFondoIcono: 'rgba(44, 110, 60, 0.12)',
+        colorIcono: '#2c6e3c',
+        icono: 'bi-wifi',
+        colorBarra: '#2c6e3c'
       }
     };
 
     /**
      * Función global para crear y disparar un Toast superior derecho con temporizador
-     * @param {string} tipo - 'success', 'error', 'warning', 'info'
+     * @param {string} tipo - 'success', 'error', 'warning', 'info', 'offline', 'online'
      * @param {string} titulo - Título opcional (si no se pasa, toma el por defecto)
      * @param {string} mensaje - Mensaje descriptivo de la alerta
      * @param {number} duracion - Duración en milisegundos (por defecto 5000)
@@ -129,6 +145,15 @@
           });
           bsToast.show();
         }
+      });
+
+      // Monitoreo del estado de la conexión a Internet usando el diseño de Bitácora
+      window.addEventListener('offline', function () {
+        window.mostrarToast('offline', 'Sin conexión', 'En este momento no tienes conexión.', 6000);
+      });
+
+      window.addEventListener('online', function () {
+        window.mostrarToast('online', 'Conexión restablecida', 'Se restauró la conexión a internet.', 5000);
       });
     });
   })();
