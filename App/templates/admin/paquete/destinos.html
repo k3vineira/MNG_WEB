@@ -281,40 +281,6 @@
         </div> 
     </section>
 
-    <!-- Script de filtrado en tiempo real -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const inputTour = document.getElementById('input-tour') || document.getElementById('input-destino');
-            const alertaNoExiste = document.getElementById('alerta-no-existe');
-            const tarjetas = document.querySelectorAll('.tarjeta-tour, .tarjeta-destino');
-
-            if (inputTour) {
-                inputTour.addEventListener('input', function() {
-                    const valorEscrito = this.value.toLowerCase().trim();
-                    let coincidencias = 0;
-
-                    tarjetas.forEach(tarjeta => {
-                        const nombreTour = tarjeta.getAttribute('data-nombre') || tarjeta.innerText.toLowerCase();
-                        
-                        if (nombreTour.includes(valorEscrito)) {
-                            tarjeta.style.display = ''; // Mostrar tarjeta
-                            coincidencias++;
-                        } else {
-                            tarjeta.style.display = 'none'; // Ocultar tarjeta
-                        }
-                    });
-
-                    // Si no hay ninguna tarjeta visible y el usuario ha escrito algo
-                    if (coincidencias === 0 && valorEscrito !== '') {
-                        if (alertaNoExiste) alertaNoExiste.style.display = 'block';
-                        inputTour.classList.add('is-invalid');
-                    } else {
-                        if (alertaNoExiste) alertaNoExiste.style.display = 'none';
-                        inputTour.classList.remove('is-invalid');
-                    }
-                });
-            }
-        });
-    </script>
+<script src="{% static 'js/destinos.js' %}"></script>
 
 {% endblock %}
