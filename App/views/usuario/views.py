@@ -1,8 +1,11 @@
+import json
+import random
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Q
-from App.models import Usuario
+from django.utils import timezone
+from App.models import Usuario, Paquete, Reserva, PQRS, Calificacion
 from App.utils import crear_notificacion_sistema
 
 
@@ -17,7 +20,58 @@ def panel_rapido_view(request):
             return redirect('dashboard_admin')
         return redirect('index')
 
-    return render(request, 'partials/panel_rapido.html')
+    user = request.user
+
+    # 1. Recomendación dinámica de paquetes con imagen
+    paquetes_activos = list(Paquete.objects.filter(estado=True))
+    paquetes_con_imagen = [p for p in paquetes_activos if p.imagen]
+    if not paquetes_con_imagen:
+        paquetes_con_imagen = paquetes_activos
+
+    recomendacion = random.choice(paquetes_con_imagen) if paquetes_con_imagen else None
+
+    recomendaciones_data = []
+    for p in paquetes_con_imagen:
+        if p.imagen:
+            recomendaciones_data.append({
+                'nombre': p.nombre,
+                'imagen_url': p.imagen.url
+            })
+
+    # 2. Métricas y estadísticas del viajero
+    reservas_qs = Reserva.objects.filter(usuario=user).select_related('paquete')
+    total_reservas = reservas_qs.count()
+    reservas_confirmadas = reservas_qs.filter(estado_reserva='confirmada').count()
+    reservas_pendientes = reservas_qs.filter(estado_reserva='pendiente').count()
+    total_pqrs = PQRS.objects.filter(usuario=user).count()
+    total_calificaciones = Calificacion.objects.filter(reserva__usuario=user).count()
+
+    # 3. Próxima aventura o última reserva activa
+    hoy = timezone.now().date()
+    proxima_reserva = reservas_qs.filter(
+        estado_reserva__in=['confirmada', 'pendiente'],
+        fecha_inicio__gte=hoy
+    ).order_by('fecha_inicio').first()
+
+    if not proxima_reserva:
+        proxima_reserva = reservas_qs.order_by('-fecha_registro').first()
+
+    # 4. Historial reciente de reservas (últimas 4)
+    ultimas_reservas = reservas_qs.order_by('-id')[:4]
+
+    context = {
+        'recomendacion': recomendacion,
+        'recomendaciones_json': json.dumps(recomendaciones_data),
+        'total_reservas': total_reservas,
+        'reservas_confirmadas': reservas_confirmadas,
+        'reservas_pendientes': reservas_pendientes,
+        'total_pqrs': total_pqrs,
+        'total_calificaciones': total_calificaciones,
+        'proxima_reserva': proxima_reserva,
+        'ultimas_reservas': ultimas_reservas,
+    }
+
+    return render(request, 'partials/panel_rapido.html', context)
 
 
 @login_required

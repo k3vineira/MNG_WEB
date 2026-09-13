@@ -1,105 +1,510 @@
-{% extends "base.html" %} {% load static %}
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block titulo %}Panel Rápido del Turista | Monagua{% endblock %}
+
 {% block content %}
 <main class="container pt-5 mt-4 mt-lg-5 pb-5">
-  <!-- Hero Section para Turista -->
+  <!-- ── 1. Hero Section & Bienvenida ── -->
   <div class="row align-items-center mb-5 g-4">
     <div class="col-12 col-lg-7" data-aos="fade-right" data-aos-duration="800">
-      <span
-        class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-3 fw-bold"
-        data-aos="zoom-in"
-        data-aos-delay="100"
-        ><i class="bi bi-geo-alt-fill me-1"></i>EXPLORA MONAGUA</span
-      >
-      <h1 class="display-4 display-lg-3 fw-bold mb-3 text-dark" data-aos="fade-right" data-aos-delay="200">
-        Hola, {{ user.first_name|default:user.username }}
+      <div class="d-flex align-items-center gap-2 mb-3" data-aos="zoom-in" data-aos-delay="100">
+        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-bold border border-success border-opacity-25">
+          <i class="bi bi-compass-fill me-1"></i> PANEL RÁPIDO DE VIAJERO
+        </span>
+        {% if user.imagen_perfil %}
+          <img src="{{ user.imagen_perfil.url }}" alt="Perfil" class="rounded-circle border border-2 border-success shadow-sm" style="width: 34px; height: 34px; object-fit: cover;">
+        {% endif %}
+      </div>
+
+      <h1 class="display-5 display-lg-4 fw-bold mb-3 text-dark" data-aos="fade-right" data-aos-delay="200">
+        ¡Hola, <span class="text-success">{{ user.first_name|default:user.username }}</span>!
       </h1>
-      <p class="lead text-muted mb-4" data-aos="fade-right" data-aos-delay="300">
-        Bienvenido de vuelta a las montañas. Nuevas rutas esperándote en
-        el páramo.
+
+      <p class="lead text-muted mb-4 fs-6 fs-md-5" data-aos="fade-right" data-aos-delay="300">
+        Gestiona tus expediciones, sube comprobantes de pago y descubre nuevas rutas ecológicas en el páramo de Mongua.
       </p>
-      <div class="d-flex flex-column flex-sm-row gap-3" data-aos="fade-up" data-aos-delay="400">
+
+      <div class="d-flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="400">
         <a
           href="{% url 'tours' %}"
-          class="btn btn-success rounded-pill px-4 px-sm-5 py-3 fw-bold shadow-sm text-center w-100 w-sm-auto card-hover-lift"
+          class="btn btn-success rounded-pill px-4 py-3 fw-bold shadow-sm d-inline-flex align-items-center justify-content-center gap-2 card-hover-lift"
         >
-          <i class="bi bi-compass me-2"></i>Explorar Destinos
+          <i class="bi bi-map-fill"></i> Explorar Catálogo de Tours
         </a>
         <a
           href="{% url 'mis_reservas_usuario' %}"
-          class="btn btn-outline-dark rounded-pill px-4 px-sm-5 py-3 fw-bold text-center w-100 w-sm-auto card-hover-lift"
+          class="btn btn-outline-dark rounded-pill px-4 py-3 fw-bold d-inline-flex align-items-center justify-content-center gap-2 card-hover-lift"
         >
-          <i class="bi bi-calendar-check me-2"></i>Ver Mis Reservas
+          <i class="bi bi-calendar2-check-fill text-success"></i> Ver Mis Reservas ({{ total_reservas }})
+        </a>
+        <a
+          href="{% url 'perfil_detalles' %}"
+          class="btn btn-light border rounded-pill px-4 py-3 fw-semibold text-secondary d-inline-flex align-items-center justify-content-center gap-2 card-hover-lift"
+          title="Actualizar datos personales"
+        >
+          <i class="bi bi-person-gear"></i> Mi Perfil
         </a>
       </div>
     </div>
+
+    <!-- Tarjeta de Recomendación Dinámica (Vía Base de Datos con Auto-Rotación) -->
     <div class="col-12 col-lg-5 mt-4 mt-lg-0" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
-      <div class="position-relative overflow-hidden rounded-4 shadow-lg hero-img-container">
-        <img
-          src="{% static 'img/Fondo.webp' %}"
-          alt="Naturaleza"
-          class="img-fluid rounded-4 w-100 hero-img"
-        />
-        <div class="position-absolute bottom-0 start-0 p-3 p-sm-4 w-100" data-aos="zoom-in" data-aos-delay="400">
-          <div
-            class="bg-white bg-opacity-90 backdrop-blur rounded-4 p-3 shadow-sm border border-white"
-          >
-            <p class="mb-0 small fw-bold text-success">
-              <i class="bi bi-stars me-1"></i> Recomendación: Laguna Negra
-            </p>
+      <a href="{% url 'tours' %}" class="text-decoration-none d-block card-hover-lift" title="Explorar tours y destinos disponibles">
+        <div class="position-relative overflow-hidden rounded-4 shadow-lg hero-img-container border border-2 border-white" id="heroRecommendationCard">
+          {% if recomendacion and recomendacion.imagen %}
+            <img
+              id="heroRecImg"
+              src="{{ recomendacion.imagen.url }}"
+              alt="{{ recomendacion.nombre }}"
+              class="img-fluid rounded-4 w-100 hero-img"
+              style="height: 350px; object-fit: cover; transition: opacity 0.5s ease-in-out, transform 0.6s ease;"
+            />
+          {% else %}
+            <img
+              id="heroRecImg"
+              src="{% static 'img/Fondo.webp' %}"
+              alt="Naturaleza y Páramo"
+              class="img-fluid rounded-4 w-100 hero-img"
+              style="height: 350px; object-fit: cover; transition: opacity 0.5s ease-in-out, transform 0.6s ease;"
+            />
+          {% endif %}
+          <div class="position-absolute bottom-0 start-0 p-3 p-sm-4 w-100" data-aos="zoom-in" data-aos-delay="400">
+            <div class="bg-white bg-opacity-90 backdrop-blur rounded-4 p-3 shadow-sm border border-white">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="me-2 overflow-hidden">
+                  <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 rounded-pill small mb-1">
+                    <i class="bi bi-stars"></i> Destino Recomendado
+                  </span>
+                  <p class="mb-0 fw-bold text-dark text-truncate" id="heroRecTitle">
+                    {{ recomendacion.nombre|default:"Laguna Negra" }}
+                  </p>
+                </div>
+                <span class="btn btn-success btn-sm rounded-circle p-2 flex-shrink-0 shadow-sm">
+                  <i class="bi bi-arrow-right-short fs-5 text-white"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── 2. Indicadores Clave de Estado (KPI Cards) ── -->
+  <section class="mb-5" data-aos="fade-up" data-aos-duration="800">
+    <div class="row g-3">
+      <!-- Reservas Activas -->
+      <div class="col-6 col-lg-3">
+        <a href="{% url 'mis_reservas_usuario' %}" class="text-decoration-none text-dark h-100 d-block">
+          <div class="p-3 p-md-4 rounded-4 bg-white border shadow-sm h-100 card-hover-lift d-flex flex-column justify-content-between">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="text-muted small fw-semibold">Mis Reservas</span>
+              <div class="bg-success bg-opacity-10 text-success rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                <i class="bi bi-calendar-check-fill fs-5"></i>
+              </div>
+            </div>
+            <div>
+              <div class="fs-3 fw-bold text-dark mb-1">{{ total_reservas }}</div>
+              <div class="small text-muted">
+                <span class="text-success fw-bold">{{ reservas_confirmadas }} confirmada{{ reservas_confirmadas|pluralize }}</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Pendientes de Pago / Comprobante -->
+      <div class="col-6 col-lg-3">
+        <a href="{% url 'mis_comprobantes' %}" class="text-decoration-none text-dark h-100 d-block">
+          <div class="p-3 p-md-4 rounded-4 bg-white border shadow-sm h-100 card-hover-lift d-flex flex-column justify-content-between">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="text-muted small fw-semibold">Comprobantes</span>
+              <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                <i class="bi bi-receipt-cutoff fs-5"></i>
+              </div>
+            </div>
+            <div>
+              <div class="fs-3 fw-bold text-dark mb-1">{{ reservas_pendientes }}</div>
+              <div class="small text-muted">
+                {% if reservas_pendientes > 0 %}
+                  <span class="text-warning fw-bold">Por validar o pagar</span>
+                {% else %}
+                  <span class="text-success fw-semibold">Al día con tus pagos</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Calificaciones y Reseñas -->
+      <div class="col-6 col-lg-3">
+        <a href="{% url 'mis_calificaciones' %}" class="text-decoration-none text-dark h-100 d-block">
+          <div class="p-3 p-md-4 rounded-4 bg-white border shadow-sm h-100 card-hover-lift d-flex flex-column justify-content-between">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="text-muted small fw-semibold">Mis Opiniones</span>
+              <div class="bg-info bg-opacity-10 text-info rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                <i class="bi bi-star-fill fs-5"></i>
+              </div>
+            </div>
+            <div>
+              <div class="fs-3 fw-bold text-dark mb-1">{{ total_calificaciones }}</div>
+              <div class="small text-muted">
+                <span class="text-info fw-semibold">Experiencias compartidas</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- PQRS y Soporte -->
+      <div class="col-6 col-lg-3">
+        <a href="{% url 'mis_pqrs' %}" class="text-decoration-none text-dark h-100 d-block">
+          <div class="p-3 p-md-4 rounded-4 bg-white border shadow-sm h-100 card-hover-lift d-flex flex-column justify-content-between">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="text-muted small fw-semibold">Atención & PQRS</span>
+              <div class="bg-danger bg-opacity-10 text-danger rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                <i class="bi bi-headset fs-5"></i>
+              </div>
+            </div>
+            <div>
+              <div class="fs-3 fw-bold text-dark mb-1">{{ total_pqrs }}</div>
+              <div class="small text-muted">
+                <span class="text-danger fw-semibold">Solicitudes radicadas</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 3. Próxima Aventura / Estado Inmediato & Accesos Rápidos ── -->
+  <div class="row g-4 mb-5">
+    <!-- Columna Izquierda: Próximo Viaje / Itinerario -->
+    <div class="col-12 col-lg-5" data-aos="fade-up" data-aos-delay="200">
+      <div class="bg-white rounded-4 border shadow-sm p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h5 class="fw-bold mb-0 text-dark">
+              <i class="bi bi-geo-fill text-success me-2"></i>Tu Próxima Aventura
+            </h5>
+            {% if proxima_reserva %}
+              {% if proxima_reserva.estado_reserva == 'confirmada' %}
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-bold">
+                  <i class="bi bi-check-circle-fill me-1"></i> Confirmada
+                </span>
+              {% elif proxima_reserva.estado_reserva == 'pendiente' %}
+                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-2 fw-bold">
+                  <i class="bi bi-hourglass-split me-1"></i> Pendiente
+                </span>
+              {% else %}
+                <span class="badge bg-secondary rounded-pill px-3 py-2 fw-bold">{{ proxima_reserva.get_estado_reserva_display }}</span>
+              {% endif %}
+            {% endif %}
+          </div>
+
+          {% if proxima_reserva %}
+            <div class="card border-0 bg-light rounded-4 overflow-hidden mb-3">
+              {% if proxima_reserva.paquete.imagen %}
+                <img src="{{ proxima_reserva.paquete.imagen.url }}" alt="{{ proxima_reserva.paquete.nombre }}" style="height: 160px; object-fit: cover;" class="w-100">
+              {% endif %}
+              <div class="p-3">
+                <h6 class="fw-bold text-dark mb-2">{{ proxima_reserva.paquete.nombre }}</h6>
+                <div class="small text-muted mb-2">
+                  <i class="bi bi-calendar-event text-success me-1"></i> 
+                  <strong>Fecha de Salida:</strong> {{ proxima_reserva.fecha_inicio|date:"d \d\e F \d\e Y"|default:"Por definir" }}
+                </div>
+                <div class="small text-muted mb-2">
+                  <i class="bi bi-people text-success me-1"></i>
+                  <strong>Viajeros:</strong> {{ proxima_reserva.numero_adultos }} Adulto{{ proxima_reserva.numero_adultos|pluralize }}
+                  {% if proxima_reserva.numero_menores > 0 %}, {{ proxima_reserva.numero_menores }} Menor{{ proxima_reserva.numero_menores|pluralize }}{% endif %}
+                </div>
+                <div class="small text-muted">
+                  <i class="bi bi-geo-alt text-success me-1"></i>
+                  <strong>Punto de encuentro:</strong> {{ proxima_reserva.paquete.punto_encuentro|default:"Mongua, Boyacá" }}
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <!-- Estado sin reservas -->
+            <div class="text-center py-4 px-3 my-auto">
+              <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 70px; height: 70px;">
+                <i class="bi bi-tree-fill fs-2"></i>
+              </div>
+              <h6 class="fw-bold text-dark mb-2">Aún no tienes un viaje programado</h6>
+              <p class="text-muted small mb-4">
+                Explora nuestras rutas guiadas por el Páramo de Mongua, cascadas ancestrales y lagunas sagradas.
+              </p>
+              <a href="{% url 'tours' %}" class="btn btn-success btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm">
+                <i class="bi bi-compass me-1"></i> Reservar Ahora
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+        {% if proxima_reserva %}
+          <div class="d-flex flex-column flex-sm-row gap-2 pt-3 border-top">
+            <a href="{% url 'comprobante_reserva' proxima_reserva.id %}" class="btn btn-outline-success btn-sm rounded-pill flex-grow-1 fw-bold py-2">
+              <i class="bi bi-file-earmark-text me-1"></i> Comprobante
+            </a>
+            {% if proxima_reserva.estado_reserva == 'pendiente' %}
+              <a href="{% url 'enviar_comprobante' %}" class="btn btn-success btn-sm rounded-pill flex-grow-1 fw-bold py-2">
+                <i class="bi bi-upload me-1"></i> Subir Pago
+              </a>
+            {% else %}
+              <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-light border btn-sm rounded-pill flex-grow-1 fw-semibold py-2">
+                <i class="bi bi-list-check me-1"></i> Mis Reservas
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Centro de Accesos Rápidos -->
+    <div class="col-12 col-lg-7" data-aos="fade-up" data-aos-delay="300">
+      <div class="bg-white rounded-4 border shadow-sm p-4 h-100">
+        <h5 class="fw-bold mb-4 text-dark">
+          <i class="bi bi-lightning-charge-fill text-warning me-2"></i>Acciones Rápidas del Viajero
+        </h5>
+        
+        <div class="row g-3">
+          <!-- 1. Catálogo de Tours -->
+          <div class="col-12 col-sm-6">
+            <a href="{% url 'tours' %}" class="text-decoration-none text-dark d-block h-100">
+              <div class="p-3 rounded-4 bg-light bg-opacity-75 border border-0 h-100 card-hover-lift quick-card d-flex align-items-center gap-3">
+                <div class="bg-success text-white rounded-4 p-3 d-flex align-items-center justify-content-center flex-shrink-0 quick-icon" style="width: 52px; height: 52px;">
+                  <i class="bi bi-map-fill fs-4"></i>
+                </div>
+                <div>
+                  <h6 class="fw-bold mb-1">Catálogo de Tours</h6>
+                  <p class="text-muted small mb-0">Explora rutas y tarifas actualizadas.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- 2. Mis Reservas -->
+          <div class="col-12 col-sm-6">
+            <a href="{% url 'mis_reservas_usuario' %}" class="text-decoration-none text-dark d-block h-100">
+              <div class="p-3 rounded-4 bg-light bg-opacity-75 border border-0 h-100 card-hover-lift quick-card d-flex align-items-center gap-3">
+                <div class="bg-primary text-white rounded-4 p-3 d-flex align-items-center justify-content-center flex-shrink-0 quick-icon" style="width: 52px; height: 52px;">
+                  <i class="bi bi-calendar2-check-fill fs-4"></i>
+                </div>
+                <div>
+                  <h6 class="fw-bold mb-1">Mis Reservas</h6>
+                  <p class="text-muted small mb-0">Ver estado de viajes e itinerarios.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- 3. Subir Comprobante de Pago -->
+          <div class="col-12 col-sm-6">
+            <a href="{% url 'enviar_comprobante' %}" class="text-decoration-none text-dark d-block h-100">
+              <div class="p-3 rounded-4 bg-light bg-opacity-75 border border-0 h-100 card-hover-lift quick-card d-flex align-items-center gap-3">
+                <div class="bg-warning text-dark rounded-4 p-3 d-flex align-items-center justify-content-center flex-shrink-0 quick-icon" style="width: 52px; height: 52px;">
+                  <i class="bi bi-cloud-arrow-up-fill fs-4 text-white"></i>
+                </div>
+                <div>
+                  <h6 class="fw-bold mb-1">Enviar Comprobante</h6>
+                  <p class="text-muted small mb-0">Adjunta tus transferencias bancarias.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- 4. Mis Facturas -->
+          <div class="col-12 col-sm-6">
+            <a href="{% url 'mis_facturas' %}" class="text-decoration-none text-dark d-block h-100">
+              <div class="p-3 rounded-4 bg-light bg-opacity-75 border border-0 h-100 card-hover-lift quick-card d-flex align-items-center gap-3">
+                <div class="bg-info text-white rounded-4 p-3 d-flex align-items-center justify-content-center flex-shrink-0 quick-icon" style="width: 52px; height: 52px;">
+                  <i class="bi bi-receipt fs-4"></i>
+                </div>
+                <div>
+                  <h6 class="fw-bold mb-1">Mis Facturas</h6>
+                  <p class="text-muted small mb-0">Descarga comprobantes en PDF.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- 5. Blog y Experiencias -->
+          <div class="col-12 col-sm-6">
+            <a href="{% url 'blog' %}" class="text-decoration-none text-dark d-block h-100">
+              <div class="p-3 rounded-4 bg-light bg-opacity-75 border border-0 h-100 card-hover-lift quick-card d-flex align-items-center gap-3">
+                <div class="bg-secondary text-white rounded-4 p-3 d-flex align-items-center justify-content-center flex-shrink-0 quick-icon" style="width: 52px; height: 52px;">
+                  <i class="bi bi-chat-quote-fill fs-4"></i>
+                </div>
+                <div>
+                  <h6 class="fw-bold mb-1">Blog de la Comunidad</h6>
+                  <p class="text-muted small mb-0">Historias, tips y recomendaciones.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- 6. Radicar PQRS / Soporte -->
+          <div class="col-12 col-sm-6">
+            <a href="{% url 'pqrs' %}" class="text-decoration-none text-dark d-block h-100">
+              <div class="p-3 rounded-4 bg-light bg-opacity-75 border border-0 h-100 card-hover-lift quick-card d-flex align-items-center gap-3">
+                <div class="bg-danger text-white rounded-4 p-3 d-flex align-items-center justify-content-center flex-shrink-0 quick-icon" style="width: 52px; height: 52px;">
+                  <i class="bi bi-shield-check fs-4"></i>
+                </div>
+                <div>
+                  <h6 class="fw-bold mb-1">Atención & PQRS</h6>
+                  <p class="text-muted small mb-0">Peticiones, quejas y sugerencias.</p>
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Accesos Rápidos -->
-  <section class="mt-5 pt-4 border-top" data-aos="fade-up" data-aos-duration="800">
-    <h4 class="fw-bold mb-4 text-dark" data-aos="fade-up" data-aos-delay="100">¿Qué quieres hacer hoy?</h4>
-    <div class="row g-4">
-      <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="200">
-        <a href="{% url 'tours' %}" class="text-decoration-none text-dark h-100 d-block">
-          <div
-            class="p-4 rounded-4 bg-white h-100 border shadow-sm transition-all card-hover-lift text-center quick-card"
-          >
-            <i class="bi bi-calendar2-check text-success display-5 mb-3 d-block quick-icon"></i>
-            <h5 class="fw-bold">Nueva Reserva</h5>
-            <p class="text-muted small mb-0">
-              Encuentra tu próxima aventura guiada por expertos.
-            </p>
-          </div>
+  <!-- ── 4. Historial Reciente de Reservas (si existen) ── -->
+  {% if ultimas_reservas %}
+  <section class="mb-5" data-aos="fade-up" data-aos-duration="800">
+    <div class="bg-white rounded-4 border shadow-sm p-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-clock-history text-success me-2"></i>Historial Reciente de Reservas
+        </h5>
+        <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-outline-success btn-sm rounded-pill fw-bold">
+          Ver todas ({{ total_reservas }}) <i class="bi bi-arrow-right"></i>
         </a>
       </div>
-      <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="300">
-        <a
-          href="{% url 'blog' %}"
-          class="text-decoration-none text-dark h-100 d-block"
-        >
-          <div
-            class="p-4 rounded-4 bg-white h-100 border shadow-sm transition-all card-hover-lift text-center quick-card"
-          >
-            <i class="bi bi-chat-square-text text-success display-5 mb-3 d-block quick-icon"></i>
-            <h5 class="fw-bold">Blog y Comentarios</h5>
-            <p class="text-muted small mb-0">
-              Lee historias de otros viajeros o deja tu reseña.
-            </p>
-          </div>
-        </a>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" class="border-0 rounded-start-3">Destino / Paquete</th>
+              <th scope="col" class="border-0">Fecha Inicio</th>
+              <th scope="col" class="border-0 text-center">Viajeros</th>
+              <th scope="col" class="border-0">Estado</th>
+              <th scope="col" class="border-0 text-end rounded-end-3">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for res in ultimas_reservas %}
+            <tr>
+              <td class="fw-semibold">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-geo-alt-fill text-success"></i>
+                  <span>{{ res.paquete.nombre }}</span>
+                </div>
+              </td>
+              <td class="text-muted small">
+                {{ res.fecha_inicio|date:"d/m/Y"|default:"Por definir" }}
+              </td>
+              <td class="text-center small">
+                <span class="badge bg-light text-dark border">
+                  {{ res.numero_adultos }} ad.{% if res.numero_menores > 0 %}, {{ res.numero_menores }} men.{% endif %}
+                </span>
+              </td>
+              <td>
+                {% if res.estado_reserva == 'confirmada' %}
+                  <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-semibold">
+                    <i class="bi bi-check-circle me-1"></i>Confirmada
+                  </span>
+                {% elif res.estado_reserva == 'pendiente' %}
+                  <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-1 fw-semibold">
+                    <i class="bi bi-hourglass-split me-1"></i>Pendiente
+                  </span>
+                {% elif res.estado_reserva == 'cancelada' %}
+                  <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-1 fw-semibold">
+                    <i class="bi bi-x-circle me-1"></i>Cancelada
+                  </span>
+                {% else %}
+                  <span class="badge bg-secondary rounded-pill px-3 py-1">{{ res.get_estado_reserva_display }}</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <a href="{% url 'comprobante_reserva' res.id %}" class="btn btn-light border btn-sm rounded-pill px-3 fw-semibold text-secondary" title="Ver Comprobante">
+                  <i class="bi bi-eye"></i> Detalle
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-      <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="400">
-        <a href="#" class="text-decoration-none text-dark h-100 d-block">
-          <div
-            class="p-4 rounded-4 bg-white h-100 border shadow-sm transition-all card-hover-lift text-center quick-card"
-          >
-            <i class="bi bi-person-gear text-success display-5 mb-3 d-block quick-icon"></i>
-            <h5 class="fw-bold">Gestionar Perfil</h5>
-            <p class="text-muted small mb-0">
-              Actualiza tu información y documentos de identidad.
-            </p>
-          </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ── 5. Banner de Soporte Directo ── -->
+  <section data-aos="fade-up" data-aos-duration="800">
+    <div class="bg-success bg-opacity-10 rounded-4 border border-success border-opacity-25 p-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="bg-success text-white rounded-circle p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px;">
+          <i class="bi bi-info-circle-fill fs-4"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-1 text-dark">¿Necesitas asistencia con tu itinerario o reserva?</h6>
+          <p class="text-muted small mb-0">Nuestro equipo de guías locales y atención al cliente está a tu disposición en Mongua.</p>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2 flex-shrink-0">
+        <a href="{% url 'pqrs' %}" class="btn btn-success rounded-pill px-4 py-2 fw-bold btn-sm shadow-sm">
+          <i class="bi bi-envelope me-1"></i> Contactar Soporte
+        </a>
+        <a href="{% url 'nosotros' %}" class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold btn-sm">
+          <i class="bi bi-building me-1"></i> Conócenos
         </a>
       </div>
     </div>
   </section>
 </main>
-{% endblock %}
 
+{% if recomendaciones_json %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      const recommendations = {{ recomendaciones_json|safe }};
+      if (Array.isArray(recommendations) && recommendations.length > 1) {
+        // Pre-cargar imágenes en caché del navegador para evitar lag/reflujo
+        recommendations.forEach(function (rec) {
+          if (rec.imagen_url) {
+            const preImg = new Image();
+            preImg.src = rec.imagen_url;
+          }
+        });
+
+        let currentIndex = 0;
+        const imgEl = document.getElementById('heroRecImg');
+        const titleEl = document.getElementById('heroRecTitle');
+        if (!imgEl || !titleEl) return;
+
+        const currentSrc = imgEl.getAttribute('src');
+        const foundIndex = recommendations.findIndex(r => r.imagen_url === currentSrc);
+        if (foundIndex !== -1) {
+          currentIndex = foundIndex;
+        }
+
+        // Rotación cada 12 segundos (12000ms)
+        setInterval(() => {
+          currentIndex = (currentIndex + 1) % recommendations.length;
+          const nextRec = recommendations[currentIndex];
+
+          imgEl.style.opacity = '0.3';
+          setTimeout(() => {
+            imgEl.src = nextRec.imagen_url;
+            imgEl.alt = nextRec.nombre;
+            titleEl.textContent = nextRec.nombre;
+            imgEl.style.opacity = '1';
+          }, 300);
+        }, 12000);
+      }
+    } catch (e) {
+      console.warn('Error cargando rotación de recomendaciones:', e);
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

@@ -2,51 +2,51 @@
 
 <!-- ── Navbar Principal ── -->
 <nav
-  class="navbar navbar-light navbar-glass border-bottom px-2 px-md-3 py-2 fixed-top rounded-bottom-2 shadow-sm"
+  class="navbar navbar-light navbar-glass border-bottom px-2 px-md-3 py-1.5 fixed-top rounded-bottom-2 shadow-sm"
 >
   <div
     class="container-fluid d-flex align-items-center justify-content-between flex-nowrap"
   >
     <!-- Logo -->
     <a
-      class="navbar-brand m-0 d-flex align-items-center text-dark py-0"
+      class="navbar-brand m-0 d-flex align-items-center text-dark py-0 flex-shrink-0"
       href="/"
     >
-      <span class="fw-bold me-2 d-none d-sm-inline">MONAGUA</span>
+      <span class="fw-bold me-1 me-sm-2 d-none d-sm-inline">MONAGUA</span>
       <img
         src="{% static 'img/Logo.webp' %}"
         alt="Monagua"
-        width="45"
-        height="45"
+        width="40"
+        height="40"
       />
     </a>
 
-    <!-- Links centrales (Solo Desktop) -->
-    <ul class="nav justify-content-center d-none d-lg-flex m-0 gap-3 gap-xl-4">
+    <!-- Links centrales (Visibles en pantallas de escritorio >= 992px, incluyendo 1080px, sin desbordamiento) -->
+    <ul class="nav justify-content-center d-none d-lg-flex m-0 gap-1 gap-xl-2 gap-xxl-3 flex-nowrap align-items-center">
       <li>
         <a
-          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          class="navbar-glass__link nav-link text-dark small fw-bold px-1.5 px-xl-2.5 py-1 text-nowrap"
           href="/"
           ><i class="bi bi-house-door me-1"></i>INICIO</a
         >
       </li>
       <li>
         <a
-          class="navbar-glass__link nav-link text-dark small fw-bold px-2"
+          class="navbar-glass__link nav-link text-dark small fw-bold px-1.5 px-xl-2.5 py-1 text-nowrap"
           href="{% url 'tours' %}"
           ><i class="bi bi-geo-alt me-1"></i>TOURS</a
         >
       </li>
       <li>
         <a
-          class="navbar-glass__link nav-link text-dark small fw-bold px-2 {% if request.resolver_match.url_name in 'mis_calificaciones listar_calificaciones' %}active text-success{% endif %}"
+          class="navbar-glass__link nav-link text-dark small fw-bold px-1.5 px-xl-2.5 py-1 text-nowrap {% if request.resolver_match.url_name in 'mis_calificaciones listar_calificaciones' %}active text-success{% endif %}"
           href="{% if user.is_authenticated and user.is_staff or user.is_superuser or user.rol == 'ADMIN' %}{% url 'listar_calificaciones' %}{% else %}{% url 'mis_calificaciones' %}{% endif %}"
           ><i class="bi bi-star-fill me-1"></i>CALIFICACIONES</a
         >
       </li>
       <li>
         <a
-          class="navbar-glass__link nav-link text-dark small fw-bold px-2 {% if request.resolver_match.url_name == 'nosotros' %}active text-success{% endif %}"
+          class="navbar-glass__link nav-link text-dark small fw-bold px-1.5 px-xl-2.5 py-1 text-nowrap {% if request.resolver_match.url_name == 'nosotros' %}active text-success{% endif %}"
           href="{% url 'nosotros' %}"
           target="_blank"
           ><i class="bi bi-people me-1"></i>NOSOTROS</a
@@ -54,7 +54,7 @@
       </li>
       <li>
         <a
-          class="navbar-glass__link nav-link text-dark small fw-bold px-2 {% if request.resolver_match.url_name == 'blog' %}active text-success{% endif %}"
+          class="navbar-glass__link nav-link text-dark small fw-bold px-1.5 px-xl-2.5 py-1 text-nowrap {% if request.resolver_match.url_name == 'blog' %}active text-success{% endif %}"
           href="{% url 'blog' %}"
           ><i class="bi bi-journal-text me-1"></i>BLOG</a
         >
@@ -62,7 +62,7 @@
     </ul>
 
     <!-- Lado Derecho: Acciones de Usuario -->
-    <div class="d-flex align-items-center gap-1 gap-md-2">
+    <div class="d-flex align-items-center gap-1 gap-md-2 flex-shrink-0">
       {% if user.is_authenticated %}
       <div class="dropdown">
         <a
@@ -112,7 +112,7 @@
       </a>
       {% endif %}
 
-      <!-- menú de hamburguesa -->
+      <!-- Menú de hamburguesa -->
       <button
         class="navbar-toggler border-0 shadow-none p-1 ms-1"
         type="button"

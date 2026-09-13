@@ -7,15 +7,15 @@
   aria-labelledby="menuPremiumLabel"
 >
   <div
-    class="d-flex justify-content-between align-items-center px-3 px-md-4 py-3 border-bottom border-dark border-opacity-10"
+    class="d-flex justify-content-between align-items-center px-3 px-md-4 py-2.5 border-bottom border-dark border-opacity-10"
   >
     <a class="navbar-brand m-0 d-flex align-items-center text-white" href="/">
       <span class="fw-bold me-2" id="menuPremiumLabel">MONAGUA</span>
       <img
         src="{% static 'img/Logo.webp' %}"
         alt="Monagua"
-        width="50"
-        height="50"
+        width="45"
+        height="45"
         class="object-fit-contain"
       />
     </a>
@@ -75,10 +75,10 @@
 
   {# ── NAVEGACIÓN DERECHA E IZQUIERDA (Dentro del menú de hamburguesa)── #}
   <div class="offcanvas-body d-flex align-items-center overflow-y-auto">
-    <div class="container-fluid px-3 px-md-5 py-3">
-      <div class="row align-items-start">
+    <div class="container-fluid px-3 px-md-5 py-2">
+      <div class="row align-items-start g-3 g-md-4">
         <!-- Columna Principal (Izquierda): Enlaces Generales Grandes -->
-        <div class="col-12 col-lg-7 offset-lg-1 mb-4 mb-lg-0">
+        <div class="col-12 col-md-6 col-lg-6 offset-lg-1 mb-3 mb-md-0">
           <nav class="d-flex flex-column gap-2 gap-md-3">
             <a
               href="{% url 'index' %}"
@@ -105,7 +105,7 @@
 
         <!-- Columna Secundaria (Derecha): Enlaces por Rol + Accesos Secundarios -->
         <div
-          class="col-12 col-lg-3 menu-hamburguesa-premium__secondary-menu mt-2 mt-lg-4"
+          class="col-12 col-md-6 col-lg-4 menu-hamburguesa-premium__secondary-menu mt-2 mt-md-0"
         >
           <ul class="nav flex-column gap-2 gap-md-3">
             {% if user.is_authenticated %}
@@ -176,24 +176,6 @@
               </a>
             </li>
             {% endif %}
-
-            <li><hr class="border-secondary opacity-25 my-1" /></li>
-            <li>
-              <a
-                class="menu-hamburguesa-premium__secondary-link"
-                href="{% url 'nosotros' %}"
-              >
-                <i class="bi bi-question-circle me-2"></i>Sobre Nosotros
-              </a>
-            </li>
-            <li>
-              <a
-                class="menu-hamburguesa-premium__secondary-link"
-                href="{% url 'terminos' %}"
-              >
-                <i class="bi bi-shield-lock me-2"></i>Términos y Condiciones
-              </a>
-            </li>
             {% else %}
             <li>
               <a
@@ -213,6 +195,7 @@
             </li>
             {% endif %}
 
+            <li><hr class="border-secondary opacity-25 my-1" /></li>
             <li>
               <a
                 class="menu-hamburguesa-premium__secondary-link"
@@ -226,9 +209,33 @@
                 <i class="bi bi-file-earmark-text me-2"></i> PQRS
               </a>
             </li>
+            <li>
+              <a
+                class="menu-hamburguesa-premium__secondary-link"
+                href="{% url 'terminos' %}"
+              >
+                <i class="bi bi-shield-lock me-2"></i>Términos y Condiciones
+              </a>
+            </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var menuPremium = document.getElementById('menuPremium');
+    if (menuPremium) {
+      menuPremium.addEventListener('show.bs.offcanvas', function () {
+        document.body.classList.add('menu-open-active');
+        document.documentElement.style.overflow = 'hidden';
+      });
+      menuPremium.addEventListener('hidden.bs.offcanvas', function () {
+        document.body.classList.remove('menu-open-active');
+        document.documentElement.style.overflow = '';
+      });
+    }
+  });
+</script>
