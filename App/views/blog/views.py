@@ -38,7 +38,11 @@ def blog(request):
 def detalle_blog(request, id):
     """Vista pública de detalle de un artículo de blog."""
     post = get_object_or_404(Blog.objects.select_related('usuario'), id=id)
-    context = {'post': post}
+    otros_blogs = Blog.objects.filter(estado=True).exclude(id=id).select_related('usuario').order_by('-fecha_publicacion')[:3]
+    context = {
+        'post': post,
+        'otros_blogs': otros_blogs,
+    }
     return render(request, 'detalle_blog.html', context)
 
 
