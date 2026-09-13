@@ -28,7 +28,7 @@
 
       <div class="d-flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="400">
         <a
-          href="{% url 'tours' %}"
+          href="{% url 'tours' %}?from=panel"
           class="btn btn-success rounded-pill px-4 py-3 fw-bold shadow-sm d-inline-flex align-items-center justify-content-center gap-2 card-hover-lift"
         >
           <i class="bi bi-map-fill"></i> Explorar Catálogo de Tours
@@ -51,7 +51,7 @@
 
     <!-- Tarjeta de Recomendación Dinámica (Vía Base de Datos con Auto-Rotación) -->
     <div class="col-12 col-lg-5 mt-4 mt-lg-0" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
-      <a href="{% url 'tours' %}" class="text-decoration-none d-block card-hover-lift" title="Explorar tours y destinos disponibles">
+      <a href="{% url 'tours' %}?from=panel" class="text-decoration-none d-block card-hover-lift" title="Explorar tours y destinos disponibles">
         <div class="position-relative overflow-hidden rounded-4 shadow-lg hero-img-container border border-2 border-white" id="heroRecommendationCard">
           {% if recomendacion and recomendacion.imagen %}
             <img
@@ -238,7 +238,7 @@
               <p class="text-muted small mb-4">
                 Explora nuestras rutas guiadas por el Páramo de Mongua, cascadas ancestrales y lagunas sagradas.
               </p>
-              <a href="{% url 'tours' %}" class="btn btn-success btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm">
+              <a href="{% url 'tours' %}?from=panel" class="btn btn-success btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm">
                 <i class="bi bi-compass me-1"></i> Reservar Ahora
               </a>
             </div>
@@ -274,7 +274,7 @@
         <div class="row g-3">
           <!-- 1. Catálogo de Tours -->
           <div class="col-12 col-sm-6">
-            <a href="{% url 'tours' %}" class="text-decoration-none text-dark d-block h-100">
+            <a href="{% url 'tours' %}?from=panel" class="text-decoration-none text-dark d-block h-100">
               <div class="p-3 rounded-4 bg-light bg-opacity-75 border border-0 h-100 card-hover-lift quick-card d-flex align-items-center gap-3">
                 <div class="bg-success text-white rounded-4 p-3 d-flex align-items-center justify-content-center flex-shrink-0 quick-icon" style="width: 52px; height: 52px;">
                   <i class="bi bi-map-fill fs-4"></i>
@@ -334,7 +334,7 @@
 
           <!-- 5. Blog y Experiencias -->
           <div class="col-12 col-sm-6">
-            <a href="{% url 'blog' %}" class="text-decoration-none text-dark d-block h-100">
+            <a href="{% url 'blog' %}?from=panel" class="text-decoration-none text-dark d-block h-100">
               <div class="p-3 rounded-4 bg-light bg-opacity-75 border border-0 h-100 card-hover-lift quick-card d-flex align-items-center gap-3">
                 <div class="bg-secondary text-white rounded-4 p-3 d-flex align-items-center justify-content-center flex-shrink-0 quick-icon" style="width: 52px; height: 52px;">
                   <i class="bi bi-chat-quote-fill fs-4"></i>
@@ -349,7 +349,7 @@
 
           <!-- 6. Radicar PQRS / Soporte -->
           <div class="col-12 col-sm-6">
-            <a href="{% url 'pqrs' %}" class="text-decoration-none text-dark d-block h-100">
+            <a href="{% url 'pqrs' %}?from=panel" class="text-decoration-none text-dark d-block h-100">
               <div class="p-3 rounded-4 bg-light bg-opacity-75 border border-0 h-100 card-hover-lift quick-card d-flex align-items-center gap-3">
                 <div class="bg-danger text-white rounded-4 p-3 d-flex align-items-center justify-content-center flex-shrink-0 quick-icon" style="width: 52px; height: 52px;">
                   <i class="bi bi-shield-check fs-4"></i>
@@ -451,10 +451,10 @@
         </div>
       </div>
       <div class="d-flex align-items-center gap-2 flex-shrink-0">
-        <a href="{% url 'pqrs' %}" class="btn btn-success rounded-pill px-4 py-2 fw-bold btn-sm shadow-sm">
+        <a href="{% url 'pqrs' %}?from=panel" class="btn btn-success rounded-pill px-4 py-2 fw-bold btn-sm shadow-sm">
           <i class="bi bi-envelope me-1"></i> Contactar Soporte
         </a>
-        <a href="{% url 'nosotros' %}" class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold btn-sm">
+        <a href="{% url 'nosotros' %}?from=panel" class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold btn-sm">
           <i class="bi bi-building me-1"></i> Conócenos
         </a>
       </div>

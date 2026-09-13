@@ -61,6 +61,32 @@
   }
 </style>
 
+<!-- ── Migas de Pan (Breadcrumb Navigation) ── -->
+<div class="container pt-5 mt-4 mt-lg-5 mb-3" data-aos="fade-down" data-aos-duration="600">
+    <nav aria-label="breadcrumb" class="bg-white rounded-pill px-4 py-2 shadow-sm border border-light d-inline-block">
+        <ol class="breadcrumb mb-0 align-items-center small fw-medium">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
+                    <i class="bi bi-house-door-fill text-success"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            {% if request.GET.from == 'panel' or 'panel-rapido' in request.META.HTTP_REFERER %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'panel_rapido' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
+                    <i class="bi bi-compass-fill text-success"></i>
+                    <span>Panel Rápido</span>
+                </a>
+            </li>
+            {% endif %}
+            <li class="breadcrumb-item active fw-bold text-dark d-inline-flex align-items-center gap-1" aria-current="page">
+                <i class="bi bi-file-earmark-text-fill me-1 text-success"></i>
+                <span>Términos y Condiciones</span>
+            </li>
+        </ol>
+    </nav>
+</div>
+
 <section class="pt-5 pb-5 position-relative overflow-hidden bg-dark" style="background: linear-gradient(135deg, #1a1e21 0%, #111 100%);">
   <!-- Subtle pattern/glow -->
   <div class="position-absolute top-50 start-50 translate-middle w-100 h-100" style="background: radial-gradient(circle, rgba(25,135,84,0.15) 0%, rgba(0,0,0,0) 70%); z-index: 0;"></div>

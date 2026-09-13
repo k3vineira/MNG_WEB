@@ -3,7 +3,40 @@
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
 />
-<main class="container" style="margin-top: 100px">
+<!-- ── Migas de Pan (Breadcrumb Navigation) ── -->
+<div class="container pt-5 mt-4 mt-lg-5 mb-3" data-aos="fade-down" data-aos-duration="600">
+    <nav aria-label="breadcrumb" class="bg-white rounded-pill px-4 py-2 shadow-sm border border-light d-inline-block">
+        <ol class="breadcrumb mb-0 align-items-center small fw-medium">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
+                    <i class="bi bi-house-door-fill text-success"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+            {% if request.GET.from == 'panel' or 'panel-rapido' in request.META.HTTP_REFERER %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'panel_rapido' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
+                    <i class="bi bi-compass-fill text-success"></i>
+                    <span>Panel Rápido</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'tours' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
+                    <i class="bi bi-map-fill text-success"></i>
+                    <span>Tours y Destinos</span>
+                </a>
+            </li>
+            {% endif %}
+            <li class="breadcrumb-item active fw-bold text-dark d-inline-flex align-items-center gap-1" aria-current="page">
+                <i class="bi bi-calendar-check-fill me-1 text-success"></i>
+                <span>Reservar</span>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<main class="container mb-5">
   <div class="row g-4 align-items-stretch justify-content-center mb-5">
     <div class="col-md-5" data-aos="fade-right" data-aos-duration="800">
       <div
@@ -220,13 +253,7 @@
                 class="btn btn-confirmar rounded-pill py-3 fs-5 shadow-sm fw-bold transition-all d-flex align-items-center justify-content-center"
                 type="submit"
                 data-auth="{% if user.is_authenticated %}true{% else %}false{% endif %}"
-                {%
-                if
-                not
-                user.is_authenticated
-                %}disabled{%
-                endif
-                %}
+                {% if not user.is_authenticated %}disabled{% endif %}
               >
                 <span>Confirmar Reserva</span>
               </button>
@@ -245,8 +272,8 @@
               {% endfor %}
             </div>
             <div class="d-none" id="contenedor-promociones">
-              {% for pp in paquete.paquetepromocion_set.all %} {% if
-              pp.promocion.activa %}
+              {% for pp in paquete.paquetepromocion_set.all %}
+              {% if pp.promocion.activa %}
               <span
                 class="promocion-item"
                 data-nombre="{{ pp.promocion.nombre }}"
@@ -257,7 +284,8 @@
                 data-val-menor="{{ pp.valor_menor_condescuento|stringformat:'f' }}"
               >
               </span>
-              {% endif %} {% endfor %}
+              {% endif %}
+              {% endfor %}
             </div>
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
             <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
@@ -267,5 +295,5 @@
       </div>
     </div>
   </div>
-  {% endblock %} {% endblock %}
 </main>
+{% endblock %}
