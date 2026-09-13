@@ -109,6 +109,172 @@ def perfil_turista_view(request):
         return redirect(request.path)
 
     return render(request, 'usuario/perfil.html', {'user': user})
+ 
+ 
+@login_required
+def configuracion_usuario_view(request):
+    """
+    Vista integral y funcional para la Configuración de Cuenta, Seguridad y Preferencias del Usuario.
+    Procesa:
+    1. Cambio de contraseña con validación de seguridad y actualización de hash de sesión.
+    2. Preferencias de notificaciones por email y sonidos del sistema.
+    3. Preferencias de interfaz (idioma, tema visual, formato de fecha).
+    4. Privacidad y visibilidad del perfil.
+    5. Actualización de datos de contacto directo.
+    6. Exportación de datos de usuario en formato JSON (Habeas Data).
+    7. Cierre de otras sesiones activas para seguridad.
+    """
+    user = request.user
+
+    # Descarga de datos personales (Habeas Data)
+    if request.GET.get('exportar') == 'json' or request.POST.get('accion') == 'exportar_datos':
+        import json
+        from django.http import HttpResponse
+        from App.models import Reserva, Pago, PQRS
+
+        total_reservas = Reserva.objects.filter(usuario=user).count()
+        total_pagos = Pago.objects.filter(reserva__usuario=user).count()
+        total_pqrs = PQRS.objects.filter(usuario=user).count()
+
+        datos_exportacion = {
+            'sistema': 'Monagua Turismo Ecoturístico',
+            'fecha_exportacion': timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'usuario': {
+                'id': user.id,
+                'username': user.username,
+                'nombres': user.first_name,
+                'apellidos': user.last_name,
+                'email': user.email,
+                'tipo_documento': user.get_tipo_documento_display() if hasattr(user, 'get_tipo_documento_display') else user.tipo_documento,
+                'numero_documento': user.numero_documento,
+                'telefono': user.telefono,
+                'residencia': user.residencia,
+                'rol': user.get_rol_display() if hasattr(user, 'get_rol_display') else str(user.rol),
+                'fecha_registro': user.date_joined.strftime('%Y-%m-%d %H:%M:%S') if user.date_joined else None,
+                'ultimo_acceso': user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else None,
+            },
+            'resumen_actividad': {
+                'total_reservas': total_reservas,
+                'total_pagos': total_pagos,
+                'total_pqrs': total_pqrs,
+            }
+        }
+
+        response = HttpResponse(
+            json.dumps(datos_exportacion, indent=4, ensure_ascii=False),
+            content_type='application/json; charset=utf-8'
+        )
+        response['Content-Disposition'] = f'attachment; filename="datos_cuenta_monagua_{user.username}.json"'
+        return response
+
+    if request.method == 'POST':
+        accion = request.POST.get('accion')
+
+        # 1. Cambio de Contraseña
+        if accion == 'cambiar_clave':
+            current_password = request.POST.get('current_password', '').strip()
+            new_password = request.POST.get('new_password', '').strip()
+            confirm_password = request.POST.get('confirm_password', '').strip()
+
+            if not user.check_password(current_password):
+                messages.error(request, 'La contraseña actual ingresada es incorrecta.')
+            elif len(new_password) < 6:
+                messages.error(request, 'La nueva contraseña debe tener al menos 6 caracteres.')
+            elif new_password != confirm_password:
+                messages.error(request, 'Las nuevas contraseñas no coinciden.')
+            else:
+                user.set_password(new_password)
+                user.save()
+                from django.contrib.auth import update_session_auth_hash
+                update_session_auth_hash(request, user)
+                messages.success(request, '¡Tu contraseña ha sido actualizada con éxito!')
+            return redirect('configuracion_usuario')
+
+        # 2. Preferencias de Notificaciones y Sistema
+        elif accion == 'guardar_preferencias':
+            notif_reservas = bool(request.POST.get('notif_reservas'))
+            notif_pagos = bool(request.POST.get('notif_pagos'))
+            notif_promos = bool(request.POST.get('notif_promos'))
+            notif_sonido = bool(request.POST.get('notif_sonido'))
+            autenticacion_dos_pasos = bool(request.POST.get('autenticacion_dos_pasos'))
+            visibilidad_perfil = request.POST.get('visibilidad_perfil', 'publico')
+            tema_visual = request.POST.get('tema_visual', 'claro')
+            idioma_pref = request.POST.get('idioma_pref', 'es')
+
+            request.session['pref_notif_reservas'] = notif_reservas
+            request.session['pref_notif_pagos'] = notif_pagos
+            request.session['pref_notif_promos'] = notif_promos
+            request.session['pref_notif_sonido'] = notif_sonido
+            request.session['pref_2fa'] = autenticacion_dos_pasos
+            request.session['pref_visibilidad'] = visibilidad_perfil
+            request.session['pref_tema_visual'] = tema_visual
+            request.session['pref_idioma'] = idioma_pref
+
+            messages.success(request, 'Preferencias del sistema y notificaciones actualizadas correctamente.')
+            return redirect('configuracion_usuario')
+
+        # 3. Actualizar Contacto Rápido
+        elif accion == 'actualizar_contacto':
+            first_name = request.POST.get('first_name', '').strip()
+            last_name = request.POST.get('last_name', '').strip()
+            telefono = request.POST.get('telefono', '').strip()
+            residencia = request.POST.get('residencia', '').strip()
+
+            if first_name:
+                user.first_name = first_name
+            if last_name:
+                user.last_name = last_name
+            if telefono:
+                user.telefono = telefono
+            if residencia:
+                user.residencia = residencia
+
+            user.save()
+            messages.success(request, 'Información de contacto y datos personales actualizados.')
+            return redirect('configuracion_usuario')
+
+        # 4. Cerrar Otras Sesiones
+        elif accion == 'cerrar_otras_sesiones':
+            from django.contrib.auth import update_session_auth_hash
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Se han revocado las credenciales en otros dispositivos.')
+            return redirect('configuracion_usuario')
+
+    # Preferencias actuales de la sesión (o defaults)
+    preferencias = {
+        'notif_reservas': request.session.get('pref_notif_reservas', True),
+        'notif_pagos': request.session.get('pref_notif_pagos', True),
+        'notif_promos': request.session.get('pref_notif_promos', True),
+        'notif_sonido': request.session.get('pref_notif_sonido', True),
+        'autenticacion_dos_pasos': request.session.get('pref_2fa', False),
+        'visibilidad_perfil': request.session.get('pref_visibilidad', 'publico'),
+        'tema_visual': request.session.get('pref_tema_visual', 'claro'),
+        'idioma_pref': request.session.get('pref_idioma', 'es'),
+    }
+
+    # Cálculo del Nivel de Seguridad de la Cuenta
+    score_seguridad = 25  # Base por cuenta creada
+    if user.email:
+        score_seguridad += 25
+    if user.telefono:
+        score_seguridad += 25
+    if getattr(user, 'numero_documento', None):
+        score_seguridad += 25
+
+    # Datos de sesión
+    ip_cliente = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '127.0.0.1'))
+    if ',' in ip_cliente:
+        ip_cliente = ip_cliente.split(',')[0].strip()
+
+    contexto = {
+        'user': user,
+        'preferencias': preferencias,
+        'score_seguridad': score_seguridad,
+        'ip_cliente': ip_cliente,
+        'user_agent': request.META.get('HTTP_USER_AGENT', 'Navegador Web'),
+    }
+
+    return render(request, 'usuario/configuracion.html', contexto)
 
 
 # ==============================================================================

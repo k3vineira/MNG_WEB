@@ -23,10 +23,11 @@ from App.views.comprobante_pago import views as comprobante_pago_views
 
 
 urlpatterns = [
-    # Panel Rápido, Dashboard y Perfil (Turista / Cliente)
+    # Panel Rápido, Dashboard, Perfil y Configuración
     path('turista/dashboard/', dashboard_views.dashboard_turista, name='dashboard_turista'),
     path('panel-rapido/', usuario_views.panel_rapido_view, name='panel_rapido'),
     path('perfil/', usuario_views.perfil_turista_view, name='perfil_detalles'),
+    path('configuracion/', usuario_views.configuracion_usuario_view, name='configuracion_usuario'),
 
     # Accesibilidad API
     path('api/accesibilidad/save/', accesibilidad_views.guardar_accesibilidad, name='guardar_accesibilidad'),
@@ -113,6 +114,7 @@ urlpatterns = [
     # Notificaciones
     path('notificaciones/', notificacion_views.listar_notificaciones, name='listar_notificaciones'),
     path('notificaciones/marcar-leida/<int:notificacion_id>/', notificacion_views.marcar_notificacion_leida, name='marcar_notificacion_leida'),
+    path('notificaciones/marcar-todas/', notificacion_views.marcar_todas_leidas, name='marcar_todas_leidas'),
     path('notificaciones/eliminar/<int:notificacion_id>/', notificacion_views.eliminar_notificacion, name='eliminar_notificacion'),
 
     # Bitácora

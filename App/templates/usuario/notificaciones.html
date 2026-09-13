@@ -1,0 +1,215 @@
+{% extends "usuario/base-turista-dashboard.html" %}
+{% load static %}
+
+{% block title %}Notificaciones y Avisos | Monagua{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0 px-md-3 py-2">
+
+  <!-- Mensajes del Sistema -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4" role="alert">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %} fs-5"></i>
+          <div class="fw-medium">{{ message }}</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- 1. CABECERA: Título + Métricas Rápidas + Acciones -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5 mb-4" data-aos="fade-down">
+    <div class="row align-items-center g-3">
+      
+      <div class="col-lg-7">
+        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-2 fw-bold">
+          <i class="bi bi-inbox-fill me-1"></i> CENTRO DE COMUNICACIONES
+        </span>
+        <h2 class="display-6 fw-bold text-dark mb-1">
+          <i class="bi bi-bell-fill text-success me-2"></i>Notificaciones y Avisos
+        </h2>
+        <p class="text-muted mb-0">Mantente al tanto de tus reservas, pagos, itinerarios y avisos del sistema en Mongua.</p>
+      </div>
+
+      <div class="col-lg-5 text-lg-end">
+        <div class="d-flex flex-wrap align-items-center justify-content-lg-end gap-2">
+          {% if total_no_leidas > 0 %}
+            <a href="{% url 'marcar_todas_leidas' %}" class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-2">
+              <i class="bi bi-check2-all fs-5"></i>
+              <span>Marcar todas como leídas</span>
+            </a>
+          {% endif %}
+          <a href="{% url 'configuracion_usuario' %}" class="btn btn-light border rounded-pill px-4 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-2" title="Ajustes de alertas">
+            <i class="bi bi-gear-fill text-muted"></i>
+            <span>Preferencias</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Barra de Métricas y Filtros -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mt-4 pt-4 border-top">
+      
+      <!-- Filtros en Píldora -->
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'listar_notificaciones' %}?filtro=todas" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold {% if filtro_actual == 'todas' or not filtro_actual %}btn-success text-white shadow-sm{% else %}btn-light text-secondary border{% endif %}">
+          <i class="bi bi-collection me-1"></i> Todas ({{ total_notificaciones }})
+        </a>
+        <a href="{% url 'listar_notificaciones' %}?filtro=no_leidas" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold {% if filtro_actual == 'no_leidas' %}btn-danger text-white shadow-sm{% else %}btn-light text-secondary border{% endif %}">
+          <i class="bi bi-dot text-danger fs-6"></i> No leídas ({{ total_no_leidas }})
+        </a>
+        <a href="{% url 'listar_notificaciones' %}?filtro=alta" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold {% if filtro_actual == 'alta' %}btn-warning text-dark shadow-sm{% else %}btn-light text-secondary border{% endif %}">
+          <i class="bi bi-exclamation-circle me-1"></i> Prioridad Alta
+        </a>
+        <a href="{% url 'listar_notificaciones' %}?filtro=leidas" class="btn btn-sm rounded-pill px-3 py-2 fw-semibold {% if filtro_actual == 'leidas' %}btn-secondary text-white shadow-sm{% else %}btn-light text-secondary border{% endif %}">
+          <i class="bi bi-check2 me-1"></i> Leídas ({{ total_leidas }})
+        </a>
+      </div>
+
+      <!-- Indicador Rápido -->
+      <span class="text-muted small">
+        <i class="bi bi-funnel-fill me-1 text-success"></i>
+        Mostrando {{ notificaciones|length }} de {{ total_notificaciones }} avisos
+      </span>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- 2. LISTADO DE NOTIFICACIONES -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="row">
+    <div class="col-12">
+      
+      {% if notificaciones %}
+        <div class="d-flex flex-column gap-3">
+          {% for noti in notificaciones %}
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 transition-hover position-relative overflow-hidden {% if not noti.leido %}border-start border-4 border-success{% else %}border-start border-4 border-light opacity-85{% endif %}" data-aos="fade-up">
+              
+              <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                
+                <!-- Ícono + Contenido -->
+                <div class="d-flex align-items-start gap-3">
+                  
+                  <!-- Ícono Circular de Estado -->
+                  <div class="flex-shrink-0">
+                    <div class="p-3 rounded-circle d-flex align-items-center justify-content-center {% if not noti.leido %}bg-success bg-opacity-10 text-success border border-success border-opacity-25{% else %}bg-light text-muted border{% endif %}" style="width: 52px; height: 52px;">
+                      {% if noti.prioridad == 'alta' %}
+                        <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
+                      {% elif noti.reserva %}
+                        <i class="bi bi-calendar-check-fill fs-5 text-success"></i>
+                      {% else %}
+                        <i class="bi bi-bell-fill fs-5"></i>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <!-- Textos y Metadatos -->
+                  <div>
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                      
+                      <!-- Tipo o Título -->
+                      <h6 class="fw-bold text-dark mb-0">
+                        {{ noti.tipo|default:"Aviso de Monagua" }}
+                      </h6>
+
+                      <!-- Insignia No Leído -->
+                      {% if not noti.leido %}
+                        <span class="badge bg-danger text-white rounded-pill px-2.5 py-1 small fw-bold">
+                          <i class="bi bi-record-fill me-1"></i> Nuevo
+                        </span>
+                      {% else %}
+                        <span class="badge bg-light text-muted rounded-pill px-2.5 py-1 small border">
+                          Leído
+                        </span>
+                      {% endif %}
+
+                      <!-- Insignia Prioridad -->
+                      {% if noti.prioridad == 'alta' %}
+                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2.5 py-1 small fw-bold">
+                          Prioridad Alta
+                        </span>
+                      {% elif noti.prioridad == 'media' %}
+                        <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-pill px-2.5 py-1 small fw-semibold">
+                          Prioridad Media
+                        </span>
+                      {% endif %}
+
+                    </div>
+
+                    <!-- Mensaje -->
+                    <p class="text-secondary mb-2 mt-1 fs-6">
+                      {{ noti.mensaje }}
+                    </p>
+
+                    <!-- Fecha y Reserva vinculada -->
+                    <div class="d-flex flex-wrap align-items-center gap-3 text-muted small">
+                      <span>
+                        <i class="bi bi-clock me-1 text-success"></i>{{ noti.fecha_creacion|date:"d/m/Y h:i A" }}
+                      </span>
+                      {% if noti.reserva %}
+                        <span>&bull;</span>
+                        <a href="{% url 'mis_reservas_usuario' %}" class="text-success fw-semibold text-decoration-none d-inline-flex align-items-center gap-1">
+                          <i class="bi bi-compass"></i> Reserva #{{ noti.reserva.id }} ({{ noti.reserva.paquete.nombre }})
+                        </a>
+                      {% endif %}
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="d-flex align-items-center gap-2 align-self-end align-self-md-center flex-shrink-0">
+                  {% if not noti.leido %}
+                    <a href="{% url 'marcar_notificacion_leida' noti.id %}" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1.5 fw-semibold d-inline-flex align-items-center gap-1" title="Marcar como leída">
+                      <i class="bi bi-check2"></i>
+                      <span class="d-none d-sm-inline">Marcar Leída</span>
+                    </a>
+                  {% endif %}
+                  <a href="{% url 'eliminar_notificacion' noti.id %}" class="btn btn-sm btn-outline-danger border-0 rounded-circle p-2" title="Eliminar notificación" onclick="return confirm('¿Deseas eliminar esta notificación?');">
+                    <i class="bi bi-trash-fill fs-6"></i>
+                  </a>
+                </div>
+
+              </div>
+
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <!-- Estado Vacío -->
+        <div class="card border-0 shadow-sm rounded-4 bg-white text-center py-5 px-4" data-aos="fade-up">
+          <div class="py-4">
+            <div class="p-4 bg-light rounded-circle d-inline-flex align-items-center justify-content-center text-muted mb-3" style="width: 80px; height: 80px;">
+              <i class="bi bi-bell-slash fs-1 text-secondary"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-2">No tienes notificaciones</h4>
+            <p class="text-muted mx-auto mb-4" style="max-width: 480px;">
+              {% if filtro_actual != 'todas' and filtro_actual %}
+                No hay notificaciones que coincidan con el filtro seleccionado (<strong>{{ filtro_actual }}</strong>).
+              {% else %}
+                Tu bandeja de notificaciones está completamente al día. Te avisaremos aquí sobre tus próximas aventuras y pagos.
+              {% endif %}
+            </p>
+            <div class="d-flex justify-content-center gap-2">
+              <a href="{% url 'listar_notificaciones' %}?filtro=todas" class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold">
+                <i class="bi bi-arrow-repeat me-1"></i> Ver todas
+              </a>
+              <a href="{% url 'dashboard_turista' %}" class="btn btn-success rounded-pill px-4 py-2 fw-semibold shadow-sm">
+                <i class="bi bi-grid-1x2-fill me-1"></i> Ir al Dashboard
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

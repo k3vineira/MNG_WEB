@@ -42,8 +42,8 @@
       class="position-fixed top-0 start-0 w-100 h-100 d-none u-style-11b54de0"
     ></div>
 
-    {% include 'partials/aside-admin.html' %}
-    {% include 'partials/accesibilidad.html' %}
+    {% include 'partials/aside-admin.html' %} {% include
+    'partials/accesibilidad.html' %}
 
     <main id="mainContent" class="p-4 position-relative">
       <!-- Notificaciones eliminadas de aqui para evitar duplicados -->
@@ -65,7 +65,7 @@
 
     <script src="{% static 'js/librerias/bootstrap.paquete.min.js' %}"></script>
     <script src="{% static 'js/base_admin.js' %}"></script>
-    {% block scripts %}{% endblock %}
-    {% include 'partials/bitacora/bitacora.html' %}
+    {% block scripts %}{% endblock %} {% include
+    'partials/bitacora/bitacora.html' %}
   </body>
 </html>
