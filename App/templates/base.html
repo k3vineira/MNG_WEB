@@ -50,8 +50,10 @@
     {% block footer %}{% include 'partials/footer.html' %}{% endblock %}
 
     <!-- Componentes Flotantes Globales -->
-    {% include 'partials/accesibilidad.html' %} {% block mascota %} {% include
-    'partials/mascota.html' %} {% endblock %}
+    {% include 'partials/accesibilidad.html' %}
+    {% block mascota %}
+      {% include 'partials/mascota.html' %}
+    {% endblock %}
 
     <script src="{% static 'js/librerias/bootstrap.paquete.min.js' %}"></script>
     <script src="{% static 'js/librerias/animaciones_scroll_aos.js' %}"></script>

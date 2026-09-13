@@ -46,6 +46,17 @@
 @media (max-width: 991.98px) {
   #mainContent {
     margin-left: 0 !important;
+    padding-top: 4.5rem !important; /* Espacio para el botón flotante de menú en móvil */
+  }
+
+  #sidebar-toggle {
+    top: 15px;
+    left: 15px;
+    z-index: 1050 !important;
+  }
+
+  #sidebar-overlay {
+    z-index: 1040 !important;
   }
 
   body.sidebar-open #mainSidebar {
@@ -55,6 +66,12 @@
   body.sidebar-open #sidebar-overlay {
     display: block !important;
     background: rgba(0, 0, 0, 0.5);
+  }
+
+  /* Ocultar el botón y panel flotante de accesibilidad cuando la barra lateral está abierta en móvil para evitar solapamientos */
+  body.sidebar-open #a11y-btn,
+  body.sidebar-open #a11y-panel {
+    display: none !important;
   }
 
   /* El botón interno de colapso no tiene sentido en móvil */

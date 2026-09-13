@@ -29,7 +29,8 @@
     <!-- ── Menú de hamburguesa (solo móvil) ── -->
     <button
       id="sidebar-toggle"
-      class="btn btn-success position-fixed d-lg-none u-style-f3ff7e61"
+      class="btn btn-success position-fixed d-lg-none shadow-sm"
+      style="top: 15px; left: 15px; z-index: 1050;"
       aria-label="Menú de hamburguesa"
       aria-expanded="false"
       aria-controls="mainSidebar"
@@ -39,11 +40,12 @@
 
     <div
       id="sidebar-overlay"
-      class="position-fixed top-0 start-0 w-100 h-100 d-none u-style-11b54de0"
+      class="position-fixed top-0 start-0 w-100 h-100 d-none"
+      style="z-index: 1040;"
     ></div>
 
-    {% include 'partials/aside-admin.html' %} {% include
-    'partials/accesibilidad.html' %}
+    {% include 'partials/aside-admin.html' %}
+    {% include 'partials/accesibilidad.html' %}
 
     <main id="mainContent" class="p-4 position-relative">
       <!-- Notificaciones eliminadas de aqui para evitar duplicados -->
@@ -65,7 +67,7 @@
 
     <script src="{% static 'js/librerias/bootstrap.paquete.min.js' %}"></script>
     <script src="{% static 'js/base_admin.js' %}"></script>
-    {% block scripts %}{% endblock %} {% include
-    'partials/bitacora/bitacora.html' %}
+    {% block scripts %}{% endblock %}
+    {% include 'partials/bitacora/bitacora.html' %}
   </body>
 </html>

@@ -29,7 +29,8 @@
     <!-- ── Menú de hamburguesa (solo móvil) ── -->
     <button
       id="sidebar-toggle"
-      class="btn btn-success position-fixed d-lg-none u-style-f3ff7e61"
+      class="btn btn-success position-fixed d-lg-none shadow-sm"
+      style="top: 15px; left: 15px; z-index: 1050;"
       aria-label="Menú de hamburguesa"
       aria-expanded="false"
       aria-controls="mainSidebar"
@@ -40,18 +41,22 @@
     <!-- ── Overlay móvil ── -->
     <div
       id="sidebar-overlay"
-      class="position-fixed top-0 start-0 w-100 h-100 d-none u-style-11b54de0"
+      class="position-fixed top-0 start-0 w-100 h-100 d-none"
+      style="z-index: 1040;"
     ></div>
 
     <!-- ══════════════ SIDEBAR ══════════════ -->
-    {% if user.is_authenticated and user.es_admin %} {% include
-    'partials/aside-admin.html' %} {% elif user.is_authenticated and
-    user.es_guia %} {% include 'partials/aside-guia.html' %} {% else %} {%
-    include 'partials/aside-turista.html' %} {% endif %} {% include
-    'partials/accesibilidad.html' %}
+    {% if user.is_authenticated and user.es_admin %}
+      {% include 'partials/aside-admin.html' %}
+    {% elif user.is_authenticated and user.es_guia %}
+      {% include 'partials/aside-guia.html' %}
+    {% else %}
+      {% include 'partials/aside-turista.html' %}
+    {% endif %}
+    {% include 'partials/accesibilidad.html' %}
 
     <!-- ══════════════ CONTENIDO PRINCIPAL ══════════════ -->
-    <main id="mainContent" class="p-4">{% block content %}{% endblock %}</main>
+    <main id="mainContent" class="p-4 pt-5 pt-lg-4">{% block content %}{% endblock %}</main>
 
     <!-- Scripts -->
     <script src="{% static 'js/librerias/bootstrap.paquete.min.js' %}"></script>
@@ -95,8 +100,8 @@
         }
       })();
     </script>
-    {% block extra_js %}{% endblock %} {% include
-    'partials/bitacora/bitacora.html' %}
+    {% block extra_js %}{% endblock %}
+    {% include 'partials/bitacora/bitacora.html' %}
 
     <script>
       (function () {
