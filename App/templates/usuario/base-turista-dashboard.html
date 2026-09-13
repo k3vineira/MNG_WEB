@@ -44,9 +44,9 @@
     ></div>
 
     <!-- ══════════════ SIDEBAR ══════════════ -->
-    {% if user.is_authenticated and user.rol == 'ADMIN' %}
+    {% if user.is_authenticated and user.es_admin %}
       {% include 'partials/aside-admin.html' %}
-    {% elif user.is_authenticated and user.rol == 'GUIA' %}
+    {% elif user.is_authenticated and user.es_guia %}
       {% include 'partials/aside-guia.html' %}
     {% else %}
       {% include 'partials/aside-turista.html' %}

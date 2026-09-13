@@ -76,12 +76,13 @@ def panel_rapido_view(request):
 
 @login_required
 def perfil_turista_view(request):
-    """Renderiza y gestiona la actualización del perfil del turista/cliente."""
+    """Renderiza y gestiona la actualización del perfil unificado (Turista, Admin, Guía)."""
     user = request.user
     if request.method == 'POST' and request.POST.get('editar_perfil') == '1':
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
         telefono = request.POST.get('telefono', '').strip()
+        residencia = request.POST.get('residencia', '').strip()
         imagen_perfil = request.FILES.get('imagen_perfil')
 
         if first_name:
@@ -90,14 +91,24 @@ def perfil_turista_view(request):
             user.last_name = last_name
         if telefono:
             user.telefono = telefono
+        if residencia:
+            user.residencia = residencia
         if imagen_perfil:
             user.imagen_perfil = imagen_perfil
 
+        if getattr(user, 'es_guia', False):
+            licencia = request.POST.get('numero_tarjeta_profesional', '').strip()
+            entidad_salud = request.POST.get('entidad_salud', '').strip()
+            if licencia:
+                user.numero_tarjeta_profesional = licencia
+            if entidad_salud:
+                user.entidad_salud = entidad_salud
+
         user.save()
         messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
-        return redirect('perfil_detalles')
+        return redirect(request.path)
 
-    return render(request, 'usuario/perfil_turista.html', {'user': user})
+    return render(request, 'usuario/perfil.html', {'user': user})
 
 
 # ==============================================================================

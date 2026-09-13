@@ -133,6 +133,17 @@ class Usuario(AbstractUser):
         from autenticacion.views.geografia import get_nombre_ciudad
         return get_nombre_ciudad(self.ciudad)
 
+    @property
+    def avatar_url(self):
+        """Retorna la URL de la imagen de perfil o el avatar por defecto."""
+        if self.imagen_perfil and hasattr(self.imagen_perfil, 'url'):
+            try:
+                return self.imagen_perfil.url
+            except Exception:
+                pass
+        return "/static/img/avatar_pred.webp"
+
+
     class Meta:
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'

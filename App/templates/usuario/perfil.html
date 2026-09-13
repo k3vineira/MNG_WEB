@@ -1,0 +1,355 @@
+{% extends "usuario/base-turista-dashboard.html" %}
+{% load static %}
+
+{% block title %}Perfil de {{ user.first_name|default:user.username }} | Monagua{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0 px-md-3 py-2">
+  
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- 1. CABECERA ESTILO FACEBOOK: Portada + Avatar Superpuesto + Info -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden mb-4" data-aos="fade-down">
+    
+    <!-- Foto de Portada -->
+    <div class="position-relative bg-dark" style="height: 220px;">
+      <img src="{% static 'img/Fondo.webp' %}" class="w-100 h-100 object-fit-cover opacity-75" alt="Portada de Perfil" />
+      <div class="position-absolute bottom-0 start-0 w-100 h-50" style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);"></div>
+    </div>
+
+    <!-- Barra de Perfil (Avatar + Nombres + Acciones) -->
+    <div class="card-body px-4 pb-4 pt-0">
+      <div class="d-flex flex-column flex-md-row align-items-center align-items-md-end justify-content-between gap-3">
+        
+        <!-- Avatar y Nombres -->
+        <div class="d-flex flex-column flex-md-row align-items-center align-items-md-end gap-3 text-center text-md-start">
+          <div class="position-relative flex-shrink-0" style="margin-top: -70px; z-index: 2; width: 140px; height: 140px; min-width: 140px; min-height: 140px;">
+            <img
+              src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
+              alt="{{ user.username }}"
+              id="avatar-preview-img"
+              class="rounded-circle shadow border border-4 border-white bg-white w-100 h-100 object-fit-cover"
+              style="aspect-ratio: 1 / 1;"
+            />
+            <label for="id_imagen_perfil" class="position-absolute bottom-0 end-0 p-2 bg-light border border-2 border-white rounded-circle shadow-sm" title="Cambiar foto de perfil" style="cursor: pointer;">
+              <i class="bi bi-camera-fill text-dark fs-6"></i>
+            </label>
+            <input type="file" name="imagen_perfil" id="id_imagen_perfil" class="d-none" accept="image/*" form="form_perfil_principal" onchange="previewAvatar(this)" />
+          </div>
+
+          <div class="pt-2 pt-md-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
+              <h2 class="fw-bold text-dark mb-0">
+                {{ user.first_name|default:user.username }} {{ user.last_name }}
+              </h2>
+              {% if user.es_admin %}
+                <span class="badge bg-dark text-white rounded-pill px-3 py-1.5 fw-bold small">
+                  <i class="bi bi-shield-lock-fill text-warning me-1"></i> Administrador
+                </span>
+              {% elif user.es_guia %}
+                <span class="badge bg-primary text-white rounded-pill px-3 py-1.5 fw-bold small">
+                  <i class="bi bi-person-badge-fill me-1"></i> Guía Oficial
+                </span>
+              {% else %}
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1.5 fw-bold small">
+                  <i class="bi bi-compass-fill text-success me-1"></i> Viajero Monagua
+                </span>
+              {% endif %}
+            </div>
+            <p class="text-muted small mb-0">@{{ user.username }} &bull; {{ user.email }}</p>
+          </div>
+        </div>
+
+        <!-- Botones de Acción de Cabecera -->
+        <div class="d-flex align-items-center gap-2 mb-md-2">
+          <button type="submit" form="form_perfil_principal" class="btn btn-success rounded-3 px-4 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-2">
+            <i class="bi bi-check2-circle fs-5"></i>
+            <span>Guardar Cambios</span>
+          </button>
+          {% if user.es_turista %}
+          <a href="{% url 'dashboard_turista' %}" class="btn btn-light border rounded-3 px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm">
+            <i class="bi bi-grid-1x2-fill text-success"></i>
+            <span class="d-none d-sm-inline">Dashboard</span>
+          </a>
+          {% elif user.es_admin %}
+          <a href="{% url 'dashboard_admin' %}" class="btn btn-light border rounded-3 px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm">
+            <i class="bi bi-speedometer2 text-dark"></i>
+            <span class="d-none d-sm-inline">Dashboard</span>
+          </a>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <!-- Barra de Pestañas estilo Facebook -->
+      <hr class="my-3 opacity-25">
+      <ul class="nav nav-pills gap-2 small fw-semibold">
+        <li class="nav-item">
+          <a class="nav-link active rounded-pill px-4 py-2 bg-success text-white" href="#seccion-info">
+            <i class="bi bi-person-lines-fill me-1"></i> Información General
+          </a>
+        </li>
+        {% if user.es_turista %}
+        <li class="nav-item">
+          <a class="nav-link rounded-pill px-4 py-2 text-dark bg-light" href="{% url 'mis_reservas_usuario' %}">
+            <i class="bi bi-calendar2-check me-1 text-success"></i> Mis Viajes
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link rounded-pill px-4 py-2 text-dark bg-light" href="{% url 'mis_comprobantes' %}">
+            <i class="bi bi-wallet2 me-1 text-success"></i> Pagos
+          </a>
+        </li>
+        {% elif user.es_admin %}
+        <li class="nav-item">
+          <a class="nav-link rounded-pill px-4 py-2 text-dark bg-light" href="{% url 'gestion_usuarios' %}">
+            <i class="bi bi-people me-1 text-dark"></i> Usuarios
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link rounded-pill px-4 py-2 text-dark bg-light" href="{% url 'gestion_reservas' %}">
+            <i class="bi bi-calendar-check me-1 text-dark"></i> Reservas
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- 2. CUERPO EN 2 COLUMNAS ESTILO FACEBOOK (Detalles + Formulario) -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="row g-4" id="seccion-info">
+    
+    <!-- Columna Izquierda: Tarjeta "Detalles / Presentación" -->
+    <div class="col-lg-5" data-aos="fade-right">
+      
+      <!-- Card Detalles -->
+      <div class="card border-0 shadow-sm rounded-4 bg-white p-4 mb-4">
+        <h5 class="fw-bold text-dark mb-3">Detalles</h5>
+
+        <div class="d-flex flex-column gap-3 text-secondary small">
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-briefcase-fill text-muted fs-5"></i>
+            <div>
+              Rol: 
+              {% if user.es_admin %}
+                <strong class="text-dark">Administrador General</strong>
+              {% elif user.es_guia %}
+                <strong class="text-primary">Guía Turístico Oficial</strong>
+              {% else %}
+                <strong class="text-success">Viajero de Monagua</strong>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-house-door-fill text-muted fs-5"></i>
+            <div>Vive en <strong class="text-dark">{{ user.residencia|default:"Mongua, Boyacá" }}</strong></div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-envelope-fill text-muted fs-5"></i>
+            <div>Correo: <strong class="text-dark">{{ user.email }}</strong></div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-telephone-fill text-muted fs-5"></i>
+            <div>Teléfono: <strong class="text-dark">{{ user.telefono|default:"No registrado" }}</strong></div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-card-heading text-muted fs-5"></i>
+            <div>Documento: <strong class="text-dark">{{ user.get_tipo_documento_display|default:user.tipo_documento }} {{ user.numero_documento }}</strong></div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-clock-history text-muted fs-5"></i>
+            <div>Se unió en <strong class="text-dark">{{ user.date_joined|date:"F \d\e Y" }}</strong></div>
+          </div>
+
+          {% if user.es_guia %}
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-patch-check-fill text-primary fs-5"></i>
+            <div>Licencia: <strong class="text-dark">{{ user.numero_tarjeta_profesional|default:"En trámite" }}</strong></div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Card Accesos Rápidos -->
+      <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+        <h6 class="fw-bold text-dark mb-3">Accesos Directos</h6>
+        
+        <div class="d-flex flex-wrap gap-2">
+          {% if user.es_admin %}
+            <a href="{% url 'dashboard_admin' %}" class="btn btn-outline-dark btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="{% url 'gestion_usuarios' %}" class="btn btn-outline-secondary btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-people-fill"></i> Usuarios
+            </a>
+            <a href="{% url 'gestion_reservas' %}" class="btn btn-outline-success btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-calendar-check"></i> Reservas
+            </a>
+            <a href="{% url 'listar_paquetes' %}" class="btn btn-outline-primary btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-map-fill"></i> Tours
+            </a>
+          {% elif user.es_guia %}
+            <a href="{% url 'index' %}" class="btn btn-outline-primary btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-house-door-fill"></i> Inicio
+            </a>
+            <a href="{% url 'tours' %}" class="btn btn-outline-success btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-compass"></i> Ver Tours
+            </a>
+          {% else %}
+            <a href="{% url 'dashboard_turista' %}" class="btn btn-outline-success btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-grid-1x2-fill"></i> Dashboard
+            </a>
+            <a href="{% url 'panel_rapido' %}" class="btn btn-outline-dark btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-house-door-fill"></i> Panel Rápido
+            </a>
+            <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-outline-primary btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-calendar2-check-fill"></i> Reservas
+            </a>
+            <a href="{% url 'mis_comprobantes' %}" class="btn btn-outline-secondary btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-wallet2"></i> Comprobantes
+            </a>
+            <a href="{% url 'mis_pqrs' %}" class="btn btn-outline-danger btn-sm rounded-pill d-inline-flex align-items-center gap-1">
+              <i class="bi bi-envelope-check-fill"></i> PQRS
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Columna Derecha: Tarjeta de Edición de Perfil -->
+    <div class="col-lg-7" data-aos="fade-left">
+      <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5">
+        
+        <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
+          <div>
+            <h5 class="fw-bold text-dark mb-1">Editar Perfil</h5>
+            <p class="text-muted small mb-0">Modifica tus datos personales y de contacto</p>
+          </div>
+          <span class="badge bg-light text-dark border rounded-pill px-3 py-2 small fw-semibold">
+            <i class="bi bi-pencil-fill text-success me-1"></i> Modo Edición
+          </span>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="form_perfil_principal">
+          {% csrf_token %}
+          <input type="hidden" name="editar_perfil" value="1" />
+
+          <!-- Nombres y Apellidos -->
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-secondary mb-1">Nombre Completo</label>
+            <div class="row g-2">
+              <div class="col-sm-6">
+                <div class="form-floating">
+                  <input type="text" name="first_name" class="form-control rounded-3" id="first_name" value="{{ user.first_name }}" placeholder="Nombres" required />
+                  <label for="first_name">Nombres</label>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-floating">
+                  <input type="text" name="last_name" class="form-control rounded-3" id="last_name" value="{{ user.last_name }}" placeholder="Apellidos" required />
+                  <label for="last_name">Apellidos</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Usuario y Correo (Solo lectura) -->
+          <div class="mb-3">
+            <div class="row g-2">
+              <div class="col-sm-6">
+                <label for="username" class="form-label small fw-semibold text-secondary mb-1">Nombre de Usuario</label>
+                <input type="text" class="form-control rounded-3 bg-light text-muted py-2.5" id="username" value="{{ user.username }}" readonly disabled />
+              </div>
+              <div class="col-sm-6">
+                <label for="email" class="form-label small fw-semibold text-secondary mb-1">Correo Electrónico</label>
+                <input type="email" class="form-control rounded-3 bg-light text-muted py-2.5" id="email" value="{{ user.email }}" readonly disabled />
+              </div>
+            </div>
+          </div>
+
+          <!-- Documento de Identidad (Solo lectura) -->
+          <div class="mb-3">
+            <div class="row g-2">
+              <div class="col-sm-6">
+                <label for="tipo_doc" class="form-label small fw-semibold text-secondary mb-1">Tipo de Documento</label>
+                <input type="text" class="form-control rounded-3 bg-light text-muted py-2.5" id="tipo_doc" value="{{ user.get_tipo_documento_display|default:user.tipo_documento }}" readonly disabled />
+              </div>
+              <div class="col-sm-6">
+                <label for="num_doc" class="form-label small fw-semibold text-secondary mb-1">Número de Documento</label>
+                <input type="text" class="form-control rounded-3 bg-light text-muted py-2.5" id="num_doc" value="{{ user.numero_documento }}" readonly disabled />
+              </div>
+            </div>
+          </div>
+
+          <!-- Celular y Residencia -->
+          <div class="mb-3">
+            <div class="row g-2">
+              <div class="col-sm-6">
+                <label for="telefono" class="form-label small fw-semibold text-secondary mb-1">Número de Celular</label>
+                <input type="tel" name="telefono" class="form-control rounded-3 py-2.5" id="telefono" value="{{ user.telefono }}" placeholder="3001234567" required />
+              </div>
+              <div class="col-sm-6">
+                <label for="residencia" class="form-label small fw-semibold text-secondary mb-1">Ciudad / Residencia</label>
+                <input type="text" name="residencia" class="form-control rounded-3 py-2.5" id="residencia" value="{{ user.residencia }}" placeholder="Mongua, Boyacá" />
+              </div>
+            </div>
+          </div>
+
+          {% if user.es_guia %}
+          <!-- Datos Profesionales de Guía -->
+          <div class="mb-3 p-3 bg-light rounded-3 border">
+            <h6 class="fw-bold text-primary mb-2">Información de Guía Turístico</h6>
+            <div class="row g-2">
+              <div class="col-sm-6">
+                <label for="licencia" class="form-label small fw-semibold text-secondary mb-1">Licencia de Turismo</label>
+                <input type="text" name="numero_tarjeta_profesional" class="form-control rounded-3 py-2" id="licencia" value="{{ user.numero_tarjeta_profesional|default:'' }}" placeholder="Tarjeta Profesional / RNT" />
+              </div>
+              <div class="col-sm-6">
+                <label for="salud" class="form-label small fw-semibold text-secondary mb-1">Entidad de Salud / EPS</label>
+                <input type="text" name="entidad_salud" class="form-control rounded-3 py-2" id="salud" value="{{ user.entidad_salud|default:'' }}" placeholder="EPS o Aseguradora" />
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Botón de Guardado -->
+          <div class="d-flex justify-content-end pt-3 border-top">
+            <button type="submit" class="btn btn-success rounded-3 px-5 py-2.5 fw-bold shadow-sm d-inline-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Guardar Cambios</span>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function previewAvatar(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById('avatar-preview-img');
+      if (preview) {
+        preview.src = e.target.result;
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
+{% endblock %}

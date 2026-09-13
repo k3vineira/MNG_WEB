@@ -23,7 +23,8 @@ from App.views.comprobante_pago import views as comprobante_pago_views
 
 
 urlpatterns = [
-    # Panel Rápido y Perfil (Turista / Cliente)
+    # Panel Rápido, Dashboard y Perfil (Turista / Cliente)
+    path('turista/dashboard/', dashboard_views.dashboard_turista, name='dashboard_turista'),
     path('panel-rapido/', usuario_views.panel_rapido_view, name='panel_rapido'),
     path('perfil/', usuario_views.perfil_turista_view, name='perfil_detalles'),
 
