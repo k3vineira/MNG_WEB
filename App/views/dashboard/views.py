@@ -121,6 +121,67 @@ def dashboard_admin(request):
 
 
 @login_required
+def dashboard_turista(request):
+    """Vista de dashboard para el turista/cliente con métricas y resumen de viajes."""
+    user = request.user
+    now = timezone.now()
+
+    # Reservas del usuario
+    reservas_qs = Reserva.objects.filter(usuario=user).select_related('paquete')
+    total_reservas = reservas_qs.count()
+    reservas_confirmadas = reservas_qs.filter(estado_reserva__in=['confirmada', 'CONFIRMADA', 'completada']).count()
+    reservas_pendientes = reservas_qs.filter(estado_reserva__in=['pendiente', 'PENDIENTE']).count()
+    reservas_canceladas = reservas_qs.filter(estado_reserva__in=['cancelada', 'CANCELADA', 'rechazada']).count()
+
+    # Inversión total en viajes (pagos aprobados de reservas del usuario)
+    total_invertido = Pago.objects.filter(
+        reserva__usuario=user,
+        estado_transaccion__in=['aprobado', 'APROBADO', 'completado']
+    ).aggregate(total=Sum('monto'))['total'] or 0
+
+    # Calificaciones y PQRS del usuario
+    total_calificaciones = Calificacion.objects.filter(reserva__usuario=user).count()
+    total_pqrs = PQRS.objects.filter(usuario=user).count()
+    pqrs_cerradas = PQRS.objects.filter(usuario=user, estado__in=['cerrado', 'cerrada', 'resuelto']).count()
+
+    # Próxima aventura o última reserva activa
+    hoy = now.date()
+    proxima_reserva = reservas_qs.filter(
+        estado_reserva__in=['confirmada', 'pendiente'],
+        fecha_inicio__gte=hoy
+    ).order_by('fecha_inicio').first()
+
+    # Últimas 5 reservas
+    ultimas_reservas = reservas_qs.order_by('-id')[:5]
+
+    # Estadísticas para el turista
+    tasa_confirmacion = round((reservas_confirmadas / total_reservas * 100), 1) if total_reservas > 0 else 0
+    dias_como_viajero = (now.date() - user.date_joined.date()).days if user.date_joined else 0
+    destinos_visitados = reservas_qs.filter(
+        estado_reserva__in=['confirmada', 'CONFIRMADA', 'completada']
+    ).values('paquete').distinct().count()
+
+    context = {
+        'total_invertido': total_invertido,
+        'total_reservas': total_reservas,
+        'reservas_confirmadas': reservas_confirmadas,
+        'reservas_pendientes': reservas_pendientes,
+        'reservas_canceladas': reservas_canceladas,
+        'total_calificaciones': total_calificaciones,
+        'total_pqrs': total_pqrs,
+        'pqrs_cerradas': pqrs_cerradas,
+        'tasa_confirmacion': tasa_confirmacion,
+        'dias_como_viajero': dias_como_viajero,
+        'destinos_visitados': destinos_visitados,
+        'proxima_reserva': proxima_reserva,
+        'ultimas_reservas': ultimas_reservas,
+        'arboles_conservados': reservas_confirmadas * 2,
+    }
+    return render(request, 'usuario/dashboard/dashboard_turista.html', context)
+
+
+
+@login_required
 def estadisticas_admin(request):
     if not _es_admin(request.user):
         return redirect('index')
@@ -297,6 +358,7 @@ def perfil_admin(request):
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
         telefono = request.POST.get('telefono', '').strip()
+        residencia = request.POST.get('residencia', '').strip()
         imagen_perfil = request.FILES.get('imagen_perfil')
 
         if first_name:
@@ -305,6 +367,8 @@ def perfil_admin(request):
             user.last_name = last_name
         if telefono:
             user.telefono = telefono
+        if residencia:
+            user.residencia = residencia
         if imagen_perfil:
             user.imagen_perfil = imagen_perfil
 
@@ -312,4 +376,4 @@ def perfil_admin(request):
         messages.success(request, 'Perfil actualizado correctamente.')
         return redirect('admin_perfil')
 
-    return render(request, 'admin/dahsboard/perfil_admin.html', {'user': user})
+    return render(request, 'usuario/perfil.html', {'user': user})

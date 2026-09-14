@@ -6,3 +6,8 @@
 {% block content %}
 {% include "usuario/estadisticas_content.html" %}
 {% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/librerias/graficos_chart.min.js' %}"></script>
+<script src="{% static 'js/estadisticas.js' %}"></script>
+{% endblock %}

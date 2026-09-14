@@ -91,7 +91,12 @@ class RegistroForm(forms.ModelForm):
             'username': forms.TextInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'aventurero_mongua'}),
             'email': forms.EmailInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'correo@ejemplo.com'}),
             'tipo_documento': forms.Select(attrs={'class': 'form-select rounded-pill py-3 px-4'}),
-            'numero_documento': forms.TextInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'Número de documento'}),
+            'numero_documento': forms.TextInput(attrs={
+                'class': 'form-control rounded-pill py-3 px-4',
+                'placeholder': 'Número de documento',
+                'maxlength': '10',
+                'oninput': "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+            }),
             'telefono': forms.TextInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': '+57 300 000 0000'}),
             'residencia': forms.TextInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'Ciudad, País'}),
             'pais': forms.TextInput(attrs={'class': 'form-control'}),
@@ -150,6 +155,8 @@ class RegistroForm(forms.ModelForm):
 
     def clean_numero_documento(self):
         doc = self.cleaned_data.get('numero_documento', '').strip()
+        if len(doc) > 10:
+            raise ValidationError("El número de documento no puede tener más de 10 dígitos.")
         if Usuario.objects.filter(numero_documento=doc).exists():
             raise ValidationError("Este número de documento ya está registrado.")
         return doc

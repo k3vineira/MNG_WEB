@@ -6,7 +6,15 @@ from App.models import Reserva
 class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
-        fields = ['usuario', 'paquete', 'fecha_inicio', 'numero_adultos', 'numero_menores','estado_reserva']
+        fields = ['usuario', 'paquete', 'fecha_inicio', 'numero_adultos', 'numero_menores', 'estado_reserva']
+        labels = {
+            'usuario': 'Cliente / Titular',
+            'paquete': 'Paquete / Tour',
+            'fecha_inicio': 'Fecha del Viaje',
+            'numero_adultos': 'Número de Adultos',
+            'numero_menores': 'Número de Menores',
+            'estado_reserva': 'Estado de la Reserva',
+        }
         widgets = {
             'usuario': forms.Select(attrs={'class': 'form-select'}),
             'paquete': forms.Select(attrs={'class': 'form-select'}),

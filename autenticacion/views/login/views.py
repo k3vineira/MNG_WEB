@@ -24,12 +24,20 @@ def login_vista(request):
         password = request.POST.get('password', '')
 
         if usuario_input and password:
-            user_obj = Usuario.objects.filter(
+            user_objs = Usuario.objects.filter(
                 Q(username__iexact=usuario_input) | Q(email__iexact=usuario_input)
-            ).first()
+            )
 
-            if user_obj:
-                user = authenticate(request, username=user_obj.username, password=password)
+            if not user_objs.exists():
+                messages.error(request, "No existe ningún usuario o correo registrado con esos datos.")
+            else:
+                user = None
+                for candidate in user_objs:
+                    authenticated_user = authenticate(request, username=candidate.username, password=password)
+                    if authenticated_user:
+                        user = authenticated_user
+                        break
+
                 if user is not None:
                     if user.is_active:
                         login(request, user)
@@ -54,8 +62,6 @@ def login_vista(request):
                         messages.error(request, "Tu cuenta se encuentra desactivada. Por favor contacta al administrador.")
                 else:
                     messages.error(request, "Contraseña incorrecta. Por favor inténtalo de nuevo.")
-            else:
-                messages.error(request, "No existe ningún usuario o correo registrado con esos datos.")
         else:
             messages.error(request, "Por favor completa todos los campos requeridos.")
 

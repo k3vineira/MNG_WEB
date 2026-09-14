@@ -1,0 +1,157 @@
+{% extends "admin/base-admin.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock extra_head %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white">
+                
+                <!-- Encabezado -->
+                <div class="card-header p-4 border-0 text-white" style="background-color: var(--verde-main);">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-pencil-square fs-1 me-3"></i>
+                        <div>
+                            <h4 class="fw-bold mb-0 text-white">Editar Promoción</h4>
+                            <p class="mb-0 text-white-50 small">Actualiza las condiciones, fechas de vigencia y paquetes turísticos vinculados.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario -->
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger rounded-3 mb-4">
+                                {% for error in form.non_field_errors %}
+                                    <p class="mb-0"><i class="bi bi-exclamation-octagon me-1"></i> {{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Datos Básicos -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-7">
+                                {{ form.nombre|as_crispy_field }}
+                            </div>
+                            <div class="col-md-5">
+                                {{ form.codigo_promocion|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <!-- Descuento y Cupón -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                {{ form.porcentaje_descuento|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.codigo_cupon|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <!-- Vigencia -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                {{ form.fecha_inicio|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.fecha_fin|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <!-- Descripción y Condiciones -->
+                        <div class="mb-3">
+                            {{ form.descripcion|as_crispy_field }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.condiciones|as_crispy_field }}
+                        </div>
+
+                        <!-- Asignación de Paquetes -->
+                        <div class="card border rounded-3 p-3 mb-4 bg-light">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-box-seam text-success fs-5 me-2"></i>
+                                <label class="fw-bold text-dark mb-0">Paquetes a los que Aplica esta Promoción</label>
+                            </div>
+                            <p class="text-muted small mb-3">
+                                Modifica los paquetes que reciben este descuento. Los precios con descuento se recalcularán automáticamente.
+                            </p>
+                            <div class="row g-2">
+                                {% for checkbox in form.paquetes %}
+                                <div class="col-12 col-md-6">
+                                    <div class="form-check p-2 bg-white rounded border shadow-sm h-100 d-flex align-items-center">
+                                        <span class="ms-1 me-2">{{ checkbox.tag }}</span>
+                                        <label class="form-check-label fw-semibold text-dark cursor-pointer mb-0" for="{{ checkbox.id_for_label }}">
+                                            {{ checkbox.choice_label }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="col-12 text-muted small">No hay paquetes turísticos disponibles.</div>
+                                {% endfor %}
+                            </div>
+                            {% if form.paquetes.errors %}
+                                <div class="text-danger small mt-2">{{ form.paquetes.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Estado Activo -->
+                        <div class="form-check form-switch mb-4 p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
+                            <div>
+                                <label class="form-check-label fw-bold text-dark mb-0" for="{{ form.activa.id_for_label }}">
+                                    Estado de la Promoción
+                                </label>
+                                <small class="text-muted d-block">Si está inactiva, no se aplicará en reservas ni se mostrará a los clientes.</small>
+                            </div>
+                            <div class="fs-5">
+                                {{ form.activa }}
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a href="{% url 'gestion_promociones' %}" class="btn btn-outline-secondary px-4 rounded-pill">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn text-white px-4 rounded-pill shadow-sm fw-bold" style="background-color: var(--verde-main); border-color: var(--verde-oscuro);">
+                                <i class="bi bi-check-circle me-1"></i> Actualizar Promoción
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const config = {
+        locale: 'es',
+        dateFormat: 'Y-m-d',
+        allowInput: true
+    };
+    
+    const inicioInput = document.getElementById('id_fecha_inicio');
+    const finInput = document.getElementById('id_fecha_fin');
+    
+    if (inicioInput) flatpickr(inicioInput, config);
+    if (finInput) flatpickr(finInput, config);
+});
+</script>
+{% endblock scripts %}

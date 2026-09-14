@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     { id: 'id_telefono', name: 'telefono' }
   ];
 
+  const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   fields.forEach(field => {
     const input = document.getElementById(field.id);
     if (!input) return;
@@ -29,20 +31,35 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
+      // Si es el campo de correo, solo consultar backend si el formato general es válido
+      if (field.name === 'email') {
+        if (!EMAIL_REGEX.test(value)) {
+          return;
+        }
+      }
+
       debounceTimeout = setTimeout(() => {
         verificarCampo(input, field.name, value);
       }, 500);
     });
 
-    // Immediate checking when field loses focus
+    // Verificación inmediata al salir del campo
     input.addEventListener('blur', function () {
       clearTimeout(debounceTimeout);
       const value = input.value.trim();
-      if (value !== '') {
-        verificarCampo(input, field.name, value);
-      } else {
+      if (value === '') {
         resetField(input);
+        return;
       }
+
+      if (field.name === 'email') {
+        if (!EMAIL_REGEX.test(value)) {
+          showError(input, 'Ingresa un correo electrónico válido (ejemplo: usuario@correo.com).');
+          return;
+        }
+      }
+
+      verificarCampo(input, field.name, value);
     });
   });
 
@@ -101,7 +118,20 @@ document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('formularioRegistro');
   if (form) {
     form.addEventListener('submit', function (e) {
-      // Re-verificar solo los inputs que sigan teniendo de forma explicita e inequívoca la clase is-invalid activa y visible
+      // Validar correo antes de enviar al servidor
+      const emailInput = document.getElementById('id_email');
+      if (emailInput) {
+        const emailVal = emailInput.value.trim();
+        if (!emailVal || !EMAIL_REGEX.test(emailVal)) {
+          e.preventDefault();
+          e.stopPropagation();
+          showError(emailInput, 'Ingresa un correo electrónico válido (ejemplo: usuario@correo.com).');
+          emailInput.focus();
+          return false;
+        }
+      }
+
+      // Re-verificar solo los inputs que sigan teniendo de forma explícita la clase is-invalid activa y visible
       const invalidFields = Array.from(form.querySelectorAll('.is-invalid')).filter(el => {
         const fb = el.parentElement.querySelector('.invalid-feedback');
         return fb && fb.style.display !== 'none';
@@ -109,7 +139,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (invalidFields.length > 0) {
         e.preventDefault();
+        e.stopPropagation();
         invalidFields[0].focus();
+        return false;
       }
     });
   }

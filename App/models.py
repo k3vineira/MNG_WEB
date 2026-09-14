@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -64,6 +65,8 @@ class Usuario(AbstractUser):
     descripcion_experiencia = models.TextField(blank=True, null=True, verbose_name='Descripción de la Experiencia')
     entidad_salud = models.CharField(max_length=100, blank=True, null=True, verbose_name='Entidad de Salud')
 
+    REQUIRED_FIELDS = ['email', 'tipo_documento', 'numero_documento', 'telefono']
+
     def clean(self):
         super().clean()
 
@@ -102,6 +105,11 @@ class Usuario(AbstractUser):
         return self
 
     @property
+    def guia(self):
+        """Retorna la instancia de usuario como guía para compatibilidad con plantillas."""
+        return self
+
+    @property
     def nombre_pais(self):
         """Retorna el nombre legible del país según dr5hn."""
         if not self.pais:
@@ -124,6 +132,17 @@ class Usuario(AbstractUser):
             return ""
         from autenticacion.views.geografia import get_nombre_ciudad
         return get_nombre_ciudad(self.ciudad)
+
+    @property
+    def avatar_url(self):
+        """Retorna la URL de la imagen de perfil o el avatar por defecto."""
+        if self.imagen_perfil and hasattr(self.imagen_perfil, 'url'):
+            try:
+                return self.imagen_perfil.url
+            except Exception:
+                pass
+        return "/static/img/avatar_pred.webp"
+
 
     class Meta:
         verbose_name = 'Usuario'
@@ -245,23 +264,27 @@ class Paquete(models.Model):
         fecha_hoy = timezone.now().date()
         all_tarifas = list(self.tarifas.all())
 
+        # 1. Tarifa vigente según temporada actual
         validas = [
             t for t in all_tarifas
             if getattr(t, 'estado', False)
             and getattr(t, 'temporada', None)
-            and t.temporada.estado
+            and getattr(t.temporada, 'estado', False)
             and t.temporada.fecha_inicio <= fecha_hoy <= t.temporada.fecha_fin
+            and (getattr(t, 'precio_adulto', 0) or 0) > 0
         ]
 
         if validas:
             return min(t.precio_adulto for t in validas)
 
+        # 2. Tarifa estándar o regular
         estandar = next(
             (
                 t for t in all_tarifas
                 if getattr(t, 'estado', False)
                 and t.temporada
-                and "estándar" in (t.temporada.nombre.lower() if t.temporada.nombre else "")
+                and any(w in (t.temporada.nombre.lower() if t.temporada.nombre else "") for w in ["estándar", "estandar", "regular", "general", "baja", "media", "alta"])
+                and (getattr(t, 'precio_adulto', 0) or 0) > 0
             ),
             None
         )
@@ -269,7 +292,17 @@ class Paquete(models.Model):
         if estandar:
             return estandar.precio_adulto
 
-        return 0
+        # 3. Cualquier tarifa activa con precio válido
+        activas = [t for t in all_tarifas if getattr(t, 'estado', False) and (getattr(t, 'precio_adulto', 0) or 0) > 0]
+        if activas:
+            return min(t.precio_adulto for t in activas)
+
+        # 4. Cualquier tarifa existente
+        con_precio = [t for t in all_tarifas if (getattr(t, 'precio_adulto', 0) or 0) > 0]
+        if con_precio:
+            return min(t.precio_adulto for t in con_precio)
+
+        return Decimal('0.00')
 
     @property
     def apto_para_menores(self):
@@ -277,6 +310,66 @@ class Paquete(models.Model):
         if all_actividades:
             return not any(not getattr(a, 'apto_menores', True) for a in all_actividades)
         return True
+
+    @property
+    def paquete_promocion_activo(self):
+        from django.utils import timezone
+        hoy = timezone.now().date()
+        # 1. Promoción activa y vigente dentro del rango de fechas
+        for pp in self.paquetepromocion_set.all():
+            p = getattr(pp, 'promocion', None)
+            if p and getattr(p, 'activa', False):
+                if p.fecha_inicio and p.fecha_fin:
+                    if p.fecha_inicio <= hoy <= p.fecha_fin:
+                        return pp
+                else:
+                    return pp
+        # 2. Promoción activa asignada (fallback si las fechas son abiertas o de prueba)
+        for pp in self.paquetepromocion_set.all():
+            p = getattr(pp, 'promocion', None)
+            if p and getattr(p, 'activa', False):
+                return pp
+        return None
+
+    @property
+    def promocion_activa(self):
+        pp = self.paquete_promocion_activo
+        return pp.promocion if pp else None
+
+    @property
+    def tiene_promocion(self):
+        return self.promocion_activa is not None
+
+    @property
+    def precio_final(self):
+        pp = self.paquete_promocion_activo
+        precio_base = Decimal(str(self.precio_minimo or 0))
+        if pp and self.tiene_promocion:
+            p = pp.promocion
+            if p and p.porcentaje_descuento and p.porcentaje_descuento > 0:
+                desc = Decimal(str(p.porcentaje_descuento)) / Decimal('100')
+                return round(precio_base * (Decimal('1') - desc), 2)
+            elif getattr(pp, 'valor_adulto_condescuento', None) and pp.valor_adulto_condescuento > 0:
+                return pp.valor_adulto_condescuento
+        return precio_base
+
+    @property
+    def ahorro_promocion(self):
+        precio_base = Decimal(str(self.precio_minimo or 0))
+        precio_fin = Decimal(str(self.precio_final or 0))
+        if precio_base > precio_fin:
+            return precio_base - precio_fin
+        return Decimal('0.00')
+
+    @property
+    def porcentaje_descuento_calculado(self):
+        if self.promocion_activa and getattr(self.promocion_activa, 'porcentaje_descuento', None):
+            return self.promocion_activa.porcentaje_descuento
+        precio_base = Decimal(str(self.precio_minimo or 0))
+        precio_fin = Decimal(str(self.precio_final or 0))
+        if precio_base > 0 and precio_base > precio_fin:
+            return round(((precio_base - precio_fin) / precio_base) * Decimal('100'))
+        return 0
 
 # ==============================================================================
 # TARIFA
@@ -423,10 +516,30 @@ class Reserva(models.Model):
                         num_adultos = self.numero_adultos or 0
                         num_menores = self.numero_menores or 0
                         base_monto = (tarifa.precio_adulto * num_adultos) + (tarifa.precio_menor * num_menores)
-                        descuento = 0
 
-                        if descuento > 0:
-                            self.monto_total = base_monto * (100 - descuento) / 100
+                        # Buscar si existe una promoción activa para este paquete y fecha
+                        pp = PaquetePromocion.objects.filter(
+                            paquete=self.paquete,
+                            promocion__activa=True,
+                            promocion__fecha_inicio__lte=self.fecha_inicio,
+                            promocion__fecha_fin__gte=self.fecha_inicio
+                        ).select_related('promocion').first()
+
+                        if not pp:
+                            # Fallback a promoción asignada y activa
+                            pp = PaquetePromocion.objects.filter(
+                                paquete=self.paquete,
+                                promocion__activa=True
+                            ).select_related('promocion').first()
+
+                        if pp:
+                            if pp.valor_adulto_condescuento and pp.valor_adulto_condescuento > 0 and pp.valor_menor_condescuento and pp.valor_menor_condescuento > 0:
+                                self.monto_total = (pp.valor_adulto_condescuento * num_adultos) + (pp.valor_menor_condescuento * num_menores)
+                            elif pp.promocion and pp.promocion.porcentaje_descuento:
+                                desc = Decimal(pp.promocion.porcentaje_descuento) / Decimal(100)
+                                self.monto_total = round(base_monto * (Decimal(1) - desc), 2)
+                            else:
+                                self.monto_total = base_monto
                         else:
                             self.monto_total = base_monto
                     else:
@@ -600,6 +713,22 @@ class Pago(models.Model):
     def usuario(self):
         """Retorna el usuario de la reserva asociada."""
         return self.reserva.usuario if self.reserva else None
+
+    @property
+    def banco_origen_pago(self):
+        return self.banco_origen
+
+    @property
+    def monto_pagado(self):
+        return self.monto
+
+    @property
+    def estado_pago(self):
+        return self.estado_transaccion
+
+    @property
+    def nota_admin_pago(self):
+        return self.nota_admin
 
     def __str__(self):
         """Retorna el ID, usuario y estado del pago como representación textual."""

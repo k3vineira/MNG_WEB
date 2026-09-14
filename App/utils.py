@@ -4,9 +4,12 @@ Utilidades del núcleo del proyecto: plantillas de correo HTML, envío de emails
 
 import base64
 import io
+import logging
 import os
 from datetime import datetime, time
 from functools import wraps
+
+logger = logging.getLogger(__name__)
 
 from django.apps import apps
 from django.conf import settings
@@ -206,15 +209,22 @@ def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"
 
 
 def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_contenido):
-    """Envía un correo electrónico con contenido HTML desde la cuenta configurada."""
-    send_mail(
-        asunto,
-        mensaje_texto,
-        settings.EMAIL_HOST_USER,
-        [destinatario],
-        fail_silently=False,
-        html_message=html_contenido
-    )
+    """Envía un correo electrónico con contenido HTML desde la cuenta configurada de manera segura."""
+    if not destinatario:
+        return False
+    try:
+        send_mail(
+            asunto,
+            mensaje_texto,
+            settings.EMAIL_HOST_USER,
+            [destinatario],
+            fail_silently=False,
+            html_message=html_contenido
+        )
+        return True
+    except Exception as e:
+        logger.error("Error al enviar correo electrónico a %s: %s", destinatario, e)
+        return False
 
 
 def get_image_base64(relative_path):
@@ -267,7 +277,7 @@ def generar_factura_pdf_bytes(reserva, request=None, password=None):
     if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro:
         fecha_emision = reserva.fecha_registro.strftime('%d/%m/%Y')
     else:
-        fecha_emision = reserva.fecha.strftime('%d/%m/%Y')
+        fecha_emision = reserva.fecha_inicio.strftime('%d/%m/%Y') if getattr(reserva, 'fecha_inicio', None) else ""
 
     context = {
         'nro_factura': f"FAC-1000{reserva.id}",
@@ -325,7 +335,7 @@ def enviar_correo_confirmacion_con_factura(reserva, request=None):
         'nombre_cliente': nombre_cliente,
         'reserva_id': reserva.id,
         'paquete': reserva.paquete.nombre,
-        'fecha': reserva.fecha.strftime('%d/%m/%Y') if reserva.fecha else "",
+        'fecha': reserva.fecha_inicio.strftime('%d/%m/%Y') if getattr(reserva, 'fecha_inicio', None) else "",
         'adultos': reserva.numero_adultos,
         'menores': reserva.numero_menores,
         'monto_total': str(reserva.monto_total),

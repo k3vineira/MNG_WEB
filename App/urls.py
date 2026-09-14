@@ -18,12 +18,21 @@ from App.views.temporada.views import TemporadaListView, TemporadaCreateView, Te
 from App.views.tarifa.views import TarifaListView, TarifaCreateView, TarifaUpdateView
 from App.views.reserva.views import ReservaListView, ReservaCreateView, ReservaUpdateView, ReservaDeleteView
 
+from App.views.categoria import views as categoria_views
+from App.views.temporada import views as temporada_views
+from App.views.actividades import views as actividades_views
+from App.views.tarifa import views as tarifa_views
+from App.views.guias import views as guias_views
+from App.views.promocion import views as promocion_views
+from App.views.comprobante_pago import views as comprobante_pago_views
 
 
 
 urlpatterns = [
-    # Panel Rápido (Turista / Cliente)
+    # Panel Rápido, Dashboard y Perfil (Turista / Cliente)
+    path('turista/dashboard/', dashboard_views.dashboard_turista, name='dashboard_turista'),
     path('panel-rapido/', usuario_views.panel_rapido_view, name='panel_rapido'),
+    path('perfil/', usuario_views.perfil_turista_view, name='perfil_detalles'),
 
     # Accesibilidad API
     path('api/accesibilidad/save/', accesibilidad_views.guardar_accesibilidad, name='guardar_accesibilidad'),
@@ -38,11 +47,35 @@ urlpatterns = [
     # Tours / Paquetes públicos
     path('tours/', paquete_views.tours, name='tours'),
 
+    # Categorías (Administración / Staff)
+    path('admin/categorias/', categoria_views.CategoriaListView.as_view(), name='listar_categorias'),
+    path('admin/categorias/agregar/', categoria_views.CategoriaCreateView.as_view(), name='agregar_categoria'),
+    path('admin/categorias/editar/<int:pk>/', categoria_views.CategoriaUpdateView.as_view(), name='editar_categoria'),
+    path('admin/categorias/eliminar/<int:pk>/', categoria_views.CategoriaDeleteView.as_view(), name='eliminar_categoria'),
+
+    # Temporadas (Administración / Staff)
+    path('admin/temporadas/', temporada_views.TemporadaListView.as_view(), name='listar_temporadas'),
+    path('admin/temporadas/agregar/', temporada_views.TemporadaCreateView.as_view(), name='agregar_temporada'),
+    path('admin/temporadas/editar/<int:pk>/', temporada_views.TemporadaUpdateView.as_view(), name='editar_temporada'),
+    path('admin/temporadas/eliminar/<int:pk>/', temporada_views.TemporadaDeleteView.as_view(), name='eliminar_temporada'),
+
+    # Actividades (Administración / Staff)
+    path('admin/actividades/', actividades_views.ActividadesListView.as_view(), name='listar_actividades'),
+    path('admin/actividades/agregar/', actividades_views.ActividadesCreateView.as_view(), name='agregar_actividad'),
+    path('admin/actividades/editar/<int:pk>/', actividades_views.ActividadesUpdateView.as_view(), name='editar_actividad'),
+    path('admin/actividades/eliminar/<int:pk>/', actividades_views.ActividadesDeleteView.as_view(), name='eliminar_actividad'),
+
     # Tours / Paquetes (Administración / Staff)
     path('admin/paquetes/', paquete_views.PaqueteListView.as_view(), name='listar_paquetes'),
     path('admin/paquetes/agregar/', paquete_views.PaqueteCreateView.as_view(), name='crear_paquete'),
     path('admin/paquetes/editar/<int:pk>/', paquete_views.PaqueteUpdateView.as_view(), name='editar_paquete'),
     path('admin/paquetes/eliminar/<int:pk>/', paquete_views.PaqueteDeleteView.as_view(), name='eliminar_paquete'),
+
+    # Tarifas (Administración / Staff)
+    path('admin/tarifas/', tarifa_views.TarifaListView.as_view(), name='listar_tarifas'),
+    path('admin/tarifas/agregar/', tarifa_views.TarifaCreateView.as_view(), name='agregar_tarifa'),
+    path('admin/tarifas/editar/<int:pk>/', tarifa_views.TarifaUpdateView.as_view(), name='editar_tarifa'),
+    path('admin/tarifas/eliminar/<int:pk>/', tarifa_views.TarifaDeleteView.as_view(), name='eliminar_tarifa'),
 
     # Reservas (Usuario / Turista)
     
@@ -58,6 +91,9 @@ urlpatterns = [
     path('admin/reservas/nueva/',ReservaCreateView.as_view(), name='crear_reserva'),
     path('admin/reservas/editar/<int:pk>/',ReservaUpdateView.as_view(), name='editar_reserva'),
     path('admin/reservas/eliminar/<int:pk>/',ReservaDeleteView.as_view(), name='eliminar_reserva'),
+    path('reservas/factura/<int:reserva_id>/', reserva_views.ver_factura, name='ver_factura'),
+    path('reservas/factura/<int:reserva_id>/descargar/', reserva_views.descargar_factura, name='descargar_factura'),
+    path('reservas/mis-facturas/', reserva_views.mis_facturas, name='mis_facturas'),
 
     # Blog
     path('blog/', blog_views.blog, name='blog'),
@@ -69,9 +105,22 @@ urlpatterns = [
     path('admin/blog/editar/<int:pk>/', blog_views.BlogUpdateView.as_view(), name='editar_blog'),
     path('admin/blog/eliminar/<int:pk>/', blog_views.BlogDeleteView.as_view(), name='eliminar_blog'),
 
+    # Promociones (Administración / Staff)
+    path('admin/promociones/', promocion_views.PromocionListView.as_view(), name='gestion_promociones'),
+    path('admin/promociones/listar/', promocion_views.PromocionListView.as_view(), name='listar_promociones'),
+    path('admin/promociones/agregar/', promocion_views.PromocionCreateView.as_view(), name='agregar_promocion'),
+    path('admin/promociones/editar/<int:pk>/', promocion_views.PromocionUpdateView.as_view(), name='editar_promocion'),
+    path('admin/promociones/eliminar/<int:pk>/', promocion_views.PromocionDeleteView.as_view(), name='eliminar_promocion'),
+    path('admin/promociones/toggle-estado/<int:pk>/', promocion_views.toggle_estado_promocion, name='toggle_estado_promocion'),
+
     # Pagos (Usuario / Turista)
     path('pagos/enviar-comprobante/', pago_views.enviar_comprobante, name='enviar_comprobante'),
     path('pagos/mis-comprobantes/', pago_views.mis_comprobantes, name='mis_comprobantes'),
+
+    # Comprobantes de Pago (Administración / Staff)
+    path('admin/comprobantes/', comprobante_pago_views.admin_comprobantes, name='admin_comprobantes'),
+    path('admin/comprobantes/revisar/<int:pk>/', comprobante_pago_views.admin_revisar_comprobante, name='admin_revisar_comprobante'),
+    path('admin/comprobantes/eliminar/<int:pk>/', comprobante_pago_views.admin_eliminar_comprobante, name='admin_eliminar_comprobante'),
 
     # Notificaciones
     path('notificaciones/', notificacion_views.listar_notificaciones, name='listar_notificaciones'),
@@ -82,21 +131,34 @@ urlpatterns = [
     path('bitacora/', bitacora_views.listar_bitacora, name='listar_bitacora'),
     path('bitacora/<int:bitacora_id>/', bitacora_views.detalle_bitacora, name='detalle_bitacora'),
 
-    # Reservas (Administración / Staff)
-    path('admin/reservas/', ReservaListView.as_view(), name='listar_reservas'),
-    path('admin/reservas/crear/', ReservaCreateView.as_view(), name='crear_reserva'),
-    path('admin/reservas/editar/<int:pk>/', ReservaUpdateView.as_view(), name='editar_reserva'),
-    path('admin/reservas/eliminar/<int:pk>/', ReservaDeleteView.as_view(), name='eliminar_reserva'),
+    # Gestión de Reservas (Administración / Staff)
+    path('admin/reservas/', reserva_views.GestionReservasListView.as_view(), name='gestion_reservas'),
+    path('admin/reservas/agregar/', reserva_views.CrearReservaAdminView.as_view(), name='agregar_reserva'),
+    path('admin/reservas/crear/', reserva_views.CrearReservaAdminView.as_view(), name='crear_reserva'),
+    path('admin/reservas/editar/<int:pk>/', reserva_views.EditarReservaAdminView.as_view(), name='editar_reserva'),
+    path('admin/reservas/eliminar/<int:pk>/', reserva_views.EliminarReservaAdminView.as_view(), name='eliminar_reserva'),
+    path('admin/reservas/cambiar-estado/<int:reserva_id>/', reserva_views.cambiar_estado_reserva, name='cambiar_estado_reserva'),
 
     # Dashboard Admin
     path('admin/dashboard/', dashboard_views.dashboard_admin, name='dashboard_admin'),
     path('admin/estadisticas/', dashboard_views.estadisticas_admin, name='estadisticas_admin'),
     path('admin/perfil/', dashboard_views.perfil_admin, name='admin_perfil'),
 
-    # Calificaciones (Administración / Staff)
+    # Gestión de Usuarios (Administración / Staff)
+    path('admin/usuarios/', usuario_views.gestion_usuarios_admin, name='gestion_usuarios'),
+    path('admin/usuarios/guardar/', usuario_views.usuarios_guardar, name='usuarios_guardar'),
+    path('admin/usuarios/toggle-estado/<int:id>/', usuario_views.usuarios_toggle_estado, name='usuarios_toggle_estado'),
+
+    # Gestión de Guías Turísticos (Administración / Staff)
+    path('admin/guias/', guias_views.gestion_guias_view, name='gestion_guias'),
+    path('admin/guias/guardar/', guias_views.guias_guardar, name='guias_guardar'),
+    path('admin/guias/asignar-rol/<int:id>/', guias_views.asignar_rol_guia, name='asignar_rol_guia'),
+
+    # Calificaciones (Administración / Staff & Turista / Cliente)
     path('admin/calificaciones/', calificacion_views.listar_calificaciones_admin, name='listar_calificaciones'),
     path('admin/calificaciones/toggle-visible/<int:pk>/', calificacion_views.toggle_visible_calificacion, name='toggle_visible_calificacion'),
     path('admin/calificaciones/responder/<int:pk>/', calificacion_views.responder_calificacion, name='responder_calificacion'),
+    path('calificaciones/mis-calificaciones/', calificacion_views.mis_calificaciones, name='mis_calificaciones'),
 
     # PQRS
     path('gestion/pqrs/', PQRSListView.as_view(), name='listar_pqrs'),

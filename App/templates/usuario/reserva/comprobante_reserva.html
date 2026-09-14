@@ -11,7 +11,7 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h4 class="fw-bold text-dark mb-0">Comprobante de Reserva</h4>
-          <div class="text-muted small">Reserva #{{ reserva.id }} · {{ reserva.fecha|date:'d M Y' }}</div>
+          <div class="text-muted small">Reserva #{{ reserva.id }} · {{ reserva.fecha_inicio|date:'d M Y' }}</div>
         </div>
         <div class="text-end">
           <img src="{% static 'img/Logo.webp' %}" alt="logo" width="72" height="72">

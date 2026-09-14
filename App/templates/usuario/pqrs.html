@@ -3,14 +3,27 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container-fluid pt-1 pb-2 px-4" style="margin-top: 60px !important; position: relative; z-index: 1000;">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item fs-5 fw-semibold">
-                <a href="#" class="text-dark text-decoration-none" style="color: #000000af !important;">Inicio</a>
+<!-- ── Migas de Pan (Breadcrumb Navigation) ── -->
+<div class="container pt-5 mt-4 mt-lg-5 mb-3" data-aos="fade-down" data-aos-duration="600">
+    <nav aria-label="breadcrumb" class="bg-white rounded-pill px-4 py-2 shadow-sm border border-light d-inline-block">
+        <ol class="breadcrumb mb-0 align-items-center small fw-medium">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
+                    <i class="bi bi-house-door-fill text-success"></i>
+                    <span>Inicio</span>
+                </a>
             </li>
-            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color: #000000af !important;">
-                PQRS
+            {% if request.GET.from == 'panel' or 'panel-rapido' in request.META.HTTP_REFERER %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'panel_rapido' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
+                    <i class="bi bi-compass-fill text-success"></i>
+                    <span>Panel Rápido</span>
+                </a>
+            </li>
+            {% endif %}
+            <li class="breadcrumb-item active fw-bold text-dark d-inline-flex align-items-center gap-1" aria-current="page">
+                <i class="bi bi-shield-check me-1 text-success"></i>
+                <span>Radicar PQRS</span>
             </li>
         </ol>
     </nav>

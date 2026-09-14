@@ -1,0 +1,170 @@
+{% extends 'admin/base-admin.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Admin | Revisar Comprobante #{{ comprobante.pk }}{% endblock %}
+
+{% block extra_head %}
+<!-- Rediseño completo en base a Bootstrap 5, sin CSS personalizado -->
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Back Button & Title -->
+    <div class="mb-4">
+        <a href="{% url 'admin_comprobantes' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-3 fw-semibold shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Volver a Comprobantes
+        </a>
+        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-2 fw-bold d-block w-fit">ACCION REQUERIDA</span>
+        <h2 class="display-6 fw-bold text-dark mb-1">Revisión de Comprobante #{{ comprobante.pk }}</h2>
+        <p class="text-muted">Verifica los detalles del depósito y actualiza el estado de la reserva.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Voucher Image Column -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white text-center">
+                <span class="fw-bold text-secondary text-uppercase small mb-3 d-block text-start u-style-e2eb0d8e">
+                    <i class="bi bi-image text-primary me-2"></i>Imagen del Comprobante
+                </span>
+                {% if comprobante.imagen_comprobante %}
+                    <a href="{{ comprobante.imagen_comprobante.url }}" target="_blank" title="Ver imagen completa" class="d-block rounded-4 overflow-hidden shadow-sm">
+                        <img src="{{ comprobante.imagen_comprobante.url }}" alt="Comprobante de Pago" class="img-fluid rounded-4 transition-all u-style-d0c65112">
+                    </a>
+                    <div class="form-text text-muted mt-3">
+                        <i class="bi bi-zoom-in me-1"></i> Haz clic en la imagen para abrirla en tamaño completo en otra pestaña
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 bg-light rounded-4 text-muted border border-dashed">
+                        <i class="bi bi-file-earmark-image fs-1 d-block mb-2"></i>
+                        No se ha cargado ninguna imagen de comprobante
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Details & Review Action Form Column -->
+        <div class="col-lg-6">
+            <!-- User & Booking Info -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block u-style-e2eb0d8e">
+                    <i class="bi bi-info-circle text-primary me-2"></i>Detalles de la Transacción
+                </span>
+                
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Usuario:</span>
+                    <span class="fw-bold text-dark">{{ comprobante.usuario.get_full_name|default:comprobante.usuario.username }}</span>
+                </div>
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Correo Electrónico:</span>
+                    <span class="text-dark">{{ comprobante.usuario.email }}</span>
+                </div>
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Reserva Asociada:</span>
+                    {% if comprobante.reserva %}
+                        <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill">Reserva #{{ comprobante.reserva.id }}</span>
+                    {% else %}
+                        <span class="text-muted italic">Ninguna</span>
+                    {% endif %}
+                </div>
+                {% if comprobante.reserva %}
+                    <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">Paquete:</span>
+                        <span class="text-secondary fw-semibold">{{ comprobante.reserva.paquete.nombre }}</span>
+                    </div>
+                    <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">Fecha Reserva:</span>
+                        <span class="text-secondary">{{ comprobante.reserva.fecha }}</span>
+                    </div>
+                    <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">Costo Total Reserva:</span>
+                        <span class="fw-bold text-dark">COP ${{ comprobante.reserva.monto_total|floatformat:0|intcomma }}</span>
+                    </div>
+                {% endif %}
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Monto Declarado en Pago:</span>
+                    <span class="fw-bold text-success">
+                        {% if comprobante.monto %}
+                            COP ${{ comprobante.monto|floatformat:0|intcomma }}
+                        {% elif comprobante.reserva %}
+                            COP ${{ comprobante.reserva.monto_total|floatformat:0|intcomma }}
+                        {% else %}
+                            No especificado
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Medio de Pago / Banco:</span>
+                    <span class="text-dark fw-semibold">{{ comprobante.banco_origen|default:"—" }}</span>
+                </div>
+                <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Nº Referencia / Transacción:</span>
+                    <span class="text-dark font-monospace">{{ comprobante.referencia|default:"—" }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Fecha Envío Comprobante:</span>
+                    <span class="text-dark">{{ comprobante.fecha_envio|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+
+            <!-- Review Action Card -->
+            <div class="card border-0 shadow rounded-4 p-4 bg-white">
+                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block u-style-e2eb0d8e">
+                    <i class="bi bi-shield-check text-primary me-2"></i>Tomar Decisión
+                </span>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <!-- Errores Globales -->
+                    {% if error_msg %}
+                    <div class="alert alert-danger shadow-sm mb-3 rounded-4">
+                        <ul class="mb-0">
+                            <li><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error_msg }}</li>
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- Banco de Origen -->
+                    <div class="form-floating mb-3">
+                        <input type="text" name="banco_origen" value="{{ comprobante.banco_origen|default:comprobante.banco_origen_pago|default:'' }}" class="form-control rounded-4 shadow-sm" placeholder="Banco o Medio de Pago" id="id_banco_origen">
+                        <label for="id_banco_origen">Banco / Medio de Pago</label>
+                        <div class="form-text text-muted mt-1 ps-2">Corrígelo o agrégalo si el usuario no lo suministró.</div>
+                    </div>
+
+                    <!-- Monto -->
+                    <div class="form-floating mb-3">
+                        <input type="number" name="monto" value="{% if comprobante.monto and comprobante.monto > 0 %}{{ comprobante.monto }}{% elif comprobante.reserva %}{{ comprobante.reserva.monto_total }}{% else %}0.00{% endif %}" step="0.01" min="0" class="form-control rounded-4 shadow-sm" placeholder="Monto Verificado" id="id_monto">
+                        <label for="id_monto">Monto Verificado (COP)</label>
+                        <div class="form-text text-muted mt-1 ps-2">Debe ser igual o mayor al total de la reserva para aprobar.</div>
+                    </div>
+
+                    <!-- Estado de Pago -->
+                    <div class="form-floating mb-3">
+                        <select name="estado_transaccion" class="form-select rounded-4 shadow-sm" id="id_estado_transaccion">
+                            <option value="pendiente" {% if comprobante.estado_transaccion == 'pendiente' or comprobante.estado_pago == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                            <option value="aprobado" {% if comprobante.estado_transaccion == 'aprobado' or comprobante.estado_pago == 'aprobado' %}selected{% endif %}>Aprobado</option>
+                            <option value="rechazado" {% if comprobante.estado_transaccion == 'rechazado' or comprobante.estado_pago == 'rechazado' %}selected{% endif %}>Rechazado</option>
+                        </select>
+                        <label for="id_estado_transaccion">Estado del Pago *</label>
+                    </div>
+
+                    <!-- Nota del Administrador -->
+                    <div class="form-floating mb-4">
+                        <textarea name="nota_admin" class="form-control rounded-4 shadow-sm" rows="3" placeholder="Motivo de rechazo o nota aclaratoria..." id="id_nota_admin" style="height: 100px">{{ comprobante.nota_admin|default:comprobante.nota_admin_pago|default:'' }}</textarea>
+                        <label for="id_nota_admin">Nota del Administrador</label>
+                        <div class="form-text text-muted mt-2 ps-2">Visible para el usuario en su historial. Obligatorio si se rechaza.</div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success py-3 rounded-pill fw-bold shadow-sm fs-6">
+                            <i class="bi bi-save-fill me-2"></i> Guardar y Aplicar Decisión
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

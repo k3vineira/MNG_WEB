@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count, Avg, Q
 
-from App.models import Calificacion, Usuario
+from App.models import Calificacion, Usuario, Reserva, Paquete
 
 
 def _es_admin(user):
@@ -91,3 +91,129 @@ def responder_calificacion(request, pk):
         messages.success(request, f'Respuesta a la calificación #{calificacion.id} guardada exitosamente.')
         
     return redirect('listar_calificaciones')
+
+
+@login_required
+def mis_calificaciones(request):
+    """
+    Gestiona la visualización y registro de calificaciones realizadas por
+    el turista/cliente para sus paquetes y experiencias reservadas.
+    """
+    # Paquetes con reservas confirmadas para este usuario
+    paquetes_reservados = Paquete.objects.filter(
+        reservas__usuario=request.user,
+        reservas__estado_reserva='confirmada'
+    ).distinct()
+
+    if request.method == 'POST':
+        tipo = request.POST.get('tipo', 'experiencia').strip()
+        titulo = request.POST.get('titulo', '').strip()
+        comentario = (request.POST.get('comentario') or request.POST.get('mensaje') or '').strip()
+        puntaje_raw = request.POST.get('puntaje_estrellas') or request.POST.get('valoracion', 5)
+
+        # 1. Validación de campos obligatorios
+        if not titulo or not comentario:
+            messages.error(request, 'El título y el comentario de la experiencia son obligatorios.')
+            return redirect('mis_calificaciones')
+
+        # 2. Validación y conversión del puntaje de estrellas (1 a 5)
+        try:
+            puntaje_int = int(puntaje_raw)
+            if puntaje_int < 1 or puntaje_int > 5:
+                puntaje_int = 5
+        except (ValueError, TypeError):
+            puntaje_int = 5
+
+        # 3. Asociación con la reserva confirmada correspondiente
+        reserva = None
+        tipo_final = tipo
+
+        if tipo.startswith('paquete_'):
+            try:
+                paquete_id = int(tipo.split('_')[1])
+                reserva = Reserva.objects.filter(
+                    usuario=request.user,
+                    paquete_id=paquete_id,
+                    estado_reserva='confirmada'
+                ).order_by('-fecha_inicio').first()
+
+                if not reserva:
+                    messages.error(request, 'No puedes calificar un paquete que no has reservado y confirmado.')
+                    return redirect('mis_calificaciones')
+
+                tipo_final = 'experiencia'
+            except (IndexError, ValueError):
+                messages.error(request, 'El paquete seleccionado no es válido.')
+                return redirect('mis_calificaciones')
+        else:
+            # Para categorías generales, asociar con la última reserva confirmada del usuario si existe
+            reserva = Reserva.objects.filter(
+                usuario=request.user,
+                estado_reserva='confirmada'
+            ).order_by('-fecha_inicio').first()
+
+            if not reserva and not request.user.is_staff:
+                messages.error(request, 'Debes tener al menos una reserva confirmada para poder enviar una calificación.')
+                return redirect('mis_calificaciones')
+
+        # 4. Creación de la calificación en el modelo Calificacion
+        Calificacion.objects.create(
+            reserva=reserva,
+            tipo=tipo_final,
+            titulo=titulo,
+            puntaje_estrellas=puntaje_int,
+            comentario=comentario,
+            visible=True
+        )
+
+        messages.success(request, '¡Gracias por tu calificación! Ha sido registrada exitosamente.')
+        return redirect('mis_calificaciones')
+
+    # GET: Listado de calificaciones del usuario y de la comunidad
+    mis_calificaciones_qs = Calificacion.objects.filter(
+        reserva__usuario=request.user
+    ).select_related('reserva', 'reserva__paquete', 'reserva__usuario').order_by('-fecha_calificacion')
+
+    calificaciones_publicas_qs = Calificacion.objects.filter(
+        visible=True
+    ).select_related('reserva', 'reserva__paquete', 'reserva__usuario').order_by('-fecha_calificacion')
+
+    # Decorar elementos para presentación visual de estrellas y metadatos
+    for c in mis_calificaciones_qs:
+        c.estrellas = range(c.puntaje_estrellas or 0)
+        c.estrellas_vacias = range(5 - (c.puntaje_estrellas or 0))
+        c.usuario = c.reserva.usuario if c.reserva else None
+        c.paquete = c.reserva.paquete if c.reserva else None
+
+    for c in calificaciones_publicas_qs:
+        c.estrellas = range(c.puntaje_estrellas or 0)
+        c.estrellas_vacias = range(5 - (c.puntaje_estrellas or 0))
+        c.usuario = c.reserva.usuario if c.reserva else None
+        c.paquete = c.reserva.paquete if c.reserva else None
+
+    # Estadísticas comunitarias
+    estadisticas = Calificacion.objects.filter(visible=True).aggregate(
+        total=Count('id'),
+        promedio=Avg('puntaje_estrellas')
+    )
+
+    promedio_val = round(estadisticas['promedio'], 1) if estadisticas['promedio'] else 0
+
+    distribucion = {}
+    for i in range(1, 6):
+        distribucion[i] = Calificacion.objects.filter(visible=True, puntaje_estrellas=i).count()
+
+    context = {
+        'titulo': 'Calificaciones — Monagua',
+        'paquetes_reservados': paquetes_reservados,
+        'mis_calificaciones': mis_calificaciones_qs,
+        'calificaciones_publicas': calificaciones_publicas_qs,
+        'stats': {
+            'total': estadisticas['total'] or 0,
+            'promedio': promedio_val,
+        },
+        'distribucion': distribucion,
+    }
+
+    return render(request, 'usuario/calificacion/calificacion.html', context)
+

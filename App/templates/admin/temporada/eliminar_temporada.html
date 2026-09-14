@@ -1,0 +1,44 @@
+{% extends 'admin/base-admin.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger shadow rounded-4 overflow-hidden">
+                <div class="card-header bg-danger text-white text-center py-3">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminación</h4>
+                </div>
+                <div class="card-body text-center p-4 bg-white">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <p class="fs-5 text-dark">Estás a punto de eliminar la temporada:</p>
+                    <h3 class="text-secondary fw-bold mb-4">"{{ object.nombre|default:temporada.nombre }}"</h3>
+                    
+                    <div class="p-3 bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-3 mb-4">
+                        <small class="fw-semibold text-warning-emphasis"><i class="bi bi-exclamation-triangle me-1"></i> Esta acción no se puede deshacer.</small>
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold">
+                                <i class="bi bi-trash me-1"></i> Sí, eliminar permanentemente
+                            </button>
+                            <a href="{% url 'listar_temporadas' %}" class="btn btn-secondary px-4 rounded-pill fw-semibold">
+                                Cancelar
+                            </a>            
+                        </div>
+                    </form>     
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -9,9 +9,17 @@ class TemporadaForm(ModelForm):
 
     class Meta:
         model = Temporada
-        fields = ['nombre', 'fecha_inicio', 'fecha_fin']
+        fields = ['nombre', 'descripcion', 'fecha_inicio', 'fecha_fin', 'estado']
+        labels = {
+            'nombre': 'Nombre de la Temporada',
+            'descripcion': 'Descripción',
+            'fecha_inicio': 'Fecha de Inicio',
+            'fecha_fin': 'Fecha de Finalización',
+            'estado': '¿Está Activa?',
+        }
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'fecha_inicio': forms.DateInput(
                 format='%Y-%m-%d',
                 attrs={'class': 'form-control', 'type': 'date'}
@@ -20,6 +28,7 @@ class TemporadaForm(ModelForm):
                 format='%Y-%m-%d',
                 attrs={'class': 'form-control', 'type': 'date'}
             ),
+            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def clean_nombre(self):

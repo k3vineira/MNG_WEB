@@ -300,7 +300,8 @@ main.wrapper,
 .navbar-glass__link {
     transition: all 0.3s ease;
     border-radius: 50px;
-    padding: 0.5rem 1rem !important;
+    padding: 0.3rem 0.6rem;
+    white-space: nowrap;
 }
 
 .navbar-glass .nav-link:hover,
@@ -335,13 +336,21 @@ main.wrapper,
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Bloqueo total del fondo cuando el menú hamburguesa está abierto */
+body.menu-open-active,
+html:has(.menu-hamburguesa-premium.show),
+body:has(.menu-hamburguesa-premium.show) {
+    overflow: hidden !important;
+    touch-action: none;
+}
+
 .menu-hamburguesa-premium__main-link {
-    font-size: 3.8rem !important;
+    font-size: clamp(2.5rem, 4.5vw, 3.6rem) !important;
     font-weight: 700 !important;
     color: #ffffff !important;
     text-decoration: none !important;
-    line-height: 1.15 !important;
-    letter-spacing: -1px !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.5px !important;
     transition: transform 0.25s ease, opacity 0.25s ease, color 0.25s ease !important;
     display: inline-block;
     width: fit-content;
@@ -359,7 +368,7 @@ main.wrapper,
     font-size: 1.25rem !important;
     transition: color 0.2s ease, transform 0.2s ease !important;
     display: inline-block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
 }
 
 .menu-hamburguesa-premium__secondary-link:hover {
@@ -371,15 +380,32 @@ main.wrapper,
     .menu-hamburguesa-premium .offcanvas-body {
         align-items: flex-start !important;
         padding-top: 1.5rem !important;
-        padding-bottom: 2rem !important;
+        padding-bottom: 2.5rem !important;
     }
 
     .menu-hamburguesa-premium__main-link {
-        font-size: 2.8rem !important;
+        font-size: clamp(2.8rem, 10vw, 3.8rem) !important;
+        line-height: 1.25 !important;
+        margin-bottom: 0.25rem !important;
     }
 
     .menu-hamburguesa-premium__secondary-link {
-        font-size: 1.2rem !important;
+        font-size: clamp(1.2rem, 4.2vw, 1.45rem) !important;
+        margin-bottom: 0.5rem !important;
+    }
+}
+
+@media (max-height: 500px) {
+    .menu-hamburguesa-premium .offcanvas-body {
+        padding-top: 0.5rem !important;
+    }
+    .menu-hamburguesa-premium__main-link {
+        font-size: 1.6rem !important;
+        line-height: 1.15 !important;
+    }
+    .menu-hamburguesa-premium__secondary-link {
+        font-size: 1rem !important;
+        margin-bottom: 0.2rem !important;
     }
 }
 

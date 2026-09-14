@@ -41,11 +41,12 @@ def requiere_autenticacion(view_func):
 
 
 # =========================
-# RESERVAS ADMIN 
+# GESTIÓN DE RESERVAS (ADMIN)
 # =========================
 
 @method_decorator(requiere_administrador, name='dispatch')
-class ReservaListView(ListView):
+class GestionReservasListView(ListView):
+    """Vista administrativa para la gestión, filtrado y monitoreo de reservas."""
     model = Reserva
     template_name = 'admin/reserva/reservas_admin.html'
     context_object_name = 'reservas'
@@ -64,6 +65,7 @@ class ReservaListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['titulo'] = 'Gestión de Reservas'
         
         stats = Reserva.objects.aggregate(
             total=Count('id'),
@@ -117,16 +119,14 @@ def cambiar_estado_reserva(request, reserva_id):
     return JsonResponse({'success': False, 'error': 'Método no permitido.'}, status=405)
 
 
-    
 @method_decorator(requiere_administrador, name='dispatch')
-class ReservaCreateView(SuccessMessageMixin, CreateView):
+class CrearReservaAdminView(SuccessMessageMixin, CreateView):
     model = Reserva
     form_class = ReservaForm
     template_name = 'admin/reserva/agregar_reserva.html'
-    success_url = reverse_lazy('listar_reservas')
+    success_url = reverse_lazy('gestion_reservas')
     success_message = "¡La reserva ha sido creada con éxito!"
 
- 
     def form_valid(self, form):
         adultos = form.cleaned_data.get('numero_adultos', 0)
         menores = form.cleaned_data.get('numero_menores', 0)
@@ -159,13 +159,12 @@ class ReservaCreateView(SuccessMessageMixin, CreateView):
 
 
 @method_decorator(requiere_administrador, name='dispatch')
-class ReservaUpdateView(UpdateView):
+class EditarReservaAdminView(UpdateView):
     model = Reserva
     form_class = ReservaForm
     template_name = 'admin/reserva/editar_reserva.html'
-    success_url = reverse_lazy('listar_reservas')
+    success_url = reverse_lazy('gestion_reservas')
 
-    # --- VALIDACIÓN AGREGADA ---
     def form_valid(self, form):
         adultos = form.cleaned_data.get('numero_adultos', 0)
         menores = form.cleaned_data.get('numero_menores', 0)
@@ -223,16 +222,16 @@ class ReservaUpdateView(UpdateView):
                 
         return response
 
-class ReservaDeleteView(DeleteView):
+@method_decorator(requiere_administrador, name='dispatch')
+class EliminarReservaAdminView(DeleteView):
     model = Reserva
     template_name = 'admin/reserva/eliminar_reserva.html'
-    success_url = reverse_lazy('listar_reservas')
+    success_url = reverse_lazy('gestion_reservas')
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         reserva_id = self.object.id
-        valor_viejo = f"ID: {self.object.id}, Cliente: {self.object.usuario}, Paquete: {self.object.paquete.nombre}, Estado: {self.object.estado}"
-
+        valor_viejo = f"ID: {self.object.id}, Cliente: {self.object.usuario}, Paquete: {self.object.paquete.nombre if self.object.paquete else 'N/A'}, Estado: {self.object.estado_reserva}"
         response = super().delete(request, *args, **kwargs)
 
         crear_notificacion_sistema(
@@ -547,11 +546,15 @@ def guardar_reserva(request, paquete_id):
             monto_total=str(reserva.monto_total)
         )
         
-        enviar_correo_html_monagua(
+        correo_enviado = enviar_correo_html_monagua(
             asunto, mensaje_texto, request.user.email, html_bonito)
 
-        messages.success(
-            request, "¡Tu reserva ha sido creada y confirmada por correo electrónico!")
+        if correo_enviado:
+            messages.success(
+                request, "¡Tu reserva ha sido creada exitosamente! Se ha enviado una confirmación a tu correo.")
+        else:
+            messages.success(
+                request, "¡Tu reserva ha sido registrada con éxito en el sistema!")
         return redirect('mis_reservas_usuario')
 
     return redirect('reservas')
@@ -572,9 +575,9 @@ def mis_facturas(request):
 @login_required(login_url='login')
 def ver_factura(request, reserva_id):
     from django.urls import reverse
-    reserva = get_object_or_404(Reserva, id=reserva_id)
+    reserva = get_object_or_404(Reserva.objects.select_related('usuario', 'paquete'), id=reserva_id)
     
-    if not request.user.is_staff and reserva.usuario != request.user:
+    if not request.user.is_staff and getattr(request.user, 'rol', None) not in [1, 'ADMIN'] and reserva.usuario != request.user:
         messages.error(request, "No tienes permiso para acceder a esta factura.")
         return redirect('mis_reservas_usuario')
     
@@ -582,28 +585,32 @@ def ver_factura(request, reserva_id):
         messages.error(request, "La factura solo está disponible para reservas confirmadas y pagadas.")
         return redirect('mis_reservas_usuario')
         
-    comprobante = reserva if reserva.estado_pago == 'aprobado' else None
-    metodo_pago = comprobante.banco_origen_pago if comprobante else "Transferencia Bancaria"
+    pago = getattr(reserva, 'pago', None)
+    metodo_pago = (pago.banco_origen or pago.metodo_pago) if pago else "Transferencia Bancaria"
     
     abs_url = request.build_absolute_uri(reverse('ver_factura', args=[reserva.id]))
     qr_base64 = get_qr_base64(abs_url)
     
     logo_base64 = get_image_base64('static/img/logo_monagua.webp')
     
+    cliente_nombre = getattr(reserva.usuario, 'nombre_completo', None)
+    if not cliente_nombre and reserva.usuario:
+        cliente_nombre = reserva.usuario.get_full_name() or reserva.usuario.username
+    
     context = {
         'reserva_id': reserva.id,
         'nro_factura': f"FAC-1000{reserva.id}",
-        'cliente_nombre': reserva.usuario.nombre_completo,
-        'cliente_email': reserva.usuario.email,
-        'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else reserva.fecha.strftime('%d/%m/%Y'),
+        'cliente_nombre': cliente_nombre or 'Cliente',
+        'cliente_email': reserva.usuario.email if reserva.usuario else '',
+        'fecha_emision': reserva.fecha_registro.strftime('%d/%m/%Y') if hasattr(reserva, 'fecha_registro') and reserva.fecha_registro else (reserva.fecha_inicio.strftime('%d/%m/%Y') if reserva.fecha_inicio else ''),
         'metodo_pago': metodo_pago,
-        'paquete_nombre': reserva.paquete.nombre,
+        'paquete_nombre': reserva.paquete.nombre if reserva.paquete else 'Aventura Mongua',
         'subtotal': reserva.monto_total,
         'total': reserva.monto_total,
         'logo_base64': logo_base64,
         'qr_base64': qr_base64,
     }
-    return render(request, 'private/factura.html', context)
+    return render(request, 'usuario/factura.html', context)
 
 
 @login_required(login_url='login')
@@ -614,7 +621,7 @@ def descargar_factura(request, reserva_id):
         messages.error(request, "No tienes permiso para descargar esta factura.")
         return redirect('mis_reservas_usuario')
     
-    if reserva.estado != 'confirmada':
+    if reserva.estado_reserva != 'confirmada':
         messages.error(request, "La factura solo se puede descargar para reservas confirmadas.")
         return redirect('mis_reservas_usuario')
         

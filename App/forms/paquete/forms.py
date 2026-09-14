@@ -1,4 +1,4 @@
-from App.models import Paquete
+from App.models import Paquete, Actividades
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
@@ -10,9 +10,19 @@ class PaqueteForm(ModelForm):
 
     class Meta:
         model = Paquete
-        exclude = ['estado']
+        fields = [
+            'nombre',
+            'categoria',
+            'descripcion',
+            'imagen',
+            'dias_duracion',
+            'noches_duracion',
+            'punto_encuentro',
+            'hora_encuentro',
+            'actividades',
+        ]
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del paquete turístico'}),
             'imagen': forms.ClearableFileInput(attrs={
                 'class': 'form-control',
                 'accept': 'image/*',
@@ -20,17 +30,13 @@ class PaqueteForm(ModelForm):
             'descripcion': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'pattern': '.*[a-zA-ZáéíóúÁÉÍÓÚñÑ].*',
-                'title': 'La descripción debe contener texto y no solo números.'
+                'placeholder': 'Describe detalladamente el paquete...'
             }),
-            'precio': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
             'dias_duracion': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
-            'noches_duracion': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
-            'duracion_estimada': forms.TextInput(attrs={'class': 'form-control'}),
+            'noches_duracion': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
             'punto_encuentro': forms.TextInput(attrs={
                 'class': 'form-control',
-                'pattern': '.*[a-zA-ZáéíóúÁÉÍÓÚñÑ].*',
-                'title': 'El punto de encuentro debe incluir letras o el nombre de un lugar, no solo números.'
+                'placeholder': 'Ej. Plaza Principal de Mongua'
             }),
             'hora_encuentro': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
@@ -41,6 +47,7 @@ class PaqueteForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['actividades'].queryset = Actividades.objects.filter(estado=True)
         if not self.instance.pk:
             self.fields['imagen'].required = True
             self.fields['imagen'].widget.attrs['required'] = 'required'
@@ -65,12 +72,6 @@ class PaqueteForm(ModelForm):
 
         return descripcion
 
-    def clean_precio(self):
-        precio = self.cleaned_data.get('precio')
-        if precio is not None and precio <= 0:
-            raise ValidationError("El precio del paquete debe ser mayor a 0.")
-        return precio
-
     def clean_punto_encuentro(self):
         punto = str(self.cleaned_data.get('punto_encuentro', '')).strip()
 
@@ -90,6 +91,6 @@ class PaqueteForm(ModelForm):
 
     def clean_noches_duracion(self):
         noches = self.cleaned_data.get('noches_duracion')
-        if noches is None or noches < 0:
-            raise ValidationError("Las noches de duración no pueden ser un valor negativo.")
-        return noches
+        if noches is None or noches < 1:
+            raise ValidationError("Las noches de duración deben ser al menos 1.")
+        return noches

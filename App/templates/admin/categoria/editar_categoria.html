@@ -12,13 +12,13 @@
                
                 <div class="card-header p-4 border-0 text-white" style="background-color: var(--verde-main);">
                     <div class="d-flex align-items-center">
-                        <i class="bi bi-activity fs-2 me-3"></i>
+                        <i class="bi bi-tags-fill fs-2 me-3"></i>
                         <div>
                             <h4 class="fw-bold mb-0 text-white">
-                                {% if object %}Editar Categoria{% else %}Registrar Nueva Categoria{% endif %}
+                                {% if object %}Editar Categoría{% else %}Registrar Nueva Categoría{% endif %}
                             </h4>
                             <p class="mb-0 text-white-50 small">
-                                {% if object %}Modifica los campos de la categoria en Mongua.{% else %}Completa los campos para habilitar una nueva categoria en Mongua.{% endif %}
+                                {% if object %}Modifica los campos de la categoría.{% else %}Completa los campos para habilitar una nueva categoría.{% endif %}
                             </p>
                         </div>
                     </div>
@@ -29,17 +29,17 @@
                     <form method="POST" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
 
-                        <!-- Crispy renderiza todos los campos del form de Actividad -->
+                        <!-- Crispy renderiza todos los campos del form de Categoría -->
                         {{ form|crispy }}
 
                         <!-- Botones de Acción centrados -->
                         <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
-                            <a href="#" class="btn btn-outline-secondary px-4 rounded-pill">
+                            <a href="{% url 'listar_categorias' %}" class="btn btn-outline-secondary px-4 rounded-pill">
                                 Cancelar
                             </a>
                             <button type="submit" class="btn text-white px-4 rounded-pill shadow-sm fw-bold" style="background-color: var(--verde-main); border-color: var(--verde-main);">
-                                <i class="bi bi-plus-circle me-1"></i> 
-                                {% if object %}Guardar Cambios{% else %}Crear Actividad{% endif %}
+                                <i class="bi bi-check-circle me-1"></i> 
+                                {% if object %}Guardar Cambios{% else %}Crear Categoría{% endif %}
                             </button>
                         </div>
                     </form>
