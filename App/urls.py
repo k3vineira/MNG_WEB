@@ -16,8 +16,6 @@ from App.views.categoria.views import CategoriaListView, CategoriaCreateView, Ca
 from App.views.actividades.views import ActividadesListView, ActividadesCreateView, ActividadesUpdateView, ActividadesDeleteView
 from App.views.temporada.views import TemporadaListView, TemporadaCreateView, TemporadaUpdateView
 from App.views.tarifa.views import TarifaListView, TarifaCreateView, TarifaUpdateView
-from App.views.reserva.views import ReservaListView, ReservaCreateView, ReservaUpdateView, ReservaDeleteView
-
 from App.views.categoria import views as categoria_views
 from App.views.temporada import views as temporada_views
 from App.views.actividades import views as actividades_views
@@ -87,10 +85,11 @@ urlpatterns = [
     path('reservas/comprobante/<int:reserva_id>/', reserva_views.comprobante_reserva_html, name='comprobante_reserva'),
     path('reservas/comprobante-multiple/', reserva_views.comprobante_multiple, name='comprobante_multiple'),
     
-    path('admin/reservas/',ReservaListView.as_view(), name='listar_reservas'),
-    path('admin/reservas/nueva/',ReservaCreateView.as_view(), name='crear_reserva'),
-    path('admin/reservas/editar/<int:pk>/',ReservaUpdateView.as_view(), name='editar_reserva'),
-    path('admin/reservas/eliminar/<int:pk>/',ReservaDeleteView.as_view(), name='eliminar_reserva'),
+    # Reservas (Administración / Staff)
+    path('admin/reservas/',reserva_views.GestionReservasListView.as_view(), name='listar_reservas'),
+    path('admin/reservas/editar/<int:pk>/', reserva_views.EditarReservaAdminView.as_view(), name='editar_reserva'),
+    path('admin/reservas/eliminar/<int:pk>/', reserva_views.EliminarReservaAdminView.as_view(), name='eliminar_reserva'),
+    
     path('reservas/factura/<int:reserva_id>/', reserva_views.ver_factura, name='ver_factura'),
     path('reservas/factura/<int:reserva_id>/descargar/', reserva_views.descargar_factura, name='descargar_factura'),
     path('reservas/mis-facturas/', reserva_views.mis_facturas, name='mis_facturas'),
@@ -191,6 +190,9 @@ urlpatterns = [
     path('admin/tarifas/', TarifaListView.as_view(), name='listar_tarifas'),
     path('admin/tarifas/crear/', TarifaCreateView.as_view(), name='crear_tarifa'),
     path('admin/tarifas/editar/<int:pk>/', TarifaUpdateView.as_view(), name='editar_tarifa'),
+    
+    # cancelaciones admin
+    path('admin/cancelaciones/', views.listar_cancelaciones_admin, name='listar_cancelaciones_admin'),
 
 
 ]

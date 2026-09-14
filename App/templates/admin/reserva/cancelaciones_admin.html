@@ -1,0 +1,104 @@
+{% extends "admin/base-admin.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1">Gestión de Cancelaciones</h4>
+            <p class="text-muted small mb-0">Histórico de reservas canceladas y penalidades aplicadas.</p>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-light">
+                    <tr class="text-secondary small fw-bold text-uppercase u-style-65e738b5">
+                        <th class="ps-4 py-3">Cliente</th>
+                        <th class="py-3">Aventura / Paquete</th>
+                        <th class="py-3">Motivo de Cancelación</th>
+                        <th class="text-center py-3">Penalidad</th>
+                        <th class="text-center py-3">Estado</th>
+                        <th class="text-end pe-4 py-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cancelaciones %}
+                    <tr>
+                        <!-- Cliente -->
+                        <td class="ps-4 py-3">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-light rounded-circle p-2 me-2 text-center" style="width: 38px; height: 38px;">
+                                    <i class="bi bi-person text-secondary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-dark small">
+                                        {{ item.usuario.get_full_name|default:item.usuario.username }}
+                                    </h6>
+                                    <span class="text-muted small" style="font-size: 0.75rem;">{{ item.usuario.email }}</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Aventura / Paquete -->
+                        <td class="py-3">
+                            <span class="fw-semibold text-dark small">
+                                {% if item.actividad %}
+                                    {{ item.actividad.nombre }}
+                                {% elif item.paquete %}
+                                    {{ item.paquete.nombre }}
+                                {% else %}
+                                    Reserva #{{ item.id }}
+                                {% endif %}
+                            </span>
+                        </td>
+
+                        <!-- Motivo de Cancelación -->
+                        <td class="py-3">
+                            <p class="text-muted small mb-0 text-truncate" style="max-width: 250px;" title="{{ item.motivo_cancelacion }}">
+                                {{ item.motivo_cancelacion|default:"Sin motivo especificado" }}
+                            </p>
+                        </td>
+
+                        <!-- Penalidad -->
+                        <td class="text-center py-3">
+                            {% if item.penalidad and item.penalidad > 0 %}
+                                <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill">
+                                    COP ${{ item.penalidad|floatformat:0 }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-light text-secondary fw-normal px-3 py-2 rounded-pill">
+                                    Sin multa
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Estado -->
+                        <td class="text-center py-3">
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
+                                Cancelada
+                            </span>
+                        </td>
+
+                        <!-- Acciones -->
+                        <td class="text-end pe-4 py-3">
+                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" data-bs-toggle="tooltip" title="Ver detalle">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            No hay reservas canceladas registradas.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

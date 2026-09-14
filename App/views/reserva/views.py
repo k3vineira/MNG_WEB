@@ -270,7 +270,7 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     real_id = reserva_id or pk
     reserva = get_object_or_404(Reserva, id=real_id, usuario=request.user)
 
-    # 2. Validar si YA se encuentra cancelada (Se quitó 'pendiente' para permitir cancelar)
+    # 2. Validar si ya se encuentra cancelada
     if reserva.estado_reserva == 'cancelada':
         messages.warning(request, "Esta reserva ya se encuentra cancelada.")
         return redirect('mis_cancelaciones')
@@ -292,7 +292,6 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
         messages.error(request, "Debes ingresar un motivo válido para solicitar la cancelación.")
         return redirect('mis_reservas_usuario')
 
-    # 5. Cálculo dinámico y numérico de la penalidad
     monto_total = float(reserva.monto_total or 0)
     fecha_tour = getattr(reserva, 'fecha_inicio', None)
     
@@ -300,8 +299,12 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     politica_reembolso = "Sujeto a evaluación administrativa."
 
     if fecha_tour:
-        dias_para_tour = (fecha_tour - date.today()).days
-        if dias_para_tour > 15:
+ 
+        fecha_tour_date = fecha_tour.date() if hasattr(fecha_tour, 'date') else fecha_tour
+        dias_para_tour = (fecha_tour_date - date.today()).days
+
+      
+        if dias_para_tour >= 15:
             penalidad_calculada = monto_total * 0.10
             politica_reembolso = "Favorable (Reembolso del 90% / Penalidad del 10%)."
         elif 5 <= dias_para_tour <= 14:
@@ -311,17 +314,17 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
             penalidad_calculada = monto_total * 1.00
             politica_reembolso = "Sin reembolso (Menos de 5 días / No-Show)."
 
-    # 6. Actualización del objeto Reserva (CAMBIO A ESTADO 'cancelada')
+   
     estado_anterior = reserva.estado_reserva
     reserva.motivo_cancelacion = motivo
     
     if hasattr(reserva, 'penalidad'):
         reserva.penalidad = penalidad_calculada
         
-    reserva.estado_reserva = 'cancelada'  # Actualización real a la base de datos
+    reserva.estado_reserva = 'cancelada'
     reserva.save()
 
-    # 7. Notificación en bitácora / sistema
+
     try:
         crear_notificacion_sistema(
             usuario=request.user,
@@ -334,7 +337,7 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     except Exception:
         pass 
 
-    # 8. Envío de correo de confirmación
+    
     try:
         asunto = f"Confirmación de Cancelación - Reserva #{reserva.id} | Monagua"
         mensaje = (
@@ -351,6 +354,7 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
 
     messages.success(request, f"La reserva #{reserva.id} fue cancelada exitosamente.")
     return redirect('mis_cancelaciones')
+
 @login_required(login_url='login')
 def mis_cancelaciones(request):
     """
@@ -637,6 +641,17 @@ def descargar_factura(request, reserva_id):
     except Exception as e:
         print(f"Error al descargar la factura PDF: {e}")
         return HttpResponse("Error al generar el PDF de la factura.", status=500)
+    
+
+def listar_cancelaciones_admin(request):
+    """Listado de reservas canceladas para el panel de administración."""
+    cancelaciones = Reserva.objects.filter(
+        estado_reserva='cancelada'
+    ).select_related('usuario').order_by('-id')
+    
+    return render(request, 'admin/cancelaciones_admin.html', {
+        'cancelaciones': cancelaciones
+    })
     
     
     

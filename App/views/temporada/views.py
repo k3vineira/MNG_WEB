@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from datetime import datetime
+from django.utils import timezone
 
 
 # Create your views here.
@@ -43,29 +44,28 @@ class TemporadaListView(StaffRequiredMixin, ListView):
                 pass
 
         return queryset.order_by('-id')
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        stats = Temporada.objects.aggregate(
-            total=Count('id'),
-            activas=Count('id', filter=Q(estado=True)),
-            inactivas=Count('id', filter=Q(estado=False))
-        )
-        context.update(stats)
-        context['stats_list'] = [
-            ('Total Temporadas', stats['total'], 'text-dark'),
-            ('Activas', stats['activas'], 'text-success'),
-            ('Inactivas', stats['inactivas'], 'text-danger'),
-        ]
-        return context
-
-     stats = Temporada.objects.aggregate(
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    
+    hoy = timezone.localdate()
+    stats = Temporada.objects.aggregate(
         total=Count('id'),
         activas=Count('id', filter=Q(estado=True)),
+        inactivas=Count('id', filter=Q(estado=False)),
         programadas=Count('id', filter=Q(fecha_inicio__gt=hoy)),
-        finalizadas=Count('id', filter=Q(fecha_fin__lt=hoy)))
-     context.update(stats)
-     return context
+        finalizadas=Count('id', filter=Q(fecha_fin__lt=hoy))
+    )
 
+    context.update(stats)
+
+    context['stats_list'] = [
+        ('Total Temporadas', stats['total'], 'text-dark'),
+        ('Activas', stats['activas'], 'text-success'),
+        ('Inactivas', stats['inactivas'], 'text-danger'),
+    ]
+    
+
+    return context
 class TemporadaCreateView(StaffRequiredMixin, CreateView):
     model = Temporada
     form_class = TemporadaForm

@@ -4,6 +4,7 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/datatables.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -106,7 +107,6 @@
                             <small class="text-muted d-block fw-normal">Reserva #{{ reserva.id }}</small>
                         </td>
                         
-                        <!-- CAMPO DE FECHA CORREGIDO CON SEGURIDAD -->
                         <td class="py-3 text-dark">
                             {{ reserva.fecha_inicio|date:"d/m/Y" }}
                         </td>
@@ -115,7 +115,6 @@
                             COP ${{ reserva.monto_total|floatformat:0|intcomma }}
                         </td>
                         
-                        <!-- ESTADO SEGÚN TU MODELO (estado_reserva) -->
                         <td class="text-center py-3">
                             {% if reserva.estado_reserva == 'pendiente' %}
                                 <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
@@ -132,7 +131,6 @@
                             {% endif %}
                         </td>
                         
-                        <!-- ACCIONES BLOQUEADAS SEGÚN EL ESTADO DE TU MODELO -->
                         <td class="text-end pe-4 py-3">
                             <div class="d-inline-flex gap-2">
                                 <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-outline-primary px-3 rounded-pill fw-semibold shadow-sm">
@@ -184,15 +182,22 @@
 
                     <div class="border-top pt-2">
                         {% if reserva.estado_reserva == 'confirmada' or reserva.estado_reserva == 'cancelada' %}
-                            <div class="text-center text-muted small py-1 fw-semibold">
+                            <div class="text-center text-muted small py-1 fw-semibold mb-2">
                                 <i class="bi bi-lock-fill me-1"></i> Reserva bloqueada para edición
                             </div>
-                            <div class="col-6">
+                            <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-sm btn-outline-danger w-100 py-2 rounded-pill fw-semibold">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        {% else %}
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-outline-primary w-100 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
                                 <a href="{% url 'eliminar_reserva' reserva.id %}" class="btn btn-sm btn-outline-danger w-100 py-2 rounded-pill fw-semibold">
                                     <i class="bi bi-trash"></i> Eliminar
                                 </a>
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -208,6 +213,5 @@
 {% endblock %}
 
 {% block scripts %}
-<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
 <script src="{% static 'js/tconf/tconf-tablaReservas.js' %}"></script>
 {% endblock %}
