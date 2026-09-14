@@ -450,3 +450,61 @@ function navegarPanel(panelId, colorClass) {
         }
     }
 }
+
+/* Exportar PDF */
+document.addEventListener('DOMContentLoaded', function() {
+    const btnExportPdf = document.getElementById('btnExportPdf');
+    if (btnExportPdf) {
+        btnExportPdf.addEventListener('click', async function () {
+          const btn = this;
+          btn.disabled = true;
+          btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Generando…';
+          try {
+            const target = document.getElementById('mainContent') || document.body;
+            const canvas = await html2canvas(target, {
+              scale: 2, useCORS: true, backgroundColor: '#f8f9fa',
+              logging: false, scrollY: -window.scrollY,
+              windowWidth: target.scrollWidth, windowHeight: target.scrollHeight
+            });
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const pW = pdf.internal.pageSize.getWidth();
+            const pH = pdf.internal.pageSize.getHeight();
+            const ratio = pW / canvas.width;
+            const totalH = canvas.height * ratio;
+            let posY = 0, pg = 1;
+            const totalPages = Math.ceil(totalH / pH);
+            let loopLimit = 0;
+
+            const header = (n, t) => {
+              pdf.setFillColor(33, 37, 41); pdf.rect(0, 0, pW, 10, 'F');
+              pdf.setTextColor(255, 255, 255); pdf.setFontSize(8); pdf.setFont('helvetica', 'bold');
+              pdf.text('MONAGUA — Estadisticas Administrativas', 8, 6.5);
+              pdf.text('Generado: ' + new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' }) + '   Pag ' + n + '/' + t, pW - 8, 6.5, { align: 'right' });
+            };
+
+            while (posY < totalH - 1 && loopLimit < 50) {
+              if (pg > 1) pdf.addPage();
+              header(pg, totalPages);
+              const sliceH = Math.min(pH - 10, totalH - posY);
+              if (sliceH <= 0) break;
+              const sc = document.createElement('canvas');
+              sc.width = canvas.width;
+              sc.height = Math.round(sliceH / ratio);
+              sc.getContext('2d').drawImage(canvas, 0, Math.round(posY / ratio), canvas.width, sc.height, 0, 0, sc.width, sc.height);
+              pdf.addImage(sc.toDataURL('image/jpeg', .92), 'JPEG', 0, 10, pW, sliceH);
+              posY += sliceH; pg++; loopLimit++;
+            }
+            pdf.save('monagua-estadisticas-' + new Date().toISOString().slice(0, 10) + '.pdf');
+          } catch (e) {
+            console.error(e);
+            if (typeof window.mostrarToast === 'function') {
+              window.mostrarToast('error', 'Error en Exportacion', 'Ocurrio un error al generar el archivo PDF.', 5000);
+            }
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-file-earmark-pdf-fill"></i> Exportar PDF';
+          }
+        });
+    }
+});

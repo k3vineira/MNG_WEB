@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
@@ -86,9 +87,27 @@ class RegistroForm(forms.ModelForm):
             'ciudad': 'Municipio',
         }
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'Nombre'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'Apellido'}),
-            'username': forms.TextInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'aventurero_mongua'}),
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control rounded-pill py-3 px-4', 
+                'placeholder': 'Nombre',
+                'pattern': '[A-Za-záéíóúÁÉÍÓÚñÑ\\s]+',
+                'title': 'Solo letras y espacios',
+                'oninput': "this.value = this.value.replace(/[^A-Za-záéíóúÁÉÍÓÚñÑ\\s]/g, '')"
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control rounded-pill py-3 px-4', 
+                'placeholder': 'Apellido',
+                'pattern': '[A-Za-záéíóúÁÉÍÓÚñÑ\\s]+',
+                'title': 'Solo letras y espacios',
+                'oninput': "this.value = this.value.replace(/[^A-Za-záéíóúÁÉÍÓÚñÑ\\s]/g, '')"
+            }),
+            'username': forms.TextInput(attrs={
+                'class': 'form-control rounded-pill py-3 px-4', 
+                'placeholder': 'aventurero_mongua',
+                'pattern': '[A-Za-z0-9]+',
+                'title': 'Solo letras y números, sin símbolos ni espacios',
+                'oninput': "this.value = this.value.replace(/[^A-Za-z0-9]/g, '')"
+            }),
             'email': forms.EmailInput(attrs={'class': 'form-control rounded-pill py-3 px-4', 'placeholder': 'correo@ejemplo.com'}),
             'tipo_documento': forms.Select(attrs={'class': 'form-select rounded-pill py-3 px-4'}),
             'numero_documento': forms.TextInput(attrs={
@@ -141,8 +160,22 @@ class RegistroForm(forms.ModelForm):
             },
         }
 
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name', '').strip()
+        if not re.match(r'^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$', first_name):
+            raise ValidationError("El nombre solo puede contener letras y espacios.")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name', '').strip()
+        if not re.match(r'^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$', last_name):
+            raise ValidationError("El apellido solo puede contener letras y espacios.")
+        return last_name
+
     def clean_username(self):
         username = self.cleaned_data.get('username', '').strip()
+        if not re.match(r'^[A-Za-z0-9]+$', username):
+            raise ValidationError("El apodo solo puede contener letras y números, sin símbolos ni espacios.")
         if Usuario.objects.filter(username__iexact=username).exists():
             raise ValidationError("Este nombre de usuario ya está registrado.")
         return username

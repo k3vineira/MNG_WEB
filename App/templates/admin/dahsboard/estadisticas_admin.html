@@ -18,12 +18,16 @@
             </h1>
             <p class="opacity-75 mb-0">{{ analitica_subtitulo|default:'Consolidado métrico avanzado e histórico de comportamiento de viajes, transacciones y soporte en Monagua.' }}</p>
         </div>
-        <div class="col-12 col-md-4 text-md-end">
+        <div class="col-12 col-md-4 text-md-end d-flex justify-content-md-end align-items-center gap-2">
             <span
                 class="badge rounded-pill bg-success bg-opacity-10 text-success px-4 py-2 fs-6 fw-semibold border border-success border-opacity-25">
                 <i class="bi bi-shield-check me-1"></i>
                 {% if user.is_staff %}Rol: Administrador{% else %}Rol: Viajero Activo{% endif %}
             </span>
+            <button class="btn btn-success btn-sm d-flex align-items-center gap-1" id="btnExportPdf">
+              <i class="bi bi-file-earmark-pdf-fill"></i>
+              <span id="exportLabel">Exportar PDF</span>
+            </button>
         </div>
     </div>
 
@@ -717,6 +721,8 @@
 
 </div>
 
+<script src="{% static 'js/librerias/html2canvas.min.js' %}"></script>
+<script src="{% static 'js/librerias/jspdf.umd.min.js' %}"></script>
 <script src="{% static 'js/librerias/graficos_chart.min.js' %}"></script>
 <div id="estadisticas-data-container"
     data-meses-labels="{{ meses_labels|default:'[]' }}"

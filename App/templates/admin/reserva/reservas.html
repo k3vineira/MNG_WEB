@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% load static %} {% block content %}
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+  href="{% static 'css/librerias/flatpickr.min.css' %}"
 />
 <!-- ── Migas de Pan (Breadcrumb Navigation) ── -->
 <div class="container pt-5 mt-4 mt-lg-5 mb-3" data-aos="fade-down" data-aos-duration="600">
@@ -287,8 +287,8 @@
               {% endif %}
               {% endfor %}
             </div>
-            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-            <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+            <script src="{% static 'js/librerias/flatpickr.min.js' %}"></script>
+            <script src="{% static 'js/librerias/flatpickr_es.js' %}"></script>
             <script src="{% static 'js/reserva.js' %}?v={% now 'U' %}"></script>
           </form>
         </div>
