@@ -23,6 +23,7 @@ from App.views.tarifa import views as tarifa_views
 from App.views.guias import views as guias_views
 from App.views.promocion import views as promocion_views
 from App.views.comprobante_pago import views as comprobante_pago_views
+from App.views.reserva.views import listar_cancelaciones_admin
 
 
 
@@ -191,9 +192,9 @@ urlpatterns = [
     path('admin/tarifas/crear/', TarifaCreateView.as_view(), name='crear_tarifa'),
     path('admin/tarifas/editar/<int:pk>/', TarifaUpdateView.as_view(), name='editar_tarifa'),
     
-    # cancelaciones admin
-    path('admin/cancelaciones/', views.listar_cancelaciones_admin, name='listar_cancelaciones_admin'),
-
-
+ 
+  #cancelaciones
+  path('admin/reserva/', listar_cancelaciones_admin, name='listar_cancelaciones'),
+  path('admin/cancelaciones/editar/<int:reserva_id>/', reserva_views.editar_cancelacion_admin, name='editar_cancelacion_admin'),
 ]
 

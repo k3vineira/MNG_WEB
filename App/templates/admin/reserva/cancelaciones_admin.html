@@ -2,30 +2,118 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid py-4">
+<div class="container-fluid px-4 py-4">
+    <!-- Subtítulo Superior -->
+    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-semibold text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">Panel de Control</span>
+    
+    <!-- Encabezado -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-1">Gestión de Cancelaciones</h4>
-            <p class="text-muted small mb-0">Histórico de reservas canceladas y penalidades aplicadas.</p>
+            <h2 class="fw-bold text-dark mb-1">Gestión de Cancelaciones</h2>
+            <p class="text-muted mb-0">Histórico de reservas canceladas, revisión y penalidades aplicadas.</p>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <!-- Tarjetas de Métricas -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase fw-bold text-muted small" style="letter-spacing: 0.5px; font-size: 0.75rem;">Total Cancelaciones</span>
+                        <h3 class="fw-bold mb-0 mt-1 text-dark">{{ cancelaciones|length }}</h3>
+                    </div>
+                    <div class="rounded-4 p-3 d-flex align-items-center justify-content-center bg-light text-secondary" style="width: 52px; height: 52px;">
+                        <i class="bi bi-files fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase fw-bold text-muted small" style="letter-spacing: 0.5px; font-size: 0.75rem;">Pendientes</span>
+                        <h3 class="fw-bold mb-0 mt-1 text-warning">
+                            {% comment %} Puedes filtrar en la vista o contar aquí {% endcomment %}
+                            {{ cancelaciones|length }}
+                        </h3>
+                    </div>
+                    <div class="rounded-4 p-3 d-flex align-items-center justify-content-center bg-warning-subtle text-warning" style="width: 52px; height: 52px;">
+                        <i class="bi bi-hourglass-split fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase fw-bold text-muted small" style="letter-spacing: 0.5px; font-size: 0.75rem;">Aprobadas</span>
+                        <h3 class="fw-bold mb-0 mt-1 text-success">0</h3>
+                    </div>
+                    <div class="rounded-4 p-3 d-flex align-items-center justify-content-center bg-success-subtle text-success" style="width: 52px; height: 52px;">
+                        <i class="bi bi-check-circle-fill fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-uppercase fw-bold text-muted small" style="letter-spacing: 0.5px; font-size: 0.75rem;">Rechazadas</span>
+                        <h3 class="fw-bold mb-0 mt-1 text-danger">0</h3>
+                    </div>
+                    <div class="rounded-4 p-3 d-flex align-items-center justify-content-center bg-danger-subtle text-danger" style="width: 52px; height: 52px;">
+                        <i class="bi bi-x-circle-fill fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Filtros -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+        <div class="d-flex align-items-center justify-content-center gap-2">
+            <div class="d-flex align-items-center bg-light rounded-pill px-3 py-1 border" style="max-width: 420px; width: 100%;">
+                <i class="bi bi-funnel text-muted me-2"></i>
+                <select class="form-select border-0 bg-transparent shadow-none form-select-sm fw-semibold text-secondary">
+                    <option value="">Mostrar: Todos los estados</option>
+                    <option value="pendiente">Pendientes de revisión</option>
+                    <option value="confirmada">Aprobadas / Confirmadas</option>
+                    <option value="rechazada">Rechazadas</option>
+                </select>
+            </div>
+            <button class="btn btn-success rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 40px; height: 40px;">
+                <i class="bi bi-search"></i>
+            </button>
+            <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 40px; height: 40px;">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
         <div class="table-responsive">
             <table class="table align-middle mb-0">
-                <thead class="table-light">
-                    <tr class="text-secondary small fw-bold text-uppercase u-style-65e738b5">
-                        <th class="ps-4 py-3">Cliente</th>
-                        <th class="py-3">Aventura / Paquete</th>
-                        <th class="py-3">Motivo de Cancelación</th>
-                        <th class="text-center py-3">Penalidad</th>
-                        <th class="text-center py-3">Estado</th>
-                        <th class="text-end pe-4 py-3">Acciones</th>
+                <thead class="bg-light border-0">
+                    <tr class="text-uppercase small fw-bold text-secondary">
+                        <th class="ps-4 py-3 border-0">CLIENTE</th>
+                        <th class="py-3 border-0">AVENTURA / PAQUETE</th>
+                        <th class="py-3 border-0">MOTIVO DE CANCELACIÓN</th>
+                        <th class="text-center py-3 border-0">PENALIDAD</th>
+                        <th class="text-center py-3 border-0">ESTADO REVISIÓN</th>
+                        <th class="text-end pe-4 py-3 border-0">ACCIONES</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in cancelaciones %}
-                    <tr>
+                    <tr class="border-bottom">
                         <!-- Cliente -->
                         <td class="ps-4 py-3">
                             <div class="d-flex align-items-center">
@@ -54,9 +142,9 @@
                             </span>
                         </td>
 
-                        <!-- Motivo de Cancelación -->
+                        <!-- Motivo -->
                         <td class="py-3">
-                            <p class="text-muted small mb-0 text-truncate" style="max-width: 250px;" title="{{ item.motivo_cancelacion }}">
+                            <p class="text-muted small mb-0 text-truncate" style="max-width: 230px;" title="{{ item.motivo_cancelacion }}">
                                 {{ item.motivo_cancelacion|default:"Sin motivo especificado" }}
                             </p>
                         </td>
@@ -64,35 +152,50 @@
                         <!-- Penalidad -->
                         <td class="text-center py-3">
                             {% if item.penalidad and item.penalidad > 0 %}
-                                <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill">
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle fw-bold px-3 py-2 rounded-pill">
                                     COP ${{ item.penalidad|floatformat:0 }}
                                 </span>
                             {% else %}
-                                <span class="badge bg-light text-secondary fw-normal px-3 py-2 rounded-pill">
+                                <span class="badge bg-light text-secondary fw-normal px-3 py-2 rounded-pill border">
                                     Sin multa
                                 </span>
                             {% endif %}
                         </td>
 
-                        <!-- Estado -->
+                        <!-- Estado (Aprobación del Admin) -->
                         <td class="text-center py-3">
-                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
-                                Cancelada
-                            </span>
+                            {% if item.estado_cancelacion == 'confirmada' or item.estado_cancelacion == 'aprobada' %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-bold">
+                                    <i class="bi bi-check-circle me-1"></i> Aprobada
+                                </span>
+                            {% elif item.estado_cancelacion == 'rechazada' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
+                                    <i class="bi bi-x-circle me-1"></i> Rechazada
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 rounded-pill fw-bold">
+                                    <i class="bi bi-clock me-1"></i> Pendiente
+                                </span>
+                            {% endif %}
                         </td>
 
                         <!-- Acciones -->
                         <td class="text-end pe-4 py-3">
-                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" data-bs-toggle="tooltip" title="Ver detalle">
-                                <i class="bi bi-eye"></i>
-                            </button>
+                            <!-- Botón Editar / Gestionar -->
+                            <a href="{% url 'editar_cancelacion_admin' item.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold" data-bs-toggle="tooltip" title="Editar y Aprobar Cancelación">
+                                <i class="bi bi-pencil-square me-1"></i> Editar
+                            </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                            No hay reservas canceladas registradas.
+                        <td colspan="6" class="text-center py-5">
+                            <div class="py-4">
+                                <div class="mb-3 text-muted">
+                                    <i class="bi bi-folder-x display-4"></i>
+                                </div>
+                                <p class="text-muted fw-semibold mb-0">No hay reservas canceladas registradas en el sistema.</p>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}

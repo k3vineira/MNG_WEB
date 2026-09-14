@@ -649,11 +649,36 @@ def listar_cancelaciones_admin(request):
         estado_reserva='cancelada'
     ).select_related('usuario').order_by('-id')
     
-    return render(request, 'admin/cancelaciones_admin.html', {
+    return render(request, 'admin/reserva/cancelaciones_admin.html', {
         'cancelaciones': cancelaciones
     })
-    
-    
-    
-    
 
+def editar_cancelacion_admin(request, reserva_id):
+    """
+    Vista para que el administrador revise la cancelación de una Reserva,
+    ajuste la penalidad y modifique el estado.
+    """
+
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+
+    if request.method == 'POST':
+        estado = request.POST.get('estado_cancelacion')
+        penalidad = request.POST.get('penalidad', 0)
+        observaciones = request.POST.get('observaciones_admin', '')
+
+        if hasattr(reserva, 'estado_cancelacion'):
+            reserva.estado_cancelacion = estado
+            
+        reserva.penalidad = float(penalidad) if penalidad else 0
+
+        if hasattr(reserva, 'observaciones_admin'):
+            reserva.observaciones_admin = observaciones
+
+        reserva.save()
+
+        messages.success(request, f"La reserva #{reserva.id} ha sido actualizada.")
+        return redirect('listar_cancelaciones')
+
+    return render(request, 'admin/reserva/editar_cancelacion_admin.html', {
+        'reserva': reserva
+    })
