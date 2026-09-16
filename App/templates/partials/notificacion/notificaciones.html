@@ -1,5 +1,6 @@
 {% load static %}
 <div id="contenedorCampanaNotif" class="dropdown position-fixed" style="top: 20px; right: 20px; z-index: 1050;">
+    <!-- Botón Flotante de la Campana -->
     <button class="btn btn-success p-0 rounded-circle d-flex align-items-center justify-content-center position-relative shadow-lg btn-campana-movil" 
             style="width: 50px; height: 50px;"
             type="button" 
@@ -7,9 +8,7 @@
             data-bs-toggle="dropdown" 
             aria-expanded="false"
             data-notif-count="{{ contador_notificaciones|default:0 }}"
-            title="Notificaciones: Avisos, mensajes y alertas del sistema"
-            onmouseover="this.style.transform='scale(1.06)'" 
-            onmouseout="this.style.transform='scale(1)'">
+            title="Notificaciones de la cuenta">
         
         <i class="bi bi-bell-fill text-white fs-4"></i>
         
@@ -20,143 +19,158 @@
         {% endif %}
     </button>
 
+    <!-- Menú Desplegable -->
     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 overflow-hidden mt-2 p-0" 
-        style="width: 350px;"
+        style="width: 360px;"
         aria-labelledby="dropdownPanelNotif">
     
         <li class="dropdown-header text-white fw-bold py-3 fs-6 bg-success d-flex align-items-center justify-content-between px-3 m-0">
             <span><i class="bi bi-bell me-2"></i>Notificaciones</span>
             {% if contador_notificaciones > 0 %}
-                <span id="badgeDropdownNotif" class="badge bg-white text-success small rounded-pill px-2">{{ contador_notificaciones }} registros</span>
+                <span id="badgeDropdownNotif" class="badge bg-white text-success small rounded-pill px-2">
+                    {{ contador_notificaciones }} sin leer
+                </span>
             {% endif %}
         </li>
 
-        <!-- Contenedor con Scroll Y -->
+        <!-- Lista de Notificaciones -->
         <div class="overflow-y-auto" style="max-height: 400px;">
             {% if notificaciones_globales %}
                 {% for noti in notificaciones_globales %}
-                    <li class="border-bottom">
+                    <li class="border-bottom {% if not noti.leido %}bg-light{% endif %}">
                         <div class="p-3 d-block text-wrap">
-                            <!-- Cabecera: Acción y Fecha/Hora -->
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="badge bg-success bg-opacity-10 text-success text-uppercase px-2 py-1 rounded small fw-bold">
-                                    {{ noti.get_accion_display }}
-                                </span>
-                                <small class="text-muted fs-7"><i class="bi bi-clock me-1"></i>{{ noti.fecha_registro|date:"d/m H:i" }}</small>
+                            
+                            <!-- Tipo, Prioridad y Fecha -->
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="badge bg-success bg-opacity-10 text-success text-uppercase px-2 py-1 rounded small fw-bold">
+                                        {{ noti.tipo }}
+                                    </span>
+                                    
+                                    <!-- Insignia según Prioridad -->
+                                    {% if noti.prioridad == 'alta' %}
+                                        <span class="badge bg-danger text-white text-uppercase" style="font-size: 0.65rem;">Alta</span>
+                                    {% elif noti.prioridad == 'media' %}
+                                        <span class="badge bg-warning text-dark text-uppercase" style="font-size: 0.65rem;">Media</span>
+                                    {% else %}
+                                        <span class="badge bg-info text-white text-uppercase" style="font-size: 0.65rem;">Baja</span>
+                                    {% endif %}
+                                </div>
+
+                                <small class="text-muted fs-7">
+                                    <i class="bi bi-clock me-1"></i>{{ noti.fecha_creacion|date:"d/m H:i" }}
+                                </small>
                             </div>
 
-                            <!-- Tabla / Módulo Afectado -->
-                            <strong class="text-dark d-block mb-1">
-                                <i class="bi bi-folder2-open me-1 text-success"></i>Módulo: {{ noti.modulo|title }}
-                            </strong>
-
-                            <!-- Observación -->
-                            {% if noti.descripcion %}
-                                <p class="mb-1 text-secondary small text-wrap">{{ noti.descripcion }}</p>
+                            <!-- Reserva Asociada -->
+                            {% if noti.reserva %}
+                                <strong class="text-dark d-block mb-1 fs-7">
+                                    <i class="bi bi-journal-check me-1 text-success"></i>Reserva #{{ noti.reserva.id }}
+                                </strong>
                             {% endif %}
 
+                            <!-- Mensaje -->
+                            <p class="mb-2 text-secondary small text-wrap lh-sm">
+                                {{ noti.mensaje }}
+                            </p>
+
                             <!-- Usuario y Botón Ver Detalle -->
-                            <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top" style="border-top-style: dashed !important;">
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top" style="border-top-style: dashed !important;">
                                 <small class="text-muted fs-7">
                                     <i class="bi bi-person-circle me-1"></i>
-                                    <strong>Usuario:</strong> {{ noti.usuario.username|default:"Sistema" }}
+                                    <strong>Usuario:</strong> {{ noti.usuario.username }}
                                 </small>
 
                                 <button type="button" 
-                                        class="btn btn-outline-success btn-sm py-0 px-2 rounded-pill fs-7 fw-bold btn-marcar-visto" 
+                                        class="btn btn-outline-success btn-sm py-0 px-2 rounded-pill fs-7 fw-bold" 
                                         data-bs-toggle="modal" 
-                                        data-bs-target="#modalDetalleBitacora{{ noti.id }}">
+                                        data-bs-target="#modalDetalleNoti{{ noti.id }}">
                                     Detalles <i class="bi bi-eye ms-1"></i>
                                 </button>
                             </div>
+
                         </div>
                     </li>
                 {% endfor %}
             {% else %}
                 <li class="p-4 text-center text-muted small">
-                    <i class="bi bi-bell-slash d-block mb-2 fs-4 text-secondary"></i>No tienes alertas pendientes.
+                    <i class="bi bi-bell-slash d-block mb-2 fs-4 text-secondary opacity-50"></i>
+                    No tienes notificaciones registradas.
                 </li>
             {% endif %}
         </div>
     </ul>
 </div>
 
-<!-- Modales de detalle (fuera del dropdown para evitar fallos de renderizado) -->
+<!-- Modales de Detalle para cada Notificación -->
 {% for noti in notificaciones_globales %}
-<div class="modal fade" id="modalDetalleBitacora{{ noti.id }}" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalDetalleNoti{{ noti.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
+            
             <div class="modal-header bg-success text-white">
                 <h6 class="modal-title fw-bold">
-                    <i class="bi bi-journal-text me-2"></i>Detalle de Bitácora #{{ noti.id }}
+                    <i class="bi bi-bell me-2"></i>Notificación #{{ noti.id }}
                 </h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
                 <table class="table table-sm table-borderless mb-3">
                     <tbody>
                         <tr>
-                            <td class="fw-bold text-muted w-35">Acción Realizada:</td>
-                            <td><span class="badge bg-primary bg-opacity-10 text-primary">{{ noti.get_accion_display }}</span></td>
+                            <td class="fw-bold text-muted w-35">Tipo:</td>
+                            <td><span class="badge bg-success bg-opacity-10 text-success fw-bold text-uppercase">{{ noti.tipo }}</span></td>
                         </tr>
                         <tr>
-                            <td class="fw-bold text-muted">Tabla/Módulo:</td>
-                            <td><strong class="text-dark">{{ noti.modulo }}</strong></td>
+                            <td class="fw-bold text-muted">Prioridad:</td>
+                            <td>
+                                {% if noti.prioridad == 'alta' %}
+                                    <span class="badge bg-danger text-white text-uppercase">Alta</span>
+                                {% elif noti.prioridad == 'media' %}
+                                    <span class="badge bg-warning text-dark text-uppercase">Media</span>
+                                {% else %}
+                                    <span class="badge bg-info text-white text-uppercase">Baja</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Estado:</td>
+                            <td>
+                                {% if noti.leido %}
+                                    <span class="badge bg-secondary">Leído</span>
+                                {% else %}
+                                    <span class="badge bg-success">No Leído</span>
+                                {% endif %}
+                            </td>
                         </tr>
                         <tr>
                             <td class="fw-bold text-muted">Usuario:</td>
-                            <td>{{ noti.usuario.get_full_name|default:noti.usuario.username|default:"Sistema" }}</td>
+                            <td>{{ noti.usuario.get_full_name|default:noti.usuario.username }}</td>
                         </tr>
                         <tr>
-                            <td class="fw-bold text-muted">Fecha y Hora:</td>
-                            <td>{{ noti.fecha_registro|date:"d/m/Y \a \l\a\s H:i:s" }}</td>
+                            <td class="fw-bold text-muted">Reserva Vinculada:</td>
+                            <td>
+                                {% if noti.reserva %}
+                                    <span class="fw-bold text-dark">Reserva #{{ noti.reserva.id }}</span>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
                         </tr>
                         <tr>
-                            <td class="fw-bold text-muted">IP Origen:</td>
-                            <td><code>{{ noti.ip_origen|default:"—" }}</code></td>
+                            <td class="fw-bold text-muted">Fecha de Creación:</td>
+                            <td>{{ noti.fecha_creacion|date:"d/m/Y \a \l\a\s H:i:s" }}</td>
                         </tr>
                         <tr>
-                            <td class="fw-bold text-muted">ID Registro:</td>
-                            <td><code>{{ noti.registro_id|default:"—" }}</code></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold text-muted">Descripción:</td>
-                            <td>{{ noti.descripcion|default:"Sin observaciones" }}</td>
+                            <td class="fw-bold text-muted">Mensaje:</td>
+                            <td class="text-dark">{{ noti.mensaje }}</td>
                         </tr>
                     </tbody>
                 </table>
-
-                {% if noti.reserva or noti.pago or noti.pqrs or noti.seguimiento %}
-                <div class="pt-2 border-top">
-                    <label class="fw-bold small text-secondary mb-2"><i class="bi bi-link-45deg me-1"></i>Registros Relacionados:</label>
-                    <div class="d-flex flex-wrap gap-2">
-                        {% if noti.reserva %}
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                                <i class="bi bi-calendar2-check me-1"></i>Reserva #{{ noti.reserva.id }}
-                            </span>
-                        {% endif %}
-                        {% if noti.pago %}
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                                <i class="bi bi-cash-coin me-1"></i>Pago #{{ noti.pago.id }}
-                            </span>
-                        {% endif %}
-                        {% if noti.pqrs %}
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                                <i class="bi bi-chat-left-text me-1"></i>PQRS #{{ noti.pqrs.id }}
-                            </span>
-                        {% endif %}
-                        {% if noti.seguimiento %}
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                                <i class="bi bi-reply me-1"></i>Seguimiento #{{ noti.seguimiento.id }}
-                            </span>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endif %}
             </div>
+
         </div>
     </div>
 </div>
 {% endfor %}
-
-<script src="{% static 'js/notificaciones.js' %}"></script>

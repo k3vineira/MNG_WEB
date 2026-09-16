@@ -43,9 +43,9 @@ def login_vista(request):
                         login(request, user)
                         crear_notificacion_sistema(
                             usuario=user,
-                            accion="LOGIN",
-                            tabla_afectada="Usuarios",
-                            observacion=f"El usuario '{user.username}' inició sesión correctamente."
+                            mensaje=f"El usuario '{user.username}' ha iniciado sesión.",
+                            tipo="Autenticación",
+                            prioridad="Alta"
                         )
                         messages.success(request, f"¡Bienvenido de nuevo, {user.first_name or user.username}!")
                         
@@ -77,10 +77,10 @@ def logout_vista(request):
     if request.user.is_authenticated:
         usuario_nombre = request.user.username
         crear_notificacion_sistema(
-            usuario=request.user,
-            accion="LOGOUT",
-            tabla_afectada="Usuarios",
-            observacion=f"El usuario '{usuario_nombre}' cerró sesión."
+           usuario=request.user,
+            mensaje=f"El usuario '{usuario_nombre}' ha cerrado sesión.",
+            tipo="Autenticación",
+            prioridad="Alta"
         )
         messages.info(request, "Has cerrado sesión correctamente. ¡Hasta pronto!")
     logout(request)

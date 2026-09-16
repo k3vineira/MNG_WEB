@@ -139,11 +139,9 @@ class PromocionCreateView(StaffRequiredMixin, CreateView):
         # Auditoría / Notificación del sistema
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="NUEVA PROMOCIÓN CREADA",
-            tabla_afectada="Promociones",
-            observacion=f"Se ha registrado con éxito la promoción '{promocion.nombre}' ({promocion.codigo_promocion}) con {promocion.porcentaje_descuento}% de descuento.",
-            valor_anterior="Ninguno (Registro Nuevo)",
-            nuevo_valor=f"Nombre: {promocion.nombre}, Código: {promocion.codigo_promocion}, Descuento: {promocion.porcentaje_descuento}%, Paquetes vinculados: {paquetes_seleccionados.count()}"
+            mensaje=f"Se ha creado una nueva promoción: '{promocion.nombre}'.",
+            tipo="Promoción",
+            prioridad="media"
         )
 
         messages.success(self.request, f"Promoción '{promocion.nombre}' registrada correctamente.")
@@ -205,11 +203,10 @@ class PromocionUpdateView(StaffRequiredMixin, UpdateView):
         )
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="PROMOCIÓN MODIFICADA",
-            tabla_afectada="Promociones",
-            observacion=f"La promoción '{promocion.nombre}' ha sido modificada satisfactoriamente.",
-            valor_anterior=valor_viejo,
-            nuevo_valor=valor_nuevo
+            mensaje=f"Se ha actualizado la promoción: '{promocion.nombre}'.",
+            tipo="Promoción",
+            prioridad="media"
+            
         )
 
         messages.success(self.request, f"Promoción '{promocion.nombre}' actualizada correctamente.")
@@ -234,11 +231,9 @@ class PromocionDeleteView(StaffRequiredMixin, DeleteView):
 
         crear_notificacion_sistema(
             usuario=request.user,
-            accion="PROMOCIÓN ELIMINADA",
-            tabla_afectada="Promociones",
-            observacion=f"Se ha eliminado permanentemente la promoción '{nombre_promo}' ({codigo_promo}).",
-            valor_anterior=valor_viejo,
-            nuevo_valor="Registro Eliminado"
+            mensaje=f"Se ha eliminado la promoción: '{nombre_promo}'.",
+            tipo="Promoción",
+            prioridad="media"
         )
 
         messages.success(request, f"La promoción '{nombre_promo}' fue eliminada del sistema.")
@@ -261,11 +256,10 @@ def toggle_estado_promocion(request, pk):
 
     crear_notificacion_sistema(
         usuario=request.user,
-        accion="ESTADO PROMOCIÓN ACTUALIZADO",
-        tabla_afectada="Promociones",
-        observacion=f"El estado de la promoción '{promocion.nombre}' cambió a {nuevo_estado_str}.",
-        valor_anterior=f"Activa: {estado_previo}",
-        nuevo_valor=f"Activa: {promocion.activa}"
+        mensaje=f"Se ha cambiado el estado de la promoción '{promocion.nombre}' a {nuevo_estado_str}.",
+        tipo="Promoción",
+        prioridad="media"
+        
     )
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('ajax') == '1':

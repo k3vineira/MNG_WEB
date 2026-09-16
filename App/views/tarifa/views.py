@@ -79,12 +79,11 @@ class TarifaCreateView(StaffRequiredMixin, CreateView):
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="NUEVA TARIFA CREADA",
-            tabla_afectada="Tarifas",
-            observacion=f"Se ha registrado una tarifa para '{self.object.paquete.nombre}' en la temporada '{self.object.temporada.nombre}'.",
-            valor_anterior="Ninguno (Registro Nuevo)",
-            nuevo_valor=f"Adulto: ${self.object.precio_adulto}, Menor: ${self.object.precio_menor}"
-        )
+            mensaje=f"Se ha creado una nueva tarifa para el paquete '{self.object.paquete.nombre}' en la temporada '{self.object.temporada.nombre}'.",
+            tipo="Tarifa",
+            prioridad="Media",
+            
+            )
         return response
 
 
@@ -114,12 +113,10 @@ class TarifaUpdateView(StaffRequiredMixin, UpdateView):
         valor_nuevo = f"Paquete: {self.object.paquete.nombre}, Temporada: {self.object.temporada.nombre}, Adulto: ${self.object.precio_adulto}, Menor: ${self.object.precio_menor}, Estado: {'Activa' if self.object.estado else 'Inactiva'}"
 
         crear_notificacion_sistema(
-            usuario=self.request.user,
-            accion="TARIFA MODIFICADA",
-            tabla_afectada="Tarifas",
-            observacion=f"Los datos de la tarifa de '{self.object.paquete.nombre}' ({self.object.temporada.nombre}) han sido actualizados.",
-            valor_anterior=valor_viejo,
-            nuevo_valor=valor_nuevo
+              usuario=self.request.user,
+              mensaje=f"se ha editado correctamente la tarifa",
+              tipo="Tarifa",
+              prioridad="Media",
         )
         return response
 
@@ -139,11 +136,9 @@ class TarifaDeleteView(StaffRequiredMixin, DeleteView):
 
         crear_notificacion_sistema(
             usuario=request.user,
-            accion="TARIFA ELIMINADA",
-            tabla_afectada="Tarifas",
-            observacion=f"Se ha eliminado del sistema la tarifa de '{nombre_paquete}' para la temporada '{nombre_temporada}'.",
-            valor_anterior=valor_viejo,
-            nuevo_valor="Registro Eliminado"
+            mensaje=f"Se ha eliminado la tarifa para el paquete '{nombre_paquete}' en la temporada '{nombre_temporada}'. Detalles previos: {valor_viejo}",
+            tipo="Tarifa",
+            prioridad="Media"
         )
         return response
 

@@ -64,11 +64,9 @@ class CategoriaCreateView(StaffRequiredMixin, CreateView):
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="NUEVA CATEGORIA CREADA",
-            tabla_afectada="Categorías",
-            observacion=f"Se ha registrado con éxito la categoría: '{self.object.nombre}'.",
-            valor_anterior="Ninguno (Registro Nuevo)",
-            nuevo_valor=f"Nombre: {self.object.nombre}"
+            mensaje=f"Se ha creado una nueva categoría: '{self.object.nombre}'.",
+            tipo="Categoría",
+            prioridad="media"
         )
         return response
 
@@ -100,11 +98,10 @@ class CategoriaUpdateView(StaffRequiredMixin, UpdateView):
 
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="CATEGORIA MODIFICADA",
-            tabla_afectada="Categorías",
-            observacion=f"La categoría '{self.object.nombre}' ha sido actualizada correctamente.",
-            valor_anterior=valor_viejo,
-            nuevo_valor=valor_nuevo
+            mensaje=f"Se ha actualizado la categoría: '{self.object.nombre}'.",
+            tipo="Categoría",
+            prioridad="media"
+            
         )
         return response
 
@@ -129,11 +126,9 @@ class CategoriaDeleteView(StaffRequiredMixin, DeleteView):
 
         crear_notificacion_sistema(
             usuario=request.user,
-            accion="CATEGORIA ELIMINADA",
-            tabla_afectada="Categorías",
-            observacion=f"Se ha quitado del sistema la categoría: '{nombre_categoria}'.",
-            valor_anterior=valor_viejo,
-            nuevo_valor="Registro Eliminado"
+            mensaje=f"Se ha eliminado la categoría: '{nombre_categoria}'.",
+            tipo="Categoría",
+            prioridad="media"
         )
         return response
 

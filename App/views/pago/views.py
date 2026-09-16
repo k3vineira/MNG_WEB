@@ -42,12 +42,11 @@ def enviar_comprobante(request):
         )
 
         crear_notificacion_sistema(
+            reserva= "correspondiente a la reserva #" + str(reserva.id),
             usuario=request.user,
-            accion="COMPROBANTE REGISTRADO",
-            tabla_afectada="Pagos",
-            observacion=f"El usuario ha enviado el comprobante de pago para la reserva #{reserva.id}.",
-            valor_anterior="Ninguno (Pago Nuevo)",
-            nuevo_valor=f"Ref: {referencia}, Banco: {banco_origen}, Monto: {monto_val}"
+            mensaje=f"Se ha enviado un nuevo comprobante de pago para la reserva #{reserva.paquete.nombre}.",
+            tipo="Comprobante de Pago",
+            prioridad="alta"
         )
 
         messages.success(request, "¡Tu comprobante de pago ha sido enviado exitosamente y será revisado en breve!")

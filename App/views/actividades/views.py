@@ -75,10 +75,9 @@ class ActividadesCreateView(StaffRequiredMixin, CreateView):
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="NUEVA ACTIVIDAD CREADA",
-            tabla_afectada="Actividades",
-            observacion=f"Se ha registrado con éxito la actividad: '{self.object.nombre}'.",
-            valor_anterior="Ninguno (Registro Nuevo)",
+            mensaje=f"Se ha registrado con éxito la actividad: '{self.object.nombre}'.",
+            tipo="Actividad",
+            prioridad="media"
         )
         return response
 
@@ -110,11 +109,10 @@ class ActividadesUpdateView(StaffRequiredMixin, UpdateView):
 
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="ACTIVIDAD MODIFICADA",
-            tabla_afectada="Actividades",
-            observacion=f"La actividad '{self.object.nombre}' ha sido actualizada correctamente.",
-            valor_anterior=valor_viejo,
-            nuevo_valor=valor_nuevo
+            mensaje=f"Se ha actualizado la actividad: '{self.object.nombre}'.",
+            tipo="Actividad",
+            prioridad="media",
+            
         )
         return response
 
@@ -140,10 +138,9 @@ class ActividadesDeleteView(StaffRequiredMixin, DeleteView):
 
         crear_notificacion_sistema(
             usuario=request.user,
-            accion="ACTIVIDAD ELIMINADA",
-            tabla_afectada="Actividades",
-            observacion=f"Se ha quitado del sistema la actividad: '{nombre_actividad}'.",
-            valor_anterior=valor_viejo,
-            nuevo_valor="Registro Eliminado"
+            mensaje=f"Se ha eliminado la actividad: '{nombre_actividad}'.",
+            tipo="Actividad",
+            prioridad="media"
+            
         )
         return response

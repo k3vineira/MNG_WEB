@@ -132,11 +132,9 @@ class PaqueteCreateView(StaffRequiredMixin, CreateView):
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="NUEVO PAQUETE CREADO",
-            tabla_afectada="Paquetes",
-            observacion=f"Se ha creado con éxito el paquete turístico: '{self.object.nombre}'.",
-            valor_anterior="Ninguno (Registro Nuevo)",
-            nuevo_valor=f"Nombre: {self.object.nombre}, Categoría: {self.object.categoria}"
+            mensaje=f"Se ha creado un nuevo paquete: '{self.object.nombre}'.",
+            tipo="Paquete",
+            prioridad="media"
         )
         return response
 
@@ -168,11 +166,9 @@ class PaqueteUpdateView(StaffRequiredMixin, UpdateView):
 
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="PAQUETE MODIFICADO",
-            tabla_afectada="Paquetes",
-            observacion=f"El paquete '{self.object.nombre}' ha sido modificado correctamente.",
-            valor_anterior=valor_viejo,
-            nuevo_valor=valor_nuevo
+            mensaje=f"Se ha actualizado el paquete: '{self.object.nombre}'.",
+            tipo="Paquete",
+            prioridad="media"
         )
         return response
 
@@ -201,11 +197,9 @@ class PaqueteDeleteView(StaffRequiredMixin, DeleteView):
 
         crear_notificacion_sistema(
             usuario=request.user,
-            accion="PAQUETE ELIMINADO",
-            tabla_afectada="Paquetes",
-            observacion=f"Se ha eliminado del sistema el paquete: '{nombre_paquete}'.",
-            valor_anterior=valor_viejo,
-            nuevo_valor="Registro Eliminado"
+            mensaje=f"Se ha eliminado el paquete: '{nombre_paquete}'.",
+            tipo="Paquete",
+            prioridad="media"
         )
         return response
 

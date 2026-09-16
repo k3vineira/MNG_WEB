@@ -12,6 +12,7 @@ from django.conf import settings
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from App.models import Reserva, Paquete, Tarifa
 
 from App.models import Reserva, Paquete, Tarifa
 from App.forms.reserva.forms import ReservaForm
@@ -105,12 +106,11 @@ def cambiar_estado_reserva(request, reserva_id):
             reserva.save()
             
             crear_notificacion_sistema(
+                reserva= "correspondiente a la reserva #" + str(reserva.id),
                 usuario=request.user,
-                accion=f"RESERVA {nuevo_estado.upper()}",
-                tabla_afectada="Reservas",
-                observacion=f"La reserva #{reserva.id} para el paquete '{reserva.paquete.nombre}' ha cambiado a {nuevo_estado} de forma rápida.",
-                valor_anterior=f"Estado: {estado_anterior}",
-                nuevo_valor=f"Estado: {nuevo_estado}"
+                mensaje=f"El estado de la reserva #{reserva.id} ha sido cambiado de '{estado_anterior}' a '{nuevo_estado}'.",
+                tipo="Reserva",
+                prioridad="media"
             )
             
             return JsonResponse({'success': True, 'estado': nuevo_estado, 'mensaje': f'Estado actualizado a {nuevo_estado}'})
@@ -147,12 +147,11 @@ class CrearReservaAdminView(SuccessMessageMixin, CreateView):
         response = super().form_valid(form)
 
         crear_notificacion_sistema(
+            reserva= "correspondiente a la reserva #" + str(self.object.id),
             usuario=self.request.user,
-            accion="NUEVA RESERVA CREADA",
-            tabla_afectada="Reservas",
-            observacion=f"Se ha registrado manualmente la reserva #{self.object.id} para el paquete '{self.object.paquete.nombre}'.",
-            valor_anterior="Ninguno (Registro Nuevo)",
-            nuevo_valor=f"Cliente: {self.object.usuario.get_full_name() or self.object.usuario.username}, Fecha: {self.object.fecha_inicio}, Adultos: {self.object.numero_adultos}, Menores: {self.object.numero_menores}"
+            mensaje=f"Se ha creado una nueva reserva para el paquete '{self.object.paquete.nombre}' con ID #{self.object.id}.",
+            tipo="Reserva",
+            prioridad="media"
         )
 
         return response
@@ -188,12 +187,12 @@ class EditarReservaAdminView(UpdateView):
 
         if reserva.estado_reserva in ['confirmada', 'cancelada']:
             crear_notificacion_sistema(
+                reserva= "correspondiente a la reserva #" + str(reserva.id),
                 usuario=self.request.user,
-                accion=f"RESERVA {reserva.estado_reserva.upper()}",
-                tabla_afectada="Reservas",
-                observacion=f"La reserva #{reserva.id} para el paquete '{reserva.paquete.nombre}' ha cambiado a {reserva.estado_reserva}.",
-                valor_anterior=valor_viejo,
-                nuevo_valor=valor_nuevo
+                mensaje=f"El estado de la reserva #{reserva.id} ha sido cambiado de '{reserva_antigua.estado_reserva}' a '{reserva.estado_reserva}'.",
+                tipo="Reserva",
+                prioridad="alta"
+
             )
 
             if reserva.estado_reserva == 'confirmada':
@@ -235,12 +234,11 @@ class EliminarReservaAdminView(DeleteView):
         response = super().delete(request, *args, **kwargs)
 
         crear_notificacion_sistema(
+            reserva="correspondiente a la reserva #" + str(reserva_id),
             usuario=request.user,
-            accion="RESERVA ELIMINADA",
-            tabla_afectada="Reservas",
-            observacion=f"Se ha eliminado del sistema la reserva #{reserva_id}.",
-            valor_anterior=valor_viejo,
-            nuevo_valor="Registro Eliminado"
+            mensaje=f"Se ha eliminado la reserva #{reserva_id}. Detalles previos: {valor_viejo}",
+            tipo="Reserva",
+            prioridad="alta"
         )
         return response
 
@@ -524,12 +522,11 @@ def guardar_reserva(request, paquete_id):
         )
 
         crear_notificacion_sistema(
+            reserva="correspondiente a la reserva #" + str(reserva.id),
             usuario=request.user,
-            accion="NUEVA RESERVA CLIENTE",
-            tabla_afectada="Reservas",
-            observacion=f"Reserva #{reserva.id} solicitada por el usuario para el paquete '{paquete.nombre}'.",
-            valor_anterior="Ninguno (Nueva Reserva)",
-            nuevo_valor=f"Fecha: {fecha_date}, Adultos: {adultos}, Menores: {menores}"
+            mensaje=f"Se ha creado una nueva reserva para el paquete '{paquete.nombre}' con ID #{reserva.id}.",
+            tipo="Reserva",
+            prioridad="media"
         )
 
         asunto = "Confirmación de tu reserva en Monagua"

@@ -88,11 +88,9 @@ class BlogCreateView(StaffRequiredMixin, CreateView):
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="NUEVA PUBLICACIÓN BLOG",
-            tabla_afectada="Blog",
-            observacion=f"Se publicó el artículo: '{self.object.titulo}'.",
-            valor_anterior="Ninguno (Nuevo Registro)",
-            nuevo_valor=f"Título: {self.object.titulo}, Estado: {'Publicado' if self.object.estado else 'Borrador'}"
+            mensaje=f"Se ha creado un nuevo artículo de blog: '{self.object.titulo}'.",
+            tipo='Blog',
+            prioridad='media'
         )
         messages.success(self.request, f"El artículo '{self.object.titulo}' ha sido creado exitosamente.")
         return response
@@ -113,11 +111,9 @@ class BlogUpdateView(StaffRequiredMixin, UpdateView):
 
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="PUBLICACIÓN BLOG MODIFICADA",
-            tabla_afectada="Blog",
-            observacion=f"Se actualizó el artículo: '{self.object.titulo}'.",
-            valor_anterior=valor_viejo,
-            nuevo_valor=valor_nuevo
+            mensaje=f"Se ha actualizado el artículo de blog: '{self.object.titulo}'.",
+            tipo='Blog',
+            prioridad='media'
         )
         messages.success(self.request, f"El artículo '{self.object.titulo}' ha sido actualizado correctamente.")
         return response
@@ -139,11 +135,9 @@ class BlogDeleteView(StaffRequiredMixin, DeleteView):
 
         crear_notificacion_sistema(
             usuario=request.user,
-            accion="PUBLICACIÓN BLOG ELIMINADA",
-            tabla_afectada="Blog",
-            observacion=f"Se eliminó el artículo de blog: '{titulo_blog}'.",
-            valor_anterior=valor_viejo,
-            nuevo_valor="Registro Eliminado"
+            mensaje=f"Se ha eliminado el artículo de blog: '{titulo_blog}'.",
+            tipo='Blog',
+            prioridad='media'
         )
         messages.success(request, f"El artículo '{titulo_blog}' ha sido eliminado exitosamente.")
         return response

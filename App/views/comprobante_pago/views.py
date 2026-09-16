@@ -106,11 +106,9 @@ def admin_revisar_comprobante(request, pk):
                     # Registrar notificación en auditoría / bitácora del sistema
                     crear_notificacion_sistema(
                         usuario=request.user,
-                        accion=f"COMPROBANTE {estado_transaccion.upper()}",
-                        tabla_afectada="Pagos",
-                        observacion=f"El administrador {request.user.username} revisó el comprobante #{comprobante.pk} (Reserva #{comprobante.reserva.id if comprobante.reserva else 'N/A'}).",
-                        valor_anterior=f"Estado: {estado_anterior}",
-                        nuevo_valor=f"Estado: {estado_transaccion}, Monto: {monto_val}, Nota: {nota_admin or 'Sin notas'}"
+                        mensaje=f"El comprobante #{comprobante.pk} ha sido actualizado de '{estado_anterior}' a '{estado_transaccion}'.",
+                        tipo="Comprobante de Pago",
+                        prioridad="alta"
                     )
 
                     messages.success(request, f"¡Comprobante #{comprobante.pk} actualizado como '{estado_transaccion}' correctamente!")
@@ -143,11 +141,9 @@ def admin_eliminar_comprobante(request, pk):
 
         crear_notificacion_sistema(
             usuario=request.user,
-            accion="ELIMINAR COMPROBANTE",
-            tabla_afectada="Pagos",
-            observacion=f"El administrador {request.user.username} eliminó el comprobante #{pago_id} de la reserva #{reserva_id}.",
-            valor_anterior=f"Comprobante #{pago_id} (Ref: {comprobante.referencia}, Estado: {comprobante.estado_transaccion})",
-            nuevo_valor="Eliminado"
+            mensaje=f"Se ha eliminado el comprobante #{pago_id} vinculado a la reserva #{reserva_id}.",
+            tipo="Comprobante de Pago",
+            prioridad="alta"
         )
 
         comprobante.delete()

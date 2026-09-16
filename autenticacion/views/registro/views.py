@@ -127,9 +127,9 @@ def verificar_otp_registro_vista(request):
 
                 crear_notificacion_sistema(
                     usuario=user,
-                    accion="NUEVO USUARIO REGISTRADO",
-                    tabla_afectada="Usuarios",
-                    observacion=f"Se ha registrado el nuevo cliente '{user.username}' ({user.email})."
+                    mensaje=f"Se ha creado una nueva cuenta de usuario '{user.username}' con rol '{user.get_rol_display()}'.",
+                    tipo="Usuario",
+                    prioridad="Media"
                 )
 
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')

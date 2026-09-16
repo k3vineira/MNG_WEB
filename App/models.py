@@ -622,7 +622,7 @@ class Seguimiento(models.Model):
 
 class Notificacion(models.Model):
     id = models.AutoField(primary_key=True)
-    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='notificaciones', verbose_name='Reserva')
+    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE, related_name='notificaciones', verbose_name='Reserva', null=True, blank=True)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notificaciones', verbose_name='Usuario')
     mensaje = models.TextField(verbose_name='Mensaje de la Notificación')
     leido = models.BooleanField(default=False, verbose_name='¿Leído?')

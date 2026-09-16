@@ -1,5 +1,6 @@
 """
-Utilidades del núcleo del proyecto: plantillas de correo HTML, envío de emails, generación de PDFs y notificaciones.
+Utilidades del núcleo del proyecto: plantillas de correo HTML, envío de emails, 
+generación de PDFs, registro en Bitácora y creación de Notificaciones.
 """
 
 import base64
@@ -9,11 +10,10 @@ import os
 from datetime import datetime, time
 from functools import wraps
 
-logger = logging.getLogger(__name__)
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.mail import EmailMultiAlternatives, send_mail
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -22,12 +22,17 @@ from pypdf import PdfReader, PdfWriter
 import qrcode
 from xhtml2pdf import pisa
 
+logger = logging.getLogger(__name__)
+
+
+# ==========================================
+# DECORADORES Y MIXINS
+# ==========================================
 
 def solo_turistas_requerido(view_func):
     """
     Decorador para vistas públicas de reserva: permite el acceso a usuarios no autenticados
-    (para ver y pedir iniciar sesión) o a clientes/turistas.
-    Redirige a los administradores a su dashboard si intentan reservar.
+    o a clientes/turistas. Redirige a administradores a su dashboard.
     """
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
@@ -37,6 +42,106 @@ def solo_turistas_requerido(view_func):
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
+
+class StaffRequiredMixin(UserPassesTestMixin):
+    """
+    Mixin para asegurar que el usuario esté autenticado y sea administrador.
+    """
+    def test_func(self):
+        return self.request.user.is_authenticated and (
+            self.request.user.is_staff or getattr(self.request.user, 'rol', None) == 1
+        )
+
+
+# ==========================================
+# NOTIFICACIONES Y BITÁCORA
+# ==========================================
+
+def crear_notificacion_sistema(usuario, mensaje, tipo="Reserva", prioridad="media", reserva=None):
+    """
+    Crea un registro de notificación en el modelo Notificacion para reflejarse en la UI (campana).
+    """
+    if usuario and usuario.is_authenticated:
+        try:
+            from App.models import Notificacion
+            return Notificacion.objects.create(
+                usuario=usuario,
+                reserva=reserva,
+                mensaje=mensaje,
+                tipo=tipo,
+                prioridad=prioridad,
+                leido=False
+            )
+        except Exception as e:
+            logger.error(f"Error al crear la notificación en BD: {e}")
+    return None
+
+
+def registrar_bitacora(
+    usuario=None,
+    accion='UPDATE',
+    modulo='',
+    registro_id=None,
+    descripcion='',
+    seguimiento=None,
+    reserva=None,
+    pqrs=None,
+    pago=None,
+    ip_origen=None,
+    **kwargs
+):
+    """
+    Crea una entrada en el registro de Bitácora del sistema para auditoría interna.
+    """
+    try:
+        from App.models import Bitacora
+        return Bitacora.objects.create(
+            usuario=usuario,
+            seguimiento=seguimiento,
+            reserva=reserva,
+            pqrs=pqrs,
+            pago=pago,
+            accion=accion,
+            modulo=modulo,
+            registro_id=registro_id,
+            ip_origen=ip_origen,
+            descripcion=descripcion
+        )
+    except Exception as e:
+        logger.error(f"Error registrando en Bitacora: {e}")
+        return None
+
+
+def lista_notificaciones_global(request):
+    """
+    Context processor para inyectar las notificaciones globales en el layout/campana.
+    """
+    if hasattr(request, 'user') and request.user.is_authenticated:
+        from App.models import Notificacion
+
+        alertas = Notificacion.objects.filter(
+            usuario=request.user
+        ).select_related('reserva', 'usuario').order_by('-fecha_creacion')[:10]
+
+        contador_no_leidas = Notificacion.objects.filter(
+            usuario=request.user,
+            leido=False
+        ).count()
+
+        return {
+            'notificaciones_globales': alertas,
+            'contador_notificaciones': contador_no_leidas,
+        }
+
+    return {
+        'notificaciones_globales': [],
+        'contador_notificaciones': 0,
+    }
+
+
+# ==========================================
+# PLANTILLAS DE CORREO Y ENVÍO DE EMAILS
+# ==========================================
 
 def plantilla_reserva_html(
     nombre_cliente,
@@ -115,8 +220,6 @@ def plantilla_reserva_html(
             <td style="padding: 12px 0; text-align: right; font-weight: 600; color: #1a202c; font-size: 16px;">${monto_total}</td>
         </tr>
         """
-
-    reserva_num_texto = f" #{reserva_id}" if reserva_id else ""
 
     return f"""
     <html>
@@ -209,7 +312,7 @@ def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"
 
 
 def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_contenido):
-    """Envía un correo electrónico con contenido HTML desde la cuenta configurada de manera segura."""
+    """Envía un correo electrónico con contenido HTML desde la cuenta configurada."""
     if not destinatario:
         return False
     try:
@@ -226,6 +329,10 @@ def enviar_correo_html_monagua(asunto, mensaje_texto, destinatario, html_conteni
         logger.error("Error al enviar correo electrónico a %s: %s", destinatario, e)
         return False
 
+
+# ==========================================
+# GENERACIÓN DE PDFS Y QR
+# ==========================================
 
 def get_image_base64(relative_path):
     """Retorna la representación en base64 de una imagen estática local."""
@@ -261,8 +368,8 @@ def generar_factura_pdf_bytes(reserva, request=None, password=None):
     comprobante = reserva.pago if (hasattr(reserva, 'pago') and reserva.pago.estado_transaccion == 'aprobado') else None
     metodo_pago = comprobante.banco_origen if comprobante else "Transferencia Bancaria"
 
-    documento_tipo = reserva.usuario.tipo_documento or "Documento"
-    documento_num = reserva.usuario.numero_documento or "—"
+    documento_tipo = getattr(reserva.usuario, 'tipo_documento', 'Documento') or "Documento"
+    documento_num = getattr(reserva.usuario, 'numero_documento', '—') or "—"
 
     if request:
         abs_url = request.build_absolute_uri(reverse('ver_factura', args=[reserva.id]))
@@ -281,7 +388,7 @@ def generar_factura_pdf_bytes(reserva, request=None, password=None):
 
     context = {
         'nro_factura': f"FAC-1000{reserva.id}",
-        'cliente_nombre': reserva.usuario.nombre_completo,
+        'cliente_nombre': getattr(reserva.usuario, 'nombre_completo', reserva.usuario.username),
         'cliente_email': reserva.usuario.email,
         'cliente_documento_tipo': documento_tipo,
         'cliente_documento': documento_num,
@@ -311,14 +418,14 @@ def generar_factura_pdf_bytes(reserva, request=None, password=None):
             writer.write(pdf_encrypted)
             return pdf_encrypted.getvalue()
         except Exception as e:
-            print(f"Error encrypting PDF: {e}")
+            logger.error(f"Error encrypting PDF: {e}")
 
     return pdf_bytes
 
 
 def enviar_correo_confirmacion_con_factura(reserva, request=None):
     """Genera la factura PDF encriptada con el número de documento y envía el correo."""
-    password = reserva.usuario.numero_documento
+    password = getattr(reserva.usuario, 'numero_documento', None)
     if password:
         password = str(password).strip()
 
@@ -356,153 +463,3 @@ def enviar_correo_confirmacion_con_factura(reserva, request=None):
     email.attach(pdf_filename, pdf_bytes, "application/pdf")
 
     email.send(fail_silently=False)
-
-
-def crear_notificacion_sistema(
-    usuario,
-    accion=None,
-    tabla_afectada="Sistema",
-    observacion="",
-    valor_anterior="",
-    nuevo_valor="",
-    titulo=None,
-    mensaje=None,
-    tipo=None,
-):
-    """Crea un registro de notificación en el sistema usando el modelo Notificacion."""
-    if usuario and usuario.is_authenticated:
-        titulo_final = titulo or accion or "Notificación del sistema"
-        mensaje_final = mensaje or observacion or f"Acción realizada en {tabla_afectada}"
-        tipo_final = tipo or "info"
-
-        try:
-            # Reemplaza 'nombre_de_tu_app' por el nombre de tu aplicación Django (ej. 'experiencias', 'core', etc.)
-            Notificacion = apps.get_model('nombre_de_tu_app', 'Notificacion')
-
-            return Notificacion.objects.create(
-                usuario=usuario,
-                titulo=titulo_final,
-                mensaje=mensaje_final,
-                tipo=tipo_final,
-            )
-        except LookupError:
-            print("El modelo 'Notificacion' no se encuentra registrado.")
-        except Exception as e:
-            print(f"Error al crear la notificación: {e}")
-
-    return None
-def registrar_bitacora(
-    usuario=None,
-    accion='UPDATE',
-    modulo='',
-    registro_id=None,
-    descripcion='',
-    seguimiento=None,
-    reserva=None,
-    pqrs=None,
-    pago=None,
-    ip_origen=None,
-    **kwargs
-):
-    """
-    Crea una entrada en el registro de Bitácora del sistema vinculando entidades
-    relevantes (Seguimiento, Reserva, PQRS, Pago, Usuario).
-    """
-    from App.models import Bitacora
-    try:
-        return Bitacora.objects.create(
-            usuario=usuario,
-            seguimiento=seguimiento,
-            reserva=reserva,
-            pqrs=pqrs,
-            pago=pago,
-            accion=accion,
-            modulo=modulo,
-            registro_id=registro_id,
-            ip_origen=ip_origen,
-            descripcion=descripcion
-        )
-    except Exception as e:
-        import logging
-        logging.getLogger(__name__).error(f"Error registrando en Bitacora: {e}")
-        return None
-
-
-def crear_notificacion_sistema(
-    usuario=None,
-    accion="NOTIFICACION",
-    tabla_afectada="",
-    observacion="",
-    valor_anterior=None,
-    nuevo_valor=None,
-    titulo=None,
-    mensaje=None,
-    tipo=None,
-    seguimiento=None,
-    reserva=None,
-    pqrs=None,
-    pago=None,
-    registro_id=None,
-    ip_origen=None,
-    **kwargs
-):
-    """
-    Wrapper compatible para registrar notificaciones y eventos del sistema en Bitácora.
-    Acepta tanto la firma por parámetros de módulo/tabla como la firma título/mensaje.
-    """
-    detalle = observacion or mensaje or titulo or ""
-    modulo_final = tabla_afectada or tipo or "Sistema"
-
-    return registrar_bitacora(
-        usuario=usuario,
-        accion=accion,
-        modulo=modulo_final,
-        registro_id=registro_id,
-        descripcion=detalle,
-        seguimiento=seguimiento,
-        reserva=reserva,
-        pqrs=pqrs,
-        pago=pago,
-        ip_origen=ip_origen
-    )
-
-
-from django.contrib.auth.mixins import UserPassesTestMixin
-
-class StaffRequiredMixin(UserPassesTestMixin):
-    """
-    Mixin para asegurar que el usuario esté autenticado y sea administrador (is_staff o rol ADMIN).
-    """
-    def test_func(self):
-        return self.request.user.is_authenticated and (
-            self.request.user.is_staff or getattr(self.request.user, 'rol', None) == 1
-        )
-
-
-def lista_notificaciones_global(request):
-    """
-    Context processor para inyectar notificaciones globales desde el modelo Bitacora.
-    """
-    if hasattr(request, 'user') and request.user.is_authenticated:
-        from App.models import Bitacora
-        # Trae las últimas 5 notificaciones/bitácoras para la campanita
-        alertas = Bitacora.objects.filter(
-            usuario=request.user
-        ).order_by('-fecha_registro', '-id')[:5]
-
-        # Conteo total de registros del usuario
-        contador = Bitacora.objects.filter(
-            usuario=request.user
-        ).count()
-
-        return {
-            'notificaciones_globales': alertas,
-            'contador_notificaciones': contador,
-        }
-
-    return {
-        'notificaciones_globales': [],
-        'contador_notificaciones': 0,
-    }
-
-

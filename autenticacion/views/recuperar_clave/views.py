@@ -160,9 +160,9 @@ def restablecer_clave_confirmar_vista(request, uidb64, token):
 
             crear_notificacion_sistema(
                 usuario=usuario,
-                accion="CAMBIO DE CONTRASEÑA",
-                tabla_afectada="Usuarios",
-                observacion=f"El usuario '{usuario.username}' restableció su contraseña exitosamente."
+                mensaje=f"El usuario '{usuario.username}' ha restablecido su contraseña exitosamente.",
+                tipo="Autenticación",
+                prioridad="Alta"
             )
             return redirect('clave_guardada')
 

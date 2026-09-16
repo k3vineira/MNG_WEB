@@ -77,11 +77,9 @@ def guias_guardar(request):
 
             crear_notificacion_sistema(
                 usuario=request.user,
-                accion="GUÍA MODIFICADO",
-                tabla_afectada="Usuario",
-                observacion=f"Se actualizaron los datos del guía '{user_obj.get_full_name() or user_obj.username}'.",
-                valor_anterior="N/A",
-                nuevo_valor=f"Guía: {user_obj.get_full_name()}, Licencia: {tarjeta_profesional}"
+                mensaje=f"Se ha actualizado la información del guía turístico: '{user_obj.get_full_name() or user_obj.username}'.",
+                tipo="Guía Turístico",
+                prioridad="media"
             )
             messages.success(request, f"Guía '{user_obj.get_full_name() or user_obj.username}' actualizado correctamente.")
         else:
@@ -121,11 +119,9 @@ def guias_guardar(request):
 
             crear_notificacion_sistema(
                 usuario=request.user,
-                accion="NUEVO GUÍA REGISTRADO",
-                tabla_afectada="Usuario",
-                observacion=f"Se dio de alta al guía turístico '{user_obj.get_full_name() or user_obj.username}'.",
-                valor_anterior="Ninguno (Nuevo Registro)",
-                nuevo_valor=f"Guía: {user_obj.get_full_name()}, Licencia: {tarjeta_profesional}"
+                mensaje=f"Se ha registrado un nuevo guía turístico: '{user_obj.get_full_name() or user_obj.username}'.",
+                tipo="Guía Turístico",
+                prioridad="media"
             )
             messages.success(request, f"Guía '{user_obj.get_full_name() or user_obj.username}' registrado exitosamente.")
 
@@ -154,11 +150,9 @@ def asignar_rol_guia(request, id):
 
         crear_notificacion_sistema(
             usuario=request.user,
-            accion=accion,
-            tabla_afectada="Usuario",
-            observacion=msg,
-            valor_anterior="N/A",
-            nuevo_valor=f"Rol: {user_obj.get_rol_display()}"
+            mensaje="Alteración de rol de usuario",
+            tipo="Guía Turístico",
+            prioridad="media"
         )
         messages.success(request, msg)
 

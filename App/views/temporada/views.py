@@ -83,11 +83,9 @@ class TemporadaCreateView(StaffRequiredMixin, CreateView):
         response = super().form_valid(form)
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="NUEVA TEMPORADA CREADA",
-            tabla_afectada="Temporadas",
-            observacion=f"Se ha registrado con éxito la temporada: '{self.object.nombre}'.",
-            valor_anterior="Ninguno (Registro Nuevo)",
-            nuevo_valor=f"Nombre: {self.object.nombre}, Inicio: {self.object.fecha_inicio}, Fin: {self.object.fecha_fin}"
+            mensaje=f"Se ha creado una nueva temporada: '{self.object.nombre}' con fecha de inicio {self.object.fecha_inicio} y fecha de fin {self.object.fecha_fin}.",
+            tipo="Temporada",
+            prioridad="Media",
         )
         return response
 
@@ -115,11 +113,9 @@ class TemporadaUpdateView(StaffRequiredMixin, UpdateView):
 
         crear_notificacion_sistema(
             usuario=self.request.user,
-            accion="TEMPORADA MODIFICADA",
-            tabla_afectada="Temporadas",
-            observacion=f"La temporada '{self.object.nombre}' ha sido actualizada correctamente.",
-            valor_anterior=valor_viejo,
-            nuevo_valor=valor_nuevo
+            mensaje=f"Se ha editado la temporada '{self.object.nombre}'. Detalles previos: {valor_viejo}. Nuevos detalles: {valor_nuevo}.",
+            tipo="Temporada",
+            prioridad="Media",
         )
         return response
 
@@ -146,10 +142,8 @@ class TemporadaDeleteView(StaffRequiredMixin, DeleteView):
 
         crear_notificacion_sistema(
             usuario=request.user,
-            accion="TEMPORADA ELIMINADA",
-            tabla_afectada="Temporadas",
-            observacion=f"Se ha eliminado del sistema la temporada: '{nombre_temporada}'.",
-            valor_anterior=valor_viejo,
-            nuevo_valor="Registro Eliminado"
+            mensaje=f"Se ha eliminado la temporada '{nombre_temporada}'. Detalles previos: {valor_viejo}.",
+            tipo="Temporada",
+            prioridad="Media"
         )
         return response
