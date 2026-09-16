@@ -132,3 +132,72 @@ def mis_pqrs_view(request):
         'form': form,
     }
     return render(request, 'admin/pqrs/mis_pqrs.html', context)
+
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from django.conf import settings
+
+def pqrs_publica(request):
+    """Renderiza el formulario público de PQRS para visitantes anónimos."""
+    form = PqrsForm()
+    return render(request, 'public/pqrs.html', {'form': form})
+
+def api_guardar_pqrs(request):
+    """Recibe la solicitud POST de PQRS, guarda en BD y envía email."""
+    if request.method == 'POST':
+        # Validación Anti-Spam (Honeypot)
+        honeypot = request.POST.get('website', '')
+        if honeypot:
+            # Es un bot, lo ignoramos devolviendo éxito silencioso
+            return JsonResponse({'status': 'success', 'message': 'Recibido'}, status=200)
+            
+        user = request.user if request.user.is_authenticated else None
+        form = PqrsForm(request.POST, user=user)
+        
+        if form.is_valid():
+            nueva_pqrs = form.save(commit=False)
+            if user:
+                nueva_pqrs.usuario = user
+            nueva_pqrs.estado = 'abierto'
+            nueva_pqrs.save() # Aquí se generará el radicado
+            
+            # Asociar reserva si la hay
+            reserva_seleccionada = form.cleaned_data.get('reserva')
+            if reserva_seleccionada:
+                Seguimiento.objects.create(
+                    pqrs=nueva_pqrs,
+                    usuario=user,
+                    reserva=reserva_seleccionada
+                )
+
+            # Enviar correo
+            destinatario = user.email if user else nueva_pqrs.correo
+            nombre_destinatario = user.get_full_name() or user.username if user else nueva_pqrs.nombre_completo
+            
+            if destinatario:
+                html_message = render_to_string('emails/pqrs_radicada.html', {
+                    'nombre': nombre_destinatario,
+                    'pqrs': nueva_pqrs
+                })
+                email = EmailMessage(
+                    subject=f"Confirmación de Solicitud PQRS - Radicado: {nueva_pqrs.radicado}",
+                    body=html_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[destinatario]
+                )
+                email.content_subtype = "html"
+                email.send(fail_silently=True)
+                
+            return JsonResponse({
+                'status': 'success', 
+                'radicado': nueva_pqrs.radicado,
+                'message': f"Tu solicitud ha sido radicada exitosamente con el número {nueva_pqrs.radicado}."
+            })
+        else:
+            return JsonResponse({
+                'status': 'error',
+                'errors': form.errors
+            }, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)

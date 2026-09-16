@@ -53,7 +53,8 @@
             <table id="tablaPQRS" class="table table-hover align-middle mb-0 u-style-6d567387">
                 <thead class="table-light text-muted">
                     <tr>
-                        <th scope="col" class="fw-bold ps-3">Solicitante</th>
+                        <th scope="col" class="fw-bold ps-3">Radicado</th>
+                        <th scope="col" class="fw-bold">Solicitante</th>
                         <th scope="col" class="fw-bold">Tipo</th>
                         <th scope="col" class="fw-bold">Reserva</th>
                         <th scope="col" class="fw-bold">Asunto</th>
@@ -63,8 +64,15 @@
                 <tbody>
                     {% for pqr in todas_las_pqrs %}
                     <tr>
-                        <td class="ps-3">
-                            <h6 class="fw-bold text-dark mb-0">{{ pqr.cliente.usuario.first_name }} {{ pqr.cliente.usuario.last_name }}</h6>
+                        <td class="ps-3 fw-bold text-primary">{{ pqr.radicado|default:"N/A" }}</td>
+                        <td>
+                            {% if pqr.usuario %}
+                                <h6 class="fw-bold text-dark mb-0">{{ pqr.usuario.get_full_name|default:pqr.usuario.username }}</h6>
+                                <small class="text-muted">{{ pqr.usuario.email }}</small>
+                            {% else %}
+                                <h6 class="fw-bold text-dark mb-0">{{ pqr.nombre_completo }} <span class="badge bg-secondary ms-1">Anónimo</span></h6>
+                                <small class="text-muted">{{ pqr.correo }}</small>
+                            {% endif %}
                         </td>
                         <td>
                             {% if pqr.tipo == 'Queja' or pqr.tipo == 'Reclamo' %}
@@ -127,7 +135,12 @@
                     <div class="card border border-light shadow-sm rounded-4 p-3">
                         <div class="d-flex justify-content-between align-items-start mb-2 border-bottom pb-2">
                             <div>
-                                <h6 class="fw-bold text-dark mb-1">{{ pqr.cliente.usuario.first_name }} {{ pqr.cliente.usuario.last_name }}</h6>
+                                <span class="badge bg-primary mb-1">{{ pqr.radicado|default:"N/A" }}</span>
+                                {% if pqr.usuario %}
+                                    <h6 class="fw-bold text-dark mb-1">{{ pqr.usuario.get_full_name|default:pqr.usuario.username }}</h6>
+                                {% else %}
+                                    <h6 class="fw-bold text-dark mb-1">{{ pqr.nombre_completo }} <span class="badge bg-secondary ms-1">Anónimo</span></h6>
+                                {% endif %}
                                 <p class="text-muted small mb-0">{{ pqr.asunto|truncatechars:40 }}</p>
                             </div>
                             <div>

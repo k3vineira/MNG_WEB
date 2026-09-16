@@ -285,21 +285,25 @@
         <div class="col-12 col-xl-4">
             <div class="card border border-light shadow-sm rounded-4 p-3 p-xl-4 h-100 bg-white">
                 <h5 class="fw-bold text-dark mb-4">
-                    <i class="bi bi-headset text-danger me-2"></i>Estado de PQRS
+                    <i class="bi bi-headset text-danger me-2"></i>Estadísticas de PQRS
                 </h5>
-                <canvas id="chartPqrsEstados" class="w-100"></canvas>
-                <div class="row g-2 text-center mt-3">
-                    <div class="col-4">
+                <canvas id="chartPqrsEstados" class="w-100 mb-3"></canvas>
+                <div class="row g-2 text-center border-top pt-3">
+                    <div class="col-6 mb-2">
                         <span class="d-block fw-bold text-primary">{{ pqrs_abiertas|default:"0" }}</span>
                         <small class="opacity-75">Abiertas</small>
                     </div>
-                    <div class="col-4">
-                        <span class="d-block fw-bold text-warning">{{ pqrs_en_gestion|default:"0" }}</span>
-                        <small class="opacity-75">En gestión</small>
-                    </div>
-                    <div class="col-4">
+                    <div class="col-6 mb-2">
                         <span class="d-block fw-bold text-success">{{ pqrs_cerradas|default:"0" }}</span>
                         <small class="opacity-75">Resueltas</small>
+                    </div>
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-warning">{{ pqrs_quejas|add:pqrs_reclamos|default:"0" }}</span>
+                        <small class="opacity-75">Quejas/Reclamos</small>
+                    </div>
+                    <div class="col-6">
+                        <span class="d-block fw-bold text-info">{{ pqrs_anonimos|default:"0" }}</span>
+                        <small class="opacity-75">Anónimos</small>
                     </div>
                 </div>
             </div>
@@ -534,26 +538,42 @@
                             <h6 class="fw-bold text-dark mb-3">Balance Operativo de Casos</h6>
                             <div class="vstack gap-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small opacity-75"><i
-                                            class="bi bi-envelope-open text-primary me-2"></i>Casos Abiertos:</span>
-                                    <span class="badge bg-primary text-white font-monospace">{{ pqrs_abiertas|default:"0" }}</span>
+                                    <span class="small opacity-75"><i class="bi bi-envelope-open text-primary me-2"></i>Abiertos / En Proceso:</span>
+                                    <span class="badge bg-primary text-white font-monospace">{{ pqrs_abiertas|add:pqrs_en_gestion|default:"0" }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small opacity-75"><i class="bi bi-gear-fill text-warning me-2"></i>En
-                                         Procesamiento:</span>
-                                    <span class="badge bg-warning text-dark font-monospace">{{ pqrs_en_gestion|default:"0" }}</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small opacity-75"><i
-                                            class="bi bi-check-all text-success me-2"></i>Cerrados / Resueltos:</span>
+                                    <span class="small opacity-75"><i class="bi bi-check-all text-success me-2"></i>Cerrados / Resueltos:</span>
                                     <span class="badge bg-success text-white font-monospace">{{ pqrs_cerradas|default:"0" }}</span>
                                 </div>
                                 <hr class="my-1">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="small opacity-75 fw-bold">Total de PQRS:</span>
-                                    <span class="badge bg-dark text-white font-monospace">{{ pqrs_total|default:"0" }}</span>
+                                    <span class="small opacity-75"><i class="bi bi-person-fill text-info me-2"></i>Usuarios Registrados:</span>
+                                    <span class="badge bg-info text-dark font-monospace">{{ pqrs_registrados|default:"0" }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small opacity-75"><i class="bi bi-incognito text-secondary me-2"></i>Visitantes Anónimos:</span>
+                                    <span class="badge bg-secondary text-white font-monospace">{{ pqrs_anonimos|default:"0" }}</span>
+                                </div>
+                                <hr class="my-1">
+                                <div class="row g-2 text-center small mb-2">
+                                    <div class="col-4 border-end">
+                                        <div class="fw-bold text-dark">{{ pqrs_peticiones|default:"0" }}</div>
+                                        <div class="opacity-75" style="font-size: 0.75rem;">Peticiones</div>
+                                    </div>
+                                    <div class="col-4 border-end">
+                                        <div class="fw-bold text-danger">{{ pqrs_quejas|add:pqrs_reclamos|default:"0" }}</div>
+                                        <div class="opacity-75" style="font-size: 0.75rem;">Quejas/Rec</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="fw-bold text-success">{{ pqrs_sugerencias|default:"0" }}</div>
+                                        <div class="opacity-75" style="font-size: 0.75rem;">Sugerencias</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded">
+                                    <span class="small fw-bold text-dark">Total Histórico:</span>
+                                    <span class="badge bg-dark text-white font-monospace">{{ pqrs_total|default:"0" }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center px-2">
                                     <span class="small opacity-75">Tasa de resolución:</span>
                                     <span class="small fw-bold text-success">{{ pqrs_tasa_resolucion|default:"0" }}%</span>
                                 </div>
@@ -736,6 +756,10 @@
     data-pqrs-abiertas="{{ pqrs_abiertas|default:0 }}"
     data-pqrs-gestion="{{ pqrs_en_gestion|default:0 }}"
     data-pqrs-cerradas="{{ pqrs_cerradas|default:0 }}"
+    data-pqrs-peticiones="{{ pqrs_peticiones|default:0 }}"
+    data-pqrs-quejas="{{ pqrs_quejas|default:0 }}"
+    data-pqrs-reclamos="{{ pqrs_reclamos|default:0 }}"
+    data-pqrs-sugerencias="{{ pqrs_sugerencias|default:0 }}"
     data-reservas-conf="{{ reservas_confirmadas|default:0 }}"
     data-reservas-pend="{{ reservas_pendientes|default:0 }}"
     data-reservas-can="{{ reservas_canceladas|default:0 }}"

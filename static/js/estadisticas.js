@@ -87,6 +87,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const reservasPend = safeParse('data-reservas-pend', 0);
     const reservasCan = safeParse('data-reservas-can', 0);
     const reservasComp = safeParse('data-reservas-comp', 0);
+
+    const pqrsPeticiones = safeParse('data-pqrs-peticiones', 0);
+    const pqrsQuejas = safeParse('data-pqrs-quejas', 0);
+    const pqrsReclamos = safeParse('data-pqrs-reclamos', 0);
+    const pqrsSugerencias = safeParse('data-pqrs-sugerencias', 0);
     
     const destinosLabels = safeParse('data-destinos-labels', []);
     const destinosDatos = safeParse('data-destinos-datos', []);
@@ -255,19 +260,23 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // 5. PQRS Estados
+    // 5. PQRS Estados y Tipos
     const chartPqrsEstados = document.getElementById("chartPqrsEstados");
     if (chartPqrsEstados) {
         new Chart(chartPqrsEstados, {
             type: "polarArea",
             data: {
-                labels: ["Abiertas", "En Gestión", "Resueltas"],
+                labels: ["Abiertas", "En Gestión", "Resueltas", "Peticiones", "Quejas", "Reclamos", "Sugerencias"],
                 datasets: [{
-                    data: [pqrsAbiertas, pqrsGestion, pqrsCerradas],
+                    data: [pqrsAbiertas, pqrsGestion, pqrsCerradas, pqrsPeticiones, pqrsQuejas, pqrsReclamos, pqrsSugerencias],
                     backgroundColor: [
                         alphaColor(C.blue, 0.7),
                         alphaColor(C.yellow, 0.7),
-                        alphaColor(C.green, 0.7)
+                        alphaColor(C.green, 0.7),
+                        alphaColor(C.cyan, 0.7),
+                        alphaColor(C.red, 0.7),
+                        alphaColor(C.orange, 0.7),
+                        alphaColor(C.purple, 0.7)
                     ],
                     borderWidth: 2,
                     borderColor: "#ffffff"
@@ -275,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 responsive: true,
-                plugins: { legend: { position: "bottom", labels: { boxWidth: 10, padding: 12 } } }
+                plugins: { legend: { position: "right", labels: { boxWidth: 10, padding: 12 } } }
             }
         });
     }
