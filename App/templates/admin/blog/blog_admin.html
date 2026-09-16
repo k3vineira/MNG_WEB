@@ -116,10 +116,10 @@
                         </div>
 
                         <div class="d-flex gap-2 pt-2">
-                            <a href="#" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill">
+                            <a href="{% url 'editar_blog' entrada.id %}" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill">
                                 <i class="bi bi-pencil me-1"></i> Editar
                             </a>
-                            <a href="#" class="btn btn-sm btn-outline-danger flex-fill fw-bold rounded-pill">
+                            <a href="{% url 'eliminar_blog' entrada.id %}" class="btn btn-sm btn-outline-danger flex-fill fw-bold rounded-pill">
                                 <i class="bi bi-trash me-1"></i> Eliminar
                             </a>
                         </div>

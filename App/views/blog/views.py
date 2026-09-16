@@ -32,7 +32,7 @@ def blog(request):
     page_number = request.GET.get('page')
     blogs = paginator.get_page(page_number)
     context = {'blogs': blogs}
-    return render(request, 'blog.html', context)
+    return render(request, 'admin/blog/blog.html', context)
 
 
 def detalle_blog(request, id):
@@ -53,7 +53,7 @@ def detalle_blog(request, id):
 class BlogListView(StaffRequiredMixin, ListView):
     """Listado administrativo y métricas de publicaciones de blog."""
     model = Blog
-    template_name = 'admin/blog/blog.html'
+    template_name = 'admin/blog/blog_admin.html'
     context_object_name = 'blogs'
     ordering = ['-fecha_publicacion', '-id']
 

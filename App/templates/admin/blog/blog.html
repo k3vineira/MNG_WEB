@@ -1,176 +1,212 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block titulo %}Blog & Experiencias en Mongua | Monagua{% endblock %}
+
 {% block content %}
-<div class="container-fluid pt-1 pb-2 px-4" style="margin-top: 60px !important; position: relative; z-index: 1000;">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item fs-5 fw-semibold">
-                <a href="{% url 'inicio' %}" class="text-dark text-decoration-none" style="color:  #000000af !important;">Inicio</a>
+<!-- ── Migas de Pan (Breadcrumb Navigation) ── -->
+<div class="container pt-5 mt-4 mt-lg-5 mb-3" data-aos="fade-down" data-aos-duration="600">
+    <nav aria-label="breadcrumb" class="bg-white rounded-pill px-4 py-2 shadow-sm border border-light d-inline-block">
+        <ol class="breadcrumb mb-0 align-items-center small fw-medium">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}" class="text-decoration-none text-muted d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-house-door-fill text-success"></i>
+                    <span>Inicio</span>
+                </a>
             </li>
-            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color:  #000000af !important;">
-                Blog
+            {% if request.GET.from == 'panel' or 'panel-rapido' in request.META.HTTP_REFERER %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'panel_rapido' %}" class="text-decoration-none text-muted d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-compass-fill text-success"></i>
+                    <span>Panel Rápido</span>
+                </a>
+            </li>
+            {% endif %}
+            <li class="breadcrumb-item active fw-bold text-dark d-inline-flex align-items-center gap-1" aria-current="page">
+                <i class="bi bi-chat-quote-fill me-1 text-success"></i>
+                <span>Blog y Experiencias</span>
             </li>
         </ol>
     </nav>
 </div>
-<header class="position-relative overflow-hidden"
-        style="background: url('{% static 'img/carousel/img1.webp' %}') center/cover no-repeat; min-height: 70vh;">
-    <div class="container">
-        <div class="row justify-content-center align-items-center text-center text-white u-style-b4553598">
-            <div class="col-lg-8">
-                <h1 class="display-1 fw-bold mb-5">
-                    El Corazón Verde de Mongua
+
+<!-- ── 1. Hero Section (Bootstrap 5) ── -->
+<header class="position-relative overflow-hidden text-white py-5 rounded-4 container shadow-lg mb-5 bg-dark" data-aos="fade-up" data-aos-duration="800">
+    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-25">
+        <img src="{% static 'img/carousel/img1.webp' %}" class="w-100 h-100 object-fit-cover" alt="Mongua">
+    </div>
+    <div class="container py-5 position-relative">
+        <div class="row align-items-center justify-content-center text-center">
+            <div class="col-lg-9" data-aos="zoom-in" data-aos-delay="100">
+                <span class="badge bg-success bg-opacity-25 text-white border border-success border-opacity-50 px-3 py-2 rounded-pill fw-bold mb-3 d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-journal-bookmark-fill text-success"></i> BITÁCORA & AVENTURAS DE MONGUA
+                </span>
+                <h1 class="display-4 fw-bold text-white mb-3">
+                    Historias que Inspiran a Explorar
                 </h1>
-                <a href="#historias" class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow">
-                    Explorar Historias
-                </a>
+                <p class="lead text-white text-opacity-90 fs-5 mb-4 mx-auto col-lg-10">
+                    Crónicas locales, senderos ancestrales, secretos del páramo de Ocetá y testimonios de viajeros apasionados por la naturaleza.
+                </p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="#historias" class="btn btn-success rounded-pill px-4 py-3 fw-bold shadow-sm d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-book-half"></i> Explorar Artículos
+                    </a>
+                    <a href="{% url 'tours' %}" class="btn btn-outline-light rounded-pill px-4 py-3 fw-semibold d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-compass"></i> Ver Tours Disponibles
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </header>
 
-<section class="py-5 bg-light" id="historias">
-    <div class="container">
 
-        <div class="text-center mb-5">
-            <h2 class="display-4 fw-bold text-dark mb-2">
-                Historias de Mongua
-            </h2>
-            <p class="text-secondary fs-5 col-lg-7 mx-auto">
-                Descubre paisajes, cultura y experiencias únicas.
-            </p>
-        </div>
-
-        <div class="row g-4">
-
-            {% for post in blogs %}
-            <div class="col-md-6 col-lg-4">
-                
-                <div class="card border-0 shadow-lg rounded-5 overflow-hidden h-100 position-relative bg-white text-decoration-none">
-
-                    <div class="position-relative">
-                        <div class="ratio ratio-4x3">
-                            {% if post.imagen_destacada %}
-                                <img src="{{ post.imagen_destacada.url }}"
-                                     class="object-fit-cover w-100 h-100"
-                                     alt="{{ post.titulo }}"
-                                     loading="lazy">
-                            {% else %}
-                                <img src="{% static 'img/lagunanegra.webp' %}"
-                                     class="object-fit-cover w-100 h-100"
-                                     alt="Imagen por defecto"
-                                     loading="lazy">
-                            {% endif %}
-                        </div>
-
-                        <div class="position-absolute top-0 start-0 m-3">
-                            <span class="badge bg-dark bg-opacity-75 px-3 py-2 rounded-pill text-white small fw-bold">
-                                📅 {{ post.fecha_publicacion|date:"d M, Y" }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="card-body d-flex flex-column p-4 justify-content-between">
-                        
-                        <div>
-                            <h3 class="h4 fw-bold text-dark mb-3">
-                                {{ post.titulo }}
-                            </h3>
-
-                            <p class="text-muted mb-4 lh-relaxed text-start u-style-85ae1781">
-                                {{ post.contenido|truncatewords:20 }}
-                            </p>
-                        </div>
-                        
-                        <div>
-                            <hr class="text-muted opacity-25 mb-4">
-
-                            <div class="d-flex align-items-center justify-content-between">
-                                
-                               <div class="d-flex align-items-center justify-content-between">
+<section class="container pb-5" id="historias">
+    <div class="row justify-content-center">
+        
     
-                                <a href="{{ post.get_absolute_url }}" class="btn btn-outline-success btn-sm rounded-pill px-4 py-2 fw-bold text-uppercase tracking-wider stretched-link shadow-sm d-inline-flex align-items-center text-decoration-none">
-                                        Leer Más
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short ms-1" viewBox="0 0 16 16">
-                                     <path fill-rule="evenodd" d="4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8"/>
-                                     </svg>
-    |                               </a> 
-                                  </div>
+        <div class="col-12">
+            
+            <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">Publicaciones Recientes</h3>
+                    <small class="text-muted">Descubre relatos auténticos compartidos por nuestra comunidad</small>
+                </div>
+                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+                    <i class="bi bi-journal-text text-success me-1"></i> {{ blogs|length }} Artículos
+                </span>
+            </div>
+
+            <!-- Listado de Artículos: col-lg-4 asegura 3 por fila -->
+            <div class="row g-4 justify-content-center">
+                {% for post in blogs %}
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-duration="650" data-aos-delay="{% cycle '50' '150' %}">
+                    <div class="card h-100 shadow-sm border border-light-subtle rounded-4 overflow-hidden d-flex flex-column justify-content-between position-relative" style="background-color: #f8f9fa;">
+                        
+                        <!-- Imagen con Ratio y Badges -->
+                        <div class="position-relative overflow-hidden">
+                            <div class="ratio ratio-16x9">
+                                {% if post.imagen_destacada %}
+                                    <img src="{{ post.imagen_destacada.url }}" class="card-img-top object-fit-cover" alt="{{ post.titulo }}" loading="lazy">
+                                {% else %}
+                                    <img src="{% static 'img/lagunanegra.webp' %}" class="card-img-top object-fit-cover" alt="{{ post.titulo }}" loading="lazy">
+                                {% endif %}
+                            </div>
+
+                            <!-- Insignias -->
+                            <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center">
+                                <span class="badge bg-dark bg-opacity-75 text-white px-3 py-2 rounded-pill shadow-sm small fw-semibold">
+                                    <i class="bi bi-calendar3 text-success me-1"></i>{{ post.fecha_publicacion|date:"d M, Y" }}
+                                </span>
+                                <span class="badge bg-success text-white px-3 py-2 rounded-pill shadow-sm small fw-semibold">
+                                    <i class="bi bi-geo-alt-fill me-1"></i>Mongua
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Contenido de la Tarjeta -->
+                        <div class="card-body p-4 d-flex flex-column justify-content-between flex-grow-1">
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
+                                    <i class="bi bi-person-circle text-success"></i>
+                                    <span>{{ post.usuario.get_full_name|default:post.usuario.username }}</span>
+                                    <span>•</span>
+                                    <span><i class="bi bi-clock me-1"></i>Lectura rápida</span>
+                                </div>
+
+                                <h4 class="fw-bold text-dark mb-3 fs-5" title="{{ post.titulo }}">
+                                    {{ post.titulo }}
+                                </h4>
+
+                                <p class="text-muted small mb-3 lh-base">
+                                    {{ post.contenido|truncatewords:20 }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <hr class="text-muted opacity-25 my-3">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <a href="{{ post.get_absolute_url }}" class="btn btn-outline-success btn-sm rounded-pill px-3 py-2 fw-bold d-inline-flex align-items-center gap-1 stretched-link text-decoration-none">
+                                        <span>Leer Historia</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                    <small class="text-muted">
+                                        <i class="bi bi-chat-left-text me-1"></i>Artículo
+                                    </small>
+                                </div>
                             </div>
                         </div>
 
                     </div>
-
                 </div>
-            </div>
-
-            {% empty %}
-            <div class="col-12">
-                <div class="card border-0 shadow-lg rounded-5 p-5 text-center bg-white">
-                    <div class="mb-4">
-                        <span class="display-3"></span>
+                {% empty %}
+                <div class="col-12" data-aos="zoom-in" data-aos-duration="600">
+                    <div class="bg-white p-5 rounded-4 shadow-sm border text-center my-4">
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center p-4 mb-3">
+                            <i class="bi bi-journal-x fs-1"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-2">Aún no hay historias publicadas</h4>
+                        <p class="text-muted mb-4 fs-6">Muy pronto nuestro equipo de guías y exploradores compartirán nuevas crónicas de viaje.</p>
+                        <a href="{% url 'tours' %}" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-compass me-1"></i> Explorar Tours
+                        </a>
                     </div>
-                    <h3 class="fw-bold text-dark mb-2">
-                        Aún no hay historias publicadas
-                    </h3>
-                    <p class="text-muted mb-0">
-                        Muy pronto encontrarás contenido increíble sobre Mongua.
-                    </p>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+
+            <!-- Paginación -->
+            {% if blogs.has_other_pages %}
+            <nav aria-label="Paginación de artículos" class="mt-5" data-aos="fade-up">
+                <ul class="pagination justify-content-center gap-1">
+                    {% if blogs.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link rounded-pill px-3 py-2 text-success border shadow-sm fw-semibold" href="?page={{ blogs.previous_page_number }}#historias" aria-label="Anterior">
+                            <i class="bi bi-chevron-left me-1"></i> Anterior
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link rounded-pill px-3 py-2 text-muted border-0 bg-light">
+                            <i class="bi bi-chevron-left me-1"></i> Anterior
+                        </span>
+                    </li>
+                    {% endif %}
+
+                    {% for num in blogs.paginator.page_range %}
+                        {% if blogs.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link rounded-circle px-3 py-2 bg-success border-success text-white fw-bold shadow-sm">
+                                {{ num }}
+                            </span>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link rounded-circle px-3 py-2 text-dark border bg-white shadow-sm fw-semibold" href="?page={{ num }}#historias">
+                                {{ num }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if blogs.has_next %}
+                    <li class="page-item">
+                        <a class="page-link rounded-pill px-3 py-2 text-success border shadow-sm fw-semibold" href="?page={{ blogs.next_page_number }}#historias" aria-label="Siguiente">
+                            Siguiente <i class="bi bi-chevron-right ms-1"></i>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link rounded-pill px-3 py-2 text-muted border-0 bg-light">
+                            Siguiente <i class="bi bi-chevron-right ms-1"></i>
+                        </span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
 
         </div>
-
-        {# Paginación #}
-        {% if blogs.has_other_pages %}
-        <nav aria-label="Navegación de páginas de blog" class="mt-5">
-            <ul class="pagination justify-content-center">
-                {% if blogs.has_previous %}
-                <li class="page-item">
-                    <a class="page-link text-success border-success border-opacity-25" href="?page={{ blogs.previous_page_number }}#historias" aria-label="Anterior">
-                        <span aria-hidden="true">&laquo; Anterior</span>
-                    </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link text-muted border-success border-opacity-10">&laquo; Anterior</span>
-                </li>
-                {% endif %}
-
-                {% for num in blogs.paginator.page_range %}
-                {% if blogs.number == num %}
-                <li class="page-item active">
-                    <span class="page-link bg-success border-success text-white">{{ num }}</span>
-                </li>
-                {% else %}
-                <li class="page-item">
-                    <a class="page-link text-success border-success border-opacity-25" href="?page={{ num }}#historias">{{ num }}</a>
-                </li>
-                {% endif %}
-                {% endfor %}
-
-                {% if blogs.has_next %}
-                <li class="page-item">
-                    <a class="page-link text-success border-success border-opacity-25" href="?page={{ blogs.next_page_number }}#historias" aria-label="Siguiente">
-                        <span aria-hidden="true">Siguiente &raquo;</span>
-                    </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link text-muted border-success border-opacity-10">Siguiente &raquo;</span>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-        {% endif %}
-
     </div>
 </section>
-
-{% endblock %}
-{% block scripts %}
-<script src="{% static 'js/datatables.min.js' %}"></script>
-<script src="{% static 'js/tconf/tconf-tablaBlogs.js' %}"></script>
 {% endblock %}
