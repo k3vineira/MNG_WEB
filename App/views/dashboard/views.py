@@ -210,6 +210,16 @@ def estadisticas_admin(request):
     pqrs_total = PQRS.objects.count()
     pqrs_tasa_resolucion = round((pqrs_cerradas / pqrs_total * 100), 1) if pqrs_total > 0 else 0
 
+    # Nuevas métricas de PQRS por tipo
+    pqrs_peticiones = PQRS.objects.filter(tipo='peticion').count()
+    pqrs_quejas = PQRS.objects.filter(tipo='queja').count()
+    pqrs_reclamos = PQRS.objects.filter(tipo='reclamo').count()
+    pqrs_sugerencias = PQRS.objects.filter(tipo='sugerencia').count()
+    
+    # Nuevas métricas de PQRS por origen
+    pqrs_anonimos = PQRS.objects.filter(usuario__isnull=True).count()
+    pqrs_registrados = PQRS.objects.filter(usuario__isnull=False).count()
+
     # Calificaciones
     total_calificaciones = Calificacion.objects.count()
     dias_como_miembro = (now.date() - request.user.date_joined.date()).days if request.user.date_joined else 0
@@ -314,6 +324,12 @@ def estadisticas_admin(request):
         'pqrs_cerradas': pqrs_cerradas,
         'pqrs_total': pqrs_total,
         'pqrs_tasa_resolucion': pqrs_tasa_resolucion,
+        'pqrs_peticiones': pqrs_peticiones,
+        'pqrs_quejas': pqrs_quejas,
+        'pqrs_reclamos': pqrs_reclamos,
+        'pqrs_sugerencias': pqrs_sugerencias,
+        'pqrs_anonimos': pqrs_anonimos,
+        'pqrs_registrados': pqrs_registrados,
         'total_calificaciones': total_calificaciones,
         'total_resenas': total_calificaciones,
         'dias_como_miembro': dias_como_miembro,
