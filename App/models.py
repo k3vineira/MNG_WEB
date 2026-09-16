@@ -498,7 +498,7 @@ class Reserva(models.Model):
     numero_adultos = models.PositiveSmallIntegerField(verbose_name='Número de Adultos', default=1)
     numero_menores = models.PositiveSmallIntegerField(verbose_name='Número de Menores', default=0)
     estado_reserva = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente', verbose_name='Estado')
-    motivo_cancelacion = models.TextField(null=True, blank=True, verbose_name='Motivo de Cancelación')
+    motivo_cancelacion = models.TextField(null=False, blank=True, verbose_name='Motivo de Cancelación')
     monto_total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Monto Total', editable=False)
     fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Registro')
     penalidad = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Penalidad', default=0, editable=False)
