@@ -641,17 +641,49 @@ def descargar_factura(request, reserva_id):
     except Exception as e:
         print(f"Error al descargar la factura PDF: {e}")
         return HttpResponse("Error al generar el PDF de la factura.", status=500)
-    
 
 def listar_cancelaciones_admin(request):
-    """Listado de reservas canceladas para el panel de administración."""
+    """Listado y filtrado de solicitudes de cancelación."""
+
+
     cancelaciones = Reserva.objects.filter(
-        estado_reserva='cancelada'
-    ).select_related('usuario').order_by('-id')
-    
-    return render(request, 'admin/reserva/cancelaciones_admin.html', {
-        'cancelaciones': cancelaciones
-    })
+        estado_cancelacion__isnull=False
+    ).exclude(estado_cancelacion='').select_related('usuario').order_by('-id')
+
+    estado_seleccionado = request.GET.get('estado', '')
+
+
+    if estado_seleccionado in ['pendiente', 'aprobada', 'rechazada']:
+        if estado_seleccionado == 'aprobada':
+            cancelaciones = cancelaciones.filter(
+                Q(estado_cancelacion__iexact='aprobada') | 
+                Q(estado_cancelacion__iexact='confirmada')
+            )
+        else:
+            cancelaciones = cancelaciones.filter(estado_cancelacion__iexact=estado_seleccionado)
+
+ 
+    stats = Reserva.objects.filter(estado_cancelacion__isnull=False).aggregate(
+        total=Count('id'),
+        pendientes=Count('id', filter=Q(estado_cancelacion__iexact='pendiente')),
+        aprobadas=Count('id', filter=Q(estado_cancelacion__iexact='aprobada') | Q(estado_cancelacion__iexact='confirmada')),
+        rechazadas=Count('id', filter=Q(estado_cancelacion__iexact='rechazada'))
+    )
+
+    stats_list = [
+        ('Total', stats['total'], 'text-dark'),
+        ('Pendientes', stats['pendientes'], 'text-warning'),
+        ('Aprobadas', stats['aprobadas'], 'text-success'),
+        ('Rechazadas', stats['rechazadas'], 'text-danger'),
+    ]
+
+    context = {
+        'cancelaciones': cancelaciones,
+        'stats_list': stats_list,
+        'estado_seleccionado': estado_seleccionado,
+    }
+
+    return render(request, 'admin/reserva/cancelaciones_admin.html', context)
 
 def editar_cancelacion_admin(request, reserva_id):
     """
