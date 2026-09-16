@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contáctanos - Radicar PQRS{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white p-4 rounded-top-4">
+                    <h3 class="mb-0"><i class="bi bi-envelope-paper-heart me-2"></i> Radicación de Solicitudes (PQRS)</h3>
+                    <p class="mb-0 mt-2 opacity-75">Envíanos tus peticiones, quejas, reclamos o sugerencias. Te responderemos pronto.</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    
+                    <div id="pqrs-success-message" class="alert alert-success d-none shadow-sm" role="alert">
+                        <h4 class="alert-heading"><i class="bi bi-check-circle-fill me-2"></i>¡Solicitud Radicada!</h4>
+                        <p>Tu solicitud ha sido enviada exitosamente. Se ha enviado un correo electrónico con los detalles.</p>
+                        <hr>
+                        <p class="mb-0">Tu Número de Radicado es: <strong id="pqrs-radicado-number" class="fs-4 text-primary"></strong></p>
+                    </div>
+
+                    <form id="pqrs-form" method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Honeypot anti-spam (invisible para usuarios reales) -->
+                        <div style="display:none;">
+                            <label for="website">Website (Dejar en blanco si eres humano):</label>
+                            <input type="text" name="website" id="website" value="">
+                        </div>
+
+                        <div class="row g-3">
+                            {% if not user.is_authenticated %}
+                            <div class="col-md-6">
+                                <label for="id_nombre_completo" class="form-label fw-bold">Nombre Completo *</label>
+                                {{ form.nombre_completo }}
+                                <div class="invalid-feedback" id="error-nombre_completo"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_correo" class="form-label fw-bold">Correo Electrónico *</label>
+                                {{ form.correo }}
+                                <div class="invalid-feedback" id="error-correo"></div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="col-md-12">
+                                <label for="id_tipo" class="form-label fw-bold">Tipo de Solicitud *</label>
+                                {{ form.tipo }}
+                                <div class="invalid-feedback" id="error-tipo"></div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label for="id_asunto" class="form-label fw-bold">Asunto *</label>
+                                {{ form.asunto }}
+                                <div class="invalid-feedback" id="error-asunto"></div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label for="id_descripcion" class="form-label fw-bold">Detalle de la Solicitud *</label>
+                                {{ form.descripcion }}
+                                <div class="invalid-feedback" id="error-descripcion"></div>
+                            </div>
+                            
+                            {% if user.is_authenticated %}
+                            <div class="col-md-12">
+                                <label for="id_reserva" class="form-label fw-bold">Reserva Afectada (Opcional)</label>
+                                {{ form.reserva }}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="col-12 mt-4 text-end">
+                                <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm" id="btn-submit-pqrs">
+                                    <span class="spinner-border spinner-border-sm d-none" id="spinner-pqrs" role="status" aria-hidden="true"></span>
+                                    <i class="bi bi-send me-2"></i> Enviar Solicitud
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formElements = document.querySelectorAll('#pqrs-form input, #pqrs-form select, #pqrs-form textarea');
+        formElements.forEach(el => {
+            if(!el.classList.contains('form-control') && !el.classList.contains('form-select')) {
+                if(el.tagName === 'SELECT') el.classList.add('form-select');
+                else el.classList.add('form-control');
+            }
+        });
+
+        const pqrsForm = document.getElementById('pqrs-form');
+        const btnSubmit = document.getElementById('btn-submit-pqrs');
+        const spinner = document.getElementById('spinner-pqrs');
+        const successMsg = document.getElementById('pqrs-success-message');
+        const radicadoNumber = document.getElementById('pqrs-radicado-number');
+
+        pqrsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
+
+            const formData = new FormData(pqrsForm);
+            
+            btnSubmit.disabled = true;
+            spinner.classList.remove('d-none');
+
+            fetch("{% url 'api_guardar_pqrs' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                btnSubmit.disabled = false;
+                spinner.classList.add('d-none');
+
+                if(data.status === 'success') {
+                    pqrsForm.style.display = 'none';
+                    successMsg.classList.remove('d-none');
+                    if(data.radicado) {
+                        radicadoNumber.innerText = data.radicado;
+                    }
+                    window.scrollTo({ top: successMsg.offsetTop - 100, behavior: 'smooth' });
+                } else if(data.status === 'error') {
+                    // Handle validation errors
+                    for(const [field, errors] of Object.entries(data.errors)) {
+                        const inputField = document.getElementById(`id_${field}`);
+                        const errorDiv = document.getElementById(`error-${field}`);
+                        if(inputField && errorDiv) {
+                            inputField.classList.add('is-invalid');
+                            errorDiv.innerText = errors.join(', ');
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                btnSubmit.disabled = false;
+                spinner.classList.add('d-none');
+                alert("Ocurrió un error al enviar la solicitud. Por favor intenta de nuevo.");
+            });
+        });
+    });
+</script>
+{% endblock %}

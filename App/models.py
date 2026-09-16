@@ -581,9 +581,17 @@ class Reserva(models.Model):
 class PQRS(models.Model):
     """Solicitud de Petición, Queja, Reclamo o Sugerencia enviada por un usuario."""
     id = models.AutoField(primary_key=True)
+    radicado = models.CharField(max_length=25, unique=True, null=True, blank=True, verbose_name="Número de Radicado")
     TIPO_CHOICES = [('peticion', 'Petición'), ('queja', 'Queja'), ('reclamo', 'Reclamo'), ('sugerencia', 'Sugerencia'),]
     ESTADO_CHOICES = [('abierto', 'Abierto'), ('en_proceso', 'En Proceso'), ('cerrado', 'Cerrado'),]
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pqrs')
+    
+    # Usuario registrado es opcional para permitir solicitudes públicas
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pqrs', null=True, blank=True)
+    
+    # Datos para visitantes anónimos
+    nombre_completo = models.CharField(max_length=150, null=True, blank=True, verbose_name="Nombre Completo")
+    correo = models.EmailField(null=True, blank=True, verbose_name="Correo Electrónico")
+    
     tipo = models.CharField(max_length=15, choices=TIPO_CHOICES)
     asunto = models.CharField(max_length=150)
     descripcion = models.TextField()
@@ -593,8 +601,17 @@ class PQRS(models.Model):
     class Meta:
         verbose_name_plural = 'PQRS'
 
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        super().save(*args, **kwargs)
+        if is_new and not self.radicado:
+            # Formato: PQRS-YYYYMMDD-ID
+            fecha_str = self.fecha.strftime("%Y%m%d") if self.fecha else "00000000"
+            self.radicado = f"PQRS-{fecha_str}-{self.id:04d}"
+            self.save(update_fields=['radicado'])
+
     def __str__(self):
-        return f'{self.get_tipo_display()} - {self.asunto}'
+        return f'{self.radicado} - {self.asunto}'
 
 # ==============================================================================
 # SEGUIMIENTO

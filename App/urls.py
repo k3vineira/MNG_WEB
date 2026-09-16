@@ -8,7 +8,7 @@ from App.views.notificacion import views as notificacion_views
 from App.views.bitacora import views as bitacora_views
 from App.views.accesibilidad import views as accesibilidad_views
 from App.views.blog import views as blog_views
-from App.views.pqrs.views import PQRSListView, contestar_pqrs, mis_pqrs_view, guardar_pqrs, pqrs
+from App.views.pqrs.views import PQRSListView, contestar_pqrs, mis_pqrs_view, guardar_pqrs, pqrs, pqrs_publica, api_guardar_pqrs
 from App.views.usuario import views as usuario_views
 from App.views.dashboard import views as dashboard_views
 from App.views.calificacion import views as calificacion_views
@@ -168,6 +168,8 @@ urlpatterns = [
     path('mis_pqrs/', mis_pqrs_view, name='mis_pqrs'),
     path('pqrs/guardar/', guardar_pqrs, name='guardar_pqrs'),
     path('pqrs/', pqrs, name='pqrs'),
+    path('contactanos/', pqrs_publica, name='pqrs_publica'),
+    path('api/pqrs/', api_guardar_pqrs, name='api_guardar_pqrs'),
     
     #cancelaciones
     path('mis_cancelaciones/', reserva_views.mis_cancelaciones, name='mis_cancelaciones'),
