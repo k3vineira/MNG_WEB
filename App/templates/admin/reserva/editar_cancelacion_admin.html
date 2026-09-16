@@ -1,0 +1,113 @@
+{% extends "admin/base-admin.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="mb-3">
+        <a href="{% url 'listar_cancelaciones' %}" class="text-decoration-none text-muted small fw-semibold">
+            <i class="bi bi-arrow-left me-1"></i> Volver al listado
+        </a>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-semibold text-uppercase mb-2" style="font-size: 0.75rem;">Gestión de Solicitudes</span>
+            <h2 class="fw-bold text-dark mb-1">Revisar Reserva #{{ reserva.id }}</h2>
+            <p class="text-muted mb-0">Evalúa los motivos, ajusta penalidades y aprueba o rechaza la cancelación.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Información del Cliente y Reserva -->
+        <div class="col-12 col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold text-dark mb-3">Información del Cliente</h5>
+                <div class="d-flex align-items-center">
+                    <div class="avatar-lg bg-light rounded-circle p-3 me-3 text-center d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <i class="bi bi-person-fill fs-3 text-secondary"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0 text-dark">{{ reserva.usuario.get_full_name|default:reserva.usuario.username }}</h6>
+                        <span class="text-muted small">{{ reserva.usuario.email }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold text-dark mb-3">Detalle de la Reserva</h5>
+                <ul class="list-group list-group-flush border-0">
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
+                        <span class="text-muted small">Aventura / Paquete:</span>
+                        <span class="fw-bold text-dark small">
+                            {% if reserva.actividad %}
+                                {{ reserva.actividad.nombre }}
+                            {% elif reserva.paquete %}
+                                {{ reserva.paquete.nombre }}
+                            {% else %}
+                                Reserva #{{ reserva.id }}
+                            {% endif %}
+                        </span>
+                    </li>
+                </ul>
+
+                <div class="mt-3 p-3 bg-light rounded-4">
+                    <span class="text-uppercase fw-bold text-muted d-block mb-1" style="font-size: 0.7rem;">Motivo de cancelación:</span>
+                    <p class="text-dark small mb-0">{{ reserva.motivo_cancelacion|default:"Sin motivo especificado" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de actualización del Administrador -->
+        <div class="col-12 col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-sliders me-2 text-primary"></i>Dictamen del Administrador</h5>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark small">Estado de Cancelación</label>
+                        <select name="estado_cancelacion" class="form-select rounded-3 py-2 fw-semibold" required>
+                            <option value="pendiente" {% if reserva.estado_cancelacion == 'pendiente' %}selected{% endif %}>
+                                 Pendiente de Revisión
+                            </option>
+                            <option value="confirmada" {% if reserva.estado_cancelacion == 'confirmada' or reserva.estado_cancelacion == 'aprobada' %}selected{% endif %}>
+                                 Aprobada / Confirmada
+                            </option>
+                            <option value="rechazada" {% if reserva.estado_cancelacion == 'rechazada' %}selected{% endif %}>
+                                 Rechazada
+                            </option>
+                        </select>
+                    </div>
+
+                <!-- Monto de Penalidad (COP) - Solo lectura -->
+<div class="mb-4">
+    <label class="form-label fw-bold text-dark small">Monto de Penalidad (COP)</label>
+    <div class="input-group">
+        <span class="input-group-text bg-light border-end-0 fw-bold">$</span>
+        <input type="number" 
+               name="penalidad" 
+               class="form-control border-start-0 py-2 fw-bold bg-light text-muted" 
+               value="{{ reserva.penalidad|default:'0' }}" 
+               readonly>
+    </div>
+    <div class="form-text text-muted small">
+        <i class="bi bi-lock-fill me-1"></i> El monto de penalidad está bloqueado y no se puede editar manualmente.
+    </div>
+</div>
+                  
+
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                        <a href="{% url 'listar_cancelaciones' %}" class="btn btn-light rounded-pill px-4 fw-semibold text-secondary">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-check-circle-fill me-1"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

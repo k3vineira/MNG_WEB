@@ -24,7 +24,7 @@
                     <form method="POST" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
 
-                        {% crispy form %}
+                        {{ form|crispy }}
 
                         <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
                             <a href="{% url 'listar_actividades' %}" class="btn btn-outline-secondary px-4 rounded-pill">
@@ -41,4 +41,4 @@
         </div>
     </div>
 </div>
-{% endblock content %}
+{% endblock content %}

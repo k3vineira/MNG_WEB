@@ -79,7 +79,6 @@ class ActividadesCreateView(StaffRequiredMixin, CreateView):
             tabla_afectada="Actividades",
             observacion=f"Se ha registrado con éxito la actividad: '{self.object.nombre}'.",
             valor_anterior="Ninguno (Registro Nuevo)",
-            nuevo_valor=f"Nombre: {self.object.nombre}, Apto menores: {'Sí' if self.object.apto_menores else 'No'}"
         )
         return response
 

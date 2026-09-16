@@ -482,6 +482,15 @@ class Reserva(models.Model):
         ('confirmada', 'Confirmada'),
         ('cancelada', 'Cancelada'),
     ]
+    estado_cancelacion = models.CharField(
+        max_length=30, 
+        default='pendiente', 
+        choices=[
+            ('pendiente', 'Pendiente de revisión'),
+            ('aprobada', 'Aprobada / Confirmada'),
+            ('rechazada', 'Rechazada')
+        ]
+    )
 
     paquete = models.ForeignKey('Paquete', on_delete=models.PROTECT, related_name='reservas', verbose_name='Paquete Reservado')
     usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='reservas', verbose_name='Usuario', null=True, blank=True)
@@ -492,6 +501,9 @@ class Reserva(models.Model):
     motivo_cancelacion = models.TextField(null=True, blank=True, verbose_name='Motivo de Cancelación')
     monto_total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Monto Total', editable=False)
     fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Registro')
+    penalidad = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Penalidad', default=0, editable=False)
+    
+    
 
     class Meta:
         verbose_name = 'Reserva'

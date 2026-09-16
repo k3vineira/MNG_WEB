@@ -83,7 +83,7 @@
                             {% with seguimiento=pqr.seguimientos.first %}
                                 {% if seguimiento and seguimiento.reserva %}
                                     <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold">
-                                        <i class="bi bi-bookmark-check-fill me-1"></i> Reserva #{{ seguimiento.reserva.id }}
+                                        <i class="bi bi-bookmark-check-fill me-1"></i> Reserva del paquete {{ seguimiento.reserva.paquete }}
                                     </span>
                                 {% else %}
                                     <span class="text-muted small">Sin Reserva</span>
@@ -95,19 +95,19 @@
                             {{ pqr.asunto|truncatechars:50 }}
                         </td>
                         <td class="text-center">
-                            {% if pqr.estado == 'cerrado' or pqr.seguimientos.all %}
-                                <button type="button" 
-                                        class="btn btn-sm btn-outline-success rounded-pill px-4 fw-bold" 
-                                        data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
-                                    <i class="bi bi-check-all me-1"></i> Respondida
-                                </button>
-                            {% else %}
-                                <button type="button" 
-                                        class="btn btn-sm btn-danger shadow-sm rounded-pill px-4 fw-bold" 
-                                        data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
-                                    <i class="bi bi-reply-fill me-1"></i> Contestar
-                                </button>
-                            {% endif %}
+                           {% if pqr.estado == 'cerrado' or pqr.estado == 'respondido' %}
+    <button type="button" 
+            class="btn btn-sm btn-outline-success rounded-pill px-4 fw-bold" 
+            data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
+        <i class="bi bi-check-all me-1"></i> Respondida
+    </button>
+{% else %}
+    <button type="button" 
+            class="btn btn-sm btn-danger shadow-sm rounded-pill px-4 fw-bold" 
+            data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
+        <i class="bi bi-reply-fill me-1"></i> Contestar
+    </button>
+{% endif %}
                         </td>
                     </tr>
                     {% empty %}
@@ -153,19 +153,19 @@
                         </div>
 
                         <div class="pt-2">
-                            {% if pqr.estado == 'cerrado' or pqr.seguimientos.all %}
-                                <button type="button" 
-                                        class="btn btn-sm w-100 btn-outline-success rounded-pill fw-bold" 
-                                        data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
-                                    <i class="bi bi-check-all me-1"></i> Respondida
-                                </button>
-                            {% else %}
-                                <button type="button" 
-                                        class="btn btn-sm w-100 btn-danger rounded-pill fw-bold" 
-                                        data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
-                                    <i class="bi bi-reply-fill me-1"></i> Responder Solicitud
-                                </button>
-                            {% endif %}
+                           {% if pqr.estado == 'cerrado' or pqr.estado == 'respondido' %}
+    <button type="button" 
+            class="btn btn-sm w-100 btn-outline-success rounded-pill fw-bold" 
+            data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
+        <i class="bi bi-check-all me-1"></i> Respondida
+    </button>
+{% else %}
+    <button type="button" 
+            class="btn btn-sm w-100 btn-danger rounded-pill fw-bold" 
+            data-bs-toggle="modal" data-bs-target="#modalContestar{{ pqr.id }}">
+        <i class="bi bi-reply-fill me-1"></i> Responder Solicitud
+    </button>
+{% endif %}
                         </div>
                     </div>
                 </div>
