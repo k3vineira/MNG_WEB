@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
-});
 
 document.addEventListener("DOMContentLoaded", function() {
     const mascot = document.getElementById('condor-mascot-container');

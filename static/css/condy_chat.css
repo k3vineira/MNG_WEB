@@ -1,0 +1,170 @@
+/* condy_chat.css */
+.condy-chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1050; /* Por encima de otros elementos como modales o tooltips de bootstrap */
+  display: flex !important; /* Para anular el display: none inicial tras cargar CSS */
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 15px;
+}
+
+.condy-chat-btn {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #198754, #146c43);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.condy-chat-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 20px rgba(25, 135, 84, 0.4) !important;
+}
+
+.condy-chat-window {
+  width: 350px;
+  height: 500px;
+  max-height: calc(100vh - 120px);
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,0.1);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform-origin: bottom right;
+}
+
+.condy-chat-window.d-none {
+  opacity: 0;
+  transform: scale(0.8) translateY(20px);
+  pointer-events: none;
+}
+
+.condy-chat-window:not(.d-none) {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.condy-chat-header {
+  background: linear-gradient(135deg, #198754, #146c43);
+}
+
+.condy-chat-messages {
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+/* Burbujas de chat */
+.chat-bubble {
+  max-width: 85%;
+  padding: 10px 15px;
+  border-radius: 18px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  animation: fadeIn 0.3s ease;
+}
+
+.chat-bubble.bot {
+  background-color: #ffffff;
+  color: #333333;
+  border: 1px solid #e9ecef;
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.chat-bubble.user {
+  background-color: #198754;
+  color: white;
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+  box-shadow: 0 2px 5px rgba(25, 135, 84, 0.2);
+}
+
+/* Opciones / Chips */
+.chat-option-btn {
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border: 1px solid #198754;
+  background-color: transparent;
+  color: #198754;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.chat-option-btn:hover {
+  background-color: #198754;
+  color: white;
+}
+
+.condy-send-btn {
+  width: 40px;
+  height: 40px;
+  background-color: #198754;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.condy-send-btn:hover:not(:disabled) {
+  background-color: #146c43;
+}
+
+.condy-send-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.condy-typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 12px 15px;
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+  width: fit-content;
+}
+
+.condy-typing-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #adb5bd;
+  border-radius: 50%;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.condy-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.condy-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividad para móviles */
+@media (max-width: 576px) {
+  .condy-chat-widget {
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .condy-chat-window {
+    width: calc(100vw - 20px);
+    height: 60vh;
+  }
+}

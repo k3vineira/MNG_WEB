@@ -19,9 +19,39 @@
     <div class="condor-avatar-wrapper position-relative">
         <img id="condor-img" src="{% static 'img/mascota/condor0.webp' %}" alt="Cóndor Mascot" width="100" height="100" class="transition-all">
         <!-- Label badge -->
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success border border-light shadow-sm">
+        <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-success border border-light shadow-sm">
             Cóndy
         </span>
+    </div>
+    
+    <!-- Ventana de Chat de Condy -->
+    <div id="condy-chat-window" class="condy-chat-window shadow-lg rounded-4 overflow-hidden d-none d-flex flex-column position-absolute" style="bottom: 120px; right: 0;">
+        <!-- Header -->
+        <div class="condy-chat-header d-flex justify-content-between align-items-center p-3 text-white">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-robot fs-4"></i>
+            <h6 class="mb-0 fw-bold">Condy - Asistente Virtual</h6>
+        </div>
+        <button id="condy-chat-close" class="btn btn-sm text-white border-0" aria-label="Cerrar chat">
+            <i class="fa-solid fa-xmark fs-5"></i>
+        </button>
+        </div>
+
+        <!-- Mensajes -->
+        <div id="condy-chat-messages" class="condy-chat-messages flex-grow-1 p-3 overflow-y-auto">
+        </div>
+
+        <!-- Sugerencias (Opciones) -->
+        <div id="condy-chat-options" class="condy-chat-options px-3 pb-2 d-none flex-wrap gap-2">
+        </div>
+
+        <!-- Input Area -->
+        <div class="condy-chat-input p-3 border-top bg-light d-flex gap-2">
+        <input type="text" id="condy-chat-input-text" class="form-control rounded-pill" placeholder="Escribe un mensaje..." aria-label="Mensaje">
+        <button id="condy-chat-send" class="btn rounded-circle text-white condy-send-btn d-flex align-items-center justify-content-center" aria-label="Enviar" disabled>
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+        </div>
     </div>
 </div>
 <script src="{% static 'js/mascota.js' %}" defer></script>
@@ -29,8 +59,9 @@
 <style>
 #condor-mascot-container {
     bottom: 25px !important;
-    left: 25px !important;
-    z-index: 999999 !important;
+    right: 90px !important;
+    left: auto !important;
+    z-index: 1050 !important;
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -54,7 +85,7 @@
 }
 
 #condor-mascot-container.collapsed {
-    transform: translateX(-105px) !important;
+    transform: translateX(105px) !important;
     opacity: 0.8;
 }
 
@@ -68,7 +99,7 @@
 
 #condor-toggle-btn {
     position: absolute;
-    right: -25px;
+    left: -25px;
     top: 50%;
     transform: translateY(-50%);
     width: 32px;
@@ -98,7 +129,8 @@
 @media (max-width: 576px) {
     #condor-mascot-container {
         bottom: 15px;
-        left: 15px;
+        right: 15px;
+        left: auto;
     }
     #condor-img {
         width: 80px !important;
@@ -106,7 +138,8 @@
     }
     #condor-speech-bubble {
         width: 220px;
-        left: 30px;
+        right: 30px;
+        left: auto;
         transform: none;
         font-size: 0.85rem;
     }
