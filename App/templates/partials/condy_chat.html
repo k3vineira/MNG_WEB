@@ -1,0 +1,39 @@
+<!-- Widget Asistente Virtual Condy -->
+<div id="condy-chat-widget" class="condy-chat-widget" style="display: none;">
+  <!-- Botón Flotante -->
+  <button id="condy-chat-btn" class="condy-chat-btn rounded-circle shadow-lg" aria-label="Abrir chat">
+    <i class="fa-solid fa-headset fs-4"></i>
+  </button>
+
+  <!-- Ventana de Chat -->
+  <div id="condy-chat-window" class="condy-chat-window shadow-lg rounded-4 overflow-hidden d-none d-flex flex-column">
+    <!-- Header -->
+    <div class="condy-chat-header d-flex justify-content-between align-items-center p-3 text-white">
+      <div class="d-flex align-items-center gap-2">
+        <i class="fa-solid fa-robot fs-4"></i>
+        <h6 class="mb-0 fw-bold">Condy - Asistente Virtual</h6>
+      </div>
+      <button id="condy-chat-close" class="btn btn-sm text-white border-0" aria-label="Cerrar chat">
+        <i class="fa-solid fa-xmark fs-5"></i>
+      </button>
+    </div>
+
+    <!-- Mensajes -->
+    <div id="condy-chat-messages" class="condy-chat-messages flex-grow-1 p-3 overflow-y-auto">
+      <!-- Los mensajes se cargarán dinámicamente aquí -->
+    </div>
+
+    <!-- Sugerencias (Opciones) -->
+    <div id="condy-chat-options" class="condy-chat-options px-3 pb-2 d-none flex-wrap gap-2">
+      <!-- Las opciones se cargarán aquí -->
+    </div>
+
+    <!-- Input Area -->
+    <div class="condy-chat-input p-3 border-top bg-light d-flex gap-2">
+      <input type="text" id="condy-chat-input-text" class="form-control rounded-pill" placeholder="Escribe un mensaje..." aria-label="Mensaje">
+      <button id="condy-chat-send" class="btn rounded-circle text-white condy-send-btn d-flex align-items-center justify-content-center" aria-label="Enviar" disabled>
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
