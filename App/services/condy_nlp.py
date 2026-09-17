@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 # Definir 10 FAQs relacionadas con el negocio (Ecoturismo/Reservas) basadas en las vistas
 FAQS = [
@@ -7,7 +8,7 @@ FAQS = [
         "answer": "Nuestro horario de atención es de Lunes a Domingo de 8:00 AM a 6:00 PM."
     },
     {
-        "keywords": ["ubicacion", "donde", "direccion", "llegar"],
+        "keywords": ["ubicacion", "donde", "direccion", "llegar", "ubicado"],
         "answer": "Nos encontramos ubicados en el centro de la ciudad, en la dirección principal. ¡Esperamos tu visita!"
     },
     {
@@ -44,12 +45,17 @@ FAQS = [
     }
 ]
 
+def remove_accents(input_str):
+    nfkd_form = unicodedata.normalize('NFKD', input_str)
+    return u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
+
 def procesar_mensaje(mensaje, request):
     # Inicializar conteo de fallos en la sesión si no existe
     if 'condy_fallos' not in request.session:
         request.session['condy_fallos'] = 0
 
-    mensaje_lower = mensaje.lower()
+    # Convertir a minúsculas y quitar tildes
+    mensaje_lower = remove_accents(mensaje.lower())
     
     # Buscar coincidencia simple
     mejor_coincidencia = None

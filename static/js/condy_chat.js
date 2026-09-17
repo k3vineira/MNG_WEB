@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
     if (willShow) {
       window.classList.remove("d-none");
-      if (bubble) bubble.classList.add("d-none"); 
       
       if (isFirstOpen) {
         const greeting = "¡Hola! Soy Condy, tu asistente virtual. ¿En qué puedo ayudarte hoy?";
