@@ -89,9 +89,7 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center py-5 text-muted">No hay entradas de blog registradas.</td>
-                    </tr>
+            
                     {% endfor %}
                 </tbody>
             </table>
@@ -137,5 +135,6 @@
 {% endblock %}
 
 {% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
 <script src="{% static 'js/tconf/tconf-tablaBlogs.js' %}"></script>
 {% endblock %}
