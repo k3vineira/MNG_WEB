@@ -197,7 +197,7 @@ class RegistroForm(forms.ModelForm):
     def clean_telefono(self):
         tel = self.cleaned_data.get('telefono', '').strip()
         if tel and Usuario.objects.filter(telefono=tel).exists():
-            raise ValidationError("Este número de teléfono ya está registrado.")
+            raise ValidationError("Este número de teléfono ya está xxxxx.")
         return tel
 
     def clean_departamento(self):
