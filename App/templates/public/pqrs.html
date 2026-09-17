@@ -5,57 +5,20 @@
 
 {% block content %}
 <div class="container py-5 mt-5">
-    <div class="row g-5 align-items-center">
-        <!-- Información de Contacto -->
-        <div class="col-lg-4 mb-4 mb-lg-0">
-            <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-3">Soporte Técnico</span>
-            <h2 class="fw-bold mb-4">Ponte en contacto con nosotros</h2>
-            <p class="text-muted mb-5">Estamos aquí para escucharte. Envíanos tus peticiones, quejas, reclamos o sugerencias (PQRS) y te responderemos lo más pronto posible.</p>
-            
-            <div class="d-flex align-items-center mb-4 p-3 bg-white rounded-4 shadow-sm border border-light">
-                <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                    <i class="bi bi-geo-alt fs-4"></i>
-                </div>
-                <div>
-                    <h6 class="mb-0 fw-bold">Nuestra Ubicación</h6>
-                    <small class="text-muted">Mongua, Boyacá, Colombia</small>
-                </div>
-            </div>
-            
-            <div class="d-flex align-items-center mb-4 p-3 bg-white rounded-4 shadow-sm border border-light">
-                <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                    <i class="bi bi-envelope-paper fs-4"></i>
-                </div>
-                <div>
-                    <h6 class="mb-0 fw-bold">Correo Electrónico</h6>
-                    <small class="text-muted">contacto@monagua.com</small>
-                </div>
-            </div>
-            
-            <div class="d-flex align-items-center p-3 bg-white rounded-4 shadow-sm border border-light">
-                <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                    <i class="bi bi-whatsapp fs-4"></i>
-                </div>
-                <div>
-                    <h6 class="mb-0 fw-bold">Línea de Atención</h6>
-                    <small class="text-muted">+57 322 3465191</small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Formulario PQRS -->
+    <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-success text-white p-4 rounded-top-4 border-0">
-                    <h4 class="mb-0 fw-bold"><i class="bi bi-envelope-paper-heart me-2"></i> Radicación de Solicitudes</h4>
+                <div class="card-header bg-primary text-white p-4 rounded-top-4">
+                    <h3 class="mb-0"><i class="bi bi-envelope-paper-heart me-2"></i> Radicación de Solicitudes (PQRS)</h3>
+                    <p class="mb-0 mt-2 opacity-75">Envíanos tus peticiones, quejas, reclamos o sugerencias. Te responderemos pronto.</p>
                 </div>
                 <div class="card-body p-4 p-md-5">
                     
-                    <div id="pqrs-success-message" class="alert alert-success d-none shadow-sm rounded-4 border-0" role="alert">
+                    <div id="pqrs-success-message" class="alert alert-success d-none shadow-sm" role="alert">
                         <h4 class="alert-heading"><i class="bi bi-check-circle-fill me-2"></i>¡Solicitud Radicada!</h4>
                         <p>Tu solicitud ha sido enviada exitosamente. Se ha enviado un correo electrónico con los detalles.</p>
                         <hr>
-                        <p class="mb-0">Tu Número de Radicado es: <strong id="pqrs-radicado-number" class="fs-4 text-success"></strong></p>
+                        <p class="mb-0">Tu Número de Radicado es: <strong id="pqrs-radicado-number" class="fs-4 text-primary"></strong></p>
                     </div>
 
                     <form id="pqrs-form" method="POST">
@@ -67,49 +30,49 @@
                             <input type="text" name="website" id="website" value="">
                         </div>
 
-                        <div class="row g-4">
+                        <div class="row g-3">
                             {% if not user.is_authenticated %}
                             <div class="col-md-6">
-                                <label for="id_nombre_completo" class="form-label fw-semibold text-secondary">Nombre Completo *</label>
+                                <label for="id_nombre_completo" class="form-label fw-bold">Nombre Completo *</label>
                                 {{ form.nombre_completo }}
                                 <div class="invalid-feedback" id="error-nombre_completo"></div>
                             </div>
                             <div class="col-md-6">
-                                <label for="id_correo" class="form-label fw-semibold text-secondary">Correo Electrónico *</label>
+                                <label for="id_correo" class="form-label fw-bold">Correo Electrónico *</label>
                                 {{ form.correo }}
                                 <div class="invalid-feedback" id="error-correo"></div>
                             </div>
                             {% endif %}
                             
                             <div class="col-md-12">
-                                <label for="id_tipo" class="form-label fw-semibold text-secondary">Tipo de Solicitud *</label>
+                                <label for="id_tipo" class="form-label fw-bold">Tipo de Solicitud *</label>
                                 {{ form.tipo }}
                                 <div class="invalid-feedback" id="error-tipo"></div>
                             </div>
                             
                             <div class="col-md-12">
-                                <label for="id_asunto" class="form-label fw-semibold text-secondary">Asunto *</label>
+                                <label for="id_asunto" class="form-label fw-bold">Asunto *</label>
                                 {{ form.asunto }}
                                 <div class="invalid-feedback" id="error-asunto"></div>
                             </div>
                             
                             <div class="col-md-12">
-                                <label for="id_descripcion" class="form-label fw-semibold text-secondary">Detalle de la Solicitud *</label>
+                                <label for="id_descripcion" class="form-label fw-bold">Detalle de la Solicitud *</label>
                                 {{ form.descripcion }}
                                 <div class="invalid-feedback" id="error-descripcion"></div>
                             </div>
                             
                             {% if user.is_authenticated %}
                             <div class="col-md-12">
-                                <label for="id_reserva" class="form-label fw-semibold text-secondary">Reserva Afectada (Opcional)</label>
+                                <label for="id_reserva" class="form-label fw-bold">Reserva Afectada (Opcional)</label>
                                 {{ form.reserva }}
                             </div>
                             {% endif %}
                             
-                            <div class="col-12 mt-4">
-                                <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill shadow-sm" id="btn-submit-pqrs">
+                            <div class="col-12 mt-4 text-end">
+                                <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm" id="btn-submit-pqrs">
                                     <span class="spinner-border spinner-border-sm d-none" id="spinner-pqrs" role="status" aria-hidden="true"></span>
-                                    <i class="bi bi-send me-2"></i> Enviar Mensaje
+                                    <i class="bi bi-send me-2"></i> Enviar Solicitud
                                 </button>
                             </div>
                         </div>
