@@ -57,11 +57,12 @@ class StaffRequiredMixin(UserPassesTestMixin):
 # NOTIFICACIONES Y BITÁCORA
 # ==========================================
 
-def crear_notificacion_sistema(usuario, mensaje, tipo="Reserva", prioridad="media", reserva=None):
+def crear_notificacion_sistema(usuario, mensaje, tipo="Reserva", prioridad="media", reserva=None, **kwargs):
     """
     Crea un registro de notificación en el modelo Notificacion para reflejarse en la UI (campana).
+    Acepta argumentos legacy adicionales pero los ignora para no romper referencias anteriores.
     """
-    if usuario and usuario.is_authenticated:
+    if usuario and getattr(usuario, 'is_authenticated', False):
         try:
             from App.models import Notificacion
             return Notificacion.objects.create(

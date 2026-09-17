@@ -4,31 +4,7 @@
 {% load humanize %}
 
 {% block content %}
-<!-- ── Migas de Pan (Breadcrumb Navigation) ── -->
-<div class="container pt-5 mt-4 mt-lg-5 mb-3" data-aos="fade-down" data-aos-duration="600">
-    <nav aria-label="breadcrumb" class="bg-white rounded-pill px-4 py-2 shadow-sm border border-light d-inline-block">
-        <ol class="breadcrumb mb-0 align-items-center small fw-medium">
-            <li class="breadcrumb-item">
-                <a href="{% url 'index' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
-                    <i class="bi bi-house-door-fill text-success"></i>
-                    <span>Inicio</span>
-                </a>
-            </li>
-            {% if request.GET.from == 'panel' or 'panel-rapido' in request.META.HTTP_REFERER %}
-            <li class="breadcrumb-item">
-                <a href="{% url 'panel_rapido' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
-                    <i class="bi bi-compass-fill text-success"></i>
-                    <span>Panel Rápido</span>
-                </a>
-            </li>
-            {% endif %}
-            <li class="breadcrumb-item active fw-bold text-dark d-inline-flex align-items-center gap-1" aria-current="page">
-                <i class="bi bi-map-fill me-1 text-success"></i>
-                <span>Tours y Destinos</span>
-            </li>
-        </ol>
-    </nav>
-</div>
+{% include "partials/breadcrumbs.html" with current_title="Tours y Destinos" current_icon="bi bi-map-fill" %}
 
     <div id="carouselTours" class="carousel slide carousel-fade shadow-lg" data-bs-ride="carousel" data-bs-interval="5000">
         <div class="carousel-indicators mb-4">

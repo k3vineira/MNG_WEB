@@ -105,13 +105,14 @@ def cambiar_estado_reserva(request, reserva_id):
             reserva.estado_reserva = nuevo_estado
             reserva.save()
             
-            crear_notificacion_sistema(
-                reserva= "correspondiente a la reserva #" + str(reserva.id),
-                usuario=request.user,
-                mensaje=f"El estado de la reserva #{reserva.id} ha sido cambiado de '{estado_anterior}' a '{nuevo_estado}'.",
-                tipo="Reserva",
-                prioridad="media"
-            )
+            if reserva.usuario:
+                crear_notificacion_sistema(
+                    usuario=reserva.usuario,
+                    reserva=reserva,
+                    mensaje=f"El estado de tu reserva #{reserva.id} ha sido cambiado de '{estado_anterior}' a '{nuevo_estado}'.",
+                    tipo="Reserva",
+                    prioridad="media"
+                )
             
             return JsonResponse({'success': True, 'estado': nuevo_estado, 'mensaje': f'Estado actualizado a {nuevo_estado}'})
         except Exception as e:
@@ -146,13 +147,14 @@ class CrearReservaAdminView(SuccessMessageMixin, CreateView):
 
         response = super().form_valid(form)
 
-        crear_notificacion_sistema(
-            reserva= "correspondiente a la reserva #" + str(self.object.id),
-            usuario=self.request.user,
-            mensaje=f"Se ha creado una nueva reserva para el paquete '{self.object.paquete.nombre}' con ID #{self.object.id}.",
-            tipo="Reserva",
-            prioridad="media"
-        )
+        if self.object.usuario:
+            crear_notificacion_sistema(
+                usuario=self.object.usuario,
+                reserva=self.object,
+                mensaje=f"Se ha creado tu reserva para el paquete '{self.object.paquete.nombre}'",
+                tipo="Reserva",
+                prioridad="media"
+            )
 
         return response
 
@@ -186,14 +188,14 @@ class EditarReservaAdminView(UpdateView):
         valor_nuevo = f"Estado: {reserva.estado_reserva}, Fecha: {reserva.fecha_inicio}, Adultos: {reserva.numero_adultos}, Menores: {reserva.numero_menores}"
 
         if reserva.estado_reserva in ['confirmada', 'cancelada']:
-            crear_notificacion_sistema(
-                reserva= "correspondiente a la reserva #" + str(reserva.id),
-                usuario=self.request.user,
-                mensaje=f"El estado de la reserva #{reserva.id} ha sido cambiado de '{reserva_antigua.estado_reserva}' a '{reserva.estado_reserva}'.",
-                tipo="Reserva",
-                prioridad="alta"
-
-            )
+            if reserva.usuario:
+                crear_notificacion_sistema(
+                    usuario=reserva.usuario,
+                    reserva=reserva,
+                    mensaje=f"El estado de tu reserva #{reserva.id} ha sido cambiado de '{reserva_antigua.estado_reserva}' a '{reserva.estado_reserva}'.",
+                    tipo="Reserva",
+                    prioridad="alta"
+                )
 
             if reserva.estado_reserva == 'confirmada':
                 try:
@@ -233,13 +235,14 @@ class EliminarReservaAdminView(DeleteView):
         valor_viejo = f"ID: {self.object.id}, Cliente: {self.object.usuario}, Paquete: {self.object.paquete.nombre if self.object.paquete else 'N/A'}, Estado: {self.object.estado_reserva}"
         response = super().delete(request, *args, **kwargs)
 
-        crear_notificacion_sistema(
-            reserva="correspondiente a la reserva #" + str(reserva_id),
-            usuario=request.user,
-            mensaje=f"Se ha eliminado la reserva #{reserva_id}. Detalles previos: {valor_viejo}",
-            tipo="Reserva",
-            prioridad="alta"
-        )
+        if self.object.usuario:
+            crear_notificacion_sistema(
+                usuario=self.object.usuario,
+                reserva=self.object,
+                mensaje=f"Tu reserva #{reserva_id} ha sido eliminada del sistema. Detalles previos: {valor_viejo}",
+                tipo="Reserva",
+                prioridad="alta"
+            )
         return response
 
 
@@ -323,17 +326,13 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     reserva.save()
 
 
-    try:
-        crear_notificacion_sistema(
-            usuario=request.user,
-            accion="CANCELACIÓN DE RESERVA POR CLIENTE",
-            tabla_afectada="Reservas",
-            observacion=f"Cancelación de reserva #{reserva.id}. Motivo: '{motivo}'. Penalidad: COP ${penalidad_calculada:,.0f}",
-            valor_anterior=f"Estado: {estado_anterior}",
-            nuevo_valor="Estado: cancelada"
-        )
-    except Exception:
-        pass 
+    crear_notificacion_sistema(
+        usuario=request.user,
+        reserva=reserva,
+        mensaje=f"Solicitaste la cancelación de tu reserva #{reserva.id}. Motivo: '{motivo}'. Penalidad estimada: COP ${penalidad_calculada:,.0f}",
+        tipo="Reserva",
+        prioridad="alta"
+    )
 
     
     try:
@@ -522,9 +521,9 @@ def guardar_reserva(request, paquete_id):
         )
 
         crear_notificacion_sistema(
-            reserva="correspondiente a la reserva #" + str(reserva.id),
             usuario=request.user,
-            mensaje=f"Se ha creado una nueva reserva para el paquete '{paquete.nombre}' con ID #{reserva.id}.",
+            reserva=reserva,
+            mensaje=f"Se ha creado tu reserva para el paquete '{paquete.nombre}'",
             tipo="Reserva",
             prioridad="media"
         )

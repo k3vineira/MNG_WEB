@@ -1,0 +1,28 @@
+<div class="container px-0 pt-2 pb-1 mb-2" data-aos="fade-down" data-aos-duration="600">
+    <nav aria-label="breadcrumb" class="bg-white rounded-pill px-3 py-1.5 shadow-sm border border-light d-inline-flex align-items-center">
+        <ol class="breadcrumb mb-0 align-items-center small fw-medium">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
+                    <i class="bi bi-house-door-fill text-success"></i>
+                    <span>Inicio</span>
+                </a>
+            </li>
+
+            {% if show_panel or request.GET.from == 'panel' or 'panel-rapido' in request.META.HTTP_REFERER %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'panel_rapido' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
+                    <i class="bi bi-compass-fill text-success"></i>
+                    <span>Panel Rápido</span>
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="breadcrumb-item active fw-bold text-dark d-inline-flex align-items-center gap-1" aria-current="page">
+                {% if current_icon %}
+                    <i class="{{ current_icon }} me-1 text-success"></i>
+                {% endif %}
+                <span>{{ current_title }}</span>
+            </li>
+        </ol>
+    </nav>
+</div>
