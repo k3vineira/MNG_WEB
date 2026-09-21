@@ -71,8 +71,8 @@
                             <option value="pendiente" {% if reserva.estado_cancelacion == 'pendiente' %}selected{% endif %}>
                                  Pendiente de Revisión
                             </option>
-                            <option value="confirmada" {% if reserva.estado_cancelacion == 'confirmada' or reserva.estado_cancelacion == 'aprobada' %}selected{% endif %}>
-                                 Aprobada / Confirmada
+                               <option value="aprobada" {% if reserva.estado_cancelacion == 'aprobada' %}selected{% endif %}>
+                                   Aprobada
                             </option>
                             <option value="rechazada" {% if reserva.estado_cancelacion == 'rechazada' %}selected{% endif %}>
                                  Rechazada

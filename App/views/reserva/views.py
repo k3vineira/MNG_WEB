@@ -92,32 +92,45 @@ import json
 
 @requiere_administrador
 def cambiar_estado_reserva(request, reserva_id):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            nuevo_estado = data.get('estado')
-            
-            reserva = get_object_or_404(Reserva, id=reserva_id)
-            if nuevo_estado not in dict(Reserva.ESTADO_CHOICES).keys():
-                return JsonResponse({'success': False, 'error': 'Estado no válido.'}, status=400)
-            
-            estado_anterior = reserva.estado_reserva
-            reserva.estado_reserva = nuevo_estado
-            reserva.save()
-            
-            if reserva.usuario:
-                crear_notificacion_sistema(
-                    usuario=reserva.usuario,
-                    reserva=reserva,
-                    mensaje=f"El estado de tu reserva #{reserva.id} ha sido cambiado de '{estado_anterior}' a '{nuevo_estado}'.",
-                    tipo="Reserva",
-                    prioridad="media"
-                )
-            
-            return JsonResponse({'success': True, 'estado': nuevo_estado, 'mensaje': f'Estado actualizado a {nuevo_estado}'})
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=500)
-    return JsonResponse({'success': False, 'error': 'Método no permitido.'}, status=405)
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Método no permitido.'}, status=405)
+
+    try:
+        data = json.loads(request.body or '{}')
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'El cuerpo debe ser JSON válido.'}, status=400)
+
+    nuevo_estado = data.get('estado')
+    if nuevo_estado not in dict(Reserva.ESTADO_CHOICES).keys():
+        return JsonResponse({'success': False, 'error': 'Estado no válido.'}, status=400)
+
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+    if nuevo_estado == 'confirmada':
+        pago = getattr(reserva, 'pago', None)
+        if not pago or pago.estado_transaccion != 'aprobado':
+            return JsonResponse(
+                {'success': False, 'error': 'No se puede confirmar la reserva sin un pago aprobado.'},
+                status=400
+            )
+
+    estado_anterior = reserva.estado_reserva
+    reserva.estado_reserva = nuevo_estado
+    reserva.save()
+
+    if reserva.usuario and estado_anterior != nuevo_estado:
+        crear_notificacion_sistema(
+            usuario=reserva.usuario,
+            reserva=reserva,
+            mensaje=f"El estado de tu reserva #{reserva.id} ha cambiado de '{estado_anterior}' a '{nuevo_estado}'.",
+            tipo="Reserva",
+            prioridad="media"
+        )
+
+    return JsonResponse({
+        'success': True,
+        'estado': nuevo_estado,
+        'mensaje': f'Estado actualizado a {nuevo_estado}'
+    })
 
 
 @method_decorator(requiere_administrador, name='dispatch')
@@ -271,10 +284,14 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     real_id = reserva_id or pk
     reserva = get_object_or_404(Reserva, id=real_id, usuario=request.user)
 
-    # 2. Validar si ya se encuentra cancelada
+    # 2. La solicitud no puede repetirse ni aplicarse a una reserva cancelada
     if reserva.estado_reserva == 'cancelada':
         messages.warning(request, "Esta reserva ya se encuentra cancelada.")
         return redirect('mis_cancelaciones')
+
+    if reserva.estado_cancelacion == 'pendiente':
+        messages.warning(request, "Ya tienes una solicitud de cancelación pendiente de revisión.")
+        return redirect('mis_reservas_usuario')
 
     # 3. Control de días desde el registro (máximo 3 días para cancelar)
     fecha_reg = getattr(reserva, 'fecha_registro', None)
@@ -293,10 +310,10 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
         messages.error(request, "Debes ingresar un motivo válido para solicitar la cancelación.")
         return redirect('mis_reservas_usuario')
 
-    monto_total = float(reserva.monto_total or 0)
+    monto_total = Decimal(reserva.monto_total or 0)
     fecha_tour = getattr(reserva, 'fecha_inicio', None)
     
-    penalidad_calculada = 0.0
+    penalidad_calculada = Decimal('0.00')
     politica_reembolso = "Sujeto a evaluación administrativa."
 
     if fecha_tour:
@@ -306,23 +323,19 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
 
       
         if dias_para_tour >= 15:
-            penalidad_calculada = monto_total * 0.10
+            penalidad_calculada = monto_total * Decimal('0.10')
             politica_reembolso = "Favorable (Reembolso del 90% / Penalidad del 10%)."
         elif 5 <= dias_para_tour <= 14:
-            penalidad_calculada = monto_total * 0.50
+            penalidad_calculada = monto_total * Decimal('0.50')
             politica_reembolso = "Parcial (Reembolso del 50% / Penalidad del 50%)."
         else:
-            penalidad_calculada = monto_total * 1.00
+            penalidad_calculada = monto_total
             politica_reembolso = "Sin reembolso (Menos de 5 días / No-Show)."
 
    
-    estado_anterior = reserva.estado_reserva
     reserva.motivo_cancelacion = motivo
-    
-    if hasattr(reserva, 'penalidad'):
-        reserva.penalidad = penalidad_calculada
-        
-    reserva.estado_reserva = 'cancelada'
+    reserva.penalidad = penalidad_calculada
+    reserva.estado_cancelacion = 'pendiente'
     reserva.save()
 
 
@@ -336,10 +349,11 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
 
     
     try:
-        asunto = f"Confirmación de Cancelación - Reserva #{reserva.id} | Monagua"
+        asunto = f"Solicitud de cancelación recibida - Reserva #{reserva.id} | Monagua"
         mensaje = (
             f"Hola {request.user.get_full_name() or request.user.username},\n\n"
-            f"Tu reserva #{reserva.id} ha sido cancelada exitosamente.\n\n"
+            f"Recibimos tu solicitud de cancelación para la reserva #{reserva.id}.\n"
+            f"La reserva seguirá en estado '{reserva.estado_reserva}' hasta que el equipo la revise.\n\n"
             f"- Motivo: {motivo}\n"
             f"- Penalidad calculada: COP ${penalidad_calculada:,.0f}\n"
             f"- Política aplicada: {politica_reembolso}\n\n"
@@ -349,7 +363,7 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     except Exception:
         pass
 
-    messages.success(request, f"La reserva #{reserva.id} fue cancelada exitosamente.")
+    messages.success(request, f"La solicitud de cancelación de la reserva #{reserva.id} fue enviada para revisión.")
     return redirect('mis_cancelaciones')
 
 @login_required(login_url='login')
@@ -361,7 +375,7 @@ def mis_cancelaciones(request):
     # Ajusta 'cancelada' o 'CANCELADA' según como guardes el estado en tu base de datos.
     cancelaciones = Reserva.objects.filter(
         usuario=request.user,
-        estado_reserva__iexact='cancelada'
+        estado_cancelacion__isnull=False
     ).select_related('paquete').order_by('-id')
 
     context = {
@@ -638,31 +652,31 @@ def descargar_factura(request, reserva_id):
         print(f"Error al descargar la factura PDF: {e}")
         return HttpResponse("Error al generar el PDF de la factura.", status=500)
 
+@requiere_administrador
 def listar_cancelaciones_admin(request):
     """Listado y filtrado de solicitudes de cancelación."""
 
 
     cancelaciones = Reserva.objects.filter(
-        estado_cancelacion__isnull=False
-    ).exclude(estado_cancelacion='').select_related('usuario').order_by('-id')
+        estado_cancelacion__in=['pendiente', 'aprobada', 'rechazada']
+    ).select_related('usuario', 'paquete').order_by('-id')
 
     estado_seleccionado = request.GET.get('estado', '')
 
 
     if estado_seleccionado in ['pendiente', 'aprobada', 'rechazada']:
         if estado_seleccionado == 'aprobada':
-            cancelaciones = cancelaciones.filter(
-                Q(estado_cancelacion__iexact='aprobada') | 
-                Q(estado_cancelacion__iexact='confirmada')
-            )
+            cancelaciones = cancelaciones.filter(estado_cancelacion='aprobada')
         else:
             cancelaciones = cancelaciones.filter(estado_cancelacion__iexact=estado_seleccionado)
 
  
-    stats = Reserva.objects.filter(estado_cancelacion__isnull=False).aggregate(
+    stats = Reserva.objects.filter(
+        estado_cancelacion__in=['pendiente', 'aprobada', 'rechazada']
+    ).aggregate(
         total=Count('id'),
         pendientes=Count('id', filter=Q(estado_cancelacion__iexact='pendiente')),
-        aprobadas=Count('id', filter=Q(estado_cancelacion__iexact='aprobada') | Q(estado_cancelacion__iexact='confirmada')),
+        aprobadas=Count('id', filter=Q(estado_cancelacion__iexact='aprobada')),
         rechazadas=Count('id', filter=Q(estado_cancelacion__iexact='rechazada'))
     )
 
@@ -681,6 +695,7 @@ def listar_cancelaciones_admin(request):
 
     return render(request, 'admin/reserva/cancelaciones_admin.html', context)
 
+@requiere_administrador
 def editar_cancelacion_admin(request, reserva_id):
     """
     Vista para que el administrador revise la cancelación de una Reserva,
@@ -691,18 +706,27 @@ def editar_cancelacion_admin(request, reserva_id):
 
     if request.method == 'POST':
         estado = request.POST.get('estado_cancelacion')
-        penalidad = request.POST.get('penalidad', 0)
-        observaciones = request.POST.get('observaciones_admin', '')
+        if estado not in {'pendiente', 'aprobada', 'rechazada'}:
+            messages.error(request, "El estado de cancelación no es válido.")
+            return redirect('editar_cancelacion_admin', reserva_id=reserva.id)
 
-        if hasattr(reserva, 'estado_cancelacion'):
-            reserva.estado_cancelacion = estado
-            
-        reserva.penalidad = float(penalidad) if penalidad else 0
-
-        if hasattr(reserva, 'observaciones_admin'):
-            reserva.observaciones_admin = observaciones
+        estado_anterior = reserva.estado_cancelacion
+        reserva.estado_cancelacion = estado
+        if estado == 'aprobada':
+            reserva.estado_reserva = 'cancelada'
+        elif estado == 'rechazada' and reserva.estado_reserva == 'cancelada':
+            reserva.estado_reserva = 'confirmada'
 
         reserva.save()
+
+        if reserva.usuario and estado_anterior != estado:
+            crear_notificacion_sistema(
+                usuario=reserva.usuario,
+                reserva=reserva,
+                mensaje=f"La solicitud de cancelación de tu reserva #{reserva.id} fue marcada como '{estado}'.",
+                tipo="Reserva",
+                prioridad="alta"
+            )
 
         messages.success(request, f"La reserva #{reserva.id} ha sido actualizada.")
         return redirect('listar_cancelaciones')
