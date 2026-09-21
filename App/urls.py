@@ -144,7 +144,6 @@ urlpatterns = [
     path('admin/reservas/crear/', reserva_views.CrearReservaAdminView.as_view(), name='crear_reserva'),
     path('admin/reservas/editar/<int:pk>/', reserva_views.EditarReservaAdminView.as_view(), name='editar_reserva'),
     path('admin/reservas/eliminar/<int:pk>/', reserva_views.EliminarReservaAdminView.as_view(), name='eliminar_reserva'),
-    path('admin/reservas/cambiar-estado/<int:reserva_id>/', reserva_views.cambiar_estado_reserva, name='cambiar_estado_reserva'),
 
     # Dashboard Admin
     path('admin/dashboard/', dashboard_views.dashboard_admin, name='dashboard_admin'),

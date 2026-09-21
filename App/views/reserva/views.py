@@ -87,52 +87,6 @@ class GestionReservasListView(ListView):
         return context
 
 
-from django.http import JsonResponse
-import json
-
-@requiere_administrador
-def cambiar_estado_reserva(request, reserva_id):
-    if request.method != 'POST':
-        return JsonResponse({'success': False, 'error': 'Método no permitido.'}, status=405)
-
-    try:
-        data = json.loads(request.body or '{}')
-    except json.JSONDecodeError:
-        return JsonResponse({'success': False, 'error': 'El cuerpo debe ser JSON válido.'}, status=400)
-
-    nuevo_estado = data.get('estado')
-    if nuevo_estado not in dict(Reserva.ESTADO_CHOICES).keys():
-        return JsonResponse({'success': False, 'error': 'Estado no válido.'}, status=400)
-
-    reserva = get_object_or_404(Reserva, id=reserva_id)
-    if nuevo_estado == 'confirmada':
-        pago = getattr(reserva, 'pago', None)
-        if not pago or pago.estado_transaccion != 'aprobado':
-            return JsonResponse(
-                {'success': False, 'error': 'No se puede confirmar la reserva sin un pago aprobado.'},
-                status=400
-            )
-
-    estado_anterior = reserva.estado_reserva
-    reserva.estado_reserva = nuevo_estado
-    reserva.save()
-
-    if reserva.usuario and estado_anterior != nuevo_estado:
-        crear_notificacion_sistema(
-            usuario=reserva.usuario,
-            reserva=reserva,
-            mensaje=f"El estado de tu reserva #{reserva.id} ha cambiado de '{estado_anterior}' a '{nuevo_estado}'.",
-            tipo="Reserva",
-            prioridad="media"
-        )
-
-    return JsonResponse({
-        'success': True,
-        'estado': nuevo_estado,
-        'mensaje': f'Estado actualizado a {nuevo_estado}'
-    })
-
-
 @method_decorator(requiere_administrador, name='dispatch')
 class CrearReservaAdminView(SuccessMessageMixin, CreateView):
     model = Reserva
@@ -144,6 +98,7 @@ class CrearReservaAdminView(SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         adultos = form.cleaned_data.get('numero_adultos', 0)
         menores = form.cleaned_data.get('numero_menores', 0)
+        nuevo_estado = form.cleaned_data.get('estado_reserva')
         fecha = form.cleaned_data.get('fecha_inicio')
 
         if adultos < 1:
@@ -152,6 +107,10 @@ class CrearReservaAdminView(SuccessMessageMixin, CreateView):
 
         if menores < 0:
             form.add_error('numero_menores', 'El número de menores no puede ser negativo.')
+            return self.form_invalid(form)
+
+        if nuevo_estado != 'pendiente':
+            form.add_error('estado_reserva', 'Una reserva nueva debe quedar pendiente hasta validar el pago.')
             return self.form_invalid(form)
 
         if fecha and fecha < date.today():
@@ -180,18 +139,20 @@ class EditarReservaAdminView(UpdateView):
     success_url = reverse_lazy('gestion_reservas')
 
     def form_valid(self, form):
-        adultos = form.cleaned_data.get('numero_adultos', 0)
-        menores = form.cleaned_data.get('numero_menores', 0)
-
-        if adultos < 1:
-            form.add_error('numero_adultos', 'Debe haber al menos 1 adulto en la reserva.')
-            return self.form_invalid(form)
-
-        if menores < 0:
-            form.add_error('numero_menores', 'El número de menores no puede ser negativo.')
-            return self.form_invalid(form)
+        nuevo_estado = form.cleaned_data.get('estado_reserva')
 
         reserva_antigua = self.get_object()
+
+        if nuevo_estado == 'confirmada':
+            pago = getattr(reserva_antigua, 'pago', None)
+            if not pago or pago.estado_transaccion != 'aprobado':
+                form.add_error('estado_reserva', 'No se puede confirmar la reserva sin un pago aprobado.')
+                return self.form_invalid(form)
+
+        if nuevo_estado == 'cancelada' and reserva_antigua.estado_cancelacion != 'aprobada':
+            form.add_error('estado_reserva', 'La reserva solo puede cancelarse después de aprobar la solicitud de cancelación.')
+            return self.form_invalid(form)
+
         valor_viejo = f"Estado: {reserva_antigua.estado_reserva}, Fecha: {reserva_antigua.fecha_inicio}, Adultos: {reserva_antigua.numero_adultos}, Menores: {reserva_antigua.numero_menores}"
 
         response = super().form_valid(form)

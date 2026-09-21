@@ -29,6 +29,12 @@ class ReservaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if self.instance.pk:
+            for field_name in list(self.fields):
+                if field_name != 'estado_reserva':
+                    self.fields.pop(field_name)
+
         # Se exigen al menos 5 días de anticipación para reservas nuevas
         if not self.instance.pk:
             fecha_minima = date.today() + timedelta(days=5)
@@ -74,6 +80,10 @@ class ReservaForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        if self.instance.pk:
+            return cleaned_data
+
         adultos = cleaned_data.get('numero_adultos') or 0
         menores = cleaned_data.get('numero_menores') or 0
 
