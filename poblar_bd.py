@@ -98,11 +98,11 @@ def poblar_base_datos():
         (date(2026, 12, 16), date(2026, 12, 31)),
     ]
 
-    print("1. Creando Usuarios (Admin, Clientes, Guías)...")
+    print("1. Creando Usuarios (Admin, Clientes/Turista, Guías)...")
     admin_user = Usuario.objects.create_superuser(
-        username='admin',
-        password='adminpassword',
-        email='admin@monagua.com',
+        username='ADMIN',
+        password='admin1234',
+        email='admin@gmail.com',
         first_name='Admin',
         last_name='Monagua',
         rol=Usuario.Roles.ADMIN,
@@ -115,13 +115,28 @@ def poblar_base_datos():
     clientes_creados = []
     guias_creados = []
 
+    # Usuario Turista / Cliente principal de prueba
+    turista_user = Usuario.objects.create_user(
+        username='turista',
+        password='turista1234',
+        email='turista@gmail.com',
+        first_name='Juan',
+        last_name='Turista',
+        rol=Usuario.Roles.CLIENTE,
+        tipo_documento=Usuario.TipoDocumento.CC,
+        numero_documento='87654321',
+        telefono='+573100000000',
+        residencia='Bogotá, COL',
+        pais='COL'
+    )
+    clientes_creados.append(turista_user)
+
     telefonos_clientes = [
         '+573152345678', '+573201112233', '+573004567890',
         '+573129876543', '+573182223344', '+573015556677',
-        '+573168889900', '+573223334455', '+573056667788',
-        '+573194445566'
+        '+573168889900', '+573223334455', '+573056667788'
     ]
-    for i in range(10):
+    for i in range(9):
         username = f"cliente_{i}_{random.randint(1000, 9999)}"
         u = Usuario.objects.create_user(
             username=username,
@@ -525,7 +540,10 @@ def poblar_base_datos():
 
     print("\n" + "=" * 60)
     print("[OK] Poblado de base de datos finalizado con éxito!")
-    print(f"   • {len(clientes_creados)} Clientes")
+    print("   • Usuarios de prueba disponibles:")
+    print("     - ADMIN:   username='admin'   | password='adminpassword'")
+    print("     - TURISTA: username='turista' | password='turistapassword'")
+    print(f"   • {len(clientes_creados)} Clientes / Turistas")
     print(f"   • {len(guias_creados)} Guías Turísticos")
     print(f"   • {len(categorias_creadas)} Categorías")
     print(f"   • {len(actividades_creadas)} Actividades")

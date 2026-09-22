@@ -392,4 +392,4 @@ def perfil_admin(request):
         messages.success(request, 'Perfil actualizado correctamente.')
         return redirect('admin_perfil')
 
-    return render(request, 'usuario/perfil.html', {'user': user})
+    return render(request, 'usuario/perfil/perfil.html', {'user': user})

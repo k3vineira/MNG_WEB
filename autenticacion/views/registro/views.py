@@ -34,8 +34,14 @@ def registro_vista(request):
             email = form.cleaned_data['email']
             otp = str(random.randint(100000, 999999))
 
-            # Guardar datos en sesión para creación posterior a la verificación
-            request.session['registro_data'] = request.POST.dict()
+            # Filtrar y almacenar en sesión exclusivamente campos de la lista blanca de RegistroForm
+            campos_permitidos = set(RegistroForm.Meta.fields) | {'password', 'confirmar_password'}
+            datos_filtrados = {k: v for k, v in request.POST.items() if k in campos_permitidos}
+            next_url = request.POST.get('next') or request.GET.get('next')
+            if next_url:
+                datos_filtrados['next'] = next_url
+
+            request.session['registro_data'] = datos_filtrados
             request.session['registro_email'] = email
             request.session['registro_otp'] = otp
             request.session['registro_otp_time'] = time.time()
@@ -111,6 +117,8 @@ def verificar_otp_registro_vista(request):
                 user = form.save(commit=False)
                 user.set_password(form.cleaned_data['password'])
                 user.rol = Usuario.Roles.CLIENTE
+                user.is_staff = False
+                user.is_superuser = False
 
                 # Asegurar persistencia de campos geográficos
                 reg_data = request.session.get('registro_data', {})
