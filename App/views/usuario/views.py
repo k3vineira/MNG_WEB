@@ -108,7 +108,7 @@ def perfil_turista_view(request):
         messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
         return redirect(request.path)
 
-    return render(request, 'usuario/perfil.html', {'user': user})
+    return render(request, 'usuario/perfil/perfil.html', {'user': user})
  
  
 @login_required
@@ -274,7 +274,7 @@ def configuracion_usuario_view(request):
         'user_agent': request.META.get('HTTP_USER_AGENT', 'Navegador Web'),
     }
 
-    return render(request, 'usuario/configuracion.html', contexto)
+    return render(request, 'usuario/perfil/configuracion.html', contexto)
 
 
 # ==============================================================================

@@ -33,7 +33,7 @@ def listar_notificaciones(request):
         'total_no_leidas': total_no_leidas,
         'total_leidas': total_leidas,
     }
-    return render(request, 'usuario/notificaciones.html', contexto)
+    return render(request, 'usuario/notificacion/notificaciones.html', contexto)
 
 
 @login_required(login_url='login')

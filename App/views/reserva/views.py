@@ -585,7 +585,7 @@ def ver_factura(request, reserva_id):
         'logo_base64': logo_base64,
         'qr_base64': qr_base64,
     }
-    return render(request, 'usuario/factura.html', context)
+    return render(request, 'usuario/reserva/factura.html', context)
 
 
 @login_required(login_url='login')
