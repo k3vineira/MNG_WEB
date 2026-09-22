@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib import messages
+from django.utils.http import url_has_allowed_host_and_scheme
 from App.models import Notificacion
 
 
@@ -39,17 +40,23 @@ def listar_notificaciones(request):
 @login_required(login_url='login')
 def marcar_notificacion_leida(request, notificacion_id):
     """
-    Marca una notificación como leída.
+    Marca una notificación como leída y redirige al destino relacionado.
     """
     notificacion = get_object_or_404(Notificacion, id=notificacion_id, usuario=request.user)
     notificacion.leido = True
-    notificacion.save()
+    notificacion.save(update_fields=['leido'])
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('format') == 'json':
         return JsonResponse({'status': 'ok', 'mensaje': 'Notificación marcada como leída'})
-    
+
+    next_url = request.GET.get('next') or request.POST.get('next')
+    if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        redirect_to = next_url
+    else:
+        redirect_to = notificacion.get_destino_url()
+
     messages.success(request, 'Notificación marcada como leída.')
-    return redirect(request.META.get('HTTP_REFERER', 'listar_notificaciones'))
+    return redirect(redirect_to)
 
 
 @login_required(login_url='login')
