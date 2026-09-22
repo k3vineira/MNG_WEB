@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 def terminos_view(request):
     """Renderiza la plantilla de Términos y Condiciones."""
-    return render(request, 'usuario/terminos.html', {
+    return render(request, 'usuario/terminos/terminos.html', {
         'titulo': 'Términos y Condiciones — Monagua'
     })
 
