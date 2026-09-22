@@ -48,7 +48,9 @@
     {% include 'partials/accesibilidad.html' %}
 
     <main id="mainContent" class="p-4 position-relative">
-      <!-- Notificaciones eliminadas de aqui para evitar duplicados -->
+      <div class="d-flex justify-content-end mb-3">
+        {% include 'partials/notificacion/notificaciones.html' %}
+      </div>
 
       {% block content %}{% endblock %}
     </main>

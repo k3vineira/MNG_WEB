@@ -44,12 +44,6 @@ def login_vista(request):
                 if user is not None:
                     if user.is_active:
                         login(request, user)
-                        crear_notificacion_sistema(
-                            usuario=user,
-                            mensaje=f"El usuario '{user.username}' ha iniciado sesión.",
-                            tipo="Autenticación",
-                            prioridad="Alta"
-                        )
                         messages.success(request, f"¡Bienvenido de nuevo, {user.first_name or user.username}!")
                         
                         next_url = request.GET.get('next') or request.POST.get('next')

@@ -689,6 +689,45 @@ class Notificacion(models.Model):
         verbose_name = 'Notificación'
         verbose_name_plural = 'Notificaciones'
 
+    def get_destino_url(self):
+        """Devuelve la ruta de la pantalla asociada a la notificación."""
+        tipo = (self.tipo or '').lower()
+        es_admin = bool(self.usuario and (self.usuario.is_staff or getattr(self.usuario, 'es_admin', False)))
+
+        if es_admin:
+            if 'pqrs' in tipo:
+                return reverse('listar_pqrs')
+            if 'reserva' in tipo:
+                return reverse('gestion_reservas')
+            if 'categoria' in tipo:
+                return reverse('listar_categorias')
+            if 'blog' in tipo:
+                return reverse('listar_blog')
+            if 'pago' in tipo or 'comprobante' in tipo or 'factura' in tipo:
+                return reverse('admin_comprobantes')
+            if 'calificacion' in tipo:
+                return reverse('listar_calificaciones')
+            if 'usuario' in tipo or 'guia' in tipo:
+                return reverse('gestion_usuarios')
+            return reverse('dashboard_admin')
+
+        if 'categoria' in tipo:
+            return reverse('tours')
+        if 'pago' in tipo or 'comprobante' in tipo or 'factura' in tipo:
+            return reverse('mis_comprobantes')
+        if 'blog' in tipo or 'articulo' in tipo or 'historia' in tipo:
+            return reverse('blog')
+        if 'pqrs' in tipo:
+            return reverse('mis_pqrs')
+        if 'reserva' in tipo:
+            return reverse('mis_reservas_usuario')
+        if 'autentic' in tipo or 'login' in tipo or 'sesion' in tipo:
+            return reverse('dashboard_turista')
+        if self.reserva_id:
+            return reverse('mis_reservas_usuario')
+
+        return reverse('listar_notificaciones')
+
     def __str__(self):
         return f'Notificación {self.id} - {self.usuario}'
 

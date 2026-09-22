@@ -30,6 +30,17 @@ class ReservaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        if 'usuario' in self.fields:
+            self.fields['usuario'].empty_label = 'Seleccione un cliente'
+        if 'paquete' in self.fields:
+            self.fields['paquete'].empty_label = 'Seleccione un paquete'
+        if 'estado_reserva' in self.fields:
+            self.fields['estado_reserva'].empty_label = 'Seleccione un estado'
+            self.fields['estado_reserva'].choices = [
+                ('', 'Seleccione un estado'),
+                *self.fields['estado_reserva'].choices[1:]
+            ]
+
         if self.instance.pk:
             for field_name in list(self.fields):
                 if field_name != 'estado_reserva':
