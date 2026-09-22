@@ -6,11 +6,13 @@ from App.models import Usuario
 
 
 class IniciarSesionForm(forms.Form):
-    """Formulario de inicio de sesión por usuario o correo electrónico y contraseña."""
-    usuario_o_email = forms.CharField(
+    """Formulario de inicio de sesión por usuario o correo electrónico y contraseña con validación robusta."""
+    username = forms.CharField(
         label="Usuario o Correo Electrónico",
+        max_length=150,
         error_messages={
-            'required': 'Por favor ingresa tu nombre de usuario o correo electrónico.'
+            'required': 'Por favor ingresa tu nombre de usuario o correo electrónico.',
+            'max_length': 'El identificador de usuario no puede superar 150 caracteres.'
         },
         widget=forms.TextInput(attrs={
             'class': 'form-control rounded-pill py-3 px-4',
@@ -21,6 +23,7 @@ class IniciarSesionForm(forms.Form):
     )
     password = forms.CharField(
         label="Contraseña",
+        max_length=128,
         error_messages={
             'required': 'Por favor ingresa tu contraseña.'
         },
@@ -31,6 +34,19 @@ class IniciarSesionForm(forms.Form):
             'autocomplete': 'current-password'
         })
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Soporte retrocompatible si la plantilla envía usuario_o_email en vez de username
+        if self.data and 'usuario_o_email' in self.data and not self.data.get('username'):
+            self.data = self.data.copy()
+            self.data['username'] = self.data.get('usuario_o_email')
+
+    def clean_username(self):
+        usuario = self.cleaned_data.get('username', '').strip()
+        if not usuario:
+            raise ValidationError("Por favor ingresa un nombre de usuario o correo válido.")
+        return usuario
 
 
 class RegistroForm(forms.ModelForm):

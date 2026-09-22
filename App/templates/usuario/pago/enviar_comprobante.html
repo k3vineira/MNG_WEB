@@ -86,7 +86,7 @@
                                 <select name="reserva" id="id_reserva" class="form-select" required>
                                     <option value="">— Selecciona la reserva —</option>
                                     {% for r in reservas_elegibles %}
-                                        <option value="{{ r.id }}" {% if selected_reserva_id|add:"0" == r.id %}selected{% endif %}>
+                                        <option value="{{ r.id }}" data-monto="COP ${{ r.monto_total|floatformat:0|intcomma }}" {% if selected_reserva_id|add:"0" == r.id %}selected{% endif %}>
                                             {% if r.multa %}[Multa] {{ r.paquete.nombre }} — Valor: COP ${{ r.multa|floatformat:0|intcomma }}{% else %}[Reserva] {{ r.paquete.nombre }} — Valor: COP ${{ r.monto_total|floatformat:0|intcomma }} (Fecha: {{ r.fecha }}){% endif %}
                                         </option>
                                     {% endfor %}
@@ -96,7 +96,7 @@
                         <div class="row">
                             <div class="form-group col-md-6 mb-3">
                                 <label for="id_referencia" class="form-label requiredField">Nº de Referencia / Transacción<span class="asteriskField">*</span></label>
-                                <input type="text" name="referencia" maxlength="100" class="textinput form-control" required id="id_referencia">
+                                <input type="text" name="referencia" maxlength="100" class="textinput form-control" required id="id_referencia" placeholder="Ej. CUS-123456789">
                             </div>
                             <div class="form-group col-md-6 mb-3">
                                 <label for="id_banco_origen" class="form-label requiredField">Banco o Medio de Pago<span class="asteriskField">*</span></label>
@@ -117,13 +117,17 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6 mb-3">
-                                <label for="id_monto" class="form-label requiredField">Monto Exacto Pagado<span class="asteriskField">*</span></label>
-                                <input type="number" name="monto" value="0.00" min="0" step="0.01" class="numberinput form-control" required id="id_monto">
+                                <label for="id_monto_display" class="form-label text-muted">Monto de la Reserva</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted">$</span>
+                                    <input type="text" id="id_monto_display" class="form-control bg-light" readonly placeholder="Selecciona una reserva para ver el valor" value="">
+                                </div>
+                                <small class="form-text text-muted"><i class="bi bi-shield-check text-success me-1"></i>Monto verificado y fijado automáticamente por el servidor.</small>
                             </div>
                             <div class="form-group col-md-6 mb-3">
-                                <label for="id_imagen_comprobante" class="form-label">Imagen o Captura del Comprobante*</label>
-                                <input type="file" name="imagen_comprobante" class="clearablefileinput form-control" accept="image/*" id="id_imagen_comprobante">
-                                <small class="form-text text-muted">Sube un archivo legible (PNG, JPG, JPEG, WebP).</small>
+                                <label for="id_imagen_comprobante" class="form-label requiredField">Imagen o Captura del Comprobante<span class="asteriskField">*</span></label>
+                                <input type="file" name="imagen_comprobante" class="clearablefileinput form-control" accept="image/png, image/jpeg, image/webp, application/pdf" required id="id_imagen_comprobante">
+                                <small class="form-text text-muted">Archivos permitidos: PNG, JPG, JPEG, WebP, PDF (Máx. 5 MB).</small>
                             </div>
                         </div>
                         <div class="row">

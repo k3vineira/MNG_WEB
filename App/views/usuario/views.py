@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.utils import timezone
 from App.models import Usuario, Paquete, Reserva, PQRS, Calificacion
 from App.utils import crear_notificacion_sistema
+from App.forms.usuario.forms import PerfilTuristaForm, PerfilGuiaForm, CambiarClaveSeguraForm
 
 
 def es_administrador(user):
@@ -59,9 +60,9 @@ def panel_rapido_view(request):
     # 4. Historial reciente de reservas (últimas 4)
     ultimas_reservas = reservas_qs.order_by('-id')[:4]
 
-    context = {
+    contexto = {
         'recomendacion': recomendacion,
-        'recomendaciones_json': json.dumps(recomendaciones_data),
+        'recomendaciones_data': recomendaciones_data,
         'total_reservas': total_reservas,
         'reservas_confirmadas': reservas_confirmadas,
         'reservas_pendientes': reservas_pendientes,
@@ -71,42 +72,28 @@ def panel_rapido_view(request):
         'ultimas_reservas': ultimas_reservas,
     }
 
-    return render(request, 'partials/panel_rapido.html', context)
+    return render(request, 'usuario/dashboard/panel_rapido.html', contexto)
 
 
 @login_required
 def perfil_turista_view(request):
-    """Renderiza y gestiona la actualización del perfil unificado (Turista, Admin, Guía)."""
+    """
+    Renderiza y gestiona la actualización segura del perfil unificado (Turista, Admin, Guía).
+    Utiliza ModelForms con listas blancas estrictas para neutralizar cualquier inyección
+    de campos privilegiados (rol, is_staff, is_superuser, password, email) desde DevTools.
+    """
     user = request.user
+    form_class = PerfilGuiaForm if getattr(user, 'es_guia', False) else PerfilTuristaForm
+
     if request.method == 'POST' and request.POST.get('editar_perfil') == '1':
-        first_name = request.POST.get('first_name', '').strip()
-        last_name = request.POST.get('last_name', '').strip()
-        telefono = request.POST.get('telefono', '').strip()
-        residencia = request.POST.get('residencia', '').strip()
-        imagen_perfil = request.FILES.get('imagen_perfil')
-
-        if first_name:
-            user.first_name = first_name
-        if last_name:
-            user.last_name = last_name
-        if telefono:
-            user.telefono = telefono
-        if residencia:
-            user.residencia = residencia
-        if imagen_perfil:
-            user.imagen_perfil = imagen_perfil
-
-        if getattr(user, 'es_guia', False):
-            licencia = request.POST.get('numero_tarjeta_profesional', '').strip()
-            entidad_salud = request.POST.get('entidad_salud', '').strip()
-            if licencia:
-                user.numero_tarjeta_profesional = licencia
-            if entidad_salud:
-                user.entidad_salud = entidad_salud
-
-        user.save()
-        messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
-        return redirect(request.path)
+        form = form_class(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
+            return redirect(request.path)
+        else:
+            errores_txt = [str(err[0]) for err in form.errors.values()]
+            messages.error(request, f"Error al actualizar perfil: {' '.join(errores_txt)}")
 
     return render(request, 'usuario/perfil/perfil.html', {'user': user})
  
@@ -170,24 +157,18 @@ def configuracion_usuario_view(request):
     if request.method == 'POST':
         accion = request.POST.get('accion')
 
-        # 1. Cambio de Contraseña
+        # 1. Cambio de Contraseña Seguro con validación en servidor
         if accion == 'cambiar_clave':
-            current_password = request.POST.get('current_password', '').strip()
-            new_password = request.POST.get('new_password', '').strip()
-            confirm_password = request.POST.get('confirm_password', '').strip()
-
-            if not user.check_password(current_password):
-                messages.error(request, 'La contraseña actual ingresada es incorrecta.')
-            elif len(new_password) < 6:
-                messages.error(request, 'La nueva contraseña debe tener al menos 6 caracteres.')
-            elif new_password != confirm_password:
-                messages.error(request, 'Las nuevas contraseñas no coinciden.')
-            else:
-                user.set_password(new_password)
+            form_clave = CambiarClaveSeguraForm(user=user, data=request.POST)
+            if form_clave.is_valid():
+                user.set_password(form_clave.cleaned_data['new_password'])
                 user.save()
                 from django.contrib.auth import update_session_auth_hash
                 update_session_auth_hash(request, user)
                 messages.success(request, '¡Tu contraseña ha sido actualizada con éxito!')
+            else:
+                errores_txt = [str(err[0]) for err in form_clave.errors.values()]
+                messages.error(request, f"Error al actualizar la contraseña: {' '.join(errores_txt)}")
             return redirect('configuracion_usuario')
 
         # 2. Preferencias de Notificaciones y Sistema

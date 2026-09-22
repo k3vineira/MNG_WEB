@@ -19,17 +19,20 @@ def login_vista(request):
             return redirect('panel_rapido')
         return redirect('tours')
 
-    if request.method == 'POST':
-        usuario_input = (request.POST.get('username') or request.POST.get('usuario_o_email') or '').strip()
-        password = request.POST.get('password', '')
+    form = IniciarSesionForm()
 
-        if usuario_input and password:
+    if request.method == 'POST':
+        form = IniciarSesionForm(data=request.POST)
+        if form.is_valid():
+            usuario_input = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
             user_objs = Usuario.objects.filter(
                 Q(username__iexact=usuario_input) | Q(email__iexact=usuario_input)
             )
 
             if not user_objs.exists():
-                messages.error(request, "No existe ningún usuario o correo registrado con esos datos.")
+                messages.error(request, "Credenciales incorrectas o usuario no registrado.")
             else:
                 user = None
                 for candidate in user_objs:
@@ -50,7 +53,8 @@ def login_vista(request):
                         messages.success(request, f"¡Bienvenido de nuevo, {user.first_name or user.username}!")
                         
                         next_url = request.GET.get('next') or request.POST.get('next')
-                        if next_url:
+                        from django.utils.http import url_has_allowed_host_and_scheme
+                        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
                             return redirect(next_url)
                         
                         if user.is_staff or getattr(user, 'rol', None) == Usuario.Roles.ADMIN:
@@ -63,9 +67,9 @@ def login_vista(request):
                 else:
                     messages.error(request, "Contraseña incorrecta. Por favor inténtalo de nuevo.")
         else:
-            messages.error(request, "Por favor completa todos los campos requeridos.")
+            errores_txt = [str(err[0]) for err in form.errors.values()]
+            messages.error(request, f"Por favor corrige los campos: {' '.join(errores_txt)}")
 
-    form = IniciarSesionForm()
     return render(request, 'autenticacion/login.html', {'form': form})
 
 

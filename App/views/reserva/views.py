@@ -464,13 +464,25 @@ def guardar_reserva(request, paquete_id):
         except ValueError:
             adultos, menores = 1, 0
 
-        # --- VALIDACIONES AGREGADAS ---
+        # --- VALIDACIONES AGREGADAS (Zero-Trust Frontend) ---
         if adultos < 1:
             messages.error(request, "Debes seleccionar al menos 1 adulto para realizar la reserva.")
             return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
 
+        if adultos > 30:
+            messages.error(request, "El número máximo de adultos permitido por reserva es de 30 personas. Para grupos mayores, comunícate con la administración.")
+            return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
+
         if menores < 0:
             messages.error(request, "El número de menores no puede ser un valor negativo.")
+            return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
+
+        if menores > 30:
+            messages.error(request, "El número máximo de menores permitido por reserva es de 30 personas.")
+            return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
+
+        if adultos + menores > 50:
+            messages.error(request, "El cupo total por reserva no puede superar las 50 personas.")
             return redirect(f"/reservas/reservar/?paquete_id={paquete_id}")
 
         ya_existe = Reserva.objects.filter(

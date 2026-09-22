@@ -43,4 +43,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    const reservaSelect = document.getElementById('id_reserva');
+    const montoDisplay = document.getElementById('id_monto_display');
+    if (reservaSelect && montoDisplay) {
+        const updateMontoDisplay = function() {
+            const selectedOpt = reservaSelect.options[reservaSelect.selectedIndex];
+            if (selectedOpt && selectedOpt.dataset.monto) {
+                montoDisplay.value = selectedOpt.dataset.monto;
+            } else {
+                montoDisplay.value = '';
+            }
+        };
+        reservaSelect.addEventListener('change', updateMontoDisplay);
+        updateMontoDisplay();
+    }
 });

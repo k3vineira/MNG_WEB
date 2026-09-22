@@ -5,50 +5,56 @@ from django.db.models import Sum
 from App.models import Pago, Reserva
 from App.utils import crear_notificacion_sistema
 
+from App.forms.pago.forms import ComprobantePagoForm
+
 @login_required(login_url='login')
 def enviar_comprobante(request):
     """
-    Vista para que el turista adjunte y envíe el comprobante de pago de una reserva.
+    Vista protegida para que el turista envíe el comprobante de pago de una reserva.
+    Aplica validación estricta en el servidor mediante ComprobantePagoForm e impide
+    la manipulación del monto, estado o reserva desde el navegador del cliente.
     """
+    form = ComprobantePagoForm()
+
     if request.method == 'POST':
         reserva_id = request.POST.get('reserva')
-        referencia = request.POST.get('referencia', '').strip()
-        banco_origen = request.POST.get('banco_origen', '').strip()
-        monto = request.POST.get('monto', '0')
-        metodo_pago = request.POST.get('metodo_pago', 'Transferencia Bancaria').strip()
-        imagen_comprobante = request.FILES.get('imagen_comprobante')
-        descripcion = request.POST.get('descripcion', '').strip()
-
-        if not reserva_id or not referencia or not banco_origen or not imagen_comprobante:
-            messages.error(request, "Por favor completa todos los campos obligatorios y adjunta la imagen del comprobante.")
+        if not reserva_id:
+            messages.error(request, "Por favor selecciona la reserva a la que corresponde este pago.")
             return redirect('enviar_comprobante')
 
+        # Garantiza que la reserva exista y pertenezca al usuario autenticado (IDOR prevention)
         reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
 
-        # Se ignora cualquier valor de monto recibido en el request y se asigna el monto exacto de la base de datos
-        monto_val = reserva.monto_total
+        # Evitar pagos duplicados si ya tiene comprobante en revisión o aprobado
+        pago_existente = getattr(reserva, 'pago', None)
+        if pago_existente and pago_existente.estado_transaccion in ['pendiente', 'aprobado']:
+            messages.warning(request, "Esta reserva ya tiene un comprobante registrado o en proceso de revisión.")
+            return redirect('mis_comprobantes')
 
-        pago = Pago.objects.create(
-            reserva=reserva,
-            referencia=referencia,
-            banco_origen=banco_origen,
-            metodo_pago=metodo_pago,
-            monto=monto_val,
-            imagen_comprobante=imagen_comprobante,
-            descripcion=descripcion,
-            estado_transaccion='pendiente'
-        )
+        form = ComprobantePagoForm(request.POST, request.FILES)
+        if form.is_valid():
+            pago = form.save(commit=False)
+            
+            # ASIGNACIÓN SEGURA EN SERVIDOR (Zero-Trust Frontend):
+            # Si el usuario manipuló el HTML para alterar el monto o estado, se ignora completamente.
+            pago.reserva = reserva
+            pago.monto = reserva.monto_total
+            pago.estado_transaccion = 'pendiente'
+            pago.save()
 
-        crear_notificacion_sistema(
-            usuario=request.user,
-            reserva=reserva,
-            mensaje=f"Se ha enviado un nuevo comprobante de pago para la reserva #{reserva.id} del paquete '{reserva.paquete.nombre}'.",
-            tipo="Comprobante de Pago",
-            prioridad="alta"
-        )
+            crear_notificacion_sistema(
+                usuario=request.user,
+                reserva=reserva,
+                mensaje=f"Se ha enviado un nuevo comprobante de pago para la reserva #{reserva.id} del paquete '{reserva.paquete.nombre}'.",
+                tipo="Comprobante de Pago",
+                prioridad="alta"
+            )
 
-        messages.success(request, "¡Tu comprobante de pago ha sido enviado exitosamente y será revisado en breve!")
-        return redirect('mis_comprobantes')
+            messages.success(request, "¡Tu comprobante de pago ha sido enviado exitosamente y será revisado en breve!")
+            return redirect('mis_comprobantes')
+        else:
+            errores_txt = [str(err[0]) for err in form.errors.values()]
+            messages.error(request, f"Error en el comprobante: {' '.join(errores_txt)}")
 
     selected_reserva_id = request.GET.get('reserva_id', '')
     reservas_elegibles = Reserva.objects.filter(usuario=request.user, estado_reserva='pendiente')
@@ -57,6 +63,7 @@ def enviar_comprobante(request):
     total_rechazados = Pago.objects.filter(reserva__usuario=request.user, estado_transaccion='rechazado').count()
 
     context = {
+        'form': form,
         'reservas_elegibles': reservas_elegibles,
         'selected_reserva_id': selected_reserva_id,
         'total_pendientes': total_pendientes,
