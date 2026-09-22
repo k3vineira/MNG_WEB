@@ -23,16 +23,34 @@ class TarifaForm(ModelForm):
         self.fields['paquete'].queryset = Paquete.objects.all()
         self.fields['temporada'].queryset = Temporada.objects.all()
 
+    def clean_paquete(self):
+        paquete = self.cleaned_data.get('paquete')
+        if not paquete:
+            raise ValidationError("Debes seleccionar un paquete turístico.")
+        if not paquete.estado:
+            raise ValidationError("No puedes configurar tarifas para un paquete inactivo.")
+        return paquete
+
+    def clean_temporada(self):
+        temporada = self.cleaned_data.get('temporada')
+        if not temporada:
+            raise ValidationError("Debes seleccionar una temporada válida.")
+        return temporada
+
     def clean_precio_adulto(self):
         precio = self.cleaned_data.get('precio_adulto')
-        if precio is not None and precio <= 0:
-            raise ValidationError("El precio para adulto debe ser mayor a 0.")
+        if precio is None or precio <= 0:
+            raise ValidationError("El precio para adulto debe ser un valor estrictamente mayor a 0.")
+        if precio > 50000000:
+            raise ValidationError("El precio para adulto supera el valor máximo permitido.")
         return precio
 
     def clean_precio_menor(self):
         precio = self.cleaned_data.get('precio_menor')
-        if precio is not None and precio < 0:
+        if precio is None or precio < 0:
             raise ValidationError("El precio para menor no puede ser un valor negativo.")
+        if precio > 50000000:
+            raise ValidationError("El precio para menor supera el valor máximo permitido.")
         return precio
 
     def clean(self):

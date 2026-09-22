@@ -47,3 +47,22 @@ class BlogForm(forms.ModelForm):
             self.fields['imagen_destacada'].label = 'Imagen destacada / portada'
             self.fields['imagen_destacada'].widget.attrs['accept'] = 'image/*'
             self.fields['imagen_destacada'].widget.attrs['title'] = 'Seleccionar imagen'
+        }
+
+    def clean_titulo(self):
+        titulo = str(self.cleaned_data.get('titulo', '')).strip()
+        if not titulo:
+            raise forms.ValidationError("El título del artículo es obligatorio.")
+        if len(titulo) < 5:
+            raise forms.ValidationError("El título debe contener al menos 5 caracteres.")
+        if titulo.isdigit():
+            raise forms.ValidationError("El título no puede contener únicamente números.")
+        return titulo
+
+    def clean_contenido(self):
+        contenido = str(self.cleaned_data.get('contenido', '')).strip()
+        if not contenido:
+            raise forms.ValidationError("El contenido del artículo es obligatorio.")
+        if len(contenido) < 20:
+            raise forms.ValidationError("El contenido debe tener al menos 20 caracteres para aportar información valiosa.")
+        return contenido

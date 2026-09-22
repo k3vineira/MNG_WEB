@@ -1,14 +1,17 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-$v(prxi2pmb4!#_1m14jqku+xgtqfc+^2_wyshu#6afow+$7ap'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-$v(prxi2pmb4!#_1m14jqku+xgtqfc+^2_wyshu#6afow+$7ap')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 
 
@@ -35,7 +38,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'auditlog.middleware.AuditlogMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'auditlog.middleware.AuditlogMiddleware',
@@ -128,3 +130,33 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "monaguamongua@gmail.com",)
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "wmdt aboo fuaj qdzs")
 DEFAULT_FROM_EMAIL = f"Monagua <{EMAIL_HOST_USER}>"
+
+# ==========================================
+# CONFIGURACIONES DE SEGURIDAD (PRODUCCIÓN Y GLOBAL)
+# ==========================================
+
+# Prevenir ataques de confusión MIME en toda la página
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Protección estricta contra Clickjacking (impide que se incruste tu sitio en un iframe)
+X_FRAME_OPTIONS = 'DENY'
+
+# Habilitar filtro XSS en el navegador
+SECURE_BROWSER_XSS_FILTER = True
+
+# Política de Referrer para no filtrar información sensible a sitios externos
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+# Configuraciones que solo deben aplicarse en producción para no romper el desarrollo local
+if not DEBUG:
+    # Redirección obligatoria a HTTPS
+    SECURE_SSL_REDIRECT = True
+    
+    # HTTP Strict Transport Security (HSTS)
+    SECURE_HSTS_SECONDS = 31536000  # 1 año
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Cookies de sesión y CSRF solo por HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True

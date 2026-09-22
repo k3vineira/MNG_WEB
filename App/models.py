@@ -382,14 +382,31 @@ class Tarifa(models.Model):
     id = models.AutoField(primary_key=True)
     paquete = models.ForeignKey(Paquete, on_delete=models.CASCADE, related_name='tarifas')
     temporada = models.ForeignKey(Temporada, on_delete=models.CASCADE, related_name='tarifas')
-    precio_adulto = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Precio por Adulto')
-    precio_menor = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Precio por Menor')
+    precio_adulto = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        verbose_name='Precio por Adulto',
+        validators=[MinValueValidator(Decimal('0.01'), message="El precio por adulto debe ser mayor a 0.")]
+    )
+    precio_menor = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        verbose_name='Precio por Menor',
+        validators=[MinValueValidator(Decimal('0.00'), message="El precio por menor no puede ser negativo.")]
+    )
     estado = models.BooleanField(default=True, verbose_name='¿Está Activa?')
 
     class Meta:
         verbose_name = 'Tarifa'
         verbose_name_plural = 'Tarifas'
         unique_together = ('paquete', 'temporada')
+
+    def clean(self):
+        super().clean()
+        if self.precio_adulto is not None and self.precio_adulto <= Decimal('0.00'):
+            raise ValidationError({'precio_adulto': 'El precio para adulto debe ser estrictamente mayor a 0.'})
+        if self.precio_menor is not None and self.precio_menor < Decimal('0.00'):
+            raise ValidationError({'precio_menor': 'El precio para menor no puede ser un valor negativo.'})
 
     def __str__(self):
         """Retorna el nombre del paquete y la temporada como representación textual."""
@@ -497,22 +514,40 @@ class Reserva(models.Model):
     paquete = models.ForeignKey('Paquete', on_delete=models.PROTECT, related_name='reservas', verbose_name='Paquete Reservado')
     usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='reservas', verbose_name='Usuario', null=True, blank=True)
     fecha_inicio = models.DateField(null=True, blank=True, verbose_name='Fecha de inicio')
-    numero_adultos = models.PositiveSmallIntegerField(verbose_name='Número de Adultos', default=1)
-    numero_menores = models.PositiveSmallIntegerField(verbose_name='Número de Menores', default=0)
+    numero_adultos = models.PositiveSmallIntegerField(
+        verbose_name='Número de Adultos',
+        default=1,
+        validators=[MinValueValidator(1, message="Debe haber al menos 1 adulto en la reserva.")]
+    )
+    numero_menores = models.PositiveSmallIntegerField(
+        verbose_name='Número de Menores',
+        default=0,
+        validators=[MinValueValidator(0, message="El número de menores no puede ser negativo.")]
+    )
     estado_reserva = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente', verbose_name='Estado')
     motivo_cancelacion = models.TextField(null=False, blank=True, verbose_name='Motivo de Cancelación')
     monto_total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Monto Total', editable=False)
     fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Registro')
     penalidad = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Penalidad', default=0, editable=False)
-    
-    
 
     class Meta:
         verbose_name = 'Reserva'
         verbose_name_plural = 'Reservas'
         constraints = [models.UniqueConstraint(fields=['usuario', 'paquete', 'fecha_inicio'], name='unique_usuario_paquete_fecha_inicio')]
 
+    def clean(self):
+        super().clean()
+        adultos = self.numero_adultos or 0
+        menores = self.numero_menores or 0
+        if adultos < 1:
+            raise ValidationError({'numero_adultos': 'Debe haber al menos 1 adulto en la reserva.'})
+        if menores < 0:
+            raise ValidationError({'numero_menores': 'El número de menores no puede ser negativo.'})
+        if adultos + menores <= 0:
+            raise ValidationError('La reserva debe incluir al menos una persona.')
+
     def save(self, *args, **kwargs):
+        self.clean()
         if self.paquete and self.fecha_inicio:
             try:
                 temporada = Temporada.objects.filter(
@@ -835,7 +870,13 @@ class Promocion(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=150, verbose_name='Nombre de la promoción')
     descripcion = models.TextField(verbose_name='Descripción')
-    porcentaje_descuento = models.PositiveIntegerField(verbose_name='Porcentaje de descuento')
+    porcentaje_descuento = models.PositiveIntegerField(
+        verbose_name='Porcentaje de descuento',
+        validators=[
+            MinValueValidator(1, message="El porcentaje de descuento debe ser al menos 1%."),
+            MaxValueValidator(100, message="El porcentaje de descuento no puede exceder el 100%.")
+        ]
+    )
     fecha_fin = models.DateField(verbose_name='Fecha de fin')
     fecha_inicio = models.DateField(verbose_name='Fecha de inicio')
     codigo_promocion = models.CharField(max_length=20, unique=True, verbose_name='Código de promoción')
@@ -846,6 +887,15 @@ class Promocion(models.Model):
     class Meta:
         verbose_name = 'Promoción'
         verbose_name_plural = 'Promociones'
+
+    def clean(self):
+        super().clean()
+        if self.fecha_inicio and self.fecha_fin:
+            if self.fecha_fin < self.fecha_inicio:
+                raise ValidationError({'fecha_fin': 'La fecha de fin no puede ser anterior a la fecha de inicio.'})
+        if self.porcentaje_descuento is not None:
+            if self.porcentaje_descuento < 1 or self.porcentaje_descuento > 100:
+                raise ValidationError({'porcentaje_descuento': 'El porcentaje de descuento debe encontrarse entre 1 y 100.'})
 
     def __str__(self):
         """Retorna el nombre y porcentaje de descuento de la promoción."""
@@ -858,10 +908,21 @@ class PolizaViaje(models.Model):
     id = models.AutoField(primary_key=True)
     nombre_poliza = models.CharField(max_length=150, verbose_name='Nombre de la Póliza')
     descripcion = models.TextField(verbose_name='Descripción de Coberturas')
-    cobertura_medica_max = models.DecimalField(max_digits=12, decimal_places=2, default=0.0, verbose_name='Monto máximo de cobertura médica')
+    cobertura_medica_max = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.0,
+        verbose_name='Monto máximo de cobertura médica',
+        validators=[MinValueValidator(Decimal('0.00'), message="La cobertura médica no puede ser negativa.")]
+    )
     cubre_perdida_equipaje = models.BooleanField(default=False, verbose_name='¿Cubre pérdida de equipaje?')
     cubre_cancelacion_vuelo = models.BooleanField(default=False, verbose_name='¿Cubre cancelación de vuelo?')
-    precio_diario = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Precio por Día')
+    precio_diario = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Precio por Día',
+        validators=[MinValueValidator(Decimal('0.00'), message="El precio diario no puede ser negativo.")]
+    )
     condiciones_generales = models.TextField(blank=True, null=True, verbose_name='Condiciones Generales')
     estado = models.BooleanField(default=True, verbose_name='¿Póliza Activa?')
 

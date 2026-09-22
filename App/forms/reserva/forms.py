@@ -89,16 +89,43 @@ class ReservaForm(forms.ModelForm):
             raise ValidationError("El número de menores no puede ser negativo.")
         return menores
 
+    def clean_paquete(self):
+        paquete = self.cleaned_data.get('paquete')
+        if not paquete:
+            raise ValidationError("Debes seleccionar un paquete turístico.")
+        if not paquete.estado:
+            raise ValidationError("El paquete seleccionado no se encuentra activo actualmente.")
+        return paquete
+
+    def clean_usuario(self):
+        usuario = self.cleaned_data.get('usuario')
+        if not usuario:
+            raise ValidationError("Debes especificar un usuario para la reserva.")
+        if not usuario.is_active:
+            raise ValidationError("El usuario seleccionado se encuentra inactivo.")
+        return usuario
+
     def clean(self):
         cleaned_data = super().clean()
 
         if self.instance.pk:
             return cleaned_data
 
+        usuario = cleaned_data.get('usuario')
+        paquete = cleaned_data.get('paquete')
+        fecha_inicio = cleaned_data.get('fecha_inicio')
         adultos = cleaned_data.get('numero_adultos') or 0
         menores = cleaned_data.get('numero_menores') or 0
 
         if adultos + menores <= 0:
             raise ValidationError("La reserva debe incluir al menos una persona.")
+
+        if usuario and paquete and fecha_inicio:
+            # Validar unicidad para evitar duplicados en la misma fecha
+            qs = Reserva.objects.filter(usuario=usuario, paquete=paquete, fecha_inicio=fecha_inicio)
+            if self.instance.pk:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise ValidationError("Este usuario ya tiene una reserva registrada para el mismo paquete en la fecha seleccionada.")
 
         return cleaned_data

@@ -64,20 +64,20 @@
             <div class="row g-4">
               <!-- Nombre de Usuario (NO EDITABLE) -->
               <div class="col-md-6">
-                <div class="form-floating mb-1">
-                  <input type="text" class="form-control rounded-4 shadow-sm bg-light text-muted" id="username" value="{{ user.username }}" readonly disabled />
-                  <label for="username"><i class="bi bi-person-badge text-dark me-2"></i>Nombre de Usuario</label>
+                <label class="form-label small fw-semibold text-secondary mb-1"><i class="bi bi-person-badge text-dark me-2"></i>Nombre de Usuario</label>
+                <div class="p-3 bg-light rounded-4 shadow-sm text-secondary border fw-medium d-flex align-items-center">
+                  <span>{{ user.username }}</span>
                 </div>
-                <span class="text-muted small ps-2">No es modificable.</span>
+                <span class="text-muted small ps-2">Identificador único inmutable.</span>
               </div>
 
               <!-- Correo (NO EDITABLE) -->
               <div class="col-md-6">
-                <div class="form-floating mb-1">
-                  <input type="email" class="form-control rounded-4 shadow-sm bg-light text-muted" id="email" value="{{ user.email }}" readonly disabled />
-                  <label for="email"><i class="bi bi-envelope text-dark me-2"></i>Correo Electrónico</label>
+                <label class="form-label small fw-semibold text-secondary mb-1"><i class="bi bi-envelope text-dark me-2"></i>Correo Electrónico</label>
+                <div class="p-3 bg-light rounded-4 shadow-sm text-secondary border fw-medium d-flex align-items-center">
+                  <span>{{ user.email }}</span>
                 </div>
-                <span class="text-muted small ps-2">No es modificable.</span>
+                <span class="text-muted small ps-2">No modificable desde este panel.</span>
               </div>
 
               <!-- Nombres (EDITABLE) -->
@@ -108,31 +108,17 @@
 
               <!-- Tipo Documento (NO EDITABLE) -->
               <div class="col-md-6">
-                <div class="form-floating">
-                  <input
-                    type="text"
-                    class="form-control rounded-4 shadow-sm bg-light text-muted"
-                    id="tipo_documento_disabled"
-                    value="{{ user.get_tipo_documento_display|default:'No especificado' }}"
-                    disabled
-                    readonly
-                  />
-                  <label for="tipo_documento_disabled"><i class="bi bi-card-heading text-dark me-2"></i>Tipo de Documento</label>
+                <label class="form-label small fw-semibold text-secondary mb-1"><i class="bi bi-card-heading text-dark me-2"></i>Tipo de Documento</label>
+                <div class="p-3 bg-light rounded-4 shadow-sm text-secondary border fw-medium d-flex align-items-center">
+                  <span>{{ user.get_tipo_documento_display|default:'No especificado' }}</span>
                 </div>
               </div>
 
               <!-- Número Documento (NO EDITABLE) -->
               <div class="col-md-6">
-                <div class="form-floating">
-                  <input
-                    type="text"
-                    class="form-control rounded-4 shadow-sm bg-light text-muted"
-                    id="numero_documento_disabled"
-                    value="{{ user.numero_documento|default:'No especificado' }}"
-                    disabled
-                    readonly
-                  />
-                  <label for="numero_documento_disabled"><i class="bi bi-123 text-dark me-2"></i>Número de Documento</label>
+                <label class="form-label small fw-semibold text-secondary mb-1"><i class="bi bi-shield-check text-dark me-2"></i>Número de Documento</label>
+                <div class="p-3 bg-light rounded-4 shadow-sm text-secondary border fw-medium d-flex align-items-center">
+                  <span>{{ user.numero_documento|default:'No especificado' }}</span>
                 </div>
               </div>
 
