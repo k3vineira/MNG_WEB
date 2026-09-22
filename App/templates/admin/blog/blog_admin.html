@@ -80,10 +80,10 @@
                         </td>
                         <td class="text-center">
                             <div class="btn-group shadow-sm">
-                                <a href="#" class="btn btn-sm btn-outline-secondary" title="Editar Blog">
+                                <a href="{% url 'editar_blog' entrada.id %}" class="btn btn-sm btn-outline-secondary" title="Editar Blog">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm btn-outline-danger" title="Eliminar Blog">
+                                <a href="{% url 'eliminar_blog' entrada.id%}" class="btn btn-sm btn-outline-danger" title="Eliminar Blog">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>

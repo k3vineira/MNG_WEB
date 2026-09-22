@@ -20,8 +20,35 @@
                 <div class="card-body p-4 bg-white">
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-                        
-                        {{ form|crispy }}
+
+                        {{ form.titulo|as_crispy_field }}
+                        {{ form.contenido|as_crispy_field }}
+                        {{ form.informacion_adicional|as_crispy_field }}
+                        {{ form.estado|as_crispy_field }}
+
+                        <div class="mb-3 mt-3">
+                            <label for="{{ form.imagen_destacada.id_for_label }}" class="form-label fw-bold text-dark">
+                                {{ form.imagen_destacada.label }}
+                            </label>
+                            <div class="input-group">
+                                <input type="file" name="{{ form.imagen_destacada.name }}" id="{{ form.imagen_destacada.id_for_label }}" class="d-none" accept="image/*">
+                                <label for="{{ form.imagen_destacada.id_for_label }}" class="btn btn-success rounded-pill px-3 py-2 fw-bold">
+                                    <i class="bi bi-upload me-2"></i>Seleccionar imagen
+                                </label>
+                                <span class="form-control text-muted" id="blog-file-name-edit">Sin archivo seleccionado</span>
+                            </div>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const input = document.getElementById('{{ form.imagen_destacada.id_for_label }}');
+                                const fileName = document.getElementById('blog-file-name-edit');
+                                if (input && fileName) {
+                                    input.addEventListener('change', function () {
+                                        fileName.textContent = input.files && input.files.length > 0 ? input.files[0].name : 'Sin archivo seleccionado';
+                                    });
+                                }
+                            });
+                        </script>
 
                         <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
                             <a href="{% url 'listar_blog' %}" class="btn btn-outline-secondary px-4 rounded-pill">
