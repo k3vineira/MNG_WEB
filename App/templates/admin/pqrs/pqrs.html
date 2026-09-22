@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Administración de PQRS" current_icon="bi bi-chat-square-text-fill" %}
 <div class="container-fluid py-4">
     
     <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
@@ -119,9 +120,6 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">No hay PQRS registradas.</td>
-                    </tr>
                     {% endfor %}
                 </tbody>
             </table>

@@ -500,11 +500,13 @@ class Reserva(models.Model):
         ('cancelada', 'Cancelada'),
     ]
     estado_cancelacion = models.CharField(
-        max_length=30, 
-        default='pendiente', 
+        max_length=30,
+        null=True,
+        blank=True,
+        default=None,
         choices=[
             ('pendiente', 'Pendiente de revisión'),
-            ('aprobada', 'Aprobada / Confirmada'),
+            ('aprobada', 'Aprobada'),
             ('rechazada', 'Rechazada')
         ]
     )

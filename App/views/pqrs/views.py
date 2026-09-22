@@ -1,12 +1,28 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from django.views.generic import ListView
 from django.db.models import Count, Q
 
 from App.models import PQRS, Seguimiento, Reserva
 from App.forms.pqrs.forms import PqrsForm
-from App.utils import registrar_bitacora
+from App.utils import registrar_bitacora, crear_notificacion_sistema
+
+
+def notificar_admines_pqrs(pqrs):
+    """Notifica a todos los administradores cuando llega una nueva PQRS."""
+    User = get_user_model()
+    admins = User.objects.filter(Q(is_staff=True) | Q(rol=User.Roles.ADMIN)).distinct()
+
+    for admin in admins:
+        crear_notificacion_sistema(
+            usuario=admin,
+            reserva=None,
+            mensaje=f"Ha llegado una nueva PQRS #{pqrs.id} con asunto '{pqrs.asunto}'. Revisa la gestión de PQRS.",
+            tipo="PQRS",
+            prioridad="alta"
+        )
 
 
 @login_required
@@ -70,6 +86,15 @@ def contestar_pqrs(request, pqrs_id):
             pqr.estado = 'cerrado'
             pqr.save()
 
+            if pqr.usuario:
+                crear_notificacion_sistema(
+                    usuario=pqr.usuario,
+                    reserva=reserva_obj,
+                    mensaje=f"Tu PQRS #{pqr.id} recibió una respuesta: {respuesta_texto[:200]}.",
+                    tipo="PQRS",
+                    prioridad="alta"
+                )
+
             registrar_bitacora(
                 usuario=request.user,
                 accion='RESPUESTA',
@@ -80,6 +105,8 @@ def contestar_pqrs(request, pqrs_id):
                 descripcion=f"Respuesta registrada para la PQRS #{pqr.id} ('{pqr.asunto}').",
                 ip_origen=request.META.get('REMOTE_ADDR')
             )
+            
+            
             
             messages.success(request, "Respuesta enviada y solicitud cerrada con éxito.")
             return redirect('listar_pqrs')
@@ -113,7 +140,19 @@ def guardar_pqrs(request):
                 reserva=reserva_seleccionada
             )
 
-            # 4. Mensaje de confirmación
+            # 4. Notificación para el usuario que radica la PQRS
+            crear_notificacion_sistema(
+                usuario=request.user,
+                reserva=reserva_seleccionada,
+                mensaje=f"Tu PQRS #{nueva_pqrs.id} ha sido radicada correctamente y quedará en revisión.",
+                tipo="PQRS",
+                prioridad="media"
+            )
+
+            # 5. Notificar a administradores de la nueva PQRS
+            notificar_admines_pqrs(nueva_pqrs)
+
+            # 6. Mensaje de confirmación
             reserva_txt = f" para la Reserva #{reserva_seleccionada.id}" if reserva_seleccionada else ""
             messages.success(request, f"Tu PQRS ha sido radicada con éxito{reserva_txt}.")
             return redirect('mis_pqrs')
@@ -170,6 +209,19 @@ def api_guardar_pqrs(request):
                     usuario=user,
                     reserva=reserva_seleccionada
                 )
+
+            # Notificar al usuario que radicó la PQRS si está autenticado
+            if user:
+                crear_notificacion_sistema(
+                    usuario=user,
+                    reserva=reserva_seleccionada,
+                    mensaje=f"Tu PQRS #{nueva_pqrs.id} ha sido radicada correctamente y quedará en revisión.",
+                    tipo="PQRS",
+                    prioridad="media"
+                )
+
+            # Notificar a los administradores del sistema
+            notificar_admines_pqrs(nueva_pqrs)
 
             # Enviar correo
             destinatario = user.email if user else nueva_pqrs.correo

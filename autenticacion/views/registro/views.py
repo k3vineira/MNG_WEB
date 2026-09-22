@@ -125,13 +125,6 @@ def verificar_otp_registro_vista(request):
 
                 user.save()
 
-                crear_notificacion_sistema(
-                    usuario=user,
-                    mensaje=f"Se ha creado una nueva cuenta de usuario '{user.username}' con rol '{user.get_rol_display()}'.",
-                    tipo="Usuario",
-                    prioridad="Media"
-                )
-
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 messages.success(request, f'¡Registro exitoso! Bienvenido a la familia Monagua, {user.first_name}.')
 

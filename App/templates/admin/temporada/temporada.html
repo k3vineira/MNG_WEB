@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Administración de Temporadas" current_icon="bi bi-calendar-range" %}
 <div class="container-fluid py-4">
     
     <!-- 1. Encabezado -->
@@ -141,9 +142,7 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">Aún no hay temporadas registradas.</td>
-                    </tr>
+                
                     {% endfor %}
                 </tbody>
             </table>

@@ -3,6 +3,12 @@ from App.models import PQRS
 from App.models import Seguimiento, Reserva
 
 class PqrsForm(forms.ModelForm):
+    tipo = forms.ChoiceField(
+        choices=[('', '-- Seleccione una opción --'), ('peticion', 'Petición'), ('queja', 'Queja'), ('reclamo', 'Reclamo'), ('sugerencia', 'Sugerencia')],
+        label='Tipo de Solicitud',
+        required=True,
+    )
+
     reserva = forms.ModelChoiceField(
         queryset=Reserva.objects.none(),
         required=False,
@@ -14,7 +20,6 @@ class PqrsForm(forms.ModelForm):
         model = PQRS
         fields = ['tipo', 'asunto', 'descripcion', 'nombre_completo', 'correo']
         labels = {
-            'tipo': 'Tipo de Solicitud',
             'asunto': 'Asunto de la PQRS',
             'descripcion': 'Detalle de su solicitud',
             'nombre_completo': 'Nombre Completo',

@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Administración de Blog" current_icon="bi bi-star-fill" %}
 <div class="container-fluid py-4">
     
     <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
@@ -89,9 +90,7 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center py-5 text-muted">No hay entradas de blog registradas.</td>
-                    </tr>
+            
                     {% endfor %}
                 </tbody>
             </table>
@@ -137,5 +136,6 @@
 {% endblock %}
 
 {% block scripts %}
+<link class="styles" rel="stylesheet" href="{% static 'css/datatables.css' %}">
 <script src="{% static 'js/tconf/tconf-tablaBlogs.js' %}"></script>
 {% endblock %}

@@ -1,4 +1,5 @@
 {% extends "base.html" %} {% load static %} {% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Administración de Reservas" current_icon="bi bi-calendar-check-fill" %}
 <link
   rel="stylesheet"
   href="{% static 'css/librerias/flatpickr.min.css' %}"

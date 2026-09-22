@@ -40,9 +40,9 @@ def enviar_comprobante(request):
         )
 
         crear_notificacion_sistema(
-            reserva= "correspondiente a la reserva #" + str(reserva.id),
             usuario=request.user,
-            mensaje=f"Se ha enviado un nuevo comprobante de pago para la reserva #{reserva.paquete.nombre}.",
+            reserva=reserva,
+            mensaje=f"Se ha enviado un nuevo comprobante de pago para la reserva #{reserva.id} del paquete '{reserva.paquete.nombre}'.",
             tipo="Comprobante de Pago",
             prioridad="alta"
         )

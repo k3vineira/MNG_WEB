@@ -3,18 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container-fluid pt-1 pb-2 px-4" style="margin-top: 60px !important; position: relative; z-index: 1000;">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item fs-5 fw-semibold">
-                <a href="#" class="text-dark text-decoration-none" style="color: #000000af !important;">Inicio</a>
-            </li>
-            <li class="breadcrumb-item active fs-5 fw-bold" aria-current="page" style="color: #000000af !important;">
-                PQRS
-            </li>
-        </ol>
-    </nav>
-</div>
+{% include "partials/breadcrumbs.html" with current_title="PQRS" current_icon="bi bi-chat-square-text-fill" %}
 <div class="container-fluid pt-2 pb-5 mt-0 min-vh-100 d-flex align-items-center bg-light">
     <div class="container">
         <div class="row justify-content-center">
@@ -43,11 +32,11 @@
 
                             <hr class="my-4 text-secondary opacity-25">
 
-                            <div class="d-grid d-md-flex justify-content-md-end gap-3">
-                                <a href="{% url 'pqrs' %}" class="btn btn-light btn-lg px-4 fw-semibold text-secondary border">
+                            <div class="d-flex justify-content-center gap-2 mt-3">
+                                <a href="{% url 'pqrs' %}" class="btn btn-light btn-sm px-3 fw-semibold text-secondary border">
                                     Cancelar
                                 </a>
-                                <button type="submit" class="btn btn-success btn-lg px-5 fw-bold shadow-sm">
+                                <button type="submit" class="btn btn-success btn-sm px-3 fw-semibold shadow-sm">
                                     Enviar Solicitud <i class="bi bi-send-fill ms-2"></i>
                                 </button>
                             </div>

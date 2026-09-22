@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Administración de Categorías" current_icon="bi bi-tags-fill" %}
 <div class="container-fluid py-4">
     
     <!-- 1. Encabezado -->
@@ -92,9 +93,7 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center py-5 text-muted">Aún no hay categorías registradas.</td>
-                    </tr>
+                
                     {% endfor %}
                 </tbody>
             </table>

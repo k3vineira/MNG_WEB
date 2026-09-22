@@ -3,32 +3,8 @@
 {% block footer %}{% endblock %}
 
 {% block content %}
-<!-- ── Migas de Pan (Breadcrumb Navigation) ── -->
-<div class="container pt-5 mt-4 mt-lg-5 mb-3" data-aos="fade-down" data-aos-duration="600">
-    <nav aria-label="breadcrumb" class="bg-white rounded-pill px-4 py-2 shadow-sm border border-light d-inline-block">
-        <ol class="breadcrumb mb-0 align-items-center small fw-medium">
-            <li class="breadcrumb-item">
-                <a href="{% url 'index' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
-                    <i class="bi bi-house-door-fill text-success"></i>
-                    <span>Inicio</span>
-                </a>
-            </li>
-            {% if user.is_authenticated and user.es_turista %}
-            <li class="breadcrumb-item">
-                <a href="{% url 'panel_rapido' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
-                    <i class="bi bi-compass-fill text-success"></i>
-                    <span>Panel Rápido</span>
-                </a>
-            </li>
-            {% endif %}
-            <li class="breadcrumb-item active fw-bold text-dark d-inline-flex align-items-center gap-1" aria-current="page">
-                <i class="bi bi-star-fill me-1 text-warning"></i>
-                <span>Calificaciones y Opiniones</span>
-            </li>
-        </ol>
-    </nav>
-</div>
 
+{% include "partials/breadcrumbs.html" with current_title="Calificaciones y Opiniones" current_icon="bi bi-star-fill" %}
 <div class="container py-5 mt-5 u-style-10efeeeb">
 
   <div class="mb-5">

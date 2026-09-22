@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Gestión de Reservas" current_icon="bi bi-star-fill" %}
 <div class="container py-4">
     
     <!-- Cabecera -->
@@ -143,12 +144,6 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="bi bi-folder-x fs-1 d-block mb-3 text-secondary"></i>
-                            No hay reservas registradas en el sistema.
-                        </td>
-                    </tr>
                     {% endfor %}
                 </tbody>
             </table>

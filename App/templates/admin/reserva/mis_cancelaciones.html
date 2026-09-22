@@ -4,6 +4,7 @@
 {% block title %}Mis Cancelaciones | Monagua{% endblock %}
 
 {% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Mis Cancelaciones" current_icon="bi bi-x-circle-fill" %}
 <div class="container-fluid px-4 py-4">
     <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 fw-semibold text-uppercase mb-2" style="font-size: 0.75rem;">Mis Viajes</span>
 
@@ -14,7 +15,7 @@
             </h2>
             <p class="text-muted mb-0">Consulta el histórico de tus reservas canceladas, penalidades y estado de reembolsos.</p>
         </div>
-        <a href="#" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold">
+        <a href="{% url 'mis_reservas_usuario' %}" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold">
             <i class="bi bi-journal-text me-1"></i> Ver Mis Reservas
         </a>
     </div>
@@ -42,7 +43,7 @@
 
                     <!-- Badge de Estado de Revisión del Admin -->
                     <div>
-                        {% if item.estado_cancelacion == 'confirmada' or item.estado_cancelacion == 'aprobada' %}
+                        {% if item.estado_cancelacion == 'aprobada' %}
                             <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-bold">
                                 <i class="bi bi-check-circle me-1"></i> Cancelación Aprobada
                             </span>
@@ -91,13 +92,15 @@
 
                     <!-- Botón o Estado de Acción -->
                     <div>
-                        {% if item.penalidad and item.penalidad > 0 %}
-                            <!-- Si hay penalidad, muestra botón verde de pago -->
-                            <a href="#" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm d-inline-flex align-items-center gap-2">
-                                <i class="bi bi-credit-card-fill"></i> Pagar Penalidad (COP ${{ item.penalidad|floatformat:0 }})
-                            </a>
-                        {% else %}
-                            <!-- Si es sin multa -->
+                        {% if item.estado_cancelacion == 'pendiente' %}
+                            <span class="badge bg-warning-subtle text-warning rounded-pill px-3 py-2 border fw-normal">
+                                <i class="bi bi-clock me-1"></i> En revisión administrativa
+                            </span>
+                        {% elif item.estado_cancelacion == 'aprobada' and item.penalidad and item.penalidad > 0 %}
+                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 border fw-normal">
+                                Penalidad: COP ${{ item.penalidad|floatformat:0 }}
+                            </span>
+                        {% elif item.estado_cancelacion == 'aprobada' %}
                             <span class="badge bg-light text-secondary rounded-pill px-3 py-2 border fw-normal">
                                 <i class="bi bi-check2-circle me-1 text-success"></i> Cancelada sin multa
                             </span>

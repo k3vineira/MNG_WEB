@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Administración de Actividades" current_icon="bi bi-activity" %}
 <div class="container-fluid py-4">
     
     <!-- 1. Encabezado -->
@@ -130,9 +131,6 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center py-5 text-muted">Aún no hay actividades creadas.</td>
-                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
