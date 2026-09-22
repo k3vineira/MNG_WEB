@@ -25,10 +25,8 @@ def enviar_comprobante(request):
 
         reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
 
-        try:
-            monto_val = float(monto) if monto else float(reserva.monto_total)
-        except ValueError:
-            monto_val = float(reserva.monto_total)
+        # Se ignora cualquier valor de monto recibido en el request y se asigna el monto exacto de la base de datos
+        monto_val = reserva.monto_total
 
         pago = Pago.objects.create(
             reserva=reserva,

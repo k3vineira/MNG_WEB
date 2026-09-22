@@ -162,42 +162,52 @@ class RegistroForm(forms.ModelForm):
 
     def clean_first_name(self):
         first_name = self.cleaned_data.get('first_name', '').strip()
+        if len(first_name) < 2:
+            raise ValidationError("El nombre debe tener al menos 2 caracteres.")
         if not re.match(r'^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$', first_name):
             raise ValidationError("El nombre solo puede contener letras y espacios.")
         return first_name
 
     def clean_last_name(self):
         last_name = self.cleaned_data.get('last_name', '').strip()
+        if len(last_name) < 2:
+            raise ValidationError("El apellido debe tener al menos 2 caracteres.")
         if not re.match(r'^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$', last_name):
             raise ValidationError("El apellido solo puede contener letras y espacios.")
         return last_name
 
     def clean_username(self):
         username = self.cleaned_data.get('username', '').strip()
-        if not re.match(r'^[A-Za-z0-9]+$', username):
-            raise ValidationError("El apodo solo puede contener letras y números, sin símbolos ni espacios.")
+        if len(username) < 4:
+            raise ValidationError("El nombre de usuario debe tener al menos 4 caracteres.")
+        if not re.match(r'^[A-Za-z0-9_]+$', username):
+            raise ValidationError("El nombre de usuario solo puede contener letras, números y guiones bajos.")
         if Usuario.objects.filter(username__iexact=username).exists():
             raise ValidationError("Este nombre de usuario ya está registrado.")
         return username
 
     def clean_email(self):
         email = self.cleaned_data.get('email', '').strip().lower()
+        if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+            raise ValidationError("Ingresa un correo electrónico válido.")
         if Usuario.objects.filter(email__iexact=email).exists():
             raise ValidationError("Ya existe una cuenta vinculada a este correo electrónico.")
         return email
 
     def clean_numero_documento(self):
         doc = self.cleaned_data.get('numero_documento', '').strip()
-        if len(doc) > 10:
-            raise ValidationError("El número de documento no puede tener más de 10 dígitos.")
+        if not re.match(r'^[0-9]{6,10}$', doc):
+            raise ValidationError("El número de documento debe contener entre 6 y 10 dígitos numéricos.")
         if Usuario.objects.filter(numero_documento=doc).exists():
             raise ValidationError("Este número de documento ya está registrado.")
         return doc
 
     def clean_telefono(self):
         tel = self.cleaned_data.get('telefono', '').strip()
-        if tel and Usuario.objects.filter(telefono=tel).exists():
-            raise ValidationError("Este número de teléfono ya está xxxxx.")
+        if not re.match(r'^\+?[0-9]{7,15}$', tel):
+            raise ValidationError("Ingresa un número de celular válido (entre 7 y 15 dígitos).")
+        if Usuario.objects.filter(telefono=tel).exists():
+            raise ValidationError("Este número de teléfono ya está registrado en el sistema.")
         return tel
 
     def clean_departamento(self):
@@ -216,8 +226,8 @@ class RegistroForm(forms.ModelForm):
         if password and confirmar_password:
             if password != confirmar_password:
                 self.add_error('confirmar_password', "Las contraseñas no coinciden.")
-            if len(password) < 6:
-                self.add_error('password', "La contraseña debe tener al menos 6 caracteres.")
+            if len(password) < 8:
+                self.add_error('password', "La contraseña debe tener al menos 8 caracteres para garantizar su seguridad.")
 
         return cleaned_data
 

@@ -63,10 +63,14 @@ def recuperar_clave_vista(request):
     return render(request, 'autenticacion/recuperar.html', {'form': form})
 
 
+from django.core import signing
+from django.core.signing import BadSignature, SignatureExpired
+from django.http import HttpResponseBadRequest
+
 def verificar_otp_recuperar_vista(request):
     """
     Valida el código OTP ingresado para la recuperación de contraseña.
-    Al ser correcto, genera un token criptográfico seguro de un solo uso
+    Al ser correcto, genera un token criptográfico seguro firmado (signing)
     y envía el enlace al correo para establecer la nueva contraseña.
     """
     if 'reset_email' not in request.session or 'reset_otp' not in request.session:
@@ -90,12 +94,16 @@ def verificar_otp_recuperar_vista(request):
             usuario = Usuario.objects.get(id=user_id)
 
             uid = urlsafe_base64_encode(force_bytes(usuario.pk))
-            token = default_token_generator.make_token(usuario)
+            # Generación de token firmado criptográficamente con salt específico (Directiva 4)
+            token_firmado = signing.dumps(
+                {'user_id': usuario.pk, 'email': usuario.email},
+                salt='password-reset-salt'
+            )
 
             contexto_correo = {
                 'user': usuario,
                 'uid': uid,
-                'token': token,
+                'token': token_firmado,
                 'protocol': 'https' if request.is_secure() else 'http',
                 'domain': request.get_host(),
             }
@@ -140,17 +148,42 @@ def restablecer_clave_enviado_vista(request):
 
 def restablecer_clave_confirmar_vista(request, uidb64, token):
     """
-    Valida el token de restablecimiento recibido por correo y permite al usuario
-    ingresar su nueva contraseña.
+    Valida el token firmado criptográficamente recibido por correo y permite al usuario
+    ingresar su nueva contraseña. Captura explícitamente SignatureExpired y BadSignature.
     """
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        usuario = Usuario.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
-        usuario = None
+    usuario = None
+    validlink = False
 
-    if usuario is not None and default_token_generator.check_token(usuario, token):
-        validlink = True
+    # 1. Validación de firma criptográfica con salt y max_age (Directiva 4)
+    try:
+        payload = signing.loads(token, salt='password-reset-salt', max_age=3600)  # 1 hora
+        usuario_id = payload.get('user_id')
+        usuario = Usuario.objects.filter(pk=usuario_id, is_active=True).first()
+        if usuario:
+            validlink = True
+    except SignatureExpired:
+        logger.warning(f"Intento de uso de enlace de restablecimiento expirado.")
+        messages.error(request, "El enlace de restablecimiento ha expirado. Por favor solicita uno nuevo.")
+        return render(request, 'autenticacion/recuperar_clave_form.html', {'validlink': False, 'form': None})
+    except BadSignature:
+        logger.error(f"Alerta de seguridad: Manipulación de firma criptográfica detectada (BadSignature).")
+        return HttpResponseBadRequest("Firma criptográfica inválida o alterada. Solicitud rechazada.")
+    except Exception:
+        pass
+
+    # 2. Fallback de compatibilidad con token tradicional
+    if not validlink:
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            usuario_cand = Usuario.objects.get(pk=uid)
+            if default_token_generator.check_token(usuario_cand, token):
+                usuario = usuario_cand
+                validlink = True
+        except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+            usuario = None
+            validlink = False
+
+    if validlink and usuario is not None:
         form = RestablecerClaveForm(request.POST or None)
 
         if request.method == 'POST' and form.is_valid():
@@ -173,9 +206,8 @@ def restablecer_clave_confirmar_vista(request, uidb64, token):
             'token': token,
         })
     else:
-        validlink = False
         return render(request, 'autenticacion/recuperar_clave_form.html', {
-            'validlink': validlink,
+            'validlink': False,
             'form': None
         })
 

@@ -262,30 +262,38 @@
             </div>
           </div>
 
-          <!-- Usuario y Correo (Solo lectura) -->
+          <!-- Usuario y Correo (Solo lectura semántico sin inputs) -->
           <div class="mb-3">
             <div class="row g-2">
               <div class="col-sm-6">
-                <label for="username" class="form-label small fw-semibold text-secondary mb-1">Nombre de Usuario</label>
-                <input type="text" class="form-control rounded-3 bg-light text-muted py-2.5" id="username" value="{{ user.username }}" readonly disabled />
+                <label class="form-label small fw-semibold text-secondary mb-1">Nombre de Usuario</label>
+                <div class="p-2.5 bg-light rounded-3 text-secondary border text-truncate fw-medium" style="min-height: 42px; display: flex; align-items: center;">
+                  <i class="bi bi-person-badge text-muted me-2"></i><span>{{ user.username }}</span>
+                </div>
               </div>
               <div class="col-sm-6">
-                <label for="email" class="form-label small fw-semibold text-secondary mb-1">Correo Electrónico</label>
-                <input type="email" class="form-control rounded-3 bg-light text-muted py-2.5" id="email" value="{{ user.email }}" readonly disabled />
+                <label class="form-label small fw-semibold text-secondary mb-1">Correo Electrónico</label>
+                <div class="p-2.5 bg-light rounded-3 text-secondary border text-truncate fw-medium" style="min-height: 42px; display: flex; align-items: center;">
+                  <i class="bi bi-envelope text-muted me-2"></i><span>{{ user.email }}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Documento de Identidad (Solo lectura) -->
+          <!-- Documento de Identidad (Solo lectura semántico sin inputs) -->
           <div class="mb-3">
             <div class="row g-2">
               <div class="col-sm-6">
-                <label for="tipo_doc" class="form-label small fw-semibold text-secondary mb-1">Tipo de Documento</label>
-                <input type="text" class="form-control rounded-3 bg-light text-muted py-2.5" id="tipo_doc" value="{{ user.get_tipo_documento_display|default:user.tipo_documento }}" readonly disabled />
+                <label class="form-label small fw-semibold text-secondary mb-1">Tipo de Documento</label>
+                <div class="p-2.5 bg-light rounded-3 text-secondary border fw-medium" style="min-height: 42px; display: flex; align-items: center;">
+                  <i class="bi bi-card-heading text-muted me-2"></i><span>{{ user.get_tipo_documento_display|default:user.tipo_documento }}</span>
+                </div>
               </div>
               <div class="col-sm-6">
-                <label for="num_doc" class="form-label small fw-semibold text-secondary mb-1">Número de Documento</label>
-                <input type="text" class="form-control rounded-3 bg-light text-muted py-2.5" id="num_doc" value="{{ user.numero_documento }}" readonly disabled />
+                <label class="form-label small fw-semibold text-secondary mb-1">Número de Documento</label>
+                <div class="p-2.5 bg-light rounded-3 text-secondary border fw-medium" style="min-height: 42px; display: flex; align-items: center;">
+                  <i class="bi bi-shield-check text-muted me-2"></i><span>{{ user.numero_documento }}</span>
+                </div>
               </div>
             </div>
           </div>

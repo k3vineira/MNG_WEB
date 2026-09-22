@@ -368,11 +368,15 @@
 
             <div class="col-sm-6">
               <label class="form-label small fw-semibold text-secondary mb-1">Tipo de Documento (Verificado)</label>
-              <input type="text" class="form-control bg-light text-muted rounded-3 py-2.5" value="{{ user.get_tipo_documento_display|default:user.tipo_documento }}" readonly disabled />
+              <div class="p-2.5 bg-light rounded-3 text-secondary border fw-medium" style="min-height: 42px; display: flex; align-items: center;">
+                <i class="bi bi-card-heading text-muted me-2"></i><span>{{ user.get_tipo_documento_display|default:user.tipo_documento }}</span>
+              </div>
             </div>
             <div class="col-sm-6">
               <label class="form-label small fw-semibold text-secondary mb-1">Número de Documento (Verificado)</label>
-              <input type="text" class="form-control bg-light text-muted rounded-3 py-2.5" value="{{ user.numero_documento }}" readonly disabled />
+              <div class="p-2.5 bg-light rounded-3 text-secondary border fw-medium" style="min-height: 42px; display: flex; align-items: center;">
+                <i class="bi bi-shield-check text-muted me-2"></i><span>{{ user.numero_documento }}</span>
+              </div>
             </div>
           </div>
 
