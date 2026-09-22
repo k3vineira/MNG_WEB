@@ -70,6 +70,7 @@ def panel_rapido_view(request):
         'total_calificaciones': total_calificaciones,
         'proxima_reserva': proxima_reserva,
         'ultimas_reservas': ultimas_reservas,
+        'recomendaciones_json': json.dumps(recomendaciones_data),
     }
 
     return render(request, 'usuario/dashboard/panel_rapido.html', contexto)

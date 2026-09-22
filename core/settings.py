@@ -120,11 +120,13 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 LOGIN_URL = 'login'
 
-# Configuración de Correo Electrónico (Backend en Consola para Desarrollo Local)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = "smtp.gmail.com"
+# Configuración de Correo Electrónico (Gmail SMTP)
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "monaguamongua@gmail.com",)
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "wmdt aboo fuaj qdzs")
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'monaguamongua@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'ccrolchemrlyhqqh').replace(' ', '')
 DEFAULT_FROM_EMAIL = f"Monagua <{EMAIL_HOST_USER}>"
+EMAIL_TIMEOUT = 10
+

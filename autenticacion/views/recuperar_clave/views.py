@@ -41,20 +41,21 @@ def recuperar_clave_vista(request):
             texto_plano = strip_tags(html_mensaje)
 
             try:
+                from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', getattr(settings, 'EMAIL_HOST_USER', 'monaguamongua@gmail.com'))
                 send_mail(
                     asunto,
                     texto_plano,
-                    getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@monagua.com'),
+                    from_email,
                     [email],
                     html_message=html_mensaje,
-                    fail_silently=True,
+                    fail_silently=False,
                 )
                 messages.info(request, f"Hemos enviado un código OTP a {email}.")
                 return redirect('verificar_otp_clave')
             except Exception as e:
-                logger.warning(f"Aviso de correo recuperación: {e}")
-                messages.info(request, f"Por favor verifica tu código OTP enviado a {email}.")
-                return redirect('verificar_otp_clave')
+                logger.error(f"Error al enviar correo OTP de recuperación: {e}")
+                messages.error(request, f"No se pudo enviar el código de verificación a {email}: {e}")
+                return redirect('recuperar_clave')
         else:
             messages.error(request, 'Los datos no coinciden con ninguna cuenta activa.')
     else:
@@ -112,10 +113,11 @@ def verificar_otp_recuperar_vista(request):
             texto_plano = strip_tags(html_mensaje)
 
             try:
+                from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', getattr(settings, 'EMAIL_HOST_USER', 'monaguamongua@gmail.com'))
                 send_mail(
                     asunto,
                     texto_plano,
-                    'noreply@monagua.com',
+                    from_email,
                     [usuario.email],
                     html_message=html_mensaje,
                     fail_silently=False,
