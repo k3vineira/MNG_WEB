@@ -47,7 +47,6 @@ class BlogForm(forms.ModelForm):
             self.fields['imagen_destacada'].label = 'Imagen destacada / portada'
             self.fields['imagen_destacada'].widget.attrs['accept'] = 'image/*'
             self.fields['imagen_destacada'].widget.attrs['title'] = 'Seleccionar imagen'
-        }
 
     def clean_titulo(self):
         titulo = str(self.cleaned_data.get('titulo', '')).strip()

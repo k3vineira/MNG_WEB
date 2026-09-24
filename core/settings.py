@@ -1,8 +1,11 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,7 +14,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-$v(prxi2pmb4!#_1m14jq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '*').split(',') if h.strip()]
+
 
 
 
@@ -122,14 +126,15 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 LOGIN_URL = 'login'
 
-# Configuración de Correo Electrónico (Backend en Consola para Desarrollo Local)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = "smtp.gmail.com"
+# Configuración de Correo Electrónico (Gmail SMTP)
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "monaguamongua@gmail.com",)
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "wmdt aboo fuaj qdzs")
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'monaguamongua@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'ccrolchemrlyhqqh').replace(' ', '')
 DEFAULT_FROM_EMAIL = f"Monagua <{EMAIL_HOST_USER}>"
+EMAIL_TIMEOUT = 10
 
 # ==========================================
 # CONFIGURACIONES DE SEGURIDAD (PRODUCCIÓN Y GLOBAL)
@@ -160,3 +165,4 @@ if not DEBUG:
     # Cookies de sesión y CSRF solo por HTTPS
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
