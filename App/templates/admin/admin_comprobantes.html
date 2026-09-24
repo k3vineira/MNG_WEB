@@ -4,308 +4,505 @@
 
 {% block title %}Admin | Comprobantes de Pago{% endblock %}
 
-{% block content %}
-{% include "partials/breadcrumbs.html" with current_title="Gestión de Comprobantes" current_icon="bi bi-star-fill" %}
-<div class="container-fluid py-4 px-4">
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/datatables.css' %}">
+{% endblock %}
 
-    <!-- ── HEADER ─────────────────────────────────────────── -->
-    <div class="mb-4">
-        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold mb-2 small">
-            PANEL DE CONTROL
-        </span>
-        <h2 class="fw-bold text-dark mb-1">
-            {% if estado_filtro == 'rechazado' %}
-                <i class="bi bi-x-circle-fill text-danger me-2"></i>Pagos Rechazados
-            {% else %}
-                <i class="bi bi-receipt-cutoff text-success me-2"></i>Gestión de Comprobantes
-            {% endif %}
-        </h2>
-        <p class="text-muted small mb-0">
-            {% if estado_filtro == 'rechazado' %}
-                Historial de comprobantes de pago declinados por la administración.
-            {% else %}
-                Revisa, aprueba o rechaza los comprobantes cargados por los usuarios.
-            {% endif %}
-        </p>
+{% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Gestión de Comprobantes" current_icon="bi bi-receipt-cutoff" %}
+<div class="container-fluid py-4">
+
+    <!-- 1. Encabezado -->
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="h3 text-success fw-bold mb-1 d-flex align-items-center">
+                    <i class="bi bi-receipt-cutoff me-2"></i>
+                    {% if estado_filtro == 'rechazado' %}Pagos Rechazados{% else %}Gestión de Comprobantes de Pago{% endif %}
+                </h1>
+                <p class="text-muted mb-0 small">
+                    {% if estado_filtro == 'rechazado' %}
+                        Historial de comprobantes de pago declinados por la administración.
+                    {% else %}
+                        Revisa, aprueba o rechaza los comprobantes cargados por los usuarios.
+                    {% endif %}
+                </p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                {% if estado_filtro == 'rechazado' %}
+                    <a href="{% url 'admin_comprobantes' %}" class="btn btn-outline-secondary fw-semibold rounded-pill shadow-sm px-4 py-2">
+                        <i class="bi bi-arrow-left me-1"></i>Ver Todos
+                    </a>
+                {% else %}
+                    <a href="?estado=rechazado" class="btn btn-outline-danger fw-semibold rounded-pill shadow-sm px-4 py-2">
+                        <i class="bi bi-x-circle me-1"></i>Ver Rechazados
+                    </a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
-    <!-- ── ESTADÍSTICAS ──────────────────────────────────── -->
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="bg-secondary bg-opacity-10 text-secondary rounded-3 p-3 fs-4 flex-shrink-0">
+    <!-- 2. Tarjetas de Estadísticas -->
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="card-body d-flex align-items-center p-3 p-xl-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0 bg-secondary bg-opacity-10 text-secondary" style="width: 50px; height: 50px; font-size: 1.25rem;">
                         <i class="bi bi-files"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-uppercase fw-bold" style="font-size:.68rem;letter-spacing:.05em">Total Recibidos</div>
-                        <div class="fw-bold fs-3 text-dark lh-1">{{ total }}</div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 small">Total Recibidos</h6>
+                        <h4 class="fw-bold mb-0 text-dark">{{ total }}</h4>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="bg-warning bg-opacity-10 text-warning rounded-3 p-3 fs-4 flex-shrink-0">
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="card-body d-flex align-items-center p-3 p-xl-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0 bg-warning bg-opacity-10 text-warning" style="width: 50px; height: 50px; font-size: 1.25rem;">
                         <i class="bi bi-hourglass-split"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-uppercase fw-bold" style="font-size:.68rem;letter-spacing:.05em">Pendientes</div>
-                        <div class="fw-bold fs-3 text-warning lh-1">{{ total_pendientes }}</div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 small">Pendientes</h6>
+                        <h4 class="fw-bold mb-0 text-warning">{{ total_pendientes }}</h4>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="bg-success bg-opacity-10 text-success rounded-3 p-3 fs-4 flex-shrink-0">
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="card-body d-flex align-items-center p-3 p-xl-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0 bg-success bg-opacity-10 text-success" style="width: 50px; height: 50px; font-size: 1.25rem;">
                         <i class="bi bi-check-circle-fill"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-uppercase fw-bold" style="font-size:.68rem;letter-spacing:.05em">Total Aprobado</div>
-                        <div class="fw-bold fs-5 text-success lh-1 mt-1">COP ${{ total_aprobados|floatformat:0|intcomma }}</div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 small">Total Aprobado</h6>
+                        <h4 class="fw-bold mb-0 text-success fs-5 text-nowrap">COP ${{ total_aprobados|floatformat:0|intcomma }}</h4>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="bg-danger bg-opacity-10 text-danger rounded-3 p-3 fs-4 flex-shrink-0">
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="card-body d-flex align-items-center p-3 p-xl-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0 bg-danger bg-opacity-10 text-danger" style="width: 50px; height: 50px; font-size: 1.25rem;">
                         <i class="bi bi-x-circle-fill"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-uppercase fw-bold" style="font-size:.68rem;letter-spacing:.05em">Rechazados</div>
-                        <div class="fw-bold fs-3 text-danger lh-1">{{ total_rechazados }}</div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 small">Rechazados</h6>
+                        <h4 class="fw-bold mb-0 text-danger">{{ total_rechazados }}</h4>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ── FILTROS Y BÚSQUEDA ─────────────────────────────── -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body py-3 px-4">
-            <div class="d-flex flex-wrap align-items-center gap-3">
-                <input type="text"
-                       id="buscarComprobante"
-                       class="form-control rounded-pill w-auto flex-grow-1"
-                       style="max-width:320px"
-                       placeholder="🔍  Buscar usuario, referencia…">
-
-                <div class="d-flex flex-wrap gap-2 ms-auto">
-                    {% if estado_filtro == 'rechazado' %}
-                        <a href="?estado=" class="btn btn-sm btn-outline-secondary rounded-pill">
-                            <i class="bi bi-arrow-left me-1"></i>Todos
-                        </a>
-                        <a href="?estado=rechazado" class="btn btn-sm btn-danger rounded-pill">
-                            <i class="bi bi-x-circle me-1"></i>Rechazados
-                        </a>
-                    {% else %}
-                        <a href="?estado=" class="btn btn-sm rounded-pill {% if not estado_filtro %}btn-dark{% else %}btn-outline-dark{% endif %}">
-                            <i class="bi bi-grid me-1"></i>Todo
-                        </a>
-                        <a href="?estado=pendiente" class="btn btn-sm rounded-pill {% if estado_filtro == 'pendiente' %}btn-warning{% else %}btn-outline-warning{% endif %} text-dark">
-                            <i class="bi bi-hourglass me-1"></i>Pendientes
-                            {% if total_pendientes > 0 %}
-                                <span class="badge bg-dark text-white rounded-pill ms-1">{{ total_pendientes }}</span>
-                            {% endif %}
-                        </a>
-                        <a href="?estado=aprobado" class="btn btn-sm rounded-pill {% if estado_filtro == 'aprobado' %}btn-success{% else %}btn-outline-success{% endif %}">
-                            <i class="bi bi-check-circle me-1"></i>Aprobados
-                        </a>
-                        <a href="?estado=rechazado" class="btn btn-sm btn-outline-danger rounded-pill">
-                            <i class="bi bi-x-circle me-1"></i>Rechazados
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── TARJETAS DE COMPROBANTES ───────────────────────── -->
-    <div id="listaComprobantes">
-        {% for c in comprobantes %}
-        <div class="card border-0 shadow-sm rounded-4 mb-3 comp-row"
-             data-buscar="{{ c.usuario.get_full_name|default:c.usuario.username|lower }} {{ c.usuario.email|lower }} {{ c.referencia|lower|default:'' }}">
-            <div class="card-body p-3">
-                <div class="row align-items-center g-3">
-
-                    <!-- Thumbnail -->
-                    <div class="col-auto">
-                        {% if c.imagen_comprobante %}
-                            <img src="{{ c.imagen_comprobante.url }}"
-                                 alt="Comprobante"
-                                 class="rounded-3 border object-fit-cover"
-                                 style="width:72px;height:72px;cursor:zoom-in"
-                                 data-bs-toggle="modal"
-                                 data-bs-target="#modalComp{{ c.id }}"
-                                 title="Clic para ampliar">
-                        {% else %}
-                            <div class="rounded-3 border border-dashed bg-light d-flex align-items-center justify-content-center text-secondary"
-                                 style="width:72px;height:72px;font-size:1.6rem">
-                                <i class="bi bi-image"></i>
-                            </div>
+    <!-- 3. Filtros por Estado -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
+        <div class="card-body p-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <span class="text-muted fw-semibold small d-flex align-items-center gap-2">
+                    <i class="bi bi-funnel text-success fs-5"></i> Filtrar por estado:
+                </span>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="?estado=" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if not estado_filtro %}btn-success text-white{% else %}btn-outline-secondary{% endif %}">
+                        <i class="bi bi-grid me-1"></i>Todos
+                    </a>
+                    <a href="?estado=pendiente" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if estado_filtro == 'pendiente' %}btn-warning text-dark{% else %}btn-outline-warning text-dark{% endif %}">
+                        <i class="bi bi-hourglass-split me-1"></i>Pendientes
+                        {% if total_pendientes > 0 %}
+                            <span class="badge bg-dark text-white rounded-pill ms-1">{{ total_pendientes }}</span>
                         {% endif %}
-                    </div>
+                    </a>
+                    <a href="?estado=aprobado" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if estado_filtro == 'aprobado' %}btn-success text-white{% else %}btn-outline-success{% endif %}">
+                        <i class="bi bi-check-circle-fill me-1"></i>Aprobados
+                    </a>
+                    <a href="?estado=rechazado" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if estado_filtro == 'rechazado' %}btn-danger text-white{% else %}btn-outline-danger{% endif %}">
+                        <i class="bi bi-x-circle-fill me-1"></i>Rechazados
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <!-- Datos principales -->
-                    <div class="col">
-                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
-                            <div>
-                                <div class="fw-bold text-dark">{{ c.usuario.get_full_name|default:c.usuario.username }}</div>
-                                <div class="text-muted small">{{ c.usuario.email }}</div>
-                                {% if c.reserva %}
-                                    <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill small mt-1">
-                                        Reserva #{{ c.reserva.id }} — {{ c.reserva.paquete.nombre }}
+    <!-- 4. Contenedor Principal de Comprobantes -->
+    <div class="card border-0 shadow-sm p-4 mb-4 rounded-4">
+        <!-- Tabla Desktop -->
+        <div class="table-responsive d-none d-lg-block">
+            <table id="tablaComprobantes" class="table table-hover align-middle mb-0 w-100">
+                <thead class="table-light">
+                    <tr class="text-secondary small fw-bold text-uppercase">
+                        <th scope="col" class="ps-4 py-3 text-center text-nowrap">Comprobante</th>
+                        <th scope="col" class="py-3 text-nowrap">Cliente</th>
+                        <th scope="col" class="py-3 text-nowrap">Reserva / Paquete</th>
+                        <th scope="col" class="py-3 text-center text-nowrap">Monto</th>
+                        <th scope="col" class="py-3 text-center text-nowrap">Canal / Referencia</th>
+                        <th scope="col" class="py-3 text-center text-nowrap">Fecha Envío</th>
+                        <th scope="col" class="py-3 text-center text-nowrap">Estado</th>
+                        <th scope="col" class="pe-4 py-3 text-center text-nowrap">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in comprobantes %}
+                    <tr>
+                        <!-- Thumbnail -->
+                        <td class="ps-4 py-3 text-center">
+                            {% if c.imagen_comprobante %}
+                                <img src="{{ c.imagen_comprobante.url }}"
+                                     alt="Comprobante"
+                                     class="rounded-3 border shadow-sm object-fit-cover"
+                                     style="width: 48px; height: 48px; cursor: zoom-in;"
+                                     data-bs-toggle="modal"
+                                     data-bs-target="#modalComp{{ c.id }}"
+                                     title="Clic para ampliar">
+                            {% else %}
+                                <div class="rounded-3 border bg-light d-flex align-items-center justify-content-center text-secondary mx-auto shadow-sm"
+                                     style="width: 48px; height: 48px;">
+                                    <i class="bi bi-image fs-5"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+
+                        <!-- Cliente -->
+                        <td class="py-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
+                                    <i class="bi bi-person-fill fs-5"></i>
+                                </div>
+                                <div class="text-truncate" style="max-width: 200px;">
+                                    <span class="fw-bold text-dark d-block text-truncate" title="{{ c.usuario.get_full_name|default:c.usuario.username }}">
+                                        {{ c.usuario.get_full_name|default:c.usuario.username }}
                                     </span>
-                                {% endif %}
+                                    <small class="text-muted d-block text-truncate" title="{{ c.usuario.email }}">
+                                        {{ c.usuario.email }}
+                                    </small>
+                                </div>
                             </div>
-                            <!-- Estado -->
+                        </td>
+
+                        <!-- Reserva / Paquete -->
+                        <td class="py-3">
+                            {% if c.reserva %}
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-light text-secondary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px;">
+                                        <i class="bi bi-compass"></i>
+                                    </div>
+                                    <div class="text-truncate" style="max-width: 210px;">
+                                        <span class="fw-bold text-dark d-block text-truncate" title="{{ c.reserva.paquete.nombre }}">
+                                            {{ c.reserva.paquete.nombre }}
+                                        </span>
+                                        <small class="text-muted d-block">
+                                            <i class="bi bi-tag me-1"></i>Reserva #{{ c.reserva.id }}
+                                        </small>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <span class="text-muted small fst-italic">Sin reserva vinculada</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Monto -->
+                        <td class="text-center py-3 text-nowrap">
+                            <span class="fw-bold text-success text-nowrap">
+                                {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}
+                                {% elif c.reserva %}COP ${{ c.reserva.monto_total|floatformat:0|intcomma }}
+                                {% else %}—{% endif %}
+                            </span>
+                        </td>
+
+                        <!-- Canal / Referencia -->
+                        <td class="text-center py-3">
+                            <span class="d-block fw-semibold text-dark small text-nowrap">{{ c.banco_origen|default:"—" }}</span>
+                            {% if c.referencia %}
+                                <span class="badge bg-light text-secondary border font-monospace small text-nowrap">
+                                    <i class="bi bi-hash me-1"></i>{{ c.referencia }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Fecha Envío -->
+                        <td class="text-center py-3 text-nowrap">
+                            <span class="badge bg-light text-dark border shadow-sm px-3 py-2 rounded-pill fw-semibold text-nowrap">
+                                <i class="bi bi-clock-history text-secondary me-1"></i>{{ c.fecha_envio|date:"d/m/Y H:i" }}
+                            </span>
+                        </td>
+
+                        <!-- Estado -->
+                        <td class="text-center py-3 text-nowrap">
                             {% if c.estado_transaccion == 'pendiente' %}
-                                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
+                                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-semibold text-nowrap">
                                     <i class="bi bi-hourglass-split me-1"></i>Pendiente
                                 </span>
                             {% elif c.estado_transaccion == 'aprobado' %}
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 fw-semibold text-nowrap">
                                     <i class="bi bi-check-circle-fill me-1"></i>Aprobado
                                 </span>
                             {% else %}
-                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-semibold">
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-semibold text-nowrap">
                                     <i class="bi bi-x-circle-fill me-1"></i>Rechazado
                                 </span>
                             {% endif %}
-                        </div>
+                        </td>
 
-                        <!-- Metadatos -->
-                        <div class="row row-cols-2 row-cols-md-4 g-2 small">
-                            <div class="col">
-                                <div class="text-muted fw-semibold text-uppercase" style="font-size:.68rem">Monto</div>
-                                <div class="fw-bold text-success">
-                                    {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}
-                                    {% elif c.reserva %}COP ${{ c.reserva.monto_total|floatformat:0|intcomma }}
-                                    {% else %}—{% endif %}
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="text-muted fw-semibold text-uppercase" style="font-size:.68rem">Canal / Banco</div>
-                                <div class="fw-semibold">{{ c.banco_origen|default:"—" }}</div>
-                            </div>
-                            <div class="col">
-                                <div class="text-muted fw-semibold text-uppercase" style="font-size:.68rem">Referencia</div>
-                                <div class="font-monospace text-secondary">{{ c.referencia|default:"—" }}</div>
-                            </div>
-                            <div class="col">
-                                <div class="text-muted fw-semibold text-uppercase" style="font-size:.68rem">Fecha Envío</div>
-                                <div class="text-muted">{{ c.fecha_envio|date:"d/m/Y H:i" }}</div>
-                            </div>
-                        </div>
-                    </div>
+                        <!-- Acciones -->
+                        <td class="text-center pe-4 py-3 text-nowrap" style="min-width: 320px;">
+                            <div class="d-inline-flex align-items-center justify-content-center gap-2">
+                                <!-- 1. Factura -->
+                                {% if c.estado_transaccion == 'aprobado' and c.reserva %}
+                                    <a href="{% url 'ver_factura' c.reserva.id %}"
+                                       class="btn btn-sm btn-outline-success px-3 rounded-pill fw-semibold shadow-sm text-nowrap"
+                                       target="_blank"
+                                       title="Ver Factura Oficial">
+                                        <i class="bi bi-file-earmark-text me-1"></i>Factura
+                                    </a>
+                                {% else %}
+                                    <button type="button"
+                                            class="btn btn-sm btn-light text-muted border rounded-pill px-3 fw-semibold text-nowrap opacity-50"
+                                            disabled
+                                            title="Factura disponible al aprobar el pago">
+                                        <i class="bi bi-file-earmark-text me-1"></i>Factura
+                                    </button>
+                                {% endif %}
 
-                    <!-- Acciones -->
-                    <div class="col-auto d-flex flex-column flex-md-row gap-2">
-                        {% if c.estado_transaccion == 'aprobado' and c.reserva %}
-                            <a href="{% url 'ver_factura' c.reserva.id %}"
-                               class="btn btn-sm btn-outline-success rounded-pill px-3"
-                               target="_blank">
-                                <i class="bi bi-file-earmark-text me-1"></i>Factura
-                            </a>
-                        {% endif %}
-                        <a href="{% url 'admin_revisar_comprobante' c.pk %}"
-                           class="btn btn-sm btn-primary rounded-pill px-3">
-                            <i class="bi bi-pencil-square me-1"></i>Revisar
-                        </a>
-                        <form action="{% url 'admin_eliminar_comprobante' c.pk %}"
-                              method="post"
-                              onsubmit="return confirm('¿Eliminar este comprobante? Esta acción no se puede deshacer.')"
-                              class="m-0">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
-                        </form>
-                    </div>
+                                <!-- 2. Revisar -->
+                                <a href="{% url 'admin_revisar_comprobante' c.pk %}"
+                                   class="btn btn-sm btn-outline-primary px-3 rounded-pill fw-semibold shadow-sm text-nowrap"
+                                   title="Revisar Comprobante">
+                                    <i class="bi bi-pencil-square me-1"></i>Revisar
+                                </a>
 
-                </div>
-            </div>
+                                <!-- 3. Eliminar -->
+                                <form action="{% url 'admin_eliminar_comprobante' c.pk %}"
+                                      method="post"
+                                      onsubmit="return confirm('¿Eliminar este comprobante? Esta acción no se puede deshacer.')"
+                                      class="m-0 d-inline-flex">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger px-3 rounded-pill fw-semibold shadow-sm text-nowrap"
+                                            title="Eliminar Comprobante">
+                                        <i class="bi bi-trash me-1"></i>Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-receipt fs-1 d-block mb-2 text-secondary opacity-50"></i>
+                            <p class="mb-0 fw-semibold">No se encontraron comprobantes registrados.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
 
-        <!-- Modal imagen ampliada -->
-        {% if c.imagen_comprobante %}
-        <div class="modal fade" id="modalComp{{ c.id }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content border-0 rounded-4 shadow">
-                    <div class="modal-header border-0 px-4 pt-4">
-                        <div>
-                            <h5 class="modal-title fw-bold text-dark mb-0">Comprobante de Pago</h5>
-                            <div class="text-muted small">{{ c.usuario.get_full_name|default:c.usuario.username }} — {{ c.fecha_envio|date:"d/m/Y H:i" }}</div>
-                        </div>
-                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body px-4 pb-4">
-                        <div class="row g-4">
-                            <div class="col-md-7 text-center">
-                                <img src="{{ c.imagen_comprobante.url }}"
-                                     class="img-fluid rounded-3 border"
-                                     style="max-height:420px;object-fit:contain"
-                                     alt="Comprobante">
+        <!-- Vista Móvil -->
+        <div class="d-lg-none">
+            <div class="row g-3">
+                {% for c in comprobantes %}
+                <div class="col-12">
+                    <div class="card border border-light shadow-sm rounded-4 p-3 bg-white">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-3 border-bottom pb-2">
+                            <div class="d-flex align-items-center gap-2 min-w-0">
+                                {% if c.imagen_comprobante %}
+                                    <img src="{{ c.imagen_comprobante.url }}"
+                                         alt="Comprobante"
+                                         class="rounded-3 border shadow-sm object-fit-cover flex-shrink-0"
+                                         style="width: 44px; height: 44px; cursor: zoom-in;"
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#modalComp{{ c.id }}"
+                                         title="Clic para ampliar">
+                                {% else %}
+                                    <div class="rounded-3 border bg-light d-flex align-items-center justify-content-center text-secondary flex-shrink-0"
+                                         style="width: 44px; height: 44px;">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="min-w-0">
+                                    <h6 class="fw-bold text-dark mb-0 text-break">{{ c.usuario.get_full_name|default:c.usuario.username }}</h6>
+                                    <small class="text-muted d-block text-truncate">{{ c.usuario.email }}</small>
+                                </div>
                             </div>
-                            <div class="col-md-5">
-                                <div class="bg-light rounded-3 p-3 h-100">
-                                    <h6 class="fw-bold text-dark mb-3">
-                                        <i class="bi bi-info-circle me-2 text-success"></i>Detalles
-                                    </h6>
-                                    <dl class="row small mb-0">
-                                        <dt class="col-5 text-muted">Usuario</dt>
-                                        <dd class="col-7 fw-bold">{{ c.usuario.get_full_name|default:c.usuario.username }}</dd>
+                            <div class="flex-shrink-0">
+                                {% if c.estado_transaccion == 'pendiente' %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-2 fw-semibold text-nowrap">
+                                        <i class="bi bi-hourglass-split me-1"></i>Pendiente
+                                    </span>
+                                {% elif c.estado_transaccion == 'aprobado' %}
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 fw-semibold text-nowrap">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Aprobado
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-semibold text-nowrap">
+                                        <i class="bi bi-x-circle-fill me-1"></i>Rechazado
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
 
-                                        <dt class="col-5 text-muted">Email</dt>
-                                        <dd class="col-7">{{ c.usuario.email }}</dd>
-
-                                        {% if c.reserva %}
-                                        <dt class="col-5 text-muted">Reserva</dt>
-                                        <dd class="col-7">#{{ c.reserva.id }} — {{ c.reserva.paquete.nombre }}</dd>
-                                        {% endif %}
-
-                                        <dt class="col-5 text-muted">Monto</dt>
-                                        <dd class="col-7 fw-bold text-success">
+                        <div class="mb-3">
+                            {% if c.reserva %}
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <i class="bi bi-compass text-secondary"></i>
+                                    <span class="fw-bold text-dark text-truncate">{{ c.reserva.paquete.nombre }} (Reserva #{{ c.reserva.id }})</span>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="bg-light rounded-3 p-2 border">
+                                        <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.72rem;">Monto</small>
+                                        <span class="fw-bold text-success small text-nowrap">
                                             {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}
                                             {% elif c.reserva %}COP ${{ c.reserva.monto_total|floatformat:0|intcomma }}
                                             {% else %}—{% endif %}
-                                        </dd>
-
-                                        <dt class="col-5 text-muted">Canal</dt>
-                                        <dd class="col-7">{{ c.banco_origen|default:"—" }}</dd>
-
-                                        <dt class="col-5 text-muted">Referencia</dt>
-                                        <dd class="col-7 font-monospace">{{ c.referencia|default:"—" }}</dd>
-
-                                        <dt class="col-5 text-muted">Estado</dt>
-                                        <dd class="col-7">
-                                            {% if c.estado_transaccion == 'pendiente' %}
-                                                <span class="badge bg-warning text-dark">Pendiente</span>
-                                            {% elif c.estado_transaccion == 'aprobado' %}
-                                                <span class="badge bg-success">Aprobado</span>
-                                            {% else %}
-                                                <span class="badge bg-danger">Rechazado</span>
-                                            {% endif %}
-                                        </dd>
-                                    </dl>
-                                    <div class="d-flex flex-column gap-2 mt-3 pt-3 border-top">
-                                        <a href="{% url 'admin_revisar_comprobante' c.pk %}"
-                                           class="btn btn-primary btn-sm w-100 rounded-pill fw-semibold">
-                                            <i class="bi bi-pencil-square me-1"></i>Revisar / Gestionar
-                                        </a>
-                                        {% if c.estado_transaccion == 'aprobado' and c.reserva %}
-                                            <a href="{% url 'ver_factura' c.reserva.id %}"
-                                               target="_blank"
-                                               class="btn btn-outline-success btn-sm w-100 rounded-pill fw-semibold">
-                                                <i class="bi bi-file-earmark-text me-1"></i>Ver Factura
-                                            </a>
-                                        {% endif %}
+                                        </span>
                                     </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-light rounded-3 p-2 border">
+                                        <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.72rem;">Banco / Ref</small>
+                                        <span class="fw-semibold text-dark small text-truncate d-block" title="{{ c.banco_origen|default:'—' }} - {{ c.referencia|default:'' }}">
+                                            {{ c.banco_origen|default:"—" }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-muted small">
+                                <i class="bi bi-clock-history me-1"></i>Envío: {{ c.fecha_envio|date:"d/m/Y H:i" }}
+                            </div>
+                        </div>
+
+                        <!-- 3 Botones móviles simétricos en cuadrícula col-4 -->
+                        <div class="row g-2 pt-2 border-top">
+                            <div class="col-4">
+                                {% if c.estado_transaccion == 'aprobado' and c.reserva %}
+                                    <a href="{% url 'ver_factura' c.reserva.id %}"
+                                       class="btn btn-sm btn-outline-success w-100 fw-semibold rounded-pill py-2 text-nowrap"
+                                       target="_blank"
+                                       title="Ver Factura">
+                                        <i class="bi bi-file-earmark-text me-1"></i>Factura
+                                    </a>
+                                {% else %}
+                                    <button type="button"
+                                            class="btn btn-sm btn-light text-muted border w-100 fw-semibold rounded-pill py-2 text-nowrap opacity-50"
+                                            disabled
+                                            title="Factura disponible al aprobar">
+                                        <i class="bi bi-file-earmark-text me-1"></i>Factura
+                                    </button>
+                                {% endif %}
+                            </div>
+                            <div class="col-4">
+                                <a href="{% url 'admin_revisar_comprobante' c.pk %}"
+                                   class="btn btn-sm btn-outline-primary w-100 fw-semibold rounded-pill py-2 text-nowrap"
+                                   title="Revisar Comprobante">
+                                    <i class="bi bi-pencil-square me-1"></i>Revisar
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <form action="{% url 'admin_eliminar_comprobante' c.pk %}"
+                                      method="post"
+                                      onsubmit="return confirm('¿Eliminar este comprobante? Esta acción no se puede deshacer.')"
+                                      class="m-0 w-100">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger w-100 fw-semibold rounded-pill py-2 text-nowrap"
+                                            title="Eliminar Comprobante">
+                                        <i class="bi bi-trash me-1"></i>Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center p-5 text-muted border rounded-4 shadow-sm bg-white">
+                    <i class="bi bi-receipt fs-1 d-block mb-2 text-secondary opacity-50"></i>
+                    <span class="fw-semibold">No se encontraron comprobantes registrados.</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales para ampliación de imagen de comprobantes -->
+    {% for c in comprobantes %}
+    {% if c.imagen_comprobante %}
+    <div class="modal fade" id="modalComp{{ c.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <div>
+                        <h5 class="modal-title fw-bold text-dark mb-0">Comprobante de Pago</h5>
+                        <div class="text-muted small">{{ c.usuario.get_full_name|default:c.usuario.username }} — {{ c.fecha_envio|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body px-4 pb-4">
+                    <div class="row g-4">
+                        <div class="col-md-7 text-center">
+                            <img src="{{ c.imagen_comprobante.url }}"
+                                 class="img-fluid rounded-3 border shadow-sm"
+                                 style="max-height:420px;object-fit:contain"
+                                 alt="Comprobante">
+                        </div>
+                        <div class="col-md-5">
+                            <div class="bg-light rounded-3 p-3 h-100 border">
+                                <h6 class="fw-bold text-dark mb-3">
+                                    <i class="bi bi-info-circle me-2 text-success"></i>Detalles
+                                </h6>
+                                <dl class="row small mb-0">
+                                    <dt class="col-5 text-muted">Usuario</dt>
+                                    <dd class="col-7 fw-bold">{{ c.usuario.get_full_name|default:c.usuario.username }}</dd>
+
+                                    <dt class="col-5 text-muted">Email</dt>
+                                    <dd class="col-7">{{ c.usuario.email }}</dd>
+
+                                    {% if c.reserva %}
+                                    <dt class="col-5 text-muted">Reserva</dt>
+                                    <dd class="col-7">#{{ c.reserva.id }} — {{ c.reserva.paquete.nombre }}</dd>
+                                    {% endif %}
+
+                                    <dt class="col-5 text-muted">Monto</dt>
+                                    <dd class="col-7 fw-bold text-success">
+                                        {% if c.monto %}COP ${{ c.monto|floatformat:0|intcomma }}
+                                        {% elif c.reserva %}COP ${{ c.reserva.monto_total|floatformat:0|intcomma }}
+                                        {% else %}—{% endif %}
+                                    </dd>
+
+                                    <dt class="col-5 text-muted">Canal</dt>
+                                    <dd class="col-7">{{ c.banco_origen|default:"—" }}</dd>
+
+                                    <dt class="col-5 text-muted">Referencia</dt>
+                                    <dd class="col-7 font-monospace">{{ c.referencia|default:"—" }}</dd>
+
+                                    <dt class="col-5 text-muted">Estado</dt>
+                                    <dd class="col-7">
+                                        {% if c.estado_transaccion == 'pendiente' %}
+                                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-2 py-1">Pendiente</span>
+                                        {% elif c.estado_transaccion == 'aprobado' %}
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-1">Aprobado</span>
+                                        {% else %}
+                                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2 py-1">Rechazado</span>
+                                        {% endif %}
+                                    </dd>
+                                </dl>
+                                <div class="d-flex flex-column gap-2 mt-3 pt-3 border-top">
+                                    <a href="{% url 'admin_revisar_comprobante' c.pk %}"
+                                       class="btn btn-primary btn-sm w-100 rounded-pill fw-semibold">
+                                        <i class="bi bi-pencil-square me-1"></i>Revisar / Gestionar
+                                    </a>
+                                    {% if c.estado_transaccion == 'aprobado' and c.reserva %}
+                                        <a href="{% url 'ver_factura' c.reserva.id %}"
+                                           target="_blank"
+                                           class="btn btn-outline-success btn-sm w-100 rounded-pill fw-semibold">
+                                            <i class="bi bi-file-earmark-text me-1"></i>Ver Factura
+                                        </a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -313,20 +510,14 @@
                 </div>
             </div>
         </div>
-        {% endif %}
-
-        {% empty %}
-        <div class="text-center py-5 text-muted">
-            <i class="bi bi-receipt fs-1 d-block mb-3 text-secondary"></i>
-            <h5 class="fw-bold text-secondary">No hay comprobantes</h5>
-            <p class="small">No se encontraron comprobantes con el filtro seleccionado.</p>
-        </div>
-        {% endfor %}
     </div>
+    {% endif %}
+    {% endfor %}
 
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/admin_comprobantes.js' %}"></script>
+<script src="{% static 'js/tconf/tconf-tablaComprobantes.js' %}"></script>
 {% endblock %}
+
