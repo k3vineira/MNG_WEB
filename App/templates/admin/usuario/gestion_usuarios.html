@@ -4,113 +4,224 @@
 {% include "partials/breadcrumbs.html" with current_title="Gestión Integral de Usuarios" current_icon="bi bi-people-fill" %}
 <div class="container-fluid py-4">
 
-    <!-- 1. Panel Superior: Encabezado -->
-    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
-        <div class="mb-0">
-            <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
-                <i class="bi bi-people-fill me-3"></i>Gestión Integral de Usuarios
-            </h1>
-            <div class="d-flex gap-2 flex-wrap">
-                <span class="badge bg-success bg-opacity-75 p-2 rounded-pill shadow-sm d-flex align-items-center"><i class="bi bi-person-badge me-1"></i> {{ total_admins }} Administradores</span>
-                <span class="badge bg-warning text-dark p-2 rounded-pill shadow-sm d-flex align-items-center"><i class="bi bi-compass me-1"></i> {{ total_guias }} Guías</span>
-                <span class="badge bg-info text-dark p-2 rounded-pill shadow-sm d-flex align-items-center"><i class="bi bi-person-walking me-1"></i> {{ total_clientes }} Clientes</span>
+    <!-- 1. Encabezado -->
+    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="h3 text-success fw-bold mb-1 d-flex align-items-center">
+                    <i class="bi bi-people-fill me-2"></i>Gestión Integral de Usuarios
+                </h1>
+                <p class="text-muted mb-0 small">Administra los usuarios de la plataforma, roles, datos de contacto y estado de activación.</p>
             </div>
         </div>
     </div>
 
-    <!-- 2. Visualización y Filtros (Listado General de Usuarios) -->
-    <div class="card border-0 shadow-sm p-3 mb-4">
-        <!-- Zona de Filtros -->
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <div class="btn-group shadow-sm" role="group" aria-label="Filtros de usuario">
-                <a href="{% url 'gestion_usuarios' %}" class="btn btn-outline-success {% if not filtro_actual %}active{% endif %}">Todos</a>
-                <a href="{% url 'gestion_usuarios' %}?filtro=ADMIN" class="btn btn-outline-success {% if filtro_actual == 'ADMIN' %}active{% endif %}">Administradores</a>
-                <a href="{% url 'gestion_usuarios' %}?filtro=GUIA" class="btn btn-outline-success {% if filtro_actual == 'GUIA' %}active{% endif %}">Guías</a>
-                <a href="{% url 'gestion_usuarios' %}?filtro=CLIENTE" class="btn btn-outline-success {% if filtro_actual == 'CLIENTE' %}active{% endif %}">Clientes/Turistas</a>
+    <!-- 2. Panel de Estadísticas -->
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="card-body d-flex align-items-center p-3 p-xl-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0 bg-primary bg-opacity-10 text-primary" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 small">Administradores</h6>
+                        <h4 class="fw-bold mb-0 text-primary">{{ total_admins|default:0 }}</h4>
+                    </div>
+                </div>
             </div>
-
-            
-            <form method="GET" action="{% url 'gestion_usuarios' %}" class="input-group shadow-sm u-style-9dd291e0">
-                {% if filtro_actual %}
-                    <input type="hidden" name="filtro" value="{{ filtro_actual }}">
-                {% endif %}
-                <input type="text" name="q" class="form-control border-success border-opacity-25" placeholder="Buscar usuario..." value="{{ request.GET.q|default:'' }}">
-                <button class="btn btn-success" type="submit"><i class="bi bi-search"></i></button>
-            </form>
         </div>
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="card-body d-flex align-items-center p-3 p-xl-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0 bg-warning bg-opacity-10 text-warning" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                        <i class="bi bi-compass-fill"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 small">Guías Turísticos</h6>
+                        <h4 class="fw-bold mb-0 text-warning">{{ total_guias|default:0 }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="card-body d-flex align-items-center p-3 p-xl-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm flex-shrink-0 bg-info bg-opacity-10 text-info" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                        <i class="bi bi-person-walking"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase fw-bold mb-1 small">Clientes / Turistas</h6>
+                        <h4 class="fw-bold mb-0 text-dark">{{ total_clientes|default:0 }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <!-- Tabla Responsiva para Desktop -->
+    <!-- 3. Filtros y Búsqueda -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
+        <div class="card-body p-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="text-muted fw-semibold small d-none d-sm-inline-flex align-items-center me-1">
+                        <i class="bi bi-funnel text-success fs-5 me-1"></i>Filtrar por rol:
+                    </span>
+                    <a href="{% url 'gestion_usuarios' %}" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if not filtro_actual %}btn-success text-white{% else %}btn-outline-secondary{% endif %}">
+                        <i class="bi bi-people me-1"></i>Todos
+                    </a>
+                    <a href="{% url 'gestion_usuarios' %}?filtro=ADMIN" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if filtro_actual == 'ADMIN' %}btn-primary text-white{% else %}btn-outline-primary{% endif %}">
+                        <i class="bi bi-shield-lock me-1"></i>Admins
+                        <span class="badge {% if filtro_actual == 'ADMIN' %}bg-white text-primary{% else %}bg-primary text-white{% endif %} rounded-pill ms-1">{{ total_admins }}</span>
+                    </a>
+                    <a href="{% url 'gestion_usuarios' %}?filtro=GUIA" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if filtro_actual == 'GUIA' %}btn-warning text-dark{% else %}btn-outline-warning text-dark{% endif %}">
+                        <i class="bi bi-compass me-1"></i>Guías
+                        <span class="badge {% if filtro_actual == 'GUIA' %}bg-dark text-warning{% else %}bg-warning text-dark{% endif %} rounded-pill ms-1">{{ total_guias }}</span>
+                    </a>
+                    <a href="{% url 'gestion_usuarios' %}?filtro=CLIENTE" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if filtro_actual == 'CLIENTE' %}btn-info text-dark{% else %}btn-outline-info text-dark{% endif %}">
+                        <i class="bi bi-person-walking me-1"></i>Clientes
+                        <span class="badge {% if filtro_actual == 'CLIENTE' %}bg-dark text-info{% else %}bg-info text-dark{% endif %} rounded-pill ms-1">{{ total_clientes }}</span>
+                    </a>
+                </div>
+
+                <form method="GET" action="{% url 'gestion_usuarios' %}" class="d-flex align-items-center gap-2 m-0 flex-grow-1 flex-md-grow-0" style="min-width: 250px; max-width: 380px;">
+                    {% if filtro_actual %}
+                        <input type="hidden" name="filtro" value="{{ filtro_actual }}">
+                    {% endif %}
+                    <div class="input-group shadow-sm rounded-pill overflow-hidden border w-100">
+                        <input type="text" name="q" class="form-control border-0 ps-3 shadow-none small" placeholder="Buscar por nombre, email o doc..." value="{{ request.GET.q|default:'' }}">
+                        <button class="btn btn-success px-3" type="submit" title="Buscar"><i class="bi bi-search"></i></button>
+                    </div>
+                    {% if request.GET.q %}
+                        <a href="{% url 'gestion_usuarios' %}{% if filtro_actual %}?filtro={{ filtro_actual }}{% endif %}" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0 flex-shrink-0" style="width: 36px; height: 36px;" title="Limpiar búsqueda">
+                            <i class="bi bi-x-lg small"></i>
+                        </a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Directorio de Usuarios -->
+    <div class="card border-0 shadow-sm p-4 mb-4 rounded-4 bg-white">
+        <!-- Tabla Desktop -->
         <div class="table-responsive d-none d-lg-block">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light text-muted">
-                    <tr>
-                        <th scope="col" class="fw-bold">ID</th>
-                        <th scope="col" class="fw-bold">Perfil</th>
-                        <th scope="col" class="fw-bold">Identificación</th>
-                        <th scope="col" class="fw-bold">Contacto</th>
-                        <th scope="col" class="fw-bold text-center">Rol</th>
-                        <th scope="col" class="fw-bold text-center">Acciones</th>
+            <table class="table table-hover align-middle mb-0 w-100">
+                <thead class="table-light">
+                    <tr class="text-secondary small fw-bold text-uppercase">
+                        <th scope="col" class="ps-4 py-3 text-nowrap">ID</th>
+                        <th scope="col" class="py-3 text-nowrap">Perfil / Usuario</th>
+                        <th scope="col" class="py-3 text-nowrap">Identificación</th>
+                        <th scope="col" class="py-3 text-nowrap">Contacto</th>
+                        <th scope="col" class="py-3 text-center text-nowrap">Rol & Estado</th>
+                        <th scope="col" class="pe-4 py-3 text-center text-nowrap">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for u in usuarios %}
                     <tr>
-                        <td class="text-muted fw-bold">#{{ u.id }}</td>
-                        <td>
-                            <div class="d-flex align-items-center">
+                        <!-- ID -->
+                        <td class="ps-4 py-3 text-muted fw-bold text-nowrap small">#{{ u.id }}</td>
+
+                        <!-- Perfil -->
+                        <td class="py-3">
+                            <div class="d-flex align-items-center gap-3">
                                 {% if u.imagen_perfil %}
-                                <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm me-3 border flex-shrink-0 {% if u.rol == 'ADMIN' %}border-primary{% elif u.rol == 'GUIA' %}border-warning{% else %}border-info{% endif %} border-opacity-50" style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; object-fit: cover;">
+                                <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border flex-shrink-0 {% if u.rol == 'ADMIN' %}border-primary{% elif u.rol == 'GUIA' %}border-warning{% else %}border-info{% endif %}" style="width: 44px; height: 44px; min-width: 44px; min-height: 44px; object-fit: cover;">
                                 {% else %}
-                                <div class="rounded-circle shadow-sm me-3 d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 45px; height: 45px; min-width: 45px; min-height: 45px; font-size: 1.1rem;">
+                                <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center fw-bold flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary text-white{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 44px; height: 44px; min-width: 44px; min-height: 44px; font-size: 1.1rem;">
                                     {{ u.first_name|first|default:u.username|first|upper }}
                                 </div>
                                 {% endif %}
-                                <div>
-                                    <div class="fw-bold text-dark mb-0">{{ u.get_full_name|default:u.username }}</div>
-                                    <div class="text-muted small">@{{ u.username }}</div>
+                                <div class="text-truncate" style="max-width: 220px;">
+                                    <div class="fw-bold text-dark text-truncate" title="{{ u.get_full_name|default:u.username }}">{{ u.get_full_name|default:u.username }}</div>
+                                    <div class="text-muted small text-truncate">@{{ u.username }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <div class="text-dark fw-semibold">{{ u.tipo_documento|default:"—" }}</div>
-                            <div class="text-muted small">{{ u.numero_documento|default:"—" }}</div>
+
+                        <!-- Identificación -->
+                        <td class="py-3 text-nowrap">
+                            <div class="text-dark fw-semibold small">{{ u.tipo_documento|default:"CC" }}</div>
+                            <div class="text-muted small font-monospace">{{ u.numero_documento|default:"Sin registrar" }}</div>
                         </td>
-                        <td>
-                            <div class="text-dark small d-flex align-items-center mb-1"><i class="bi bi-envelope text-success me-2"></i> {{ u.email|default:"—" }}</div>
-                            <div class="text-muted small d-flex align-items-center"><i class="bi bi-telephone text-success me-2"></i> {{ u.telefono|default:"—" }}</div>
+
+                        <!-- Contacto -->
+                        <td class="py-3">
+                            <div class="d-flex flex-column gap-1" style="min-width: 190px; max-width: 240px;">
+                                <div class="text-dark small d-flex align-items-center text-truncate" title="{{ u.email|default:'—' }}">
+                                    <i class="bi bi-envelope text-success me-2 flex-shrink-0"></i>
+                                    <span class="text-truncate">{{ u.email|default:"—" }}</span>
+                                </div>
+                                <div class="text-muted small d-flex align-items-center text-nowrap">
+                                    <i class="bi bi-telephone text-success me-2 flex-shrink-0"></i>
+                                    <span>{{ u.telefono|default:"—" }}</span>
+                                </div>
+                            </div>
                         </td>
-                        <td class="text-center">
-                            {% if u.rol == 'ADMIN' %}
-                            <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">ADMIN</span>
-                            {% elif u.rol == 'GUIA' %}
-                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm">GUIA</span>
-                            {% else %}
-                            <span class="badge bg-info text-dark px-3 py-2 rounded-pill shadow-sm">CLIENTE</span>
-                            {% endif %}
+
+                        <!-- Rol & Estado -->
+                        <td class="text-center py-3 text-nowrap">
+                            <div class="d-inline-flex flex-column align-items-center gap-1">
+                                {% if u.rol == 'ADMIN' %}
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 fw-semibold small">
+                                    <i class="bi bi-shield-lock-fill me-1"></i>ADMIN
+                                </span>
+                                {% elif u.rol == 'GUIA' %}
+                                <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-pill px-3 py-1 fw-semibold small">
+                                    <i class="bi bi-compass-fill me-1"></i>GUÍA
+                                </span>
+                                {% else %}
+                                <span class="badge bg-info bg-opacity-10 text-dark border border-info border-opacity-25 rounded-pill px-3 py-1 fw-semibold small">
+                                    <i class="bi bi-person-walking me-1"></i>CLIENTE
+                                </span>
+                                {% endif %}
+
+                                {% if u.is_active %}
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-0" style="font-size: 0.72rem;">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Activo
+                                </span>
+                                {% else %}
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2 py-0" style="font-size: 0.72rem;">
+                                    <i class="bi bi-x-circle-fill me-1"></i>Inactivo
+                                </span>
+                                {% endif %}
+                            </div>
                         </td>
-                        <td class="text-center">
-                            <div class="btn-group shadow-sm" role="group">
-                                <!-- Ver Detalles -->
-                                <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetallesUsuario{{ u.id }}" title="Ver Detalles">
-                                    <i class="bi bi-eye"></i>
+
+                        <!-- Acciones -->
+                        <td class="text-center pe-4 py-3 text-nowrap" style="min-width: 320px;">
+                            <div class="d-inline-flex align-items-center justify-content-center gap-2">
+                                <!-- 1. Detalles -->
+                                <button type="button" class="btn btn-sm btn-outline-success px-3 rounded-pill fw-semibold shadow-sm text-nowrap" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetallesUsuario{{ u.id }}" title="Ver Detalles">
+                                    <i class="bi bi-eye me-1"></i>Detalles
                                 </button>
-                                <!-- Editar -->
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditarUsuario{{ u.id }}" title="Editar">
-                                    <i class="bi bi-pencil"></i>
+                                <!-- 2. Editar -->
+                                <button type="button" class="btn btn-sm btn-outline-primary px-3 rounded-pill fw-semibold shadow-sm text-nowrap" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditarUsuario{{ u.id }}" title="Editar Perfil y Rol">
+                                    <i class="bi bi-pencil me-1"></i>Editar
                                 </button>
-                                <!-- Toggle Estado -->
-                                <form action="{% url 'usuarios_toggle_estado' u.id %}" method="POST" class="d-inline m-0 p-0">
+                                <!-- 3. Toggle Estado -->
+                                <form action="{% url 'usuarios_toggle_estado' u.id %}" method="POST" class="m-0 d-inline-flex" onsubmit="return confirm('¿Confirmas cambiar el estado de la cuenta de {{ u.username }}?')">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="{% if u.is_active %}Inactivar{% else %}Activar{% endif %}">
-                                        <i class="bi bi-power"></i>
+                                    {% if u.is_active %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill fw-semibold shadow-sm text-nowrap" title="Inactivar usuario">
+                                        <i class="bi bi-slash-circle me-1"></i>Inactivar
                                     </button>
+                                    {% else %}
+                                    <button type="submit" class="btn btn-sm btn-outline-success px-3 rounded-pill fw-semibold shadow-sm text-nowrap" title="Activar usuario">
+                                        <i class="bi bi-check-circle me-1"></i>Activar
+                                    </button>
+                                    {% endif %}
                                 </form>
                             </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center p-5 text-muted small">No hay usuarios registrados con este filtro o búsqueda.</td>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-people fs-1 text-muted d-block mb-2"></i>
+                            <span class="small fw-semibold">No se encontraron usuarios que coincidan con la búsqueda o filtro aplicado.</span>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -122,68 +233,83 @@
             <div class="row g-3">
                 {% for u in usuarios %}
                 <div class="col-12">
-                    <div class="card border border-light shadow-sm rounded-4">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                    <div class="card border border-light-subtle shadow-sm rounded-4 bg-white overflow-hidden">
+                        <div class="card-body p-3">
+                            <!-- Cabecera de tarjeta -->
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
                                 <div class="d-flex align-items-center gap-3">
                                     {% if u.imagen_perfil %}
-                                        <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border flex-shrink-0" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; object-fit: cover;">
+                                        <img src="{{ u.imagen_perfil.url }}" alt="Avatar" class="rounded-circle shadow-sm border flex-shrink-0" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; object-fit: cover;">
                                     {% else %}
-                                        <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; font-size: 1.2rem;">
+                                        <div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center fw-bold flex-shrink-0 {% if u.rol == 'ADMIN' %}bg-primary text-white{% elif u.rol == 'GUIA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; font-size: 1.15rem;">
                                             {{ u.first_name|first|default:u.username|first|upper }}
                                         </div>
                                     {% endif %}
-                                    <div>
-                                        <h6 class="fw-bold mb-0 text-dark">{{ u.get_full_name|default:u.username }}</h6>
-                                        <small class="text-muted">@{{ u.username }}</small>
+                                    <div class="text-truncate" style="max-width: 170px;">
+                                        <h6 class="fw-bold mb-0 text-dark text-truncate">{{ u.get_full_name|default:u.username }}</h6>
+                                        <small class="text-muted text-truncate d-block">@{{ u.username }}</small>
                                     </div>
                                 </div>
-                                <div>
+                                <div class="d-flex flex-column align-items-end gap-1">
                                     {% if u.rol == 'ADMIN' %}
-                                        <span class="badge bg-primary rounded-pill px-2 py-1 small">ADMIN</span>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1 small">ADMIN</span>
                                     {% elif u.rol == 'GUIA' %}
-                                        <span class="badge bg-warning text-dark rounded-pill px-2 py-1 small">GUIA</span>
+                                        <span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-pill px-2 py-1 small">GUÍA</span>
                                     {% else %}
-                                        <span class="badge bg-info text-dark rounded-pill px-2 py-1 small">CLIENTE</span>
+                                        <span class="badge bg-info bg-opacity-10 text-dark border border-info border-opacity-25 rounded-pill px-2 py-1 small">CLIENTE</span>
+                                    {% endif %}
+                                    {% if u.is_active %}
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-2 py-0" style="font-size: 0.7rem;">Activo</span>
+                                    {% else %}
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2 py-0" style="font-size: 0.7rem;">Inactivo</span>
                                     {% endif %}
                                 </div>
                             </div>
                             
-                            <div class="small text-muted mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <span class="fw-bold text-secondary">Documento:</span>
-                                    <span class="text-dark">{{ u.tipo_documento|default:"—" }} {{ u.numero_documento|default:"" }}</span>
+                            <!-- Datos de contacto y documento -->
+                            <div class="small mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted fw-semibold"><i class="bi bi-card-text me-1 text-secondary"></i>Documento:</span>
+                                    <span class="text-dark fw-medium">{{ u.tipo_documento|default:"CC" }} {{ u.numero_documento|default:"—" }}</span>
                                 </div>
-                                <div class="d-flex justify-content-between mb-1">
-                                    <span class="fw-bold text-secondary">Email:</span>
-                                    <span class="text-dark">{{ u.email|default:"—" }}</span>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted fw-semibold"><i class="bi bi-envelope me-1 text-success"></i>Email:</span>
+                                    <span class="text-dark text-truncate ms-2" style="max-width: 200px;">{{ u.email|default:"—" }}</span>
                                 </div>
-                                <div class="d-flex justify-content-between">
-                                    <span class="fw-bold text-secondary">Teléfono:</span>
-                                    <span class="text-dark">{{ u.telefono|default:"—" }}</span>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted fw-semibold"><i class="bi bi-telephone me-1 text-success"></i>Teléfono:</span>
+                                    <span class="text-dark fw-medium">{{ u.telefono|default:"—" }}</span>
                                 </div>
                             </div>
                             
-                            <div class="d-flex gap-2 justify-content-end border-top pt-3">
-                                <button type="button" class="btn btn-sm btn-outline-success flex-fill fw-bold rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetallesUsuario{{ u.id }}">
-                                    <i class="bi bi-eye me-1"></i> Detalles
+                            <!-- Botones de Acción Móvil -->
+                            <div class="d-flex gap-2 border-top pt-3">
+                                <button type="button" class="btn btn-sm btn-outline-success flex-fill fw-semibold rounded-pill shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetallesUsuario{{ u.id }}">
+                                    <i class="bi bi-eye me-1"></i>Detalles
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary flex-fill fw-bold rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditarUsuario{{ u.id }}">
-                                    <i class="bi bi-pencil me-1"></i> Editar
+                                <button type="button" class="btn btn-sm btn-outline-primary flex-fill fw-semibold rounded-pill shadow-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEditarUsuario{{ u.id }}">
+                                    <i class="bi bi-pencil me-1"></i>Editar
                                 </button>
-                                <form action="{% url 'usuarios_toggle_estado' u.id %}" method="POST" class="m-0 p-0 flex-fill">
+                                <form action="{% url 'usuarios_toggle_estado' u.id %}" method="POST" class="m-0 flex-fill" onsubmit="return confirm('¿Confirmas cambiar el estado de la cuenta de {{ u.username }}?')">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold rounded-pill" title="Cambiar Estado">
-                                        <i class="bi bi-power"></i>
+                                    {% if u.is_active %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-semibold rounded-pill shadow-sm" title="Inactivar">
+                                        <i class="bi bi-slash-circle me-1"></i>Inactivar
                                     </button>
+                                    {% else %}
+                                    <button type="submit" class="btn btn-sm btn-outline-success w-100 fw-semibold rounded-pill shadow-sm" title="Activar">
+                                        <i class="bi bi-check-circle me-1"></i>Activar
+                                    </button>
+                                    {% endif %}
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="col-12 text-center p-4 text-muted border rounded shadow-sm bg-light">
-                    No hay usuarios registrados.
+                <div class="col-12 text-center p-4 text-muted border rounded-4 shadow-sm bg-light">
+                    <i class="bi bi-people fs-2 text-muted d-block mb-2"></i>
+                    No hay usuarios registrados con este filtro o búsqueda.
                 </div>
                 {% endfor %}
             </div>
@@ -197,7 +323,7 @@
 {% for u in usuarios %}
 
     <!-- OFFCANVAS DE DETALLES (Reemplaza el antiguo modal) -->
-    <div class="offcanvas offcanvas-end border-0 shadow-lg u-style-c407f9e8" tabindex="-1" id="offcanvasDetallesUsuario{{ u.id }}">
+    <div class="offcanvas offcanvas-end border-0 shadow-lg" style="width: 500px; max-width: 95vw;" tabindex="-1" id="offcanvasDetallesUsuario{{ u.id }}">
         <div class="offcanvas-header {% if u.rol == 'ADMIN' %}bg-primary{% elif u.rol == 'GUIA' %}bg-warning{% else %}bg-info{% endif %} bg-opacity-10 border-bottom p-4">
             <div class="d-flex align-items-center gap-3">
                 {% if u.imagen_perfil %}
@@ -238,25 +364,25 @@
                 <div class="row g-3 mb-4">
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-3">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Nombres</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.72rem;">Nombres</small>
                             <span class="fw-bold text-dark">{{ u.first_name|default:"—" }}</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-3">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Apellidos</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.72rem;">Apellidos</small>
                             <span class="fw-bold text-dark">{{ u.last_name|default:"—" }}</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-3">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Tipo Documento</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.72rem;">Tipo Documento</small>
                             <span class="fw-bold text-dark">{{ u.tipo_documento|default:"—" }}</span>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="bg-light rounded-3 p-3">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Nro. Documento</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.72rem;">Nro. Documento</small>
                             <span class="fw-bold text-dark font-monospace">{{ u.numero_documento|default:"—" }}</span>
                         </div>
                     </div>
@@ -265,7 +391,7 @@
                 <h6 class="fw-bold text-dark mb-3 border-bottom pb-2"><i class="bi bi-telephone me-2 text-success"></i>Contacto</h6>
                 <div class="list-group list-group-flush mb-4">
                     <div class="list-group-item bg-transparent px-0 d-flex align-items-center gap-3 border-bottom">
-                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center u-style-80722803">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px;">
                             <i class="bi bi-envelope-fill"></i>
                         </div>
                         <div>
@@ -274,7 +400,7 @@
                         </div>
                     </div>
                     <div class="list-group-item bg-transparent px-0 d-flex align-items-center gap-3 border-bottom">
-                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center u-style-80722803">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px;">
                             <i class="bi bi-telephone-fill"></i>
                         </div>
                         <div>
@@ -283,7 +409,7 @@
                         </div>
                     </div>
                     <div class="list-group-item bg-transparent px-0 d-flex align-items-center gap-3">
-                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center u-style-80722803">
+                        <div class="bg-success bg-opacity-10 text-success rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px;">
                             <i class="bi bi-geo-alt-fill"></i>
                         </div>
                         <div>
@@ -299,15 +425,15 @@
                 <div class="bg-warning bg-opacity-10 rounded-4 p-3 border border-warning border-opacity-25 mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-warning border-opacity-25 pb-2">
                         <div>
-                            <small class="text-muted text-uppercase fw-bold d-block u-style-22c80133">Licencia de Turismo</small>
+                            <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.72rem;">Licencia de Turismo</small>
                             <span class="fw-bold text-dark fs-5 font-monospace">{% if u.guia %}{{ u.guia.numero_tarjeta_profesional|default:"—" }}{% else %}—{% endif %}</span>
                         </div>
                         <div class="text-end">
-                            <small class="text-muted text-uppercase fw-bold d-block u-style-22c80133">Experiencia</small>
+                            <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.72rem;">Experiencia</small>
                             <span class="fw-bold text-success fs-5">{% if u.guia %}{{ u.guia.experiencia_anos|default:0 }}{% else %}0{% endif %} <small class="text-muted fw-normal">años</small></span>
                         </div>
                     </div>
-                    <small class="text-muted text-uppercase fw-bold d-block mb-2 u-style-22c80133">Biografía Profesional</small>
+                    <small class="text-muted text-uppercase fw-bold d-block mb-2" style="font-size: 0.72rem;">Biografía Profesional</small>
                     <div class="bg-white rounded-3 p-3 border">
                         <p class="text-dark small mb-0 lh-lg">{% if u.guia and u.guia.descripcion_experiencia %}{{ u.guia.descripcion_experiencia }}{% else %}Sin biografía registrada.{% endif %}</p>
                     </div>
@@ -317,21 +443,21 @@
                 <div class="bg-info bg-opacity-10 rounded-4 p-3 border border-info border-opacity-25 mb-3">
                     <div class="row g-3">
                         <div class="col-4">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">País</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.72rem;">País</small>
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-globe-americas text-info"></i>
                                 <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.nombre_pais|default:"—" }}{% else %}—{% endif %}</span>
                             </div>
                         </div>
                         <div class="col-4">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Departamento</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.72rem;">Departamento</small>
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-map text-info"></i>
                                 <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.nombre_departamento|default:"—" }}{% else %}—{% endif %}</span>
                             </div>
                         </div>
                         <div class="col-4">
-                            <small class="text-muted text-uppercase fw-bold d-block mb-1 u-style-22c80133">Ciudad/Mun.</small>
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.72rem;">Ciudad/Mun.</small>
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-building text-info"></i>
                                 <span class="fw-bold text-dark">{% if u.cliente %}{{ u.cliente.nombre_ciudad|default:"—" }}{% else %}—{% endif %}</span>
@@ -359,7 +485,7 @@
     </div>
 
     <!-- OFFCANVAS DE EDICIÓN -->
-    <div class="offcanvas offcanvas-end border-0 shadow-lg u-style-5d401be2" tabindex="-1" id="offcanvasEditarUsuario{{ u.id }}">
+    <div class="offcanvas offcanvas-end border-0 shadow-lg" style="width: 520px; max-width: 95vw;" tabindex="-1" id="offcanvasEditarUsuario{{ u.id }}">
         <div class="offcanvas-header bg-secondary bg-opacity-10 border-bottom p-4">
             <h5 class="offcanvas-title fw-bold text-dark d-flex align-items-center gap-2 m-0">
                 <i class="bi bi-person-gear fs-4"></i> Editar Usuario #{{ u.id }}
@@ -513,7 +639,7 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="form-floating">
-                                            <textarea class="form-control form-control-sm u-style-1a3a679d" name="biografia">{% if u.rol == 'GUIA' and u.guia %}{{ u.guia.descripcion_experiencia }}{% endif %}</textarea>
+                                            <textarea class="form-control form-control-sm" style="height: 100px;" name="biografia">{% if u.rol == 'GUIA' and u.guia %}{{ u.guia.descripcion_experiencia }}{% endif %}</textarea>
                                             <label class="text-muted small">Biografía / Presentación</label>
                                         </div>
                                     </div>
