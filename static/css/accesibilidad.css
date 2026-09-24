@@ -339,11 +339,21 @@ html[data-a11y-cursor="true"] body * {
 /* Responsividad del Widget */
 @media (max-width: 576px) {
     .a11y-panel {
-        min-width: 280px;
-        max-width: calc(100vw - 30px);
-        right: 15px !important;
-        bottom: 70px !important;
+        min-width: 300px;
+        max-width: calc(100vw - 32px);
+        right: 16px !important;
+        bottom: 76px !important;
+        border-radius: 16px !important;
     }
+    
+    .a11y-panel-header {
+        padding: 1rem 1.25rem !important;
+    }
+    
+    .a11y-panel-content {
+        padding: 1.25rem !important;
+    }
+
     .a11y-panel-header span:last-child { display: none; }
     .a11y-section-title span { display: none; }
     .a11y-section-title i { margin-right: 0; }
@@ -351,37 +361,41 @@ html[data-a11y-cursor="true"] body * {
     .a11y-panel-footer .d-sm-block { display: none !important; }
 
     .a11y-tab-btn {
-        padding: 0.65rem 0.5rem;
-        font-size: 0.75rem;
+        padding: 0.75rem 0.25rem;
+        font-size: 0.7rem;
+        gap: 0.2rem;
     }
     .a11y-tab-btn span { display: none; }
     .a11y-tab-btn i {
-        font-size: 1rem;
+        font-size: 1.2rem;
         margin: 0;
     }
 
     .btn-campana-movil {
-        width: 40px !important;
-        height: 40px !important;
+        width: 44px !important;
+        height: 44px !important;
     }
     .btn-campana-movil i.bi-bell-fill {
         font-size: 1.25rem !important;
     }
     .btn-campana-movil .badge {
-        font-size: 0.65rem !important;
-        padding: 0.3em 0.5em !important;
+        font-size: 0.7rem !important;
+        padding: 0.4em 0.6em !important;
     }
 }
 
 @media (max-width: 380px) {
     .a11y-btn-main {
-        width: 50px !important;
-        height: 50px !important;
+        width: 48px !important;
+        height: 48px !important;
         bottom: 1rem !important;
         right: 1rem !important;
     }
     .a11y-panel {
-        max-width: calc(100vw - 20px);
+        min-width: 260px;
+        max-width: calc(100vw - 24px);
+        right: 12px !important;
+        bottom: 68px !important;
     }
 }
 
