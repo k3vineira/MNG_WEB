@@ -80,21 +80,26 @@
                         </select>
                     </div>
 
-                <!-- Monto de Penalidad (COP) - Solo lectura -->
-<div class="mb-4">
-    <label class="form-label fw-bold text-dark small">Monto de Penalidad (COP)</label>
-    <div class="input-group">
-        <span class="input-group-text bg-light border-end-0 fw-bold">$</span>
-        <input type="number" 
-               name="penalidad" 
-               class="form-control border-start-0 py-2 fw-bold bg-light text-muted" 
-               value="{{ reserva.penalidad|default:'0' }}" 
-               readonly>
-    </div>
-    <div class="form-text text-muted small">
-        <i class="bi bi-lock-fill me-1"></i> El monto de penalidad está bloqueado y no se puede editar manualmente.
-    </div>
-</div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark small">Multa calculada (COP)</label>
+                        {% if reserva.penalidad and reserva.penalidad > 0 %}
+                            <div class="alert alert-warning d-flex align-items-center gap-2 mb-0 rounded-3">
+                                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                                <div>
+                                    <span class="d-block small text-muted">Valor calculado automáticamente</span>
+                                    <strong>COP ${{ reserva.penalidad|floatformat:0 }}</strong>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-success d-flex align-items-center gap-2 mb-0 rounded-3">
+                                <i class="bi bi-check-circle-fill fs-5"></i>
+                                <strong>Sin multa</strong>
+                            </div>
+                        {% endif %}
+                        <div class="form-text text-muted small mt-2">
+                            <i class="bi bi-lock-fill me-1"></i> Este valor fue calculado automáticamente y no se puede editar manualmente.
+                        </div>
+                    </div>
                   
 
                     <div class="d-flex justify-content-end gap-2 pt-3 border-top">
