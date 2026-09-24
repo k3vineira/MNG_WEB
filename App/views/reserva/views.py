@@ -225,7 +225,10 @@ class EliminarReservaAdminView(DeleteView):
 def mis_reservas_usuario(request):
     reservas = Reserva.objects.filter(
         usuario=request.user
-    ).exclude(estado_reserva='cancelada').order_by('-fecha_registro')
+    ).exclude(
+        Q(estado_reserva='cancelada') |
+        Q(estado_cancelacion__in=['pendiente', 'aprobada'])
+    ).order_by('-fecha_registro')
 
     context = {
         'reservas': reservas
@@ -278,20 +281,18 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
     politica_reembolso = "Sujeto a evaluación administrativa."
 
     if fecha_tour:
- 
         fecha_tour_date = fecha_tour.date() if hasattr(fecha_tour, 'date') else fecha_tour
         dias_para_tour = (fecha_tour_date - date.today()).days
 
-      
-        if dias_para_tour >= 15:
+        if dias_para_tour > 15:
             penalidad_calculada = monto_total * Decimal('0.10')
             politica_reembolso = "Favorable (Reembolso del 90% / Penalidad del 10%)."
-        elif 5 <= dias_para_tour <= 14:
+        elif dias_para_tour >= 2:
             penalidad_calculada = monto_total * Decimal('0.50')
             politica_reembolso = "Parcial (Reembolso del 50% / Penalidad del 50%)."
         else:
             penalidad_calculada = monto_total
-            politica_reembolso = "Sin reembolso (Menos de 5 días / No-Show)."
+            politica_reembolso = "Sin reembolso (Menos de 48 horas / No-Show)."
 
    
     reserva.motivo_cancelacion = motivo
