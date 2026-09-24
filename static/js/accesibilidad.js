@@ -17,7 +17,7 @@
     };
     var s = Object.assign({}, D);
     var _toast = null;
-    var currentTab = "tamaño";
+    var currentTab = "tamano";
 
     function save() {
       try {
