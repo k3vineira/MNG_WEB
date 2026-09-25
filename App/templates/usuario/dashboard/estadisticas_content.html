@@ -425,13 +425,6 @@
                                 </td>
                                 <td class="text-end fw-bold text-dark py-3">COP ${{ reporte.inversion|floatformat:0|intcomma }}</td>
                             </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="7" class="text-center opacity-75 py-5">
-                                    <i class="bi bi-folder-x fs-2 d-block mb-2"></i>Sin registros mensuales
-                                    consolidados.
-                                </td>
-                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -472,12 +465,6 @@
                                 </td>
                                 <td class="text-end fw-bold text-success py-3">COP ${{ reporte.inversion|floatformat:0|intcomma }}</td>
                             </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="8" class="text-center opacity-75 py-5">
-                                    <i class="bi bi-folder-x fs-2 d-block mb-2"></i>Sin registros anuales.
-                                </td>
-                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -507,13 +494,6 @@
                                 <td class="text-center py-3"><span class="badge bg-primary px-3 py-1 rounded-pill">{{ destino.total_reservas }}</span></td>
                                 <td class="text-center py-3 opacity-75">COP ${{ destino.inversion_total|floatformat:0|intcomma|default:"—" }}</td>
                                 <td class="text-end opacity-75 py-3">{{ destino.ultima_visita|date:"d M Y"|default:"—" }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="text-center opacity-75 py-5">
-                                    <i class="bi bi-geo fs-2 d-block mb-2"></i>Aún no se registran destinos
-                                    geolocalizados en la cuenta.
-                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -619,12 +599,6 @@
                                     {% endif %}
                                 </td>
                             </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="6" class="text-center opacity-75 py-5">
-                                    <i class="bi bi-credit-card fs-2 d-block mb-2"></i>Sin transacciones registradas.
-                                </td>
-                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -667,12 +641,6 @@
                                     {% endif %}
                                 </td>
                                 <td class="text-end opacity-75 py-3 small">{{ calificacion.fecha_calificacion|default:calificacion.fecha|date:"d M Y"|default:"—" }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="5" class="text-center opacity-75 py-5">
-                                    <i class="bi bi-star fs-2 d-block mb-2"></i>Aún no se registran calificaciones.
-                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
