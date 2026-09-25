@@ -1,451 +1,233 @@
 {% load static %}
-<!-- CONTENEDOR FIJO PRINCIPAL -->
-<div
-  id="mainSidebar"
-  class="position-fixed top-0 start-0 h-100 d-flex shadow-lg bg-dark u-style-b9a43dee"
->
-  <!-- =========================================================================
-       1. VISTA EXPANDIDA (SIDEBAR GUÍA ANCHO)
-       ========================================================================= -->
-  <div
-    class="collapse collapse-horizontal show toggle-guia-sidebar sidebar-wide"
-    id="sidebarGuiaWide"
-  >
-    <aside
-      class="bg-dark text-white d-flex flex-column h-100 overflow-hidden border-end border-secondary u-style-a3df2370"
-    >
-      <!-- Header / Brand -->
-      <div
-        class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary"
-      >
-        <a
-          href="/"
-          class="d-flex align-items-center gap-2 text-white text-decoration-none"
-        >
-          <img
-            src="{% static 'img/logo_monagua.webp' %}"
-            alt="Logo Monagua"
-            class="rounded-circle border border-success flex-shrink-0 u-style-a2bbb072"
-            width="35"
-            height="35"
-          />
-          <div class="d-flex flex-column">
-            <span class="fw-bold small text-white">MONAGUA</span>
-            <span
-              class="text-white text-uppercase fw-bold"
-              style="font-size: 0.75rem; letter-spacing: 0.5px"
-              >Panel Guía</span
-            >
-          </div>
-        </a>
-        <button
-          class="btn btn-sm btn-outline-secondary border-0 text-white flex-shrink-0 toggle-sidebar-btn"
-          data-bs-toggle="collapse"
-          data-bs-target=".toggle-guia-sidebar"
-          aria-label="Contraer menú"
-        >
-          <i class="bi bi-chevron-left"></i>
+<div id="mainSidebar" class="bg-dark text-white shadow-lg">
+
+  <!-- ═════════════════════════════════════════════════════════════════
+       1. VISTA CONTRAÍDA (CARRIL DE ÍCONOS GUÍA - MODO SLIM CON BOOTSTRAP)
+       ═════════════════════════════════════════════════════════════════ -->
+  <aside class="sidebar-slim-view bg-dark text-white d-flex flex-column align-items-center h-100 border-end border-secondary border-opacity-25 w-100" aria-label="Barra de actividades">
+    
+    <!-- Header / Brand & Botón Desplegar -->
+    <div class="d-flex flex-column align-items-center py-3 px-1 border-bottom border-secondary border-opacity-25 w-100 gap-2">
+      <a href="/" class="text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" title="Monagua — Inicio">
+        <img src="{% static 'img/logo_monagua.webp' %}" alt="Monagua" class="rounded-circle border border-success p-1 shadow-sm" style="width: 36px; height: 36px; object-fit: cover;">
+      </a>
+      <button class="btn btn-sm btn-outline-secondary border-0 text-white-50 p-1 toggle-sidebar-btn" type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Desplegar menú lateral">
+        <i class="bi bi-layout-sidebar fs-5"></i>
+      </button>
+    </div>
+
+    <!-- Carril central de iconos con utilidades Bootstrap -->
+    <nav class="d-flex flex-column align-items-center flex-grow-1 overflow-auto py-2 gap-1 w-100">
+      
+      <a href="/" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 text-white-50 text-white-hover" 
+         style="width: 44px; height: 44px;" 
+         data-bs-toggle="tooltip" data-bs-placement="right" title="Página Principal">
+        <i class="bi bi-house fs-5"></i>
+      </a>
+
+      <a href="#" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'dashboard_guia' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         style="width: 44px; height: 44px;" 
+         data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
+        <i class="bi bi-grid-1x2 fs-5"></i>
+      </a>
+
+      <a href="#" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'estadisticas_guia' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         style="width: 44px; height: 44px;" 
+         data-bs-toggle="tooltip" data-bs-placement="right" title="Mis Estadísticas">
+        <i class="bi bi-graph-up-arrow fs-5"></i>
+      </a>
+
+      <a href="#" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'perfil_detalles' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         style="width: 44px; height: 44px;" 
+         data-bs-toggle="tooltip" data-bs-placement="right" title="Mi Perfil">
+        <i class="bi bi-person-badge fs-5"></i>
+      </a>
+
+      <hr class="border-secondary border-opacity-25 w-75 my-2">
+
+      <!-- Mis Tours (Al hacer clic: despliega el aside y abre el acordeón de Mis Tours) -->
+      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50{% endif %}" 
+              style="width: 44px; height: 44px;"
+              type="button" 
+              data-expand-sidebar-target="#menuGuiaTours"
+              data-bs-toggle="tooltip" 
+              data-bs-placement="right" 
+              title="Mis Tours">
+        <i class="bi bi-map fs-5"></i>
+      </button>
+
+      <!-- Comunidad (Al hacer clic: despliega el aside y abre el acordeón de Comunidad) -->
+      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50{% endif %}" 
+              style="width: 44px; height: 44px;"
+              type="button" 
+              data-expand-sidebar-target="#menuGuiaComunidad"
+              data-bs-toggle="tooltip" 
+              data-bs-placement="right" 
+              title="Comunidad">
+        <i class="bi bi-chat-left-heart fs-5"></i>
+      </button>
+
+      <a href="{% url 'listar_notificaciones' %}" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 text-white-50 text-white-hover" 
+         style="width: 44px; height: 44px;" 
+         data-bs-toggle="tooltip" data-bs-placement="right" title="Notificaciones">
+        <i class="bi bi-bell fs-5"></i>
+      </a>
+
+      <a href="{% url 'configuracion_usuario' %}" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 text-white-50 text-white-hover" 
+         style="width: 44px; height: 44px;" 
+         data-bs-toggle="tooltip" data-bs-placement="right" title="Configuración">
+        <i class="bi bi-gear fs-5"></i>
+      </a>
+
+    </nav>
+
+    <!-- Footer Slim: Avatar + Logout -->
+    <div class="d-flex flex-column align-items-center py-2 px-1 border-top border-secondary border-opacity-25 w-100 gap-2">
+      <a href="#" class="position-relative d-inline-block text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ user.first_name|default:user.username }} (Guía Oficial)">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Guía" class="rounded-circle border border-success" style="width: 34px; height: 34px; object-fit: cover;">
+        <span class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-dark" style="width: 8px; height: 8px;"></span>
+      </a>
+
+      <form action="{% url 'logout' %}" method="post" class="m-0 p-0">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-danger border-0 p-2 text-white-50 text-white-hover rounded-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Cerrar Sesión">
+          <i class="bi bi-power fs-5"></i>
         </button>
-      </div>
+      </form>
+    </div>
 
-      <!-- Menú de Navegación con ACORDEÓN -->
-      <nav class="flex-grow-1 overflow-auto p-3">
-        <ul class="nav nav-pills flex-column mb-auto gap-1" id="guiaAccordion">
-          <!-- Sección Cuenta -->
-          <li class="nav-item mt-1 mb-1">
-            <span
-              class="text-secondary text-uppercase fw-bold small px-2 u-style-e8f06dcb"
-              >Cuenta</span
-            >
-          </li>
-          <li class="nav-item">
-            <a
-              href="#"
-              class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'perfil_detalles' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}"
-            >
-              <i class="bi bi-person-badge"></i> Mi Perfil
-            </a>
-          </li>
+  </aside>
 
-          <!-- Sección Principal -->
-          <li class="nav-item mt-3 mb-1">
-            <span
-              class="text-secondary text-uppercase fw-bold small px-2 u-style-e8f06dcb"
-              >Principal</span
-            >
-          </li>
-          <li class="nav-item">
-            <a
-              href="/"
-              class="nav-link text-white opacity-75 d-flex align-items-center gap-2"
-            >
-              <i class="bi bi-house-door-fill"></i> Página Principal
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              href="#"
-              class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'dashboard_guia' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}"
-            >
-              <i class="bi bi-grid-1x2-fill"></i> Dashboard
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              href="#"
-              class="nav-link d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'estadisticas_guia' %}active bg-success text-white{% else %}text-white opacity-75{% endif %}"
-            >
-              <i class="bi bi-graph-up-arrow"></i> Mis Estadísticas
-            </a>
-          </li>
 
-          <!-- Separador -->
-          <li class="nav-item mt-2">
-            <hr class="border-secondary mx-2 my-1" />
-          </li>
-
-          <!-- Sección Operativa -->
-          <li class="nav-item mt-2 mb-1">
-            <span
-              class="text-secondary text-uppercase fw-bold small px-2 u-style-e8f06dcb"
-              >Operaciones</span
-            >
-          </li>
-
-          <!-- Mis Tours / Asignaciones -->
-          <li class="nav-item">
-            <button
-              class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'mis_asignaciones calendario_guia historial_tours' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}"
-              data-bs-toggle="collapse"
-              data-bs-target="#menuTours"
-              aria-expanded="{% if 'mis_asignaciones' in request.resolver_match.url_name %}true{% else %}false{% endif %}"
-            >
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-map-fill"></i> Mis Tours
-              </div>
-              <i class="bi bi-chevron-down small"></i>
-            </button>
-            <div
-              class="collapse {% if 'mis_asignaciones' in request.resolver_match.url_name or 'calendario_guia' in request.resolver_match.url_name or 'historial_tours' in request.resolver_match.url_name %}show{% endif %}"
-              id="menuTours"
-              data-bs-parent="#guiaAccordion"
-            >
-              <ul
-                class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1"
-              >
-                <li>
-                  <a
-                    href="#"
-                    class="nav-link small py-1 {% if request.resolver_match.url_name == 'mis_asignaciones' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"
-                    ><i class="bi bi-pin-map-fill me-1"></i> Asignaciones</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="nav-link small py-1 {% if request.resolver_match.url_name == 'calendario_guia' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"
-                    ><i class="bi bi-calendar-range me-1"></i> Calendario</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="nav-link small py-1 {% if request.resolver_match.url_name == 'historial_tours' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"
-                    ><i class="bi bi-clock-history me-1"></i> Historial</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </li>
-
-          <!-- Comunidad e Interacción -->
-          <li class="nav-item">
-            <button
-              class="nav-link text-white w-100 d-flex justify-content-between align-items-center {% if request.resolver_match.url_name not in 'resenas_guia blog_usuario' %}collapsed opacity-75{% else %}text-success fw-bold{% endif %}"
-              data-bs-toggle="collapse"
-              data-bs-target="#menuComunidadGuia"
-              aria-expanded="{% if 'resenas_guia' in request.resolver_match.url_name %}true{% else %}false{% endif %}"
-            >
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-chat-left-heart"></i> Comunidad
-              </div>
-              <i class="bi bi-chevron-down small"></i>
-            </button>
-            <div
-              class="collapse {% if 'resenas_guia' in request.resolver_match.url_name or 'blog_usuario' in request.resolver_match.url_name %}show{% endif %}"
-              id="menuComunidadGuia"
-              data-bs-parent="#guiaAccordion"
-            >
-              <ul
-                class="nav flex-column ms-3 border-start border-secondary ps-2 mt-1 gap-1"
-              >
-                <li>
-                  <a
-                    href="#"
-                    class="nav-link small py-1 {% if request.resolver_match.url_name == 'calificaciones_guia' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"
-                    ><i class="bi bi-star-fill me-1"></i> Mis Calificaciones</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="nav-link small py-1 {% if request.resolver_match.url_name == 'blog_usuario' %}active bg-success text-white{% else %}text-white opacity-50{% endif %}"
-                    ><i class="bi bi-journal-text me-1"></i> Blog</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </li>
-
-          <!-- Sección Sistema -->
-          <li class="nav-item mt-3 mb-1">
-            <span
-              class="text-secondary text-uppercase fw-bold small px-2 u-style-e8f06dcb"
-              >Sistema</span
-            >
-          </li>
-          <li class="nav-item">
-            <a
-              href="{% url 'listar_notificaciones' %}"
-              class="nav-link text-white opacity-75 d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'listar_notificaciones' %}active bg-success text-white{% endif %}"
-            >
-              <i class="bi bi-bell-fill"></i> Notificaciones
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              href="{% url 'configuracion_usuario' %}"
-              class="nav-link text-white opacity-75 d-flex align-items-center gap-2 {% if request.resolver_match.url_name == 'configuracion_usuario' %}active bg-success text-white{% endif %}"
-            >
-              <i class="bi bi-gear-fill"></i> Configuración
-            </a>
-          </li>
-        </ul>
-      </nav>
-
-      <!-- Footer: Perfil + Logout -->
-      <div class="p-3 border-top border-secondary">
-        <div class="d-flex align-items-center gap-3 mb-3">
-          <img
-            src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
-            alt="Guía"
-            class="rounded-circle border border-success flex-shrink-0 u-style-a2bbb072"
-            width="40"
-            height="40"
-          />
-          <div class="overflow-hidden">
-            <div class="fw-bold text-white fs-6 text-truncate">
-              {{ user.first_name|default:user.username }} {{ user.last_name }}
-            </div>
-            <div class="text-white opacity-75 fw-semibold small text-truncate">
-              Guía Oficial
-            </div>
-          </div>
+  <!-- ═════════════════════════════════════════════════════════════════
+       2. VISTA EXPANDIDA (SIDEBAR GUÍA DESPLEGADO CON BOOTSTRAP)
+       ═════════════════════════════════════════════════════════════════ -->
+  <aside class="sidebar-wide-view bg-dark text-white d-flex flex-column h-100 border-end border-secondary border-opacity-25 w-100" aria-label="Menú principal guía expandido">
+    
+    <!-- Header / Brand & Botón Contraer -->
+    <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-25 bg-black bg-opacity-25">
+      <a href="/" class="d-flex align-items-center gap-2 text-white text-decoration-none overflow-hidden">
+        <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="rounded-circle border border-success flex-shrink-0" style="width: 34px; height: 34px; object-fit: cover;">
+        <div class="d-flex flex-column" style="line-height: 1.15;">
+          <span class="fw-bold small text-white text-uppercase" style="letter-spacing: 0.5px;">MONAGUA</span>
+          <span class="text-success text-uppercase fw-bold" style="font-size: 0.68rem; letter-spacing: 0.5px;">Panel Guía</span>
         </div>
-        <form action="{% url 'logout' %}" method="post">
-          {% csrf_token %}
-          <button
-            type="submit"
-            class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2"
-          >
-            <i class="bi bi-power"></i> Cerrar Sesión
-          </button>
-        </form>
-      </div>
-    </aside>
-  </div>
+      </a>
+      <button class="btn btn-sm btn-outline-secondary border-0 text-white-50 toggle-sidebar-btn rounded-2 p-1" type="button" aria-label="Contraer menú" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Contraer menú">
+        <i class="bi bi-layout-sidebar-inset fs-5"></i>
+      </button>
+    </div>
 
-  <!-- =========================================================================
-       2. VISTA CONTRAÍDA (SIDEBAR MINIMALISTA GUÍA - SOLO ÍCONOS)
-       ========================================================================= -->
-  <div
-    class="collapse collapse-horizontal toggle-guia-sidebar sidebar-slim"
-    id="sidebarGuiaSlim"
-  >
-    <aside
-      class="bg-dark text-white d-flex flex-column align-items-center h-100 border-end border-secondary u-style-1ba5ed5b"
-    >
-      <!-- Header / Icono de despliegue -->
-      <div
-        class="d-flex align-items-center justify-content-center p-3 w-100 border-bottom border-secondary u-style-0d0bd2ea"
-      >
-        <button
-          class="btn btn-sm btn-outline-secondary border-0 text-white toggle-sidebar-btn"
-          data-bs-toggle="collapse"
-          data-bs-target=".toggle-guia-sidebar"
-          aria-label="Expandir menú"
-        >
-          <i class="bi bi-list fs-4"></i>
+    <!-- Navegación con Acordeón y Listas Bootstrap -->
+    <nav class="flex-grow-1 overflow-auto p-2 d-flex flex-column gap-1">
+      
+      <div class="text-secondary text-uppercase fw-bold px-2 pt-2 pb-1 small" style="font-size: 0.68rem; letter-spacing: 0.8px;">Principal</div>
+      
+      <a href="/" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none text-white-50 text-white-hover">
+        <i class="bi bi-house fs-6" style="width: 20px;"></i>
+        <span class="small">Página Principal</span>
+      </a>
+
+      <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'dashboard_guia' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+        <i class="bi bi-grid-1x2 fs-6 {% if request.resolver_match.url_name == 'dashboard_guia' %}text-success{% endif %}" style="width: 20px;"></i>
+        <span class="small">Dashboard</span>
+      </a>
+
+      <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'estadisticas_guia' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+        <i class="bi bi-graph-up-arrow fs-6 {% if request.resolver_match.url_name == 'estadisticas_guia' %}text-success{% endif %}" style="width: 20px;"></i>
+        <span class="small">Mis Estadísticas</span>
+      </a>
+
+      <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'perfil_detalles' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+        <i class="bi bi-person-badge fs-6 {% if request.resolver_match.url_name == 'perfil_detalles' %}text-success{% endif %}" style="width: 20px;"></i>
+        <span class="small">Mi Perfil</span>
+      </a>
+
+      <!-- Operaciones -->
+      <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1 small" style="font-size: 0.68rem; letter-spacing: 0.8px;">Operaciones</div>
+
+      <div>
+        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}text-white fw-semibold bg-white bg-opacity-10{% else %}text-white-50 collapsed{% endif %}" 
+                type="button" data-bs-toggle="collapse" data-bs-target="#menuGuiaTours" 
+                aria-expanded="{% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}true{% else %}false{% endif %}">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-map fs-6" style="width: 20px;"></i>
+            <span class="small">Mis Tours</span>
+          </div>
+          <i class="bi bi-chevron-down small"></i>
         </button>
+        <div class="collapse {% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}show{% endif %}" id="menuGuiaTours">
+          <ul class="list-unstyled ps-3 ms-2 border-start border-secondary border-opacity-25 my-1 d-flex flex-column gap-1">
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'mis_asignaciones' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-pin-map"></i> Asignaciones</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'calendario_guia' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-calendar-range"></i> Calendario</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'historial_tours' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-clock-history"></i> Historial</a></li>
+          </ul>
+        </div>
       </div>
 
-      <!-- Navegación Minimalista (Dropend) -->
-      <nav class="flex-grow-1 overflow-visible w-100 py-3">
-        <ul class="nav flex-column align-items-center w-100 gap-2">
-          <li class="nav-item w-100 text-center">
-            <a
-              href="#"
-              class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'perfil_detalles' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}"
-              title="Mi Perfil"
-              ><i class="bi bi-person-badge fs-5"></i
-            ></a>
-          </li>
+      <!-- Comunidad -->
+      <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1 small" style="font-size: 0.68rem; letter-spacing: 0.8px;">Comunidad</div>
 
-          <!-- Separador -->
-          <li class="nav-item w-100 text-center">
-            <hr class="border-secondary mx-2 my-1" />
-          </li>
-
-          <li class="nav-item w-100 text-center">
-            <a
-              href="/"
-              class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75"
-              title="Página Principal"
-              ><i class="bi bi-house-door-fill fs-5"></i
-            ></a>
-          </li>
-          <li class="nav-item w-100 text-center">
-            <a
-              href="#"
-              class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'dashboard_guia' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}"
-              title="Dashboard"
-              ><i class="bi bi-grid-1x2-fill fs-5"></i
-            ></a>
-          </li>
-          <li class="nav-item w-100 text-center">
-            <a
-              href="#"
-              class="btn w-100 py-2 border-0 rounded-0 {% if request.resolver_match.url_name == 'estadisticas_guia' %}btn-success text-white{% else %}btn-dark text-white opacity-75{% endif %}"
-              title="Estadísticas"
-              ><i class="bi bi-graph-up-arrow fs-5"></i
-            ></a>
-          </li>
-
-          <!-- Mis Tours (Dropend) -->
-          <li class="nav-item w-100 text-center dropend mt-2">
-            <button
-              class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'mis_asignaciones' in request.resolver_match.url_name or 'calendario_guia' in request.resolver_match.url_name or 'historial_tours' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              title="Mis Tours"
-            >
-              <i class="bi bi-map-fill fs-5"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark shadow">
-              <li>
-                <h6 class="dropdown-header text-success text-uppercase small">
-                  Mis Tours
-                </h6>
-              </li>
-              <li>
-                <a
-                  class="dropdown-item {% if request.resolver_match.url_name == 'mis_asignaciones' %}active bg-success{% endif %}"
-                  href="#"
-                  ><i class="bi bi-pin-map-fill me-2"></i>Asignaciones</a
-                >
-              </li>
-              <li>
-                <a
-                  class="dropdown-item {% if request.resolver_match.url_name == 'calendario_guia' %}active bg-success{% endif %}"
-                  href="#"
-                  ><i class="bi bi-calendar-range me-2"></i>Calendario</a
-                >
-              </li>
-              <li>
-                <a
-                  class="dropdown-item {% if request.resolver_match.url_name == 'historial_tours' %}active bg-success{% endif %}"
-                  href="#"
-                  ><i class="bi bi-clock-history me-2"></i>Historial</a
-                >
-              </li>
-            </ul>
-          </li>
-
-          <!-- Comunidad (Dropend) -->
-          <li class="nav-item w-100 text-center dropend">
-            <button
-              class="btn btn-dark w-100 py-2 border-0 rounded-0 {% if 'resenas_guia' in request.resolver_match.url_name or 'blog_usuario' in request.resolver_match.url_name %}text-success fw-bold{% else %}text-white opacity-75{% endif %}"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              title="Comunidad"
-            >
-              <i class="bi bi-chat-left-heart fs-5"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark shadow">
-              <li>
-                <h6 class="dropdown-header text-success text-uppercase small">
-                  Comunidad
-                </h6>
-              </li>
-              <li>
-                <a
-                  class="dropdown-item {% if request.resolver_match.url_name == 'calificaciones_guia' %}active bg-success{% endif %}"
-                  href="#"
-                  ><i class="bi bi-star-fill me-2"></i>Mis Calificaciones</a
-                >
-              </li>
-              <li>
-                <a
-                  class="dropdown-item {% if request.resolver_match.url_name == 'blog_usuario' %}active bg-success{% endif %}"
-                  href="#"
-                  ><i class="bi bi-journal-text me-2"></i>Blog</a
-                >
-              </li>
-            </ul>
-          </li>
-
-          <!-- Separador -->
-          <li class="nav-item w-100 text-center mt-2">
-            <hr class="border-secondary mx-2 my-1" />
-          </li>
-
-          <li class="nav-item w-100 text-center">
-            <a
-              href="#"
-              class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75"
-              title="Notificaciones"
-              ><i class="bi bi-bell-fill fs-5"></i
-            ></a>
-          </li>
-          <li class="nav-item w-100 text-center">
-            <a
-              href="#"
-              class="btn btn-dark w-100 py-2 border-0 rounded-0 text-white opacity-75"
-              title="Configuración"
-              ><i class="bi bi-gear-fill fs-5"></i
-            ></a>
-          </li>
-        </ul>
-      </nav>
-
-      <!-- Footer Slim -->
-      <div
-        class="p-2 w-100 text-center border-top border-secondary d-flex flex-column align-items-center gap-3"
-      >
-        <img
-          src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}"
-          alt="Guía"
-          class="rounded-circle border border-success u-style-a2bbb072"
-          width="34"
-          height="34"
-          title="{{ user.first_name|default:'Guía' }}"
-        />
-        <form action="{% url 'logout' %}" method="post" class="w-100">
-          {% csrf_token %}
-          <button
-            type="submit"
-            class="btn btn-sm btn-outline-danger border-0 w-100"
-            title="Cerrar Sesión"
-          >
-            <i class="bi bi-power fs-5"></i>
-          </button>
-        </form>
+      <div>
+        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}text-white fw-semibold bg-white bg-opacity-10{% else %}text-white-50 collapsed{% endif %}" 
+                type="button" data-bs-toggle="collapse" data-bs-target="#menuGuiaComunidad" 
+                aria-expanded="{% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}true{% else %}false{% endif %}">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-chat-left-heart fs-6" style="width: 20px;"></i>
+            <span class="small">Comunidad</span>
+          </div>
+          <i class="bi bi-chevron-down small"></i>
+        </button>
+        <div class="collapse {% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}show{% endif %}" id="menuGuiaComunidad">
+          <ul class="list-unstyled ps-3 ms-2 border-start border-secondary border-opacity-25 my-1 d-flex flex-column gap-1">
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'calificaciones_guia' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-star"></i> Mis Calificaciones</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'blog_usuario' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-journal-text"></i> Blog</a></li>
+          </ul>
+        </div>
       </div>
-    </aside>
-  </div>
+
+      <!-- Sistema -->
+      <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1 small" style="font-size: 0.68rem; letter-spacing: 0.8px;">Sistema</div>
+
+      <a href="{% url 'listar_notificaciones' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'listar_notificaciones' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+        <i class="bi bi-bell fs-6" style="width: 20px;"></i>
+        <span class="small">Notificaciones</span>
+      </a>
+
+      <a href="{% url 'configuracion_usuario' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'configuracion_usuario' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+        <i class="bi bi-gear fs-6" style="width: 20px;"></i>
+        <span class="small">Configuración</span>
+      </a>
+
+    </nav>
+
+    <!-- Footer: Perfil + Logout -->
+    <div class="p-3 border-top border-secondary border-opacity-25 bg-black bg-opacity-25 d-flex flex-column gap-2">
+      <div class="d-flex align-items-center gap-2 p-1 rounded-2">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Guía" class="rounded-circle border border-success flex-shrink-0" style="width: 36px; height: 36px; object-fit: cover;">
+        <div class="overflow-hidden">
+          <div class="fw-bold text-white small text-truncate">{{ user.first_name|default:user.username }} {{ user.last_name }}</div>
+          <div class="text-white-50 small text-truncate" style="font-size: 0.72rem;">Guía Oficial</div>
+        </div>
+      </div>
+      <form action="{% url 'logout' %}" method="post" class="m-0">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+          <i class="bi bi-power"></i>
+          <span>Cerrar Sesión</span>
+        </button>
+      </form>
+    </div>
+
+  </aside>
+
 </div>
 
-<link rel="stylesheet" href="{% static 'css/sidebar.css' %}?v=1.1" />
-<script src="{% static 'js/sidebar.js' %}" defer></script>
-
-{% include 'partials/notificacion/notificaciones.html' %}
+<link rel="stylesheet" href="{% static 'css/sidebar.css' %}?v=2.2">
+<script src="{% static 'js/sidebar.js' %}?v=2.2" defer></script>
