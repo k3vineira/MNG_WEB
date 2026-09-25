@@ -256,11 +256,14 @@
       var open = p.classList.contains("d-none");
       p.classList.toggle("d-none", !open);
       b.setAttribute("aria-expanded", open ? "true" : "false");
-      if (open)
+      if (open) {
         setTimeout(function () {
           var f = p.querySelector("button,input,select");
           if (f) f.focus();
         }, 50);
+      } else {
+        b.focus();
+      }
     }
 
     function reset() {
@@ -464,6 +467,37 @@
           reset();
         }
       });
+
+      // Trap focus in panel and allow Escape to close
+      var panel = document.getElementById("a11y-panel");
+      if (panel) {
+        panel.addEventListener("keydown", function(e) {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            var p = document.getElementById("a11y-panel");
+            if (p && !p.classList.contains("d-none")) {
+              toggle();
+            }
+          }
+          if (e.key === "Tab") {
+            var focusable = panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusable.length === 0) return;
+            var first = focusable[0];
+            var last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+              if (document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+              }
+            } else {
+              if (document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+              }
+            }
+          }
+        });
+      }
 
       // Escuchar redimensionado para recalcular tamaño base
       window.addEventListener("resize", function () {

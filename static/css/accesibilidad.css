@@ -467,3 +467,19 @@ html[data-a11y-invert="true"] video,
 html[data-a11y-invert="true"] iframe {
     filter: invert(100%) hue-rotate(180deg) !important;
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   MEJORAS GLOBALES DE FOCO VISIBLE (KEYBOARD ACCESSIBILITY)
+   ════════════════════════════════════════════════════════════════════════════ */
+:focus-visible {
+    outline: 3px solid #0d6efd !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.3) !important;
+    border-radius: 4px;
+}
+
+html[data-a11y-theme="high-contrast"] :focus-visible {
+    outline: 4px solid #ffff00 !important;
+    box-shadow: none !important;
+}
+

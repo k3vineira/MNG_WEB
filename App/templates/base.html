@@ -40,9 +40,10 @@
     <title>{% block titulo %}Monagua{% endblock %}</title>
   </head>
   <body>
+    <a href="#main-content" class="visually-hidden-focusable p-3 bg-primary text-white position-absolute z-3">Saltar al contenido principal</a>
     {% block navbar %}{% include 'partials/header.html' %}{% endblock %}
 
-    <main class="wrapper min-vh-100">
+    <main id="main-content" class="wrapper min-vh-100">
       <div class="content-wrapper">{% block content %}{% endblock %}</div>
     </main>
 
