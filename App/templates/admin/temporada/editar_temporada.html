@@ -1,48 +1,214 @@
 {% extends "admin/base-admin.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
+
+{% block title %}Admin | Editar Temporada #{{ object.pk }} - Monagua{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/librerias/flatpickr.min.css' %}">
 {% endblock extra_head %}
 
 {% block content %}
-<div class="container py-4" style="--verde-main: #2c6e3c;">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
-            
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+{% include "partials/breadcrumbs.html" with current_title="Editar Temporada" current_icon="bi bi-calendar-range" %}
+
+<div class="container py-4">
+    <!-- Encabezado con Botón Volver y Badges -->
+    <div class="mb-4">
+        <a href="{% url 'listar_temporadas' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-3 fw-semibold shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Volver a Temporadas
+        </a>
+        <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill fw-bold small">
+                <i class="bi bi-pencil-square me-1"></i> EDICIÓN DE REGISTRO
+            </span>
+            {% if object.estado %}
+                <span class="badge bg-success text-white rounded-pill px-3 py-1 small fw-semibold">
+                    <i class="bi bi-check-circle-fill me-1"></i> Temporada Activa
+                </span>
+            {% else %}
+                <span class="badge bg-danger text-white rounded-pill px-3 py-1 small fw-semibold">
+                    <i class="bi bi-x-circle-fill me-1"></i> Temporada Inactiva
+                </span>
+            {% endif %}
+        </div>
+        <h1 class="display-6 fw-bold text-dark mb-1">Editar Temporada: {{ object.nombre }}</h1>
+        <p class="text-muted mb-0">Modifica el rango de fechas, descripción y vigencia para las tarifas turísticas en Mongua.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna Lateral: Resumen del Registro y Consejos -->
+        <div class="col-12 col-lg-4">
+            <!-- Tarjeta Info General -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-calendar-check-fill fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark mb-0">Detalles de la Temporada</h6>
+                </div>
                 
-                <div class="card-header p-4 border-0 text-white" style="background-color: var(--verde-main);">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-pencil-square fs-2 me-3"></i>
-                        <div>
-                            <h4 class="fw-bold mb-0 text-white">Editar Temporada</h4>
-                            <p class="mb-0 text-white-50 small">Actualiza las fechas o información de la temporada en Mongua.</p>
+                <div class="border-bottom border-light pb-2 mb-2 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Identificador:</span>
+                    <span class="badge bg-light text-dark fw-bold border">#{{ object.id }}</span>
+                </div>
+                <div class="border-bottom border-light pb-2 mb-2 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Nombre:</span>
+                    <span class="fw-bold text-dark small text-truncate" style="max-width: 150px;">{{ object.nombre }}</span>
+                </div>
+                <div class="border-bottom border-light pb-2 mb-2 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Fecha Inicio:</span>
+                    <span class="text-dark small fw-semibold">{{ object.fecha_inicio|date:"d/m/Y" }}</span>
+                </div>
+                <div class="border-bottom border-light pb-2 mb-2 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Fecha Fin:</span>
+                    <span class="text-dark small fw-semibold">{{ object.fecha_fin|date:"d/m/Y" }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pt-1">
+                    <span class="text-muted small">Estado operativo:</span>
+                    {% if object.estado %}
+                        <span class="text-success fw-bold small"><i class="bi bi-check2-circle me-1"></i>Vigente</span>
+                    {% else %}
+                        <span class="text-danger fw-bold small"><i class="bi bi-eye-slash me-1"></i>Inactiva</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Tarjeta de Buenas Prácticas -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-lightbulb-fill fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark mb-0">Recomendaciones</h6>
+                </div>
+                <ul class="list-unstyled mb-0 small text-muted d-flex flex-column gap-2">
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check-lg text-success mt-1"></i>
+                        <span>Las tarifas aplicarán automáticamente a las reservas realizadas dentro de este período.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check-lg text-success mt-1"></i>
+                        <span>Asegúrate de que la fecha de finalización sea posterior o igual a la de inicio.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Columna Principal: Formulario -->
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div class="card-header bg-success text-white p-4 border-0">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-white bg-opacity-25 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                <i class="bi bi-calendar-range fs-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0 text-white">Formulario de Temporada</h5>
+                                <p class="mb-0 text-white-50 small">Actualiza las fechas y configuración de la temporada</p>
+                            </div>
                         </div>
+                        <span class="badge bg-white text-success fw-bold px-3 py-1 rounded-pill small">#{{ object.id }}</span>
                     </div>
                 </div>
 
-                <!-- Cuerpo del Formulario -->
-                <div class="card-body p-4 bg-white">
+                <div class="card-body p-4 p-md-5">
                     <form method="POST" novalidate>
                         {% csrf_token %}
 
-                        {{ form|crispy }}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger rounded-3 mb-4">
+                                {% for error in form.non_field_errors %}
+                                    <p class="mb-0"><i class="bi bi-exclamation-octagon me-1"></i> {{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold text-dark small">
+                                <i class="bi bi-calendar-event me-1 text-success"></i> {{ form.nombre.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.nombre }}
+                            {% if form.nombre.help_text %}
+                                <div class="form-text text-muted small">{{ form.nombre.help_text }}</div>
+                            {% endif %}
+                            {% if form.nombre.errors %}
+                                <div class="text-danger small mt-1">{{ form.nombre.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Fechas Inicio y Fin en 2 columnas -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-md-6">
+                                <label for="{{ form.fecha_inicio.id_for_label }}" class="form-label fw-bold text-dark small">
+                                    <i class="bi bi-calendar-date me-1 text-success"></i> {{ form.fecha_inicio.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.fecha_inicio }}
+                                {% if form.fecha_inicio.help_text %}
+                                    <div class="form-text text-muted small">{{ form.fecha_inicio.help_text }}</div>
+                                {% endif %}
+                                {% if form.fecha_inicio.errors %}
+                                    <div class="text-danger small mt-1">{{ form.fecha_inicio.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="{{ form.fecha_fin.id_for_label }}" class="form-label fw-bold text-dark small">
+                                    <i class="bi bi-calendar-date me-1 text-success"></i> {{ form.fecha_fin.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.fecha_fin }}
+                                {% if form.fecha_fin.help_text %}
+                                    <div class="form-text text-muted small">{{ form.fecha_fin.help_text }}</div>
+                                {% endif %}
+                                {% if form.fecha_fin.errors %}
+                                    <div class="text-danger small mt-1">{{ form.fecha_fin.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold text-dark small">
+                                <i class="bi bi-card-text me-1 text-success"></i> {{ form.descripcion.label }}
+                            </label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.help_text %}
+                                <div class="form-text text-muted small">{{ form.descripcion.help_text }}</div>
+                            {% endif %}
+                            {% if form.descripcion.errors %}
+                                <div class="text-danger small mt-1">{{ form.descripcion.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Estado Switch -->
+                        <div class="card border rounded-3 p-3 mb-4 bg-light">
+                            <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 m-0">
+                                <div>
+                                    <label class="form-check-label fw-bold text-dark mb-0 cursor-pointer" for="{{ form.estado.id_for_label }}">
+                                        <i class="bi bi-toggle2-on me-1 text-success"></i> {{ form.estado.label }}
+                                    </label>
+                                    <small class="text-muted d-block">Indica si la temporada está activa para la cotización de tarifas de paquetes.</small>
+                                </div>
+                                <div class="ms-3 fs-5">
+                                    {{ form.estado }}
+                                </div>
+                            </div>
+                            {% if form.estado.errors %}
+                                <div class="text-danger small mt-2">{{ form.estado.errors }}</div>
+                            {% endif %}
+                        </div>
 
                         <!-- Botones de Acción -->
-                        <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
-                            <a href="{% url 'listar_temporadas' %}" class="btn btn-outline-secondary px-4 rounded-pill">
-                                Cancelar
+                        <div class="d-flex justify-content-end align-items-center gap-2 pt-3 border-top">
+                            <a href="{% url 'listar_temporadas' %}" class="btn btn-outline-secondary px-4 rounded-pill fw-semibold">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
                             </a>
-                            <button type="submit" class="btn text-white px-4 rounded-pill shadow-sm fw-bold" style="background-color: var(--verde-main); border-color: var(--verde-oscuro);">
+                            <button type="submit" class="btn btn-success px-4 rounded-pill shadow-sm fw-bold">
                                 <i class="bi bi-check-circle me-1"></i> Guardar Cambios
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

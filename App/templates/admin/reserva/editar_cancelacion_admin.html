@@ -1,116 +1,165 @@
 {% extends "admin/base-admin.html" %}
 {% load static %}
+{% load humanize %}
+
+{% block title %}Admin | Revisar Cancelación Reserva #{{ reserva.id }} - Monagua{% endblock %}
 
 {% block content %}
-<div class="container-fluid px-4 py-4">
-    <div class="mb-3">
-        <a href="{% url 'listar_cancelaciones' %}" class="text-decoration-none text-muted small fw-semibold">
-            <i class="bi bi-arrow-left me-1"></i> Volver al listado
-        </a>
-    </div>
+{% include "partials/breadcrumbs.html" with current_title="Revisar Cancelación" current_icon="bi bi-x-circle" %}
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-semibold text-uppercase mb-2" style="font-size: 0.75rem;">Gestión de Solicitudes</span>
-            <h2 class="fw-bold text-dark mb-1">Revisar Reserva #{{ reserva.id }}</h2>
-            <p class="text-muted mb-0">Evalúa los motivos, ajusta penalidades y aprueba o rechaza la cancelación.</p>
+<div class="container py-4">
+    <!-- Encabezado con Botón Volver y Badges -->
+    <div class="mb-4">
+        <a href="{% url 'listar_cancelaciones' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-3 fw-semibold shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Volver a Cancelaciones
+        </a>
+        <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-3 py-1 rounded-pill fw-bold small">
+                <i class="bi bi-shield-exclamation me-1"></i> REVISIÓN DE CANCELACIÓN
+            </span>
+            {% if reserva.estado_cancelacion == 'pendiente' %}
+                <span class="badge bg-warning text-dark rounded-pill px-3 py-1 small fw-semibold">Pendiente</span>
+            {% elif reserva.estado_cancelacion == 'aprobada' %}
+                <span class="badge bg-success text-white rounded-pill px-3 py-1 small fw-semibold">Aprobada</span>
+            {% else %}
+                <span class="badge bg-danger text-white rounded-pill px-3 py-1 small fw-semibold">Rechazada</span>
+            {% endif %}
         </div>
+        <h1 class="display-6 fw-bold text-dark mb-1">Revisar Cancelación: Reserva #{{ reserva.id }}</h1>
+        <p class="text-muted mb-0">Evalúa los motivos expuestos por el cliente, verifica penalidades y define la resolución de la solicitud.</p>
     </div>
 
     <div class="row g-4">
-        <!-- Información del Cliente y Reserva -->
+        <!-- Información del Cliente y Reserva (Columna Izquierda) -->
         <div class="col-12 col-lg-5">
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
-                <h5 class="fw-bold text-dark mb-3">Información del Cliente</h5>
-                <div class="d-flex align-items-center">
-                    <div class="avatar-lg bg-light rounded-circle p-3 me-3 text-center d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                        <i class="bi bi-person-fill fs-3 text-secondary"></i>
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-person-fill fs-5"></i>
                     </div>
-                    <div>
-                        <h6 class="fw-bold mb-0 text-dark">{{ reserva.usuario.get_full_name|default:reserva.usuario.username }}</h6>
-                        <span class="text-muted small">{{ reserva.usuario.email }}</span>
+                    <h6 class="fw-bold text-dark mb-0">Información del Cliente</h6>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <img src="{% if reserva.usuario.imagen_perfil %}{{ reserva.usuario.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Avatar" class="rounded-circle border" style="width: 48px; height: 48px; object-fit: cover;">
+                    <div class="overflow-hidden">
+                        <h6 class="fw-bold mb-0 text-dark text-truncate">{{ reserva.usuario.get_full_name|default:reserva.usuario.username }}</h6>
+                        <span class="text-muted small text-truncate d-block">{{ reserva.usuario.email }}</span>
                     </div>
                 </div>
             </div>
 
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
-                <h5 class="fw-bold text-dark mb-3">Detalle de la Reserva</h5>
-                <ul class="list-group list-group-flush border-0">
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0">
-                        <span class="text-muted small">Aventura / Paquete:</span>
-                        <span class="fw-bold text-dark small">
-                            {% if reserva.actividad %}
-                                {{ reserva.actividad.nombre }}
-                            {% elif reserva.paquete %}
-                                {{ reserva.paquete.nombre }}
-                            {% else %}
-                                Reserva #{{ reserva.id }}
-                            {% endif %}
-                        </span>
-                    </li>
-                </ul>
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-calendar-event fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark mb-0">Detalles de la Reserva</h6>
+                </div>
+                <div class="border-bottom border-light pb-2 mb-2 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Aventura / Paquete:</span>
+                    <span class="fw-bold text-success small">
+                        {% if reserva.actividad %}
+                            {{ reserva.actividad.nombre }}
+                        {% elif reserva.paquete %}
+                            {{ reserva.paquete.nombre }}
+                        {% else %}
+                            Reserva #{{ reserva.id }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="border-bottom border-light pb-2 mb-2 d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Fecha viaje:</span>
+                    <span class="text-dark small fw-semibold">{{ reserva.fecha_inicio|date:"d/m/Y" }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pt-1">
+                    <span class="text-muted small">Monto pagado / total:</span>
+                    <span class="fw-bold text-dark small">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</span>
+                </div>
 
                 <div class="mt-3 p-3 bg-light rounded-4">
-                    <span class="text-uppercase fw-bold text-muted d-block mb-1" style="font-size: 0.7rem;">Motivo de cancelación:</span>
+                    <span class="text-uppercase fw-bold text-muted d-block mb-1" style="font-size: 0.7rem;">
+                        <i class="bi bi-chat-left-quote me-1"></i> Motivo de cancelación:
+                    </span>
                     <p class="text-dark small mb-0">{{ reserva.motivo_cancelacion|default:"Sin motivo especificado" }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Formulario de actualización del Administrador -->
+        <!-- Formulario de Dictamen del Administrador (Columna Derecha) -->
         <div class="col-12 col-lg-7">
-            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
-                <h5 class="fw-bold text-dark mb-4"><i class="bi bi-sliders me-2 text-primary"></i>Dictamen del Administrador</h5>
-
-                <form method="POST">
-                    {% csrf_token %}
-
-                    <div class="mb-4">
-                        <label class="form-label fw-bold text-dark small">Estado de Cancelación</label>
-                        <select name="estado_cancelacion" class="form-select rounded-3 py-2 fw-semibold" required>
-                            <option value="pendiente" {% if reserva.estado_cancelacion == 'pendiente' %}selected{% endif %}>
-                                 Pendiente de Revisión
-                            </option>
-                               <option value="aprobada" {% if reserva.estado_cancelacion == 'aprobada' %}selected{% endif %}>
-                                   Aprobada
-                            </option>
-                            <option value="rechazada" {% if reserva.estado_cancelacion == 'rechazada' %}selected{% endif %}>
-                                 Rechazada
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-bold text-dark small">Multa calculada (COP)</label>
-                        {% if reserva.penalidad and reserva.penalidad > 0 %}
-                            <div class="alert alert-warning d-flex align-items-center gap-2 mb-0 rounded-3">
-                                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
-                                <div>
-                                    <span class="d-block small text-muted">Valor calculado automáticamente</span>
-                                    <strong>COP ${{ reserva.penalidad|floatformat:0 }}</strong>
-                                </div>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div class="card-header bg-success text-white p-4 border-0">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-white bg-opacity-25 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                <i class="bi bi-sliders fs-4"></i>
                             </div>
-                        {% else %}
-                            <div class="alert alert-success d-flex align-items-center gap-2 mb-0 rounded-3">
-                                <i class="bi bi-check-circle-fill fs-5"></i>
-                                <strong>Sin multa</strong>
+                            <div>
+                                <h5 class="fw-bold mb-0 text-white">Dictamen del Administrador</h5>
+                                <p class="mb-0 text-white-50 small">Actualiza la resolución de esta solicitud</p>
                             </div>
-                        {% endif %}
-                        <div class="form-text text-muted small mt-2">
-                            <i class="bi bi-lock-fill me-1"></i> Este valor fue calculado automáticamente y no se puede editar manualmente.
                         </div>
+                        <span class="badge bg-white text-success fw-bold px-3 py-1 rounded-pill small">#{{ reserva.id }}</span>
                     </div>
-                  
+                </div>
 
-                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
-                        <a href="{% url 'listar_cancelaciones' %}" class="btn btn-light rounded-pill px-4 fw-semibold text-secondary">
-                            Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
-                            <i class="bi bi-check-circle-fill me-1"></i> Guardar Cambios
-                        </button>
-                    </div>
-                </form>
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark small">
+                                <i class="bi bi-check2-circle text-success me-1"></i> Estado de Cancelación <span class="text-danger">*</span>
+                            </label>
+                            <select name="estado_cancelacion" class="form-select rounded-3 py-2 fw-semibold" required>
+                                <option value="pendiente" {% if reserva.estado_cancelacion == 'pendiente' %}selected{% endif %}>
+                                     Pendiente de Revisión
+                                </option>
+                                <option value="aprobada" {% if reserva.estado_cancelacion == 'aprobada' %}selected{% endif %}>
+                                     Aprobada
+                                </option>
+                                <option value="rechazada" {% if reserva.estado_cancelacion == 'rechazada' %}selected{% endif %}>
+                                     Rechazada
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark small">
+                                <i class="bi bi-cash-stack text-success me-1"></i> Multa calculada (COP)
+                            </label>
+                            {% if reserva.penalidad and reserva.penalidad > 0 %}
+                                <div class="alert alert-warning d-flex align-items-center gap-2 mb-0 rounded-3">
+                                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                                    <div>
+                                        <span class="d-block small text-muted">Valor calculado automáticamente según políticas de cancelación</span>
+                                        <strong class="fs-6">COP ${{ reserva.penalidad|floatformat:0|intcomma }}</strong>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success d-flex align-items-center gap-2 mb-0 rounded-3">
+                                    <i class="bi bi-check-circle-fill fs-5"></i>
+                                    <div>
+                                        <span class="d-block small text-muted">Aplica reembolso total</span>
+                                        <strong class="fs-6">Sin multa / penalidad (COP $0)</strong>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div class="form-text text-muted small mt-2">
+                                <i class="bi bi-lock-fill me-1"></i> Este valor se calcula automáticamente conforme a las políticas de cancelación de Monagua.
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end align-items-center gap-2 pt-3 border-top">
+                            <a href="{% url 'listar_cancelaciones' %}" class="btn btn-outline-secondary px-4 rounded-pill fw-semibold">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success px-4 rounded-pill shadow-sm fw-bold">
+                                <i class="bi bi-check-circle me-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

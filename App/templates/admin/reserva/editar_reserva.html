@@ -2,28 +2,44 @@
 {% load crispy_forms_tags %}
 {% load humanize %}
 
+{% block title %}Admin | Editar Reserva #{{ reserva.id }} - Monagua{% endblock %}
+
 {% block content %}
+{% include "partials/breadcrumbs.html" with current_title="Editar Reserva" current_icon="bi bi-calendar-check" %}
+
 <div class="container py-4">
-    
     <!-- Botón volver & Cabecera -->
     <div class="mb-4">
         <a href="{% url 'gestion_reservas' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-3 fw-semibold shadow-sm">
             <i class="bi bi-arrow-left me-1"></i> Volver a Gestión de Reservas
         </a>
-        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-2 fw-bold d-block w-fit">EDICIÓN DE REGISTRO</span>
-        <h2 class="display-6 fw-bold text-dark mb-1">Modificar Reserva #{{ reserva.id }}</h2>
-        <p class="text-muted">Actualiza los datos de la reserva o cambia su estado de procesamiento.</p>
+        <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill fw-bold small">
+                <i class="bi bi-pencil-square me-1"></i> EDICIÓN DE REGISTRO
+            </span>
+            {% if reserva.estado_reserva == 'pendiente' %}
+                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-1 fw-bold">Pendiente</span>
+            {% elif reserva.estado_reserva == 'confirmada' %}
+                <span class="badge bg-success text-white rounded-pill px-3 py-1 fw-bold">Confirmada</span>
+            {% else %}
+                <span class="badge bg-danger text-white rounded-pill px-3 py-1 fw-bold">Cancelada</span>
+            {% endif %}
+        </div>
+        <h1 class="display-6 fw-bold text-dark mb-1">Modificar Reserva #{{ reserva.id }}</h1>
+        <p class="text-muted mb-0">Actualiza los datos de la reserva o cambia su estado de procesamiento.</p>
     </div>
 
     <div class="row g-4">
-        
         <!-- Columna Detalles de la Reserva (Izquierda) -->
-        <div class="col-lg-7">
+        <div class="col-12 col-lg-7">
             <!-- Tarjeta Info General -->
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
-                <span class="fw-bold text-secondary text-uppercase small mb-4 d-block u-style-e2eb0d8e">
-                    <i class="bi bi-info-circle text-primary me-2"></i>Información General de la Reserva
-                </span>
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-info-circle-fill fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark mb-0">Información General de la Reserva</h6>
+                </div>
 
                 <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Cliente / Titular:</span>
@@ -31,7 +47,7 @@
                 </div>
                 <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Correo Electrónico:</span>
-                    <span class="text-secondary">{{ reserva.usuario.email }}</span>
+                    <span class="text-secondary small">{{ reserva.usuario.email }}</span>
                 </div>
                 <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Aventura / Destino:</span>
@@ -39,23 +55,23 @@
                 </div>
                 <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Fecha Planificada de Viaje:</span>
-                    <span class="text-dark">{{ reserva.fecha_inicio|date:"d/m/Y" }}</span>
+                    <span class="text-dark small fw-semibold">{{ reserva.fecha_inicio|date:"d/m/Y" }}</span>
                 </div>
                 <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Pasajeros Declarados:</span>
-                    <span class="text-secondary fw-medium">{{ reserva.numero_adultos }} Adultos / {{ reserva.numero_menores }} Menores</span>
+                    <span class="badge bg-light text-dark border fw-semibold">{{ reserva.numero_adultos }} Adulto{{ reserva.numero_adultos|pluralize }} / {{ reserva.numero_menores }} Menor{{ reserva.numero_menores|pluralize:"es" }}</span>
                 </div>
                 <div class="border-bottom border-light pb-3 mb-3 d-flex justify-content-between align-items-center">
                     <span class="text-muted small">Estado Actual:</span>
                     {% if reserva.estado_reserva == 'pendiente' %}
                         <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 rounded-pill px-3 py-1 fw-bold">Pendiente</span>
                     {% elif reserva.estado_reserva == 'confirmada' %}
-                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1 fw-bold">Confirmada</span>
+                        <span class="badge bg-success text-white rounded-pill px-3 py-1 fw-bold">Confirmada</span>
                     {% else %}
-                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-1 fw-bold">Cancelada</span>
+                        <span class="badge bg-danger text-white rounded-pill px-3 py-1 fw-bold">Cancelada</span>
                     {% endif %}
                 </div>
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center pt-1">
                     <span class="text-muted small">Costo Total:</span>
                     <span class="fw-bold text-dark fs-5">COP ${{ reserva.monto_total|floatformat:0|intcomma }}</span>
                 </div>
@@ -63,12 +79,14 @@
         </div>
 
         <!-- Columna Formulario de Decisión (Derecha) -->
-        <div class="col-lg-5">
-            <div class="card border-0 shadow rounded-4 overflow-hidden bg-white">
-                <div class="card-header bg-success text-white py-3 border-0">
-                    <h5 class="mb-0 fw-bold text-uppercase text-center u-style-e2eb0d8e">
-                        <i class="bi bi-pencil-square me-2"></i>Editar Reserva
-                    </h5>
+        <div class="col-12 col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div class="card-header bg-success text-white p-3 px-4 border-0 d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-pencil-square fs-5"></i>
+                        <h6 class="mb-0 fw-bold text-white">Editar Reserva</h6>
+                    </div>
+                    <span class="badge bg-white text-success fw-bold px-2.5 py-1 rounded-pill small">#{{ reserva.id }}</span>
                 </div>
 
                 <div class="card-body p-4">
@@ -79,15 +97,15 @@
                             {{ form|crispy }}
                         </div>
 
-                        <div class="row g-2">
+                        <div class="row g-2 pt-2 border-top">
                             <div class="col-6">
                                 <a href="{% url 'gestion_reservas' %}" class="btn btn-outline-secondary rounded-pill w-100 py-2 fw-semibold">
-                                    Cancelar
+                                    <i class="bi bi-x-circle me-1"></i> Cancelar
                                 </a>
                             </div>
                             <div class="col-6">
                                 <button type="submit" class="btn btn-success rounded-pill w-100 py-2 fw-bold shadow-sm">
-                                    Guardar Cambios
+                                    <i class="bi bi-check-circle me-1"></i> Guardar
                                 </button>
                             </div>
                         </div>

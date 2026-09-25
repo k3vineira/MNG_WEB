@@ -1,43 +1,174 @@
 {% extends "admin/base-admin.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
+
+{% block title %}Admin | Nueva Actividad - Monagua{% endblock %}
 
 {% block content %}
-<div class="container py-4" style="--verde-main: #2c6e3c;">
-    <div class="row justify-content-center">
-       
-        <div class="col-12 col-lg-10" style="max-width: 880px;">
-            
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                
-                <div class="card-header p-4 border-0 text-white" style="background-color: var(--verde-main);">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-activity fs-2 me-3"></i>
+{% include "partials/breadcrumbs.html" with current_title="Nueva Actividad" current_icon="bi bi-activity" %}
+
+<div class="container py-4">
+    <!-- Encabezado con Botón Volver y Badges -->
+    <div class="mb-4">
+        <a href="{% url 'listar_actividades' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-3 fw-semibold shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Volver a Actividades
+        </a>
+        <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill fw-bold small">
+                <i class="bi bi-plus-circle me-1"></i> NUEVO REGISTRO
+            </span>
+        </div>
+        <h1 class="display-6 fw-bold text-dark mb-1">Registrar Nueva Actividad</h1>
+        <p class="text-muted mb-0">Crea una nueva actividad turística para ser incluida en los paquetes de Mongua.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna Lateral: Consejos y Ayuda -->
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-lightbulb-fill fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark mb-0">Guía de Actividades</h6>
+                </div>
+                <ul class="list-unstyled mb-0 small text-muted d-flex flex-column gap-2">
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check-lg text-success mt-1"></i>
+                        <span>Ingresa un nombre claro que defina la vivencia (ej. <em>Senderismo a Peña de Otí</em>).</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check-lg text-success mt-1"></i>
+                        <span>Especifica si es apta para niños para prevenir contratiempos durante los recorridos.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check-lg text-success mt-1"></i>
+                        <span>Podrás vincular esta actividad a uno o múltiples paquetes turísticos.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Columna Principal: Formulario -->
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div class="card-header bg-success text-white p-4 border-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-activity fs-4"></i>
+                        </div>
                         <div>
-                            <h4 class="fw-bold mb-0 text-white">Registrar Nueva Actividad</h4>
-                            <p class="mb-0 text-white-50 small">Completa la información para habilitar una nueva actividad turística en Mongua.</p>
+                            <h5 class="fw-bold mb-0 text-white">Datos de la Actividad</h5>
+                            <p class="mb-0 text-white-50 small">Completa los campos para dar de alta la actividad</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="card-body p-4 bg-white">
+                <div class="card-body p-4 p-md-5">
                     <form method="POST" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
 
-                        {{ form|crispy }}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger rounded-3 mb-4">
+                                {% for error in form.non_field_errors %}
+                                    <p class="mb-0"><i class="bi bi-exclamation-octagon me-1"></i> {{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
 
-                        <div class="d-flex justify-content-end gap-2 pt-3 mt-4 border-top">
-                            <a href="{% url 'listar_actividades' %}" class="btn btn-outline-secondary px-4 rounded-pill">
-                                Cancelar
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold text-dark small">
+                                <i class="bi bi-type me-1 text-success"></i> {{ form.nombre.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.nombre }}
+                            {% if form.nombre.help_text %}
+                                <div class="form-text text-muted small">{{ form.nombre.help_text }}</div>
+                            {% endif %}
+                            {% if form.nombre.errors %}
+                                <div class="text-danger small mt-1">{{ form.nombre.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold text-dark small">
+                                <i class="bi bi-card-text me-1 text-success"></i> {{ form.descripcion.label }}
+                            </label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.help_text %}
+                                <div class="form-text text-muted small">{{ form.descripcion.help_text }}</div>
+                            {% endif %}
+                            {% if form.descripcion.errors %}
+                                <div class="text-danger small mt-1">{{ form.descripcion.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Equipo Requerido y Recomendaciones en 2 columnas -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-md-6">
+                                <label for="{{ form.equipo_requerimiento.id_for_label }}" class="form-label fw-bold text-dark small">
+                                    <i class="bi bi-backpack me-1 text-success"></i> {{ form.equipo_requerimiento.label }}
+                                </label>
+                                {{ form.equipo_requerimiento }}
+                                {% if form.equipo_requerimiento.errors %}
+                                    <div class="text-danger small mt-1">{{ form.equipo_requerimiento.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="{{ form.recomendaciones.id_for_label }}" class="form-label fw-bold text-dark small">
+                                    <i class="bi bi-shield-check me-1 text-success"></i> {{ form.recomendaciones.label }}
+                                </label>
+                                {{ form.recomendaciones }}
+                                {% if form.recomendaciones.errors %}
+                                    <div class="text-danger small mt-1">{{ form.recomendaciones.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Switches: Apto Menores y Estado -->
+                        <div class="card border rounded-3 p-3 mb-4 bg-light">
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6 border-end-md">
+                                    <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 m-0">
+                                        <div>
+                                            <label class="form-check-label fw-bold text-dark mb-0 cursor-pointer" for="{{ form.apto_menores.id_for_label }}">
+                                                <i class="bi bi-people me-1 text-success"></i> {{ form.apto_menores.label }}
+                                            </label>
+                                            <small class="text-muted d-block">¿Permitida para niños y familias?</small>
+                                        </div>
+                                        <div class="ms-3 fs-5">
+                                            {{ form.apto_menores }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 m-0">
+                                        <div>
+                                            <label class="form-check-label fw-bold text-dark mb-0 cursor-pointer" for="{{ form.estado.id_for_label }}">
+                                                <i class="bi bi-toggle2-on me-1 text-success"></i> {{ form.estado.label }}
+                                            </label>
+                                            <small class="text-muted d-block">¿Habilitada inmediatamente?</small>
+                                        </div>
+                                        <div class="ms-3 fs-5">
+                                            {{ form.estado }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="d-flex justify-content-end align-items-center gap-2 pt-3 border-top">
+                            <a href="{% url 'listar_actividades' %}" class="btn btn-outline-secondary px-4 rounded-pill fw-semibold">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
                             </a>
-                            <button type="submit" class="btn text-white px-4 rounded-pill shadow-sm fw-bold" style="background-color: var(--verde-main); border-color: var(--verde-main);">
+                            <button type="submit" class="btn btn-success px-4 rounded-pill shadow-sm fw-bold">
                                 <i class="bi bi-plus-circle me-1"></i> Crear Actividad
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

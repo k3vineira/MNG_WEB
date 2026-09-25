@@ -1,21 +1,70 @@
 {% extends "admin/base-admin.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
 
+{% block title %}Admin | Nueva Publicación de Blog - Monagua{% endblock %}
+
 {% block content %}
-<div class="container py-3" style="--verde-main: #2c6e3c;">
-    <div class="row justify-content-center">
-        <!-- Ancho reducido a máximo 550px -->
-        <div class="col-12 col-md-8 col-lg-6" style="max-width: 550px;">
-            
-            <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-                
-                <!-- Encabezado compacto -->
-                <div class="card-header py-2 px-3 text-white" style="background-color: var(--verde-main);">
-                    <h6 class="mb-0 text-center fw-bold">Publicar Información</h6>
+{% include "partials/breadcrumbs.html" with current_title="Nueva Publicación" current_icon="bi bi-journal-plus" %}
+
+<div class="container py-4">
+    <!-- Encabezado con Botón Volver y Badges -->
+    <div class="mb-4">
+        <a href="{% url 'listar_blog' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-3 fw-semibold shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Volver a Publicaciones
+        </a>
+        <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill fw-bold small">
+                <i class="bi bi-plus-circle me-1"></i> NUEVO REGISTRO
+            </span>
+        </div>
+        <h1 class="display-6 fw-bold text-dark mb-1">Crear Nueva Publicación de Blog</h1>
+        <p class="text-muted mb-0">Escribe experiencias, historias y recomendaciones turísticas para los visitantes de Mongua.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna Lateral: Consejos y Ayuda -->
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-lightbulb-fill fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark mb-0">Recomendaciones</h6>
+                </div>
+                <ul class="list-unstyled mb-0 small text-muted d-flex flex-column gap-2">
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check-lg text-success mt-1"></i>
+                        <span>Usa un título cautivador que invite a conocer las maravillas de Mongua.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check-lg text-success mt-1"></i>
+                        <span>Añade una foto destacada horizontal de alta calidad para encabezar la publicación.</span>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-check-lg text-success mt-1"></i>
+                        <span>Puedes guardarla como <em>Borrador</em> si aún no deseas que sea visible públicamente.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Columna Principal: Formulario -->
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div class="card-header bg-success text-white p-4 border-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-journal-plus fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0 text-white">Datos del Artículo</h5>
+                            <p class="mb-0 text-white-50 small">Completa la información para redactar la entrada</p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Cuerpo del formulario compacto -->
-                <div class="card-body p-3 bg-white">
+                <div class="card-body p-4 p-md-5">
                     <form method="POST" enctype="multipart/form-data" novalidate> 
                         {% csrf_token %}
 
@@ -25,8 +74,8 @@
                         {{ form.estado|as_crispy_field }}
 
                         <div class="mb-3 mt-3">
-                            <label for="{{ form.imagen_destacada.id_for_label }}" class="form-label fw-bold text-dark">
-                                {{ form.imagen_destacada.label }}
+                            <label for="{{ form.imagen_destacada.id_for_label }}" class="form-label fw-bold text-dark small">
+                                <i class="bi bi-upload text-success me-1"></i> {{ form.imagen_destacada.label }}
                             </label>
                             <div class="input-group">
                                 <input type="file" name="{{ form.imagen_destacada.name }}" id="{{ form.imagen_destacada.id_for_label }}" class="d-none" accept="image/*">
@@ -48,18 +97,17 @@
                             });
                         </script>
 
-                        <!-- Botones de Acción pequeños -->
-                        <div class="d-flex justify-content-end gap-2 pt-2 mt-3 border-top">
-                            <a href="{% url 'listar_blog' %}" class="btn btn-sm btn-outline-secondary px-3 rounded-pill">
-                                Cancelar
+                        <!-- Botones de Acción -->
+                        <div class="d-flex justify-content-end align-items-center gap-2 pt-3 mt-4 border-top">
+                            <a href="{% url 'listar_blog' %}" class="btn btn-outline-secondary px-4 rounded-pill fw-semibold">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
                             </a>
-                            <button type="submit" class="btn btn-sm text-white px-3 rounded-pill shadow-sm fw-bold" style="background-color: var(--verde-main); border-color: var(--verde-main);">
-                                Guardar Publicación
+                            <button type="submit" class="btn btn-success px-4 rounded-pill shadow-sm fw-bold">
+                                <i class="bi bi-plus-circle me-1"></i> Publicar Artículo
                             </button>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
