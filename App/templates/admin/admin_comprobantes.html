@@ -289,12 +289,6 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="8" class="text-center py-5 text-muted">
-                            <i class="bi bi-receipt fs-1 d-block mb-2 text-secondary opacity-50"></i>
-                            <p class="mb-0 fw-semibold">No se encontraron comprobantes registrados.</p>
-                        </td>
-                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -339,7 +333,7 @@
                                 {% else %}
                                     <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 fw-semibold text-nowrap">
                                         <i class="bi bi-x-circle-fill me-1"></i>Rechazado
-                                    </span>
+                                    </span> |   
                                 {% endif %}
                             </div>
                         </div>
