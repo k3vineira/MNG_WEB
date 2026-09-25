@@ -27,21 +27,21 @@
       </a>
 
       <a href="#" 
-         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'dashboard_guia' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'dashboard_guia' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
          style="width: 44px; height: 44px;" 
          data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
         <i class="bi bi-grid-1x2 fs-5"></i>
       </a>
 
       <a href="#" 
-         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'estadisticas_guia' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'estadisticas_guia' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
          style="width: 44px; height: 44px;" 
          data-bs-toggle="tooltip" data-bs-placement="right" title="Mis Estadísticas">
         <i class="bi bi-graph-up-arrow fs-5"></i>
       </a>
 
       <a href="#" 
-         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'perfil_detalles' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'perfil_detalles' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
          style="width: 44px; height: 44px;" 
          data-bs-toggle="tooltip" data-bs-placement="right" title="Mi Perfil">
         <i class="bi bi-person-badge fs-5"></i>
@@ -50,7 +50,7 @@
       <hr class="border-secondary border-opacity-25 w-75 my-2">
 
       <!-- Mis Tours (Al hacer clic: despliega el aside y abre el acordeón de Mis Tours) -->
-      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50{% endif %}" 
+      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50{% endif %}" 
               style="width: 44px; height: 44px;"
               type="button" 
               data-expand-sidebar-target="#menuGuiaTours"
@@ -61,7 +61,7 @@
       </button>
 
       <!-- Comunidad (Al hacer clic: despliega el aside y abre el acordeón de Comunidad) -->
-      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}bg-white bg-opacity-10 text-white border-start border-3 border-success{% else %}text-white-50{% endif %}" 
+      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50{% endif %}" 
               style="width: 44px; height: 44px;"
               type="button" 
               data-expand-sidebar-target="#menuGuiaComunidad"
@@ -134,18 +134,18 @@
         <span class="small">Página Principal</span>
       </a>
 
-      <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'dashboard_guia' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
-        <i class="bi bi-grid-1x2 fs-6 {% if request.resolver_match.url_name == 'dashboard_guia' %}text-success{% endif %}" style="width: 20px;"></i>
+      <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'dashboard_guia' %}bg-success text-white fw-semibold shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+        <i class="bi bi-grid-1x2 fs-6" style="width: 20px;"></i>
         <span class="small">Dashboard</span>
       </a>
 
-      <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'estadisticas_guia' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
-        <i class="bi bi-graph-up-arrow fs-6 {% if request.resolver_match.url_name == 'estadisticas_guia' %}text-success{% endif %}" style="width: 20px;"></i>
+      <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'estadisticas_guia' %}bg-success text-white fw-semibold shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+        <i class="bi bi-graph-up-arrow fs-6" style="width: 20px;"></i>
         <span class="small">Mis Estadísticas</span>
       </a>
 
-      <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'perfil_detalles' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
-        <i class="bi bi-person-badge fs-6 {% if request.resolver_match.url_name == 'perfil_detalles' %}text-success{% endif %}" style="width: 20px;"></i>
+      <a href="#" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'perfil_detalles' %}bg-success text-white fw-semibold shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+        <i class="bi bi-person-badge fs-6" style="width: 20px;"></i>
         <span class="small">Mi Perfil</span>
       </a>
 
@@ -153,7 +153,7 @@
       <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1 small" style="font-size: 0.68rem; letter-spacing: 0.8px;">Operaciones</div>
 
       <div>
-        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}text-white fw-semibold bg-white bg-opacity-10{% else %}text-white-50 collapsed{% endif %}" 
+        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}text-white fw-semibold bg-white bg-opacity-10 border-start border-3 border-success{% else %}text-white-50 collapsed{% endif %}" 
                 type="button" data-bs-toggle="collapse" data-bs-target="#menuGuiaTours" 
                 aria-expanded="{% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}true{% else %}false{% endif %}">
           <div class="d-flex align-items-center gap-2">
@@ -164,9 +164,9 @@
         </button>
         <div class="collapse {% if request.resolver_match.url_name in 'mis_asignaciones calendario_guia historial_tours' %}show{% endif %}" id="menuGuiaTours">
           <ul class="list-unstyled ps-3 ms-2 border-start border-secondary border-opacity-25 my-1 d-flex flex-column gap-1">
-            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'mis_asignaciones' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-pin-map"></i> Asignaciones</a></li>
-            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'calendario_guia' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-calendar-range"></i> Calendario</a></li>
-            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'historial_tours' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-clock-history"></i> Historial</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'mis_asignaciones' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-pin-map"></i> Asignaciones</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'calendario_guia' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-calendar-range"></i> Calendario</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'historial_tours' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-clock-history"></i> Historial</a></li>
           </ul>
         </div>
       </div>
@@ -175,7 +175,7 @@
       <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1 small" style="font-size: 0.68rem; letter-spacing: 0.8px;">Comunidad</div>
 
       <div>
-        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}text-white fw-semibold bg-white bg-opacity-10{% else %}text-white-50 collapsed{% endif %}" 
+        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}text-white fw-semibold bg-white bg-opacity-10 border-start border-3 border-success{% else %}text-white-50 collapsed{% endif %}" 
                 type="button" data-bs-toggle="collapse" data-bs-target="#menuGuiaComunidad" 
                 aria-expanded="{% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}true{% else %}false{% endif %}">
           <div class="d-flex align-items-center gap-2">
@@ -186,8 +186,8 @@
         </button>
         <div class="collapse {% if request.resolver_match.url_name in 'calificaciones_guia blog_usuario' %}show{% endif %}" id="menuGuiaComunidad">
           <ul class="list-unstyled ps-3 ms-2 border-start border-secondary border-opacity-25 my-1 d-flex flex-column gap-1">
-            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'calificaciones_guia' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-star"></i> Mis Calificaciones</a></li>
-            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'blog_usuario' %}text-success fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-journal-text"></i> Blog</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'calificaciones_guia' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-star"></i> Mis Calificaciones</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'blog_usuario' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-journal-text"></i> Blog</a></li>
           </ul>
         </div>
       </div>
@@ -195,12 +195,12 @@
       <!-- Sistema -->
       <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1 small" style="font-size: 0.68rem; letter-spacing: 0.8px;">Sistema</div>
 
-      <a href="{% url 'listar_notificaciones' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'listar_notificaciones' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+      <a href="{% url 'listar_notificaciones' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'listar_notificaciones' %}bg-success text-white fw-semibold shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
         <i class="bi bi-bell fs-6" style="width: 20px;"></i>
         <span class="small">Notificaciones</span>
       </a>
 
-      <a href="{% url 'configuracion_usuario' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'configuracion_usuario' %}bg-success bg-opacity-10 text-white fw-semibold border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+      <a href="{% url 'configuracion_usuario' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'configuracion_usuario' %}bg-success text-white fw-semibold shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
         <i class="bi bi-gear fs-6" style="width: 20px;"></i>
         <span class="small">Configuración</span>
       </a>
@@ -229,5 +229,5 @@
 
 </div>
 
-<link rel="stylesheet" href="{% static 'css/sidebar.css' %}?v=2.2">
-<script src="{% static 'js/sidebar.js' %}?v=2.2" defer></script>
+<link rel="stylesheet" href="{% static 'css/sidebar.css' %}?v=2.3">
+<script src="{% static 'js/sidebar.js' %}?v=2.3" defer></script>
