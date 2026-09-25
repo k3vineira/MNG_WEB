@@ -74,6 +74,7 @@
           role="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
+          aria-label="Menú de usuario"
         >
           {% if user.imagen_perfil %}
           <img
@@ -109,8 +110,9 @@
       <a
         class="btn btn-link text-dark p-2 position-relative shadow-none"
         href="{% url 'carrito' %}"
+        aria-label="Ver carrito de reservas"
       >
-        <i class="bi bi-cart3 fs-5"></i>
+        <i class="bi bi-cart3 fs-5" aria-hidden="true"></i>
       </a>
       {% endif %}
 

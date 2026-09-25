@@ -40,8 +40,8 @@ $(document).ready(function() {
         language: {
             sProcessing:     "Procesando...",
             sLengthMenu:     "Mostrar _MENU_ registros",
-            sZeroRecords:    "No se encontraron resultados",
-            sEmptyTable:     "Ningún dato disponible en esta tabla",
+            sZeroRecords: "<div class='text-center p-4 text-muted'><i class='bi bi-search fs-2 d-block mb-2 text-secondary'></i><span class='small fw-semibold'>No se encontraron resultados para tu búsqueda.</span></div>",
+            sEmptyTable: "<div class='text-center p-4 text-muted'><i class='bi bi-inbox fs-2 d-block mb-2 text-secondary'></i><span class='small fw-semibold'>Aún no hay registros disponibles.</span></div>",
             sInfo:           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
             sInfoEmpty:      "Mostrando registros del 0 al 0 de un total de 0 registros",
             sInfoFiltered:   "(filtrado de un total de _MAX_ registros)",

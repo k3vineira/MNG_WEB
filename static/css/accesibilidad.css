@@ -419,18 +419,18 @@ html[data-a11y-cursor="true"] body * {
    NUEVAS FUNCIONES AVANZADAS DE ACCESIBILIDAD
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* Fuente para Dislexia */
-@import url('https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap');
+/* Fuente para Dislexia / Mejora de Lectura (Lexend en lugar del enlace roto de OpenDyslexic) */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap');
 
 html[data-a11y-dyslexic="true"],
 html[data-a11y-dyslexic="true"] body,
-html[data-a11y-dyslexic="true"] * {
-    font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+html[data-a11y-dyslexic="true"] *:not(i):not([class*="bi"]):not([class*="fa"]) {
+    font-family: 'Lexend', 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
 }
 
-/* Espaciado de Texto */
+/* Espaciado de Texto (Protegiendo iconos para no romper el renderizado) */
 html[data-a11y-spacing="true"] p,
-html[data-a11y-spacing="true"] span,
+html[data-a11y-spacing="true"] span:not([class*="bi"]):not([class*="fa"]),
 html[data-a11y-spacing="true"] a,
 html[data-a11y-spacing="true"] li,
 html[data-a11y-spacing="true"] div,
@@ -453,11 +453,13 @@ html[data-a11y-animations="false"] *::after {
 
 /* Modo Monocromático (Escala de grises) */
 html[data-a11y-monochrome="true"] {
+    -webkit-filter: grayscale(100%) !important;
     filter: grayscale(100%) !important;
 }
 
 /* Modo Invertir Colores */
 html[data-a11y-invert="true"] {
+    -webkit-filter: invert(100%) hue-rotate(180deg) !important;
     filter: invert(100%) hue-rotate(180deg) !important;
 }
 
@@ -465,5 +467,22 @@ html[data-a11y-invert="true"] {
 html[data-a11y-invert="true"] img,
 html[data-a11y-invert="true"] video,
 html[data-a11y-invert="true"] iframe {
+    -webkit-filter: invert(100%) hue-rotate(180deg) !important;
     filter: invert(100%) hue-rotate(180deg) !important;
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   MEJORAS GLOBALES DE FOCO VISIBLE (KEYBOARD ACCESSIBILITY)
+   ════════════════════════════════════════════════════════════════════════════ */
+:focus-visible {
+    outline: 3px solid #0d6efd !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.3) !important;
+    border-radius: 4px;
+}
+
+html[data-a11y-theme="high-contrast"] :focus-visible {
+    outline: 4px solid #ffff00 !important;
+    box-shadow: none !important;
+}
+

@@ -40,7 +40,7 @@ $(document).ready(function () {
             sSearch: "Buscar:",
             sLengthMenu: "Mostrar _MENU_ registros",
             sInfo: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            sZeroRecords: "No se encontraron resultados",
+            sZeroRecords: "<div class='text-center p-4 text-muted'><i class='bi bi-search fs-2 d-block mb-2 text-secondary'></i><span class='small fw-semibold'>No se encontraron resultados para tu búsqueda.</span></div>",
             sEmptyTable: "No hay datos disponibles"
         },
 
