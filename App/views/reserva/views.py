@@ -12,9 +12,9 @@ from django.conf import settings
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from App.models import Reserva, Paquete, Tarifa
+from App.models import Reserva, Paquete, Tarifa, Pago
 
-from App.models import Reserva, Paquete, Tarifa
+from App.models import Reserva, Paquete, Tarifa, Pago
 from App.forms.reserva.forms import ReservaForm
 from App.utils import (
     plantilla_reserva_html,
@@ -220,14 +220,25 @@ class EliminarReservaAdminView(DeleteView):
         return response
 
 
+def normalizar_estados_cancelacion_usuario(usuario):
+    """Corrige registros inconsistentes donde una reserva ya está cancelada pero sigue marcada como pendiente."""
+    Reserva.objects.filter(
+        usuario=usuario,
+        estado_reserva='cancelada',
+        estado_cancelacion='pendiente'
+    ).update(estado_cancelacion='aprobada')
+
+
 @login_required(login_url='login')
 @solo_turistas_requerido
 def mis_reservas_usuario(request):
+    normalizar_estados_cancelacion_usuario(request.user)
+
     reservas = Reserva.objects.filter(
         usuario=request.user
     ).exclude(
         Q(estado_reserva='cancelada') |
-        Q(estado_cancelacion__in=['pendiente', 'aprobada'])
+        Q(estado_cancelacion='aprobada')
     ).order_by('-fecha_registro')
 
     context = {
@@ -253,23 +264,39 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
         messages.warning(request, "Esta reserva ya se encuentra cancelada.")
         return redirect('mis_cancelaciones')
 
+    pago = getattr(reserva, 'pago', None)
+    motivo = request.POST.get('motivo_cancelacion', '').strip()
+
+    if not pago:
+        if not motivo:
+            messages.error(request, "Debes ingresar un motivo para descartar la reserva.")
+            return redirect('mis_reservas_usuario')
+
+        reserva.motivo_cancelacion = motivo
+        reserva.penalidad = Decimal('0.00')
+        reserva.estado_cancelacion = 'aprobada'
+        reserva.estado_reserva = 'cancelada'
+        reserva.save()
+
+        crear_notificacion_sistema(
+            usuario=request.user,
+            reserva=reserva,
+            mensaje=f"Descartaste tu reserva #{reserva.id} sin pago registrado. Motivo: '{motivo}'.",
+            tipo="Reserva",
+            prioridad="media"
+        )
+
+        messages.info(
+            request,
+            "La reserva fue descartada y registrada como cancelación aprobada sin penalidad."
+        )
+        return redirect('mis_cancelaciones')
+
     if reserva.estado_cancelacion == 'pendiente':
         messages.warning(request, "Ya tienes una solicitud de cancelación pendiente de revisión.")
         return redirect('mis_reservas_usuario')
 
-    # 3. Control de días desde el registro (máximo 3 días para cancelar)
-    fecha_reg = getattr(reserva, 'fecha_registro', None)
-    if fecha_reg:
-        fecha_reg_date = fecha_reg.date() if hasattr(fecha_reg, 'date') else fecha_reg
-        if (date.today() - fecha_reg_date).days > 3:
-            messages.error(
-                request, 
-                "Han pasado más de 3 días desde que realizaste la reserva. Ya no es posible cancelarla."
-            )
-            return redirect('mis_reservas_usuario')
-
-    # 4. Validar motivo ingresado por el usuario
-    motivo = request.POST.get('motivo_cancelacion', '').strip()
+    # 3. Validar motivo ingresado por el usuario
     if not motivo:
         messages.error(request, "Debes ingresar un motivo válido para solicitar la cancelación.")
         return redirect('mis_reservas_usuario')
@@ -284,17 +311,20 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
         fecha_tour_date = fecha_tour.date() if hasattr(fecha_tour, 'date') else fecha_tour
         dias_para_tour = (fecha_tour_date - date.today()).days
 
+        if dias_para_tour < 2:
+            messages.error(
+                request,
+                "No se puede cancelar una reserva cuando faltan menos de 2 días para el viaje."
+            )
+            return redirect('mis_reservas_usuario')
+
         if dias_para_tour > 15:
             penalidad_calculada = monto_total * Decimal('0.10')
             politica_reembolso = "Favorable (Reembolso del 90% / Penalidad del 10%)."
         elif dias_para_tour >= 2:
             penalidad_calculada = monto_total * Decimal('0.50')
             politica_reembolso = "Parcial (Reembolso del 50% / Penalidad del 50%)."
-        else:
-            penalidad_calculada = monto_total
-            politica_reembolso = "Sin reembolso (Menos de 48 horas / No-Show)."
 
-   
     reserva.motivo_cancelacion = motivo
     reserva.penalidad = penalidad_calculada
     reserva.estado_cancelacion = 'pendiente'
@@ -331,13 +361,16 @@ def cancelar_reserva_usuario(request, reserva_id=None, pk=None):
 @login_required(login_url='login')
 def mis_cancelaciones(request):
     """
-    Vista para que el usuario consulte el historial de sus reservas canceladas.
+    Vista para que el usuario consulte el historial de sus cancelaciones pendientes o aprobadas.
     """
-    # Filtra las reservas del usuario autenticado que estén canceladas.
-    # Ajusta 'cancelada' o 'CANCELADA' según como guardes el estado en tu base de datos.
+
+    normalizar_estados_cancelacion_usuario(request.user)
+
     cancelaciones = Reserva.objects.filter(
         usuario=request.user,
-        estado_cancelacion__isnull=False
+        estado_cancelacion__in=['pendiente', 'aprobada']
+    ).exclude(
+        Q(estado_reserva='cancelada') & Q(estado_cancelacion='pendiente')
     ).select_related('paquete').order_by('-id')
 
     context = {

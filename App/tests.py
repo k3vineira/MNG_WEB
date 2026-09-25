@@ -1,3 +1,4 @@
+from datetime import date, timedelta
 from decimal import Decimal
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -148,3 +149,245 @@ class SeguridadFormulariosTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('username', form.errors)
         self.assertIn('password', form.errors)
+
+
+class CancelacionReservaTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.turista = Usuario.objects.create_user(
+            username='turista_cancelacion',
+            email='cancelacion@monagua.com',
+            password='Password123#',
+            first_name='Ana',
+            last_name='Lopez',
+            rol=Usuario.Roles.CLIENTE,
+            is_staff=False,
+            is_superuser=False
+        )
+        self.categoria = Categoria.objects.create(nombre='Aventura')
+        self.paquete = Paquete.objects.create(
+            nombre='Tour de prueba',
+            descripcion='Aventura de prueba',
+            categoria=self.categoria,
+            punto_encuentro='Plaza central',
+            hora_encuentro='08:00:00',
+            dias_duracion=1,
+            noches_duracion=1,
+            imagen=SimpleUploadedFile('test.jpg', b'contenido_imagen', content_type='image/jpeg')
+        )
+
+    def test_reserva_sin_pago_se_descarta_en_lugar_de_cancelarse(self):
+        """Si la reserva no tiene pago, se descarta con motivo y queda registrada como cancelación aprobada."""
+        self.reserva = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='pendiente',
+            fecha_inicio=date.today() + timedelta(days=10),
+            estado_cancelacion='pendiente'
+        )
+        self.client.force_login(self.turista)
+
+        response = self.client.post(
+            reverse('cancelar_reserva_usuario', args=[self.reserva.id]),
+            {'motivo_cancelacion': 'Ya no puedo viajar'}
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.reserva.refresh_from_db()
+        self.assertEqual(self.reserva.estado_reserva, 'cancelada')
+        self.assertEqual(self.reserva.estado_cancelacion, 'aprobada')
+        self.assertEqual(self.reserva.motivo_cancelacion, 'Ya no puedo viajar')
+        self.assertEqual(self.reserva.penalidad, Decimal('0.00'))
+
+    def test_reserva_no_se_puede_cancelar_si_falta_menos_de_2_dias(self):
+        """La cancelación queda bloqueada cuando faltan menos de 2 días para el viaje."""
+        self.reserva = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='pendiente',
+            fecha_inicio=date.today() + timedelta(days=1),
+            estado_cancelacion='pendiente'
+        )
+        self.client.force_login(self.turista)
+
+        self.reserva.monto_total = Decimal('350000.00')
+        self.reserva.save(update_fields=['monto_total'])
+
+        Pago.objects.create(
+            reserva=self.reserva,
+            referencia='REF-123',
+            banco_origen='Bancolombia',
+            metodo_pago='Transferencia Bancaria',
+            monto=Decimal('350000.00'),
+            imagen_comprobante=SimpleUploadedFile('pago.gif', b'GIF89a\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff\x00\x00\x00!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;', content_type='image/gif'),
+            descripcion='Pago validado',
+            estado_transaccion='aprobado'
+        )
+
+        response = self.client.post(
+            reverse('cancelar_reserva_usuario', args=[self.reserva.id]),
+            {'motivo_cancelacion': 'Se me complicó la fecha'}
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.reserva.refresh_from_db()
+        self.assertEqual(self.reserva.estado_cancelacion, 'pendiente')
+        self.assertEqual(self.reserva.estado_reserva, 'confirmada')
+
+    def test_reserva_con_cancelacion_pendiente_sigue_apareciendo_en_mis_reservas(self):
+        """Una reserva activa no debe desaparecer de la lista de reservas solo por tener una solicitud de cancelación pendiente."""
+        self.reserva = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='confirmada',
+            fecha_inicio=date.today() + timedelta(days=10),
+            estado_cancelacion='pendiente'
+        )
+        Pago.objects.create(
+            reserva=self.reserva,
+            referencia='REF-REQUEST-001',
+            banco_origen='Bancolombia',
+            metodo_pago='Transferencia Bancaria',
+            monto=Decimal('350000.00'),
+            imagen_comprobante=SimpleUploadedFile('pago.gif', b'GIF89a\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff\x00\x00\x00!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;', content_type='image/gif'),
+            descripcion='Pago validado',
+            estado_transaccion='aprobado'
+        )
+        self.client.force_login(self.turista)
+
+        response = self.client.get(reverse('mis_reservas_usuario'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Tour de prueba')
+        self.assertContains(response, 'Cancelación en revisión')
+
+    def test_mis_reservas_excluye_las_canceladas_y_aprobadas(self):
+        """Solo deben salir de Mis Reservas las reservas ya canceladas o aprobadas; las pendientes siguen visibles."""
+        activa = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='confirmada',
+            fecha_inicio=date.today() + timedelta(days=30)
+        )
+        pendiente = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='confirmada',
+            fecha_inicio=date.today() + timedelta(days=15),
+            estado_cancelacion='pendiente',
+            motivo_cancelacion='Solicituda de cancelación'
+        )
+        cancelada = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='cancelada',
+            fecha_inicio=date.today() + timedelta(days=10),
+            estado_cancelacion='aprobada',
+            motivo_cancelacion='Sin pago'
+        )
+        aprobada_sin_cancelar = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='confirmada',
+            fecha_inicio=date.today() + timedelta(days=20),
+            estado_cancelacion='aprobada',
+            motivo_cancelacion='Se descartó por falta de pago'
+        )
+
+        self.client.force_login(self.turista)
+        response = self.client.get(reverse('mis_reservas_usuario'))
+
+        self.assertEqual(response.status_code, 200)
+        reservas = list(response.context['reservas'])
+        self.assertIn(activa, reservas)
+        self.assertIn(pendiente, reservas)
+        self.assertNotIn(cancelada, reservas)
+        self.assertNotIn(aprobada_sin_cancelar, reservas)
+
+    def test_reserva_cancelada_pero_pendiente_se_normaliza_y_no_aparece_en_mis_reservas(self):
+        """Una reserva ya cancelada no debe seguir apareciendo como pendiente ni en la lista activa."""
+        reserva = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='cancelada',
+            fecha_inicio=date.today() + timedelta(days=10),
+            estado_cancelacion='pendiente',
+            motivo_cancelacion='Se registró con estado inconsistente'
+        )
+
+        self.client.force_login(self.turista)
+        response = self.client.get(reverse('mis_reservas_usuario'))
+
+        reserva.refresh_from_db()
+        self.assertEqual(reserva.estado_cancelacion, 'aprobada')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(reserva, list(response.context['reservas']))
+
+    def test_mis_cancelaciones_muestra_solo_pendientes_o_aprobadas(self):
+        """Solo deben aparecer en el historial de cancelaciones las solicitudes pendientes o aprobadas."""
+        aprobada = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='cancelada',
+            fecha_inicio=date.today() + timedelta(days=10),
+            estado_cancelacion='aprobada',
+            motivo_cancelacion='Sin pago'
+        )
+        pendiente = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='confirmada',
+            fecha_inicio=date.today() + timedelta(days=15),
+            estado_cancelacion='pendiente',
+            motivo_cancelacion='Solicituda de cancelación'
+        )
+        rechazada = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='confirmada',
+            fecha_inicio=date.today() + timedelta(days=20),
+            estado_cancelacion='rechazada',
+            motivo_cancelacion='No procede'
+        )
+
+        self.client.force_login(self.turista)
+        response = self.client.get(reverse('mis_cancelaciones'))
+
+        self.assertEqual(response.status_code, 200)
+        cancelaciones = list(response.context['cancelaciones'])
+        self.assertIn(aprobada, cancelaciones)
+        self.assertIn(pendiente, cancelaciones)
+        self.assertNotIn(rechazada, cancelaciones)

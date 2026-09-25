@@ -26,7 +26,7 @@ class CategoriaListView(StaffRequiredMixin, ListView):
     context_object_name = 'categorias'
 
     def get_queryset(self):
-        return super().get_queryset().order_by('-id')
+        return super().get_queryset().order_by('id')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
