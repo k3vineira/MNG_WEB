@@ -38,10 +38,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (btnOpen) {
       btnOpen.addEventListener("click", (e) => {
           e.stopPropagation();
-          const mascotContainer = document.getElementById('condor-mascot-container');
-          if (mascotContainer && mascotContainer.classList.contains('collapsed')) {
-              return;
-          }
           toggleChat();
       });
   }

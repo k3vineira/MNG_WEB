@@ -36,22 +36,9 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("DOMContentLoaded", function() {
     const mascot = document.getElementById('condor-mascot-container');
     const img = document.getElementById('condor-img');
-    const toggleBtn = document.getElementById('condor-toggle-btn');
     
-    if (!mascot || !toggleBtn || !img) return;
+    if (!mascot || !img) return;
 
     // Activate bouncing animation
     img.classList.add('condor-bounce');
-    
-    // Start collapsed on mobile devices
-    if (window.innerWidth <= 768) {
-        mascot.classList.add('collapsed');
-    }
-
-    // Toggle button handler
-    toggleBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        mascot.classList.toggle('collapsed');
-        img.classList.add('condor-bounce');
-    });
 });
