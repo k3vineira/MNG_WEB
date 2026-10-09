@@ -24,6 +24,26 @@ from xhtml2pdf import pisa
 
 logger = logging.getLogger(__name__)
 
+MONAGUA_VERDE = '#2c6e3c'
+MONAGUA_VERDE_OSCURO = '#1e4a2a'
+
+
+def _logo_monagua_html():
+    """Genera el bloque HTML con el logo Monagua para incluirlo dentro de correos."""
+    logo_base64 = get_image_base64('static/img/logo_monagua.webp')
+    if logo_base64:
+        return (
+            '<img src="{logo_base64}" alt="logo_monagua" title="logo_monagua" '
+            'style="display:block; width:64px; height:64px; margin:0 auto 14px; border-radius:50%; '
+            'object-fit:cover; border:2px solid rgba(44,110,60,0.18); background:#ffffff; '
+            'box-shadow:0 8px 18px rgba(44,110,60,0.14);">'
+        ).format(logo_base64=logo_base64)
+    return (
+        '<div style="width:64px; height:64px; line-height:64px; margin:0 auto 14px; text-align:center; '
+        'border-radius:50%; background-color:#2c6e3c; color:#ffffff; font-size:30px; font-weight:700; '
+        'font-family:Georgia, serif; box-shadow:0 8px 18px rgba(44,110,60,0.14);">M</div>'
+    )
+
 
 # ==========================================
 # DECORADORES Y MIXINS
@@ -170,22 +190,23 @@ def plantilla_reserva_html(
         hora_encuentro = time(0, 0)
 
     hora_formateada = hora_encuentro.strftime('%H:%M')
+    logo_html = _logo_monagua_html()
 
     if estado == 'confirmada':
-        color_tag = "#1E4620"
-        bg_caja_estado = "#f4f8f5"
-        texto_estado = "Reserva Confirmada"
-        bloque_mensaje_estado = "¡Felicidades! Tu pago ha sido verificado con éxito. Tu lugar está completamente asegurado para vivir esta aventura."
+        color_tag = MONAGUA_VERDE
+        bg_caja_estado = '#f4f8f5'
+        texto_estado = 'Reserva Confirmada'
+        bloque_mensaje_estado = '¡Felicidades! Tu pago ha sido verificado con éxito. Tu lugar está completamente asegurado para vivir esta aventura.'
     elif estado == 'cancelada':
-        color_tag = "#dc3545"
-        bg_caja_estado = "#fff5f5"
-        texto_estado = "Reserva Cancelada"
-        bloque_mensaje_estado = "Te confirmamos que la reserva ha sido dada de baja en nuestro sistema según lo solicitado."
+        color_tag = '#dc3545'
+        bg_caja_estado = '#fff5f5'
+        texto_estado = 'Reserva Cancelada'
+        bloque_mensaje_estado = 'Te confirmamos que la reserva ha sido dada de baja en nuestro sistema según lo solicitado.'
     else:
-        color_tag = "#2E6F40"
-        bg_caja_estado = "#fafdfb"
-        texto_estado = "Reserva Pendiente"
-        bloque_mensaje_estado = "Nuestro equipo verificará el comprobante de pago y se pondrá en contacto contigo en breve para confirmar tu reserva. ¡Gracias por elegirnos!"
+        color_tag = MONAGUA_VERDE
+        bg_caja_estado = '#fafdfb'
+        texto_estado = 'Reserva Pendiente'
+        bloque_mensaje_estado = 'Nuestro equipo verificará el comprobante de pago y se pondrá en contacto contigo en breve para confirmar tu reserva. ¡Gracias por elegirnos!'
 
     bloque_detalles = ""
     if fecha:
@@ -225,14 +246,14 @@ def plantilla_reserva_html(
     return f"""
     <html>
     <body style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f7f5; margin: 0; padding: 40px 15px;">
-        <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(30, 70, 32, 0.06);">
-            <div style="background-color: #1E4620; text-align: center; padding: 40px 20px 35px 20px;">
-                <div style="display: inline-block; background-color: #ffffff; color: #1E4620; width: 46px; height: 46px; line-height: 46px; border-radius: 50%; font-size: 24px; font-weight: bold; font-family: 'Georgia', serif; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);">M</div>
+        <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(44, 110, 60, 0.08);">
+            <div style="background-color: {MONAGUA_VERDE}; text-align: center; padding: 36px 20px 28px 20px;">
+                {logo_html}
                 <div style="font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: 2px; margin-bottom: 6px;">MONAGUA</div>
-                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #a3c7a6; font-weight: bold;">Actualización de Reserva</div>
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.8); font-weight: bold;">Actualización de Reserva</div>
             </div>
             <div style="padding: 40px; color: #2d3748; line-height: 1.7;">
-                <h2 style="font-size: 24px; color: #1E4620; margin-top: 0; font-weight: 600; text-align: center;">¡Notificación de tu Reserva, {nombre_cliente}!</h2>
+                <h2 style="font-size: 24px; color: {MONAGUA_VERDE}; margin-top: 0; font-weight: 600; text-align: center;">¡Notificación de tu Reserva, {nombre_cliente}!</h2>
                 <p style="font-size: 15px; color: #4a5568; text-align: center; margin-bottom: 30px;">Se ha registrado una actualización en el estado de tu experiencia.</p>
                 <div style="background-color: {bg_caja_estado}; border: 1px solid {color_tag}40; border-radius: 12px; padding: 25px; margin-bottom: 30px;">
                     <div style="text-align: center; margin-bottom: 20px;">
@@ -257,7 +278,7 @@ def plantilla_reserva_html(
             <div style="background-color: #fafdfb; text-align: center; padding: 30px 20px; border-top: 1px solid #edf2f0;">
                 <p style="margin: 0; font-size: 13px; color: #718096; font-weight: 600;">Monagua Experiencias</p>
                 <p style="margin: 5px 0 0 0; font-size: 11px; color: #a0aec0;">Estás recibiendo este correo porque realizaste una solicitud en nuestro sitio web.</p>
-                <p style="margin: 15px 0 0 0; font-size: 12px; color: #1E4620; font-weight: bold;">© 2026</p>
+                <p style="margin: 15px 0 0 0; font-size: 12px; color: {MONAGUA_VERDE}; font-weight: bold;">© 2026</p>
             </div>
         </div>
     </body>
@@ -267,33 +288,35 @@ def plantilla_reserva_html(
 
 def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"):
     """Genera el HTML de un correo electrónico para notificaciones de cancelaciones."""
-    if estado in ['aceptada', 'confirmada']:
-        color_tag = "#dc3545"
-        bg_caja_estado = "#fff5f5"
-        texto_estado = "Solicitud Aceptada"
+    logo_html = _logo_monagua_html()
+
+    if estado in ['aceptada', 'confirmada', 'aprobada']:
+        color_tag = '#dc3545'
+        bg_caja_estado = '#fff5f5'
+        texto_estado = 'Solicitud Aprobada'
         mensaje_cuerpo = f'La solicitud de cancelación de tu viaje fue procesada con éxito. Ten en cuenta que se aplicará una penalidad de <strong style="color: #dc3545; font-size: 17px;">${penalidad}</strong> conforme a las políticas del servicio.'
     elif estado in ['rechazada', 'cancelada']:
-        color_tag = "#1E4620"
-        bg_caja_estado = "#f4f8f5"
-        texto_estado = "Solicitud Rechazada"
-        mensaje_cuerpo = "Tu solicitud de cancelación ha sido revisada y <strong>no ha sido aprobada</strong>. Esto significa que tu itinerario sigue en pie y <strong>tu reserva continúa completamente activa</strong>. ¡Te esperamos!"
+        color_tag = MONAGUA_VERDE
+        bg_caja_estado = '#f4f8f5'
+        texto_estado = 'Solicitud Rechazada'
+        mensaje_cuerpo = 'Tu solicitud de cancelación ha sido revisada y <strong>no ha sido aprobada</strong>. Esto significa que tu itinerario sigue en pie y <strong>tu reserva continúa completamente activa</strong>. ¡Te esperamos!'
     else:
-        color_tag = "#2E6F40"
-        bg_caja_estado = "#fafdfb"
-        texto_estado = "En Revisión / Recibida"
-        mensaje_cuerpo = "Hemos recibido tu solicitud de cancelación. Nuestro equipo está analizando los detalles de tu caso bajo las políticas vigentes. Te enviaremos una notificación definitiva lo antes posible."
+        color_tag = MONAGUA_VERDE
+        bg_caja_estado = '#fafdfb'
+        texto_estado = 'En Revisión / Recibida'
+        mensaje_cuerpo = 'Hemos recibido tu solicitud de cancelación. Nuestro equipo está analizando los detalles de tu caso bajo las políticas vigentes. Te enviaremos una notificación definitiva lo antes posible.'
 
     return f"""
     <html>
     <body style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background-color: #f4f7f5; margin: 0; padding: 40px 15px;">
-        <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(30, 70, 32, 0.06);">
-            <div style="background-color: #1E4620; text-align: center; padding: 40px 20px 35px 20px;">
-                <div style="display: inline-block; background-color: #ffffff; color: #1E4620; width: 46px; height: 46px; line-height: 46px; border-radius: 50%; font-size: 24px; font-weight: bold; font-family: 'Georgia', serif; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);">M</div>
+        <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(44, 110, 60, 0.08);">
+            <div style="background-color: {MONAGUA_VERDE}; text-align: center; padding: 36px 20px 28px 20px;">
+                {logo_html}
                 <div style="font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: 2px; margin-bottom: 6px;">MONAGUA</div>
-                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #a3c7a6; font-weight: bold;">Actualización de Solicitud</div>
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.8); font-weight: bold;">Actualización de Solicitud</div>
             </div>
             <div style="padding: 40px; color: #2d3748; line-height: 1.7;">
-                <h2 style="font-size: 24px; color: #1E4620; margin-top: 0; text-align: center; font-weight: 600;">Estado de tu Cancelación</h2>
+                <h2 style="font-size: 24px; color: {MONAGUA_VERDE}; margin-top: 0; text-align: center; font-weight: 600;">Estado de tu Cancelación</h2>
                 <p style="font-size: 15px; color: #4a5568; text-align: center; margin-bottom: 30px;">Hola {nombre_cliente}, hay novedades sobre tu solicitud para el paquete: <strong>{paquete}</strong></p>
                 <div style="background-color: {bg_caja_estado}; border: 1px solid {color_tag}40; border-radius: 12px; padding: 25px; margin-bottom: 30px; text-align: center;">
                     <span style="font-size: 11px; font-weight: bold; background-color: {color_tag}; color: #ffffff; padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">{texto_estado}</span>
@@ -304,7 +327,7 @@ def plantilla_cancelacion_html(nombre_cliente, paquete, estado, penalidad="0.00"
             <div style="background-color: #fafdfb; text-align: center; padding: 30px 20px; border-top: 1px solid #edf2f0;">
                 <p style="margin: 0; font-size: 13px; color: #718096; font-weight: 600;">Monagua Experiencias</p>
                 <p style="margin: 5px 0 0 0; font-size: 11px; color: #a0aec0;">Estás recibiendo este correo porque realizaste una solicitud en nuestro sitio web.</p>
-                <p style="margin: 15px 0 0 0; font-size: 12px; color: #1E4620; font-weight: bold;">© 2026</p>
+                <p style="margin: 15px 0 0 0; font-size: 12px; color: {MONAGUA_VERDE}; font-weight: bold;">© 2026</p>
             </div>
         </div>
     </body>
@@ -448,9 +471,10 @@ def enviar_correo_confirmacion_con_factura(reserva, request=None):
         'menores': reserva.numero_menores,
         'monto_total': str(reserva.monto_total),
         'tiene_password': bool(password),
+        'logo_base64': get_image_base64('static/img/logo_monagua.webp'),
     }
 
-    html_contenido = render_to_string('emails/factura_email.html', context)
+    html_contenido = render_to_string('email/factura_email.html', context)
 
     email = EmailMultiAlternatives(
         subject=asunto,

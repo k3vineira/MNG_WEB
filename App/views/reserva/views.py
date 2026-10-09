@@ -776,6 +776,22 @@ def editar_cancelacion_admin(request, reserva_id):
                 prioridad="alta"
             )
 
+            asunto = f"Actualización de tu cancelación - Reserva #{reserva.id} | Monagua"
+            mensaje_texto = (
+                f"Hola {reserva.usuario.get_full_name() or reserva.usuario.username}, "
+                f"la solicitud de cancelación de tu reserva #{reserva.id} fue marcada como '{estado}'."
+            )
+            html_respuesta = plantilla_cancelacion_html(
+                nombre_cliente=reserva.usuario.get_full_name() or reserva.usuario.username,
+                paquete=reserva.paquete.nombre if reserva.paquete else 'Paquete',
+                estado=estado,
+                penalidad=str(reserva.penalidad or '0.00')
+            )
+            try:
+                enviar_correo_html_monagua(asunto, mensaje_texto, reserva.usuario.email, html_respuesta)
+            except Exception as exc:
+                print(f"Error enviando correo de actualización de cancelación: {exc}")
+
         messages.success(request, f"La reserva #{reserva.id} ha sido actualizada.")
         return redirect('listar_cancelaciones')
 

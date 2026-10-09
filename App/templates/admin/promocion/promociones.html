@@ -8,7 +8,7 @@
 
 {% block content %}
 {% include "partials/breadcrumbs.html" with current_title="Gestión de Promociones" current_icon="bi bi-megaphone" %}
-<div class="container-fluid py-4">
+<div class="container-fluid py-4 page-admin-neutral">
 
     <!-- 1. Mensajes de alerta -->
     {% if messages %}
@@ -21,15 +21,15 @@
     {% endif %}
 
     <!-- 2. Encabezado Principal -->
-    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded-4">
+    <div class="card bg-light border border-light-subtle shadow-sm p-4 mb-4 rounded-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <h1 class="display-6 text-success fw-bold mb-1 d-flex align-items-center">
-                    <i class="bi bi-megaphone me-3"></i>Gestión de Promociones
+                <h1 class="display-6 text-dark fw-bold mb-1 d-flex align-items-center">
+                    <i class="bi bi-megaphone me-3 text-secondary"></i>Gestión de Promociones
                 </h1>
                 <p class="text-muted mb-0">Configura descuentos, códigos promocionales, cupones y asignación directa a paquetes turísticos.</p>
             </div>
-            <a href="{% url 'agregar_promocion' %}" class="btn btn-success fw-bold rounded-pill shadow-sm px-4 py-2">
+            <a href="{% url 'agregar_promocion' %}" class="btn btn-secondary fw-bold rounded-pill shadow-sm px-4 py-2">
                 <i class="bi bi-plus-circle me-2"></i>Nueva Promoción
             </a>
         </div>
@@ -66,7 +66,7 @@
                 <!-- Búsqueda por texto -->
                 <div class="col-12 col-md-4">
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-light border-end-0 text-success"><i class="bi bi-search"></i></span>
+                        <span class="input-group-text bg-light border-end-0 text-secondary"><i class="bi bi-search"></i></span>
                         <input type="text" name="q" class="form-control border-start-0 bg-light" placeholder="Buscar por nombre, código o cupón..." value="{{ q }}">
                     </div>
                 </div>
@@ -98,7 +98,7 @@
 
                 <!-- Botones Filtrar y Limpiar -->
                 <div class="col-12 col-md-2 d-flex gap-2 justify-content-end">
-                    <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold flex-fill">
+                    <button type="submit" class="btn btn-sm btn-secondary rounded-pill px-3 fw-semibold flex-fill">
                         <i class="bi bi-funnel-fill me-1"></i>Filtrar
                     </button>
                     <a href="{% url 'gestion_promociones' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="Limpiar Filtros">

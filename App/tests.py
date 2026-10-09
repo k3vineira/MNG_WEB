@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from decimal import Decimal
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ValidationError
 from App.models import Usuario, Paquete, Reserva, Categoria, Pago
@@ -640,3 +641,182 @@ class CancelacionReservaTests(TestCase):
         self.assertIn(aprobada, cancelaciones)
         self.assertIn(pendiente, cancelaciones)
         self.assertNotIn(rechazada, cancelaciones)
+
+
+class EmailReservaYCancelacionTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.admin = Usuario.objects.create_user(
+            username='admin_email',
+            email='admin@monagua.com',
+            password='Password123#',
+            first_name='Admin',
+            last_name='Monagua',
+            rol=Usuario.Roles.ADMIN,
+            is_staff=True,
+            is_superuser=False,
+        )
+        self.turista = Usuario.objects.create_user(
+            username='turista_email_unique',
+            email='turista_unique@monagua.com',
+            password='Password123#',
+            first_name='Andrés',
+            last_name='Pérez',
+            tipo_documento='CC',
+            numero_documento='1234567890',
+            telefono='3001234567',
+            rol=Usuario.Roles.CLIENTE,
+            is_staff=False,
+            is_superuser=False,
+        )
+        self.categoria = Categoria.objects.create(nombre='Aventura')
+        self.paquete = Paquete.objects.create(
+            nombre='Tour de prueba',
+            descripcion='Aventura de prueba',
+            categoria=self.categoria,
+            punto_encuentro='Plaza central',
+            hora_encuentro='08:00:00',
+            dias_duracion=1,
+            noches_duracion=1,
+            imagen=SimpleUploadedFile('test.jpg', b'contenido_imagen', content_type='image/jpeg')
+        )
+
+    def test_html_reserva_usa_logo_y_color_monagua(self):
+        from App.utils import plantilla_reserva_html
+
+        html = plantilla_reserva_html(
+            nombre_cliente='Andrés',
+            paquete='Tour de prueba',
+            fecha='12/12/2026',
+            adultos=2,
+            menores=1,
+            punto_encuentro='Plaza central',
+            hora_encuentro='08:00',
+            estado='confirmada',
+            reserva_id='99',
+            monto_total='350000'
+        )
+
+        self.assertIn('#2c6e3c', html)
+        self.assertIn('logo_monagua', html)
+
+    def test_admin_approval_of_cancellation_sends_email(self):
+        reserva = Reserva.objects.create(
+            usuario=self.turista,
+            paquete=self.paquete,
+            monto_total=Decimal('350000.00'),
+            numero_adultos=2,
+            numero_menores=0,
+            estado_reserva='cancelada',
+            fecha_inicio=date.today() + timedelta(days=15),
+            estado_cancelacion='pendiente',
+            motivo_cancelacion='Cambio de planes',
+            penalidad=Decimal('15000.00'),
+        )
+        self.client.force_login(self.admin)
+
+        with self.settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend'):
+            mail.outbox.clear()
+            response = self.client.post(
+                reverse('editar_cancelacion_admin', args=[reserva.id]),
+                {'estado_cancelacion': 'aprobada'}
+            )
+
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(len(mail.outbox), 1)
+            self.assertIn('Monagua', mail.outbox[0].subject)
+            self.assertIn('#2c6e3c', mail.outbox[0].alternatives[0][0])
+
+
+class CrudBootstrapConsistencyTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.admin = Usuario.objects.create_user(
+            username='admin_bootstrap',
+            email='admin@monagua.com',
+            password='Password123#',
+            first_name='Admin',
+            last_name='Bootstrap',
+            rol=Usuario.Roles.ADMIN,
+            is_staff=True,
+            is_superuser=False,
+        )
+        self.categoria = Categoria.objects.create(nombre='Aventura', estado=True)
+        self.paquete = Paquete.objects.create(
+            nombre='Ruta de la Cueva',
+            descripcion='Recorrido en la montaña',
+            categoria=self.categoria,
+            punto_encuentro='Plaza central',
+            hora_encuentro='08:00:00',
+            dias_duracion=2,
+            noches_duracion=1,
+            estado=True,
+            imagen=SimpleUploadedFile('test.jpg', b'contenido_imagen', content_type='image/jpeg'),
+        )
+        from App.models import Temporada, Actividades, Tarifa
+
+        self.temporada = Temporada.objects.create(
+            nombre='Alta Temporada',
+            descripcion='Temporada alta',
+            fecha_inicio=date.today(),
+            fecha_fin=date.today() + timedelta(days=15),
+            estado=True,
+        )
+        self.actividad = Actividades.objects.create(
+            nombre='Senderismo',
+            descripcion='Senderismo guiado',
+            apto_menores=True,
+            estado=True,
+        )
+        self.tarifa = Tarifa.objects.create(
+            paquete=self.paquete,
+            temporada=self.temporada,
+            precio_adulto=150000,
+            precio_menor=100000,
+            estado=True,
+        )
+
+    def test_delete_forms_use_consistent_bootstrap_action_buttons(self):
+        self.client.force_login(self.admin)
+
+        urls_to_check = [
+            ('eliminar_paquete', self.paquete.id),
+            ('eliminar_categoria', self.categoria.id),
+            ('eliminar_temporada', self.temporada.id),
+            ('eliminar_actividad', self.actividad.id),
+            ('eliminar_tarifa', self.tarifa.id),
+        ]
+
+        for url_name, obj_id in urls_to_check:
+            with self.subTest(url_name=url_name):
+                response = self.client.get(reverse(url_name, args=[obj_id]))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, 'Confirmar Eliminación')
+                self.assertContains(response, 'btn btn-danger px-4 rounded-pill fw-bold')
+                self.assertContains(response, 'btn btn-outline-secondary px-4 rounded-pill fw-semibold')
+
+    def test_create_and_edit_forms_use_same_green_header(self):
+        self.client.force_login(self.admin)
+
+        urls_to_check = [
+            ('crear_paquete', None),
+            ('editar_paquete', self.paquete.id),
+            ('crear_categoria', None),
+            ('editar_categoria', self.categoria.id),
+            ('crear_temporada', None),
+            ('editar_temporada', self.temporada.id),
+            ('crear_actividad', None),
+            ('editar_actividad', self.actividad.id),
+            ('crear_tarifa', None),
+            ('editar_tarifa', self.tarifa.id),
+        ]
+
+        for url_name, obj_id in urls_to_check:
+            with self.subTest(url_name=url_name):
+                if obj_id is None:
+                    response = self.client.get(reverse(url_name))
+                else:
+                    response = self.client.get(reverse(url_name, args=[obj_id]))
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, 'bg-success text-white p-4 border-0')
+                self.assertContains(response, 'btn btn-success px-4 rounded-pill shadow-sm fw-bold')

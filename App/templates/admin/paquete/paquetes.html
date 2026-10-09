@@ -9,15 +9,15 @@
 {% include "partials/breadcrumbs.html" with current_title="Administración de Paquetes" current_icon="bi bi-star-fill" %}
 <div class="container-fluid py-4">
     <!-- 1. Encabezado -->
-    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded">
+    <div class="card admin-page-header p-4 mb-4 rounded-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <h1 class="display-6 text-success fw-bold mb-2 d-flex align-items-center">
+                <h1 class="display-6 admin-page-title mb-2 d-flex align-items-center">
                     <i class="bi bi-luggage-fill me-3"></i>Administración de Paquetes
                 </h1>
                 <p class="text-muted mb-0">Gestiona los paquetes turísticos ofrecidos en Monagua.</p>
             </div>
-            <a href="{% url 'crear_paquete' %}" class="btn btn-success fw-bold rounded-pill shadow-sm px-4 py-2">
+            <a href="{% url 'crear_paquete' %}" class="btn fw-bold rounded-pill px-4 py-2 shadow-sm" style="background: linear-gradient(135deg, #2c6e3c 0%, #3d7d52 100%); border: 0; color: #fff; box-shadow: 0 10px 22px rgba(44,110,60,0.18);">
                 <i class="bi bi-plus-circle me-2"></i>Nuevo Paquete
             </a>
         </div>
@@ -70,7 +70,7 @@
                 </select>
                 
                 <div class="d-flex align-items-center gap-1 ps-2 pe-1">
-                    <button type="submit" class="btn btn-success rounded-circle d-flex align-items-center justify-content-center p-0 shadow-sm" style="width: 34px; height: 34px;" title="Filtrar">
+                    <button type="submit" class="btn rounded-circle d-flex align-items-center justify-content-center p-0 shadow-sm" style="width: 34px; height: 34px; background: linear-gradient(135deg, rgba(44,110,60,0.18), rgba(44,110,60,0.08)); border: 1px solid rgba(44,110,60,0.18); color: #2c6e3c;" title="Filtrar">
                         <i class="bi bi-search fs-6"></i>
                     </button>
                     
@@ -86,11 +86,11 @@
 </div>
 
     <!-- 3. Lista de Paquetes -->
-    <div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
+    <div class="card admin-list-panel p-3 mb-4">
         <!-- Tabla Desktop -->
         <div class="table-responsive d-none d-lg-block">
-            <table id="tablaPaquetes" class="table table-hover align-middle mb-0 u-style-6d567387">
-                <thead class="table-light text-muted">
+            <table id="tablaPaquetes" class="table table-hover align-middle mb-0 admin-data-table">
+                <thead>
                     <tr>
                       
                         <th scope="col" class="fw-bold">Paquete</th>
@@ -133,9 +133,9 @@
                             </span>
                         <td class="text-center">
                             {% if paquete.estado %}
-                                <span class="badge bg-success bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-check-circle-fill me-1"></i> Activo</span>
+                                <span class="badge px-3 py-2 rounded-pill border border-success-subtle bg-success-subtle text-success-emphasis shadow-sm"><i class="bi bi-check-circle-fill me-1"></i> Activo</span>
                             {% else %}
-                                <span class="badge bg-danger bg-opacity-75 px-3 py-2 rounded-pill shadow-sm"><i class="bi bi-x-circle-fill me-1"></i> Inactivo</span>
+                                <span class="badge px-3 py-2 rounded-pill border border-danger-subtle bg-danger-subtle text-danger-emphasis shadow-sm"><i class="bi bi-x-circle-fill me-1"></i> Inactivo</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
@@ -173,9 +173,9 @@
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="fw-bold text-dark mb-0">{{ paquete.nombre }}</h5>
                                 {% if paquete.estado %}
-                                    <span class="badge bg-success bg-opacity-75 rounded-pill shadow-sm">Activo</span>
+                                    <span class="badge rounded-pill border border-success-subtle bg-success-subtle text-success-emphasis shadow-sm">Activo</span>
                                 {% else %}
-                                    <span class="badge bg-danger bg-opacity-75 rounded-pill shadow-sm">Inactivo</span>
+                                    <span class="badge rounded-pill border border-danger-subtle bg-danger-subtle text-danger-emphasis shadow-sm">Inactivo</span>
                                 {% endif %}
                             </div>
                             <p class="text-muted small mb-3"><i class="bi bi-tag-fill text-success me-1"></i>{{ paquete.categoria.nombre|default:"Sin categoría" }}</p>

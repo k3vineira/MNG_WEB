@@ -1,15 +1,15 @@
 {% load static %}
-<div id="mainSidebar" class="bg-dark text-white shadow-lg">
+<div id="mainSidebar" class="text-white shadow-lg" style="background: #111827; border: 1px solid rgba(255,255,255,0.06);">
 
   <!-- ═════════════════════════════════════════════════════════════════
        1. VISTA CONTRAÍDA (CARRIL DE ÍCONOS - MODO SLIM CON BOOTSTRAP)
        ═════════════════════════════════════════════════════════════════ -->
-  <aside class="sidebar-slim-view bg-dark text-white d-flex flex-column align-items-center h-100 border-end border-secondary border-opacity-25 w-100" aria-label="Barra de actividades">
+  <aside class="sidebar-slim-view text-white d-flex flex-column align-items-center h-100 border-end border-secondary border-opacity-25 w-100" aria-label="Barra de actividades" style="background: #111827;">
     
     <!-- Header / Brand & Botón Desplegar -->
     <div class="d-flex flex-column align-items-center py-3 px-1 border-bottom border-secondary border-opacity-25 w-100 gap-2">
       <a href="/" class="text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" title="Monagua — Inicio">
-        <img src="{% static 'img/logo_monagua.webp' %}" alt="Monagua" class="rounded-circle border border-success p-1 shadow-sm" style="width: 36px; height: 36px; object-fit: cover;">
+        <img src="{% static 'img/logo_monagua.webp' %}" alt="Monagua" class="rounded-circle border border-secondary-subtle p-1 shadow-sm" style="width: 36px; height: 36px; object-fit: cover;">
       </a>
       <button class="btn btn-sm btn-outline-secondary border-0 text-white-50 p-1 toggle-sidebar-btn" type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Desplegar menú lateral">
         <i class="bi bi-layout-sidebar fs-5"></i>
@@ -28,28 +28,28 @@
       </a>
 
       <a href="{% url 'dashboard_admin' %}" 
-         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'dashboard_admin' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'dashboard_admin' %}bg-transparent text-white border-0{% else %}text-white-50 text-white-hover{% endif %}" 
          style="width: 44px; height: 44px;" 
          data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
         <i class="bi bi-grid-1x2 fs-5"></i>
       </a>
 
       <a href="{% url 'estadisticas_admin' %}" 
-         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'estadisticas_admin' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'estadisticas_admin' %}bg-transparent text-white border-0{% else %}text-white-50 text-white-hover{% endif %}" 
          style="width: 44px; height: 44px;" 
          data-bs-toggle="tooltip" data-bs-placement="right" title="Estadísticas">
         <i class="bi bi-graph-up-arrow fs-5"></i>
       </a>
 
       <a href="{% url 'admin_perfil' %}" 
-         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'admin_perfil' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'admin_perfil' %}bg-transparent text-white border-0{% else %}text-white-50 text-white-hover{% endif %}" 
          style="width: 44px; height: 44px;" 
          data-bs-toggle="tooltip" data-bs-placement="right" title="Mi Perfil">
         <i class="bi bi-person-vcard fs-5"></i>
       </a>
 
       <a href="{% url 'listar_calificaciones' %}" 
-         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'listar_calificaciones' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}" 
+         class="d-flex align-items-center justify-content-center text-decoration-none rounded-3 {% if request.resolver_match.url_name == 'listar_calificaciones' %}bg-transparent text-white border-0{% else %}text-white-50 text-white-hover{% endif %}" 
          style="width: 44px; height: 44px;" 
          data-bs-toggle="tooltip" data-bs-placement="right" title="Calificaciones">
         <i class="bi bi-star fs-5"></i>
@@ -58,7 +58,7 @@
       <hr class="border-secondary border-opacity-25 w-75 my-2">
 
       <!-- Paquetes (Al hacer clic: despliega el aside y abre el acordeón de Paquetes) -->
-      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50{% endif %}" 
+      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}bg-transparent text-white border-0{% else %}text-white-50{% endif %}" 
               style="width: 44px; height: 44px;"
               type="button" 
               data-expand-sidebar-target="#menuWidePaquetes"
@@ -69,7 +69,7 @@
       </button>
 
       <!-- Reservas & Pagos (Al hacer clic: despliega el aside y abre Reservas & Pagos) -->
-      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'gestion_reservas listar_cancelaciones admin_comprobantes' %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50{% endif %}" 
+      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if request.resolver_match.url_name in 'gestion_reservas listar_cancelaciones admin_comprobantes' %}bg-transparent text-white border-0{% else %}text-white-50{% endif %}" 
               style="width: 44px; height: 44px;"
               type="button" 
               data-expand-sidebar-target="#menuWideReservas"
@@ -80,7 +80,7 @@
       </button>
 
       <!-- Usuarios & Guías (Al hacer clic: despliega el aside y abre Usuarios & Guías) -->
-      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50{% endif %}" 
+      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}bg-transparent text-white border-0{% else %}text-white-50{% endif %}" 
               style="width: 44px; height: 44px;"
               type="button" 
               data-expand-sidebar-target="#menuWideUsuarios"
@@ -91,7 +91,7 @@
       </button>
 
       <!-- Contenido & Soporte (Al hacer clic: despliega el aside y abre Contenido) -->
-      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if 'blog' in request.resolver_match.url_name or 'pqrs' in request.resolver_match.url_name or 'promocion' in request.resolver_match.url_name %}bg-success text-white shadow-sm border-start border-3 border-success{% else %}text-white-50{% endif %}" 
+      <button class="btn p-0 d-flex align-items-center justify-content-center border-0 rounded-3 text-white-hover {% if 'blog' in request.resolver_match.url_name or 'pqrs' in request.resolver_match.url_name or 'promocion' in request.resolver_match.url_name %}bg-transparent text-white border-0{% else %}text-white-50{% endif %}" 
               style="width: 44px; height: 44px;"
               type="button" 
               data-expand-sidebar-target="#menuWideContenido"
@@ -106,7 +106,7 @@
     <!-- Footer Slim: Avatar + Logout -->
     <div class="d-flex flex-column align-items-center py-2 px-1 border-top border-secondary border-opacity-25 w-100 gap-2">
       <a href="{% url 'admin_perfil' %}" class="position-relative d-inline-block text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" title="{{ user.first_name|default:'Administrador' }} (Super Admin)">
-        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success" style="width: 34px; height: 34px; object-fit: cover;">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-secondary-subtle" style="width: 34px; height: 34px; object-fit: cover;">
         <span class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-dark" style="width: 8px; height: 8px;"></span>
       </a>
 
@@ -124,15 +124,15 @@
   <!-- ═════════════════════════════════════════════════════════════════
        2. VISTA EXPANDIDA (SIDEBAR DESPLEGADO CON BOOTSTRAP)
        ═════════════════════════════════════════════════════════════════ -->
-  <aside class="sidebar-wide-view bg-dark text-white d-flex flex-column h-100 border-end border-secondary border-opacity-25 w-100" aria-label="Menú principal expandido">
+  <aside class="sidebar-wide-view text-white d-flex flex-column h-100 border-end border-secondary border-opacity-25 w-100" aria-label="Menú principal expandido" style="background: #111827;">
     
     <!-- Header / Brand & Botón Contraer -->
-    <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-25 bg-black bg-opacity-25">
+    <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-25 bg-transparent">
       <a href="/" class="d-flex align-items-center gap-2 text-white text-decoration-none overflow-hidden">
-        <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="rounded-circle border border-success flex-shrink-0" style="width: 34px; height: 34px; object-fit: cover;">
+        <img src="{% static 'img/logo_monagua.webp' %}" alt="Logo Monagua" class="rounded-circle border border-secondary-subtle flex-shrink-0" style="width: 34px; height: 34px; object-fit: cover;">
         <div class="d-flex flex-column" style="line-height: 1.15;">
           <span class="fw-bold small text-white text-uppercase" style="letter-spacing: 0.5px;">MONAGUA</span>
-          <span class="text-success text-uppercase fw-bold" style="font-size: 0.68rem; letter-spacing: 0.5px;">Admin Panel</span>
+          <span class="text-secondary text-uppercase fw-bold" style="font-size: 0.68rem; letter-spacing: 0.5px;">Admin Panel</span>
         </div>
       </a>
       <button class="btn btn-sm btn-outline-secondary border-0 text-white-50 toggle-sidebar-btn rounded-2 p-1" type="button" aria-label="Contraer menú" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Contraer menú">
@@ -151,22 +151,22 @@
         <span class="small">Página Principal</span>
       </a>
 
-      <a href="{% url 'dashboard_admin' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'dashboard_admin' %}bg-success text-white fw-semibold shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+      <a href="{% url 'dashboard_admin' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'dashboard_admin' %}bg-transparent text-white fw-semibold{% else %}text-white-50 text-white-hover{% endif %}">
         <i class="bi bi-grid-1x2 fs-6" style="width: 20px;"></i>
         <span class="small">Dashboard</span>
       </a>
 
-      <a href="{% url 'estadisticas_admin' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'estadisticas_admin' %}bg-success text-white fw-semibold shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+      <a href="{% url 'estadisticas_admin' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'estadisticas_admin' %}bg-transparent text-white fw-semibold{% else %}text-white-50 text-white-hover{% endif %}">
         <i class="bi bi-graph-up-arrow fs-6" style="width: 20px;"></i>
         <span class="small">Estadísticas</span>
       </a>
 
-      <a href="{% url 'admin_perfil' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'admin_perfil' %}bg-success text-white fw-semibold shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+      <a href="{% url 'admin_perfil' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'admin_perfil' %}bg-transparent text-white fw-semibold{% else %}text-white-50 text-white-hover{% endif %}">
         <i class="bi bi-person-vcard fs-6" style="width: 20px;"></i>
         <span class="small">Mi Perfil</span>
       </a>
 
-      <a href="{% url 'listar_calificaciones' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'listar_calificaciones' %}bg-success text-white fw-semibold shadow-sm border-start border-3 border-success{% else %}text-white-50 text-white-hover{% endif %}">
+      <a href="{% url 'listar_calificaciones' %}" class="d-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none position-relative {% if request.resolver_match.url_name == 'listar_calificaciones' %}bg-transparent text-white fw-semibold{% else %}text-white-50 text-white-hover{% endif %}">
         <i class="bi bi-star fs-6" style="width: 20px;"></i>
         <span class="small">Calificaciones</span>
       </a>
@@ -176,7 +176,7 @@
 
       <!-- Acordeón Paquetes -->
       <div>
-        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}text-white fw-semibold bg-white bg-opacity-10 border-start border-3 border-success{% else %}text-white-50 collapsed{% endif %}" 
+        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}text-white fw-semibold bg-transparent border-0{% else %}text-white-50 collapsed{% endif %}" 
                 type="button" data-bs-toggle="collapse" data-bs-target="#menuWidePaquetes" 
                 aria-expanded="{% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}true{% else %}false{% endif %}">
           <div class="d-flex align-items-center gap-2">
@@ -187,18 +187,18 @@
         </button>
         <div class="collapse {% if request.resolver_match.url_name in 'listar_paquetes listar_actividades listar_tarifas listar_temporadas listar_categorias' %}show{% endif %}" id="menuWidePaquetes">
           <ul class="list-unstyled ps-3 ms-2 border-start border-secondary border-opacity-25 my-1 d-flex flex-column gap-1">
-            <li><a href="{% url 'listar_categorias' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_categorias' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-bookmark"></i> 1. Categorías</a></li>
-            <li><a href="{% url 'listar_temporadas' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_temporadas' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-calendar-range"></i> 2. Temporadas</a></li>
-            <li><a href="{% url 'listar_actividades' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_actividades' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-activity"></i> 3. Actividades</a></li>
-            <li><a href="{% url 'listar_paquetes' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_paquetes' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-box"></i> 4. Paquetes</a></li>
-            <li><a href="{% url 'listar_tarifas' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_tarifas' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-tag"></i> 5. Tarifas</a></li>
+            <li><a href="{% url 'listar_categorias' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_categorias' %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-bookmark"></i> 1. Categorías</a></li>
+            <li><a href="{% url 'listar_temporadas' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_temporadas' %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-calendar-range"></i> 2. Temporadas</a></li>
+            <li><a href="{% url 'listar_actividades' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_actividades' %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-activity"></i> 3. Actividades</a></li>
+            <li><a href="{% url 'listar_paquetes' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_paquetes' %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-box"></i> 4. Paquetes</a></li>
+            <li><a href="{% url 'listar_tarifas' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_tarifas' %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-tag"></i> 5. Tarifas</a></li>
           </ul>
         </div>
       </div>
 
       <!-- Acordeón Reservas & Pagos -->
       <div>
-        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'gestion_reservas listar_cancelaciones admin_comprobantes' %}text-white fw-semibold bg-white bg-opacity-10 border-start border-3 border-success{% else %}text-white-50 collapsed{% endif %}" 
+        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if request.resolver_match.url_name in 'gestion_reservas listar_cancelaciones admin_comprobantes' %}text-white fw-semibold bg-transparent border-0{% else %}text-white-50 collapsed{% endif %}" 
                 type="button" data-bs-toggle="collapse" data-bs-target="#menuWideReservas" 
                 aria-expanded="{% if request.resolver_match.url_name in 'gestion_reservas listar_cancelaciones admin_comprobantes' %}true{% else %}false{% endif %}">
           <div class="d-flex align-items-center gap-2">
@@ -209,9 +209,9 @@
         </button>
         <div class="collapse {% if request.resolver_match.url_name in 'gestion_reservas listar_cancelaciones admin_comprobantes' %}show{% endif %}" id="menuWideReservas">
           <ul class="list-unstyled ps-3 ms-2 border-start border-secondary border-opacity-25 my-1 d-flex flex-column gap-1">
-            <li><a href="{% url 'gestion_reservas' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'gestion_reservas' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-calendar2-check"></i> Reservas</a></li>
-            <li><a href="{% url 'listar_cancelaciones' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_cancelaciones' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-x-circle"></i> Cancelaciones</a></li>
-            <li><a href="{% url 'admin_comprobantes' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-receipt"></i> Comprobantes</a></li>
+            <li><a href="{% url 'gestion_reservas' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'gestion_reservas' %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-calendar2-check"></i> Reservas</a></li>
+            <li><a href="{% url 'listar_cancelaciones' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_cancelaciones' %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-x-circle"></i> Cancelaciones</a></li>
+            <li><a href="{% url 'admin_comprobantes' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if 'comprobantes' in request.resolver_match.url_name and not request.GET.estado %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-receipt"></i> Comprobantes</a></li>
             <li><a href="{% url 'admin_comprobantes' %}?estado=rechazado" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if 'comprobantes' in request.resolver_match.url_name and request.GET.estado == 'rechazado' %}bg-danger text-white fw-bold shadow-sm{% else %}text-danger text-white-hover{% endif %}"><i class="bi bi-x-octagon"></i> Pagos Rechazados</a></li>
           </ul>
         </div>
@@ -219,7 +219,7 @@
 
       <!-- Acordeón Usuarios & Guías -->
       <div>
-        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}text-white fw-semibold bg-white bg-opacity-10 border-start border-3 border-success{% else %}text-white-50 collapsed{% endif %}" 
+        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}text-white fw-semibold bg-transparent border-0{% else %}text-white-50 collapsed{% endif %}" 
                 type="button" data-bs-toggle="collapse" data-bs-target="#menuWideUsuarios" 
                 aria-expanded="{% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}true{% else %}false{% endif %}">
           <div class="d-flex align-items-center gap-2">
@@ -230,8 +230,8 @@
         </button>
         <div class="collapse {% if 'gestion_usuarios' in request.resolver_match.url_name or 'gestion_guias' in request.resolver_match.url_name %}show{% endif %}" id="menuWideUsuarios">
           <ul class="list-unstyled ps-3 ms-2 border-start border-secondary border-opacity-25 my-1 d-flex flex-column gap-1">
-            <li><a href="{% url 'gestion_usuarios' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'gestion_usuarios' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-person"></i> Gestionar Usuarios</a></li>
-            <li><a href="{% url 'gestion_guias' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if 'gestion_guias' in request.resolver_match.url_name %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-person-badge"></i> Gestionar Guías</a></li>
+            <li><a href="{% url 'gestion_usuarios' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'gestion_usuarios' %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-person"></i> Gestionar Usuarios</a></li>
+            <li><a href="{% url 'gestion_guias' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if 'gestion_guias' in request.resolver_match.url_name %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-person-badge"></i> Gestionar Guías</a></li>
           </ul>
         </div>
       </div>
@@ -240,7 +240,7 @@
       <div class="text-secondary text-uppercase fw-bold px-2 pt-3 pb-1 small" style="font-size: 0.68rem; letter-spacing: 0.8px;">Contenido</div>
 
       <div>
-        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if 'blog' in request.resolver_match.url_name or 'pqrs' in request.resolver_match.url_name or 'promocion' in request.resolver_match.url_name %}text-white fw-semibold bg-white bg-opacity-10 border-start border-3 border-success{% else %}text-white-50 collapsed{% endif %}" 
+        <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-2 text-decoration-none border-0 text-start text-white-hover {% if 'blog' in request.resolver_match.url_name or 'pqrs' in request.resolver_match.url_name or 'promocion' in request.resolver_match.url_name %}text-white fw-semibold bg-transparent border-0{% else %}text-white-50 collapsed{% endif %}" 
                 type="button" data-bs-toggle="collapse" data-bs-target="#menuWideContenido" 
                 aria-expanded="{% if 'blog' in request.resolver_match.url_name or 'pqrs' in request.resolver_match.url_name or 'promocion' in request.resolver_match.url_name %}true{% else %}false{% endif %}">
           <div class="d-flex align-items-center gap-2">
@@ -251,9 +251,9 @@
         </button>
         <div class="collapse {% if 'blog' in request.resolver_match.url_name or 'pqrs' in request.resolver_match.url_name or 'promocion' in request.resolver_match.url_name %}show{% endif %}" id="menuWideContenido">
           <ul class="list-unstyled ps-3 ms-2 border-start border-secondary border-opacity-25 my-1 d-flex flex-column gap-1">
-            <li><a href="{% url 'listar_blog' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if 'blog' in request.resolver_match.url_name %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-journal-text"></i> Blog</a></li>
-            <li><a href="{% url 'listar_pqrs' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_pqrs' %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-envelope-paper"></i> PQRS</a></li>
-            <li><a href="{% url 'gestion_promociones' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if 'promocion' in request.resolver_match.url_name %}bg-success text-white fw-bold shadow-sm{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-megaphone"></i> Promociones</a></li>
+            <li><a href="{% url 'listar_blog' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if 'blog' in request.resolver_match.url_name %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-journal-text"></i> Blog</a></li>
+            <li><a href="{% url 'listar_pqrs' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if request.resolver_match.url_name == 'listar_pqrs' %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-envelope-paper"></i> PQRS</a></li>
+            <li><a href="{% url 'gestion_promociones' %}" class="d-flex align-items-center gap-2 px-2 py-1 rounded-2 small text-decoration-none {% if 'promocion' in request.resolver_match.url_name %}bg-transparent text-white fw-bold{% else %}text-white-50 text-white-hover{% endif %}"><i class="bi bi-megaphone"></i> Promociones</a></li>
           </ul>
         </div>
       </div>
@@ -261,12 +261,12 @@
     </nav>
 
     <!-- Footer: Perfil + Logout -->
-    <div class="p-3 border-top border-secondary border-opacity-25 bg-black bg-opacity-25 d-flex flex-column gap-2">
+    <div class="p-3 border-top border-secondary border-opacity-25 bg-transparent d-flex flex-column gap-2">
       <a href="{% url 'admin_perfil' %}" class="d-flex align-items-center gap-2 text-decoration-none p-1 rounded-2 text-white-hover">
-        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-success flex-shrink-0" style="width: 36px; height: 36px; object-fit: cover;">
+        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'img/avatar_pred.webp' %}{% endif %}" alt="Admin" class="rounded-circle border border-secondary flex-shrink-0" style="width: 36px; height: 36px; object-fit: cover;">
         <div class="overflow-hidden">
           <div class="fw-bold text-white small text-truncate">{{ user.first_name|default:'Administrador' }}</div>
-          <div class="text-success small fw-semibold text-truncate" style="font-size: 0.72rem;">Super Admin</div>
+          <div class="text-white-50 small fw-semibold text-truncate" style="font-size: 0.72rem;">Super Admin</div>
         </div>
       </a>
       <form action="{% url 'logout' %}" method="post" class="m-0">

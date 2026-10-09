@@ -1,38 +1,48 @@
 {% extends 'admin/base-admin.html' %}
 
+{% block title %}Admin | Eliminar Paquete - Monagua{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
+{% include "partials/breadcrumbs.html" with current_title="Eliminar Paquete" current_icon="bi bi-trash-fill" %}
+
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-danger shadow">
-                <div class="card-header bg-danger text-white text-center">
-                    <h4><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h4>
+        <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-danger text-white p-4 border-0 text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+                        <h4 class="mb-0 fw-bold">Confirmar Eliminación</h4>
+                    </div>
                 </div>
-                <div class="card-body text-center p-4">
+                <div class="card-body text-center p-4 p-md-5">
                     {% if messages %}
                         {% for message in messages %}
-                            <div class="alert alert-{{ message.tags|default:'danger' }} alert-dismissible fade show text-start mb-3" role="alert">
+                            <div class="alert alert-{{ message.tags|default:'danger' }} alert-dismissible fade show text-start mb-3 rounded-3" role="alert">
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
                             </div>
                         {% endfor %}
                     {% endif %}
 
-                    <p class="fs-5">Estás a punto de eliminar el paquete:</p>
-                    <h3 class="text-secondary mb-4">"{{ object.nombre|default:paquete.nombre }}"</h3>
-                    
-                    <div class="p-3 bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25 rounded-3 mb-4">
-                        <small class="fw-semibold text-warning-emphasis"><i class="bi bi-exclamation-triangle me-1"></i> Esta acción no se puede deshacer.</small>
+                    <p class="fs-5 text-dark mb-2">Estás a punto de eliminar el paquete:</p>
+                    <h3 class="fw-bold text-dark mb-4">"{{ object.nombre }}"</h3>
+
+                    <div class="alert alert-warning border-0 rounded-3 mb-4">
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            <small class="fw-semibold">Esta acción no se puede deshacer.</small>
+                        </div>
                     </div>
 
                     <form method="POST">
                         {% csrf_token %}
-                        <div class="d-grid gap-2 d-md-block">
-                            <button type="submit" class="btn btn-danger px-4">
-                                <i class="bi bi-trash"></i> Sí, eliminar permanentemente
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold">
+                                <i class="bi bi-trash me-1"></i> Sí, eliminar permanentemente
                             </button>
-                            <a href="{% url 'listar_paquetes' %}" class="btn btn-secondary px-4">
-                                Cancelar
+                            <a href="{% url 'listar_paquetes' %}" class="btn btn-outline-secondary px-4 rounded-pill fw-semibold">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
                             </a>
                         </div>
                     </form>

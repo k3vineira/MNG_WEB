@@ -21,6 +21,23 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.4" />
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}?v=2.0" />
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <style>
+      .btn-admin-primary {
+        background-color: #198754 !important;
+        border-color: #198754 !important;
+        color: #ffffff !important;
+        box-shadow: 0 0.7rem 1.3rem rgba(25, 135, 84, 0.18) !important;
+      }
+
+      .btn-admin-primary:hover,
+      .btn-admin-primary:focus,
+      .btn-admin-primary:active,
+      .btn-admin-primary.show {
+        background-color: #157347 !important;
+        border-color: #146c43 !important;
+        color: #ffffff !important;
+      }
+    </style>
 
     {% block extra_head %}{% endblock %}
   </head>
@@ -30,8 +47,8 @@
     <!-- ── Menú de hamburguesa (solo móvil) ── -->
     <button
       id="sidebar-toggle"
-      class="btn btn-success position-fixed d-lg-none shadow-sm"
-      style="top: 15px; left: 15px; z-index: 1050;"
+      class="btn btn-secondary position-fixed d-lg-none shadow-sm"
+      style="top: 15px; left: 15px; z-index: 1050; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); color: #fff;"
       aria-label="Menú de hamburguesa"
       aria-expanded="false"
       aria-controls="mainSidebar"

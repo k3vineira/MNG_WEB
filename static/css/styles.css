@@ -15,9 +15,9 @@
 :root {
     --bs-body-font-family: 'Poppins', sans-serif;
     --bs-font-sans-serif: 'Poppins', sans-serif;
-    --bs-success: #1a261f;
-    --bs-success-rgb: 26, 38, 31;
-    --primary-green: #1a261f;
+    --bs-success: #2c6e3c;
+    --bs-success-rgb: 44, 110, 60;
+    --primary-green: #2c6e3c;
     
     /* Paleta Monagua - Verde */
     --verde-oscuro: #005215;
@@ -42,6 +42,84 @@
     --estadisticas-pink: #ec4899;
     --estadisticas-teal: #14b8a6;
     --estadisticas-grid-line: #f1f5f9;
+}
+
+.admin-page-header {
+    background: linear-gradient(135deg, rgba(148, 163, 184, 0.08), rgba(15, 23, 42, 0.02)) !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04) !important;
+}
+
+.admin-page-title {
+    color: #111827 !important;
+    font-weight: 800 !important;
+}
+
+.admin-list-panel {
+    border: 1px solid rgba(44, 110, 60, 0.12) !important;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05) !important;
+    border-radius: 1.25rem !important;
+}
+
+.admin-filter-shell {
+    background: rgba(248, 250, 252, 0.9) !important;
+    border: 1px solid rgba(44, 110, 60, 0.12) !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04) !important;
+}
+
+.admin-data-table thead {
+    background: #f8fafc !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2) !important;
+}
+
+.admin-data-table thead th {
+    color: #374151 !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    background: #f8fafc !important;
+}
+
+.admin-data-table tbody tr {
+    transition: background 0.2s ease, transform 0.2s ease !important;
+}
+
+.admin-data-table tbody tr:hover {
+    background: #f8fafc !important;
+}
+
+.admin-data-table .btn-success,
+.admin-data-table .badge.bg-success,
+.admin-data-table .badge.bg-success.bg-opacity-75,
+.admin-data-table .bg-success,
+.admin-data-table .bg-success.bg-opacity-10,
+.admin-data-table .text-success,
+.admin-data-table .border-success,
+.admin-data-table .badge.bg-success-subtle {
+    background-color: rgba(148, 163, 184, 0.08) !important;
+    color: #374151 !important;
+    border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+.admin-data-table .btn-success {
+    background: linear-gradient(135deg, rgba(148, 163, 184, 0.12), rgba(148, 163, 184, 0.06)) !important;
+    box-shadow: none !important;
+}
+
+.admin-data-table .btn-success:hover {
+    background: linear-gradient(135deg, rgba(148, 163, 184, 0.16), rgba(148, 163, 184, 0.1)) !important;
+}
+
+.admin-badge-success {
+    background: rgba(44, 110, 60, 0.12) !important;
+    color: var(--verde-main, #2c6e3c) !important;
+    border: 1px solid rgba(44, 110, 60, 0.2) !important;
+}
+
+.admin-empty-state {
+    background: rgba(248, 250, 252, 0.9) !important;
+    border: 1px dashed rgba(44, 110, 60, 0.22) !important;
+    color: #475569 !important;
 }
 
 /* Utilitarios para la paleta de estadísticas */
@@ -167,6 +245,28 @@ main .breadcrumb-item.active {
 .link-verde {
     color: #2c6e3c;
     font-weight: bold;
+}
+
+@media print {
+    .monagua-print-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 1rem !important;
+        padding: 1rem 1.25rem !important;
+        margin-bottom: 1.25rem !important;
+        border-bottom: 4px solid var(--verde-main, #2c6e3c) !important;
+        background: linear-gradient(135deg, var(--verde-light, #d1e7dd), #ffffff) !important;
+        border-radius: 14px 14px 0 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .monagua-print-header img {
+        height: 46px !important;
+        width: auto !important;
+        object-fit: contain !important;
+    }
 }
 
 /* Efecto de superposición con desenfoque para modales o tarjetas */
@@ -314,6 +414,31 @@ main .breadcrumb-item.active {
     border-color: var(--verde-main, #2c6e3c) !important;
     box-shadow: 0 0 0 0.2rem rgba(44, 110, 60, 0.2) !important;
     background-color: #ffffff !important;
+}
+
+.btn-success,
+.bg-success,
+.badge.bg-success,
+.card-header.bg-success {
+    background-color: var(--verde-main, #2c6e3c) !important;
+    border-color: var(--verde-main, #2c6e3c) !important;
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active,
+.btn-success.show,
+.btn-success:focus-visible {
+    background-color: var(--verde-mid, #406d46) !important;
+    border-color: var(--verde-mid, #406d46) !important;
+    box-shadow: 0 0 0 0.2rem rgba(44, 110, 60, 0.25) !important;
+}
+
+.text-success,
+.badge.text-success,
+.border-success {
+    color: var(--verde-main, #2c6e3c) !important;
+    border-color: var(--verde-main, #2c6e3c) !important;
 }
 
 .form-check-input {
@@ -1018,10 +1143,101 @@ body:has(.menu-hamburguesa-premium.show) {
     align-items: center !important;
     justify-content: center !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    background: rgba(255,255,255,0.12) !important;
+    border-color: rgba(255,255,255,0.18) !important;
+    color: #fff !important;
+}
+
+#sidebar-toggle:hover,
+#sidebar-toggle:focus,
+#sidebar-toggle:active,
+#sidebar-toggle.show {
+    background: rgba(255,255,255,0.18) !important;
+    border-color: rgba(255,255,255,0.26) !important;
+    color: #fff !important;
 }
 
 #sidebar-overlay {
     z-index: 1040 !important;
+}
+
+#mainSidebar .bg-success,
+#mainSidebar .bg-success-subtle,
+#mainSidebar .text-success,
+#mainSidebar .border-success,
+#mainSidebar .btn-success,
+#mainSidebar .badge.bg-success,
+#mainSidebar .badge.bg-success-subtle {
+    background-color: rgba(148, 163, 184, 0.12) !important;
+    border-color: rgba(148, 163, 184, 0.25) !important;
+    color: #ffffff !important;
+}
+
+#mainSidebar .bg-success.text-white,
+#mainSidebar .bg-success-subtle.text-white,
+#mainSidebar .text-success {
+    color: #ffffff !important;
+}
+
+.page-admin-neutral .bg-success,
+.page-admin-neutral .bg-success.bg-opacity-10,
+.page-admin-neutral .bg-success.bg-opacity-75,
+.page-admin-neutral .btn-success,
+.page-admin-neutral .text-success,
+.page-admin-neutral .border-success,
+.page-admin-neutral .badge.bg-success,
+.page-admin-neutral .badge.bg-success-subtle,
+.page-admin-neutral .bg-success-subtle,
+.page-admin-neutral .btn-outline-success {
+    background-color: rgba(148, 163, 184, 0.10) !important;
+    border-color: rgba(148, 163, 184, 0.24) !important;
+    color: #374151 !important;
+}
+
+.page-admin-neutral .btn-success,
+.page-admin-neutral .btn-outline-success {
+    box-shadow: none !important;
+}
+
+.page-admin-neutral .btn-success:hover,
+.page-admin-neutral .btn-outline-success:hover,
+.page-admin-neutral .btn-success:focus,
+.page-admin-neutral .btn-outline-success:focus {
+    background-color: rgba(148, 163, 184, 0.15) !important;
+    border-color: rgba(148, 163, 184, 0.26) !important;
+    color: #374151 !important;
+}
+
+.admin-page-header,
+.admin-page-title,
+.admin-page-title h1,
+.admin-page-title h2,
+.admin-page-title h3 {
+    color: #111827 !important;
+    background: transparent !important;
+}
+
+.admin-data-table thead,
+.admin-data-table thead th,
+.admin-data-table .table-light th,
+.admin-data-table .table-light {
+    background: #f8fafc !important;
+    color: #374151 !important;
+    border-color: rgba(148, 163, 184, 0.2) !important;
+}
+
+.admin-data-table .btn-success,
+.admin-data-table .badge.bg-success,
+.admin-data-table .badge.bg-success.bg-opacity-75,
+.admin-data-table .bg-success,
+.admin-data-table .bg-success.bg-opacity-10,
+.admin-data-table .text-success,
+.admin-data-table .border-success,
+.admin-data-table .badge.bg-success-subtle,
+.admin-data-table .table-success {
+    background-color: rgba(148, 163, 184, 0.08) !important;
+    color: #374151 !important;
+    border-color: rgba(148, 163, 184, 0.25) !important;
 }
 
 @media (max-width: 991.98px) {

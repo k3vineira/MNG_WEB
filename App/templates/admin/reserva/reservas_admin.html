@@ -12,13 +12,14 @@
 <div class="container py-4">
     
     <!-- Cabecera -->
-    <div class="row align-items-center mb-4 g-3">
-        <div class="col-md-8">
-            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-2 fw-bold">PANEL DE CONTROL</span>
-            <h2 class="display-6 fw-bold text-dark mb-1">Gestión de Reservas</h2>
-            <p class="text-muted mb-0">Administra las reservas activas y gestiona los estados de los viajes solicitados.</p>
-        </div>
-        <div class="col-md-4 text-md-end text-start">
+    <div class="card admin-page-header p-4 mb-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h2 class="display-6 admin-page-title mb-2 d-flex align-items-center">
+                    <i class="bi bi-calendar-check me-3"></i>Gestión de Reservas
+                </h2>
+                <p class="text-muted mb-0">Administra las reservas activas y gestiona los estados de los viajes solicitados.</p>
+            </div>
             <a href="{% url 'crear_reserva' %}" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">
                 <i class="bi bi-plus-circle me-1"></i> Nueva Reserva
             </a>
@@ -81,12 +82,12 @@
     </div>
 
     <!-- Tabla y Contenido -->
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card admin-list-panel overflow-hidden">
         
         <!-- Tabla para Escritorio -->
         <div class="table-responsive d-none d-md-block">
-            <table id="tablaReservas" class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+            <table id="tablaReservas" class="table table-hover align-middle mb-0 admin-data-table">
+                <thead>
                     <tr class="text-secondary small fw-bold text-uppercase">
                         <th class="ps-4 py-3">Cliente</th>
                         <th class="py-3">Aventura / Paquete</th>

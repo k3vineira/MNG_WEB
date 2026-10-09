@@ -8,10 +8,14 @@
     <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-semibold text-uppercase mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">Panel de Control</span>
     
     <!-- Encabezado -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold text-dark mb-1">Gestión de Cancelaciones</h2>
-            <p class="text-muted mb-0">Histórico de reservas canceladas, revisión y penalidades aplicadas.</p>
+    <div class="card admin-page-header p-4 mb-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h2 class="display-6 admin-page-title mb-2 d-flex align-items-center">
+                    <i class="bi bi-x-circle me-3"></i>Gestión de Cancelaciones
+                </h2>
+                <p class="text-muted mb-0">Histórico de reservas canceladas, revisión y penalidades aplicadas.</p>
+            </div>
         </div>
     </div>
 
@@ -70,10 +74,10 @@
 </div>
 </div>
     <!-- Tabla -->
-    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+    <div class="card admin-list-panel overflow-hidden">
         <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead class="bg-light border-0">
+            <table class="table align-middle mb-0 admin-data-table">
+                <thead>
                     <tr class="text-uppercase small fw-bold text-secondary">
                         <th class="ps-4 py-3 border-0">CLIENTE</th>
                         <th class="py-3 border-0">AVENTURA / PAQUETE</th>

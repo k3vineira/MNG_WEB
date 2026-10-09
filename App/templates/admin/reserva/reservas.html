@@ -1,36 +1,26 @@
 {% extends "base.html" %} {% load static %} {% block content %}
-
 <link
   rel="stylesheet"
   href="{% static 'css/librerias/flatpickr.min.css' %}"
 />
 <!-- ── Migas de Pan (Breadcrumb Navigation) ── -->
-<div class="container pt-4 mt-3 mt-lg-4 mb-3" data-aos="fade-down" data-aos-duration="600">
-    <nav aria-label="breadcrumb" class="bg-white rounded-pill px-4 py-2 shadow-sm border border-light d-inline-block">
-        <ol class="breadcrumb mb-0 align-items-center small fw-medium">
+<div class="container pt-5 mt-4 mt-lg-5 mb-3" data-aos="fade-down" data-aos-duration="600">
+    <nav aria-label="breadcrumb" class="breadcrumb-shell d-inline-flex align-items-center bg-white rounded-pill px-4 py-2 shadow-sm border border-light-subtle">
+        <ol class="breadcrumb mb-0 align-items-center small fw-medium flex-wrap" style="margin-left: 0; padding-left: 0; display: flex;">
             <li class="breadcrumb-item">
                 <a href="{% url 'index' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
                     <i class="bi bi-house-door-fill text-success"></i>
                     <span>Inicio</span>
                 </a>
             </li>
-            {% if request.GET.from == 'panel' or 'panel-rapido' in request.META.HTTP_REFERER %}
-            <li class="breadcrumb-item">
-                <a href="{% url 'panel_rapido' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
-                    <i class="bi bi-compass-fill text-success"></i>
-                    <span>Panel Rápido</span>
-                </a>
-            </li>
-            {% else %}
             <li class="breadcrumb-item">
                 <a href="{% url 'tours' %}" class="text-decoration-none text-muted hover-success d-inline-flex align-items-center gap-1 transition-all">
                     <i class="bi bi-map-fill text-success"></i>
                     <span>Tours y Destinos</span>
                 </a>
             </li>
-            {% endif %}
-            <li class="breadcrumb-item active fw-bold text-dark d-inline-flex align-items-center gap-1" aria-current="page">
-                <i class="bi bi-calendar-check-fill me-1 text-success"></i>
+            <li class="breadcrumb-item active fw-bold d-inline-flex align-items-center gap-1" aria-current="page" style="color: #2c6e3c;">
+                <i class="bi bi-calendar-check-fill me-1" style="color: #2c6e3c;"></i>
                 <span>Reservar</span>
             </li>
         </ol>
@@ -71,7 +61,7 @@
           <h3 class="mb-0 fw-bold header-reserva text-dark">Haz tu Reserva</h3>
           {% if paquete %}
           <p
-            class="text-success fw-semibold mb-0 mt-2 small bg-success bg-opacity-10 d-inline-block px-3 py-1 rounded-pill"
+            class="fw-semibold mb-0 mt-2 small bg-white border border-success-subtle text-success d-inline-block px-3 py-1 rounded-pill shadow-sm"
           >
             <i class="bi bi-geo-alt-fill me-1"></i>{{ paquete.nombre }}
           </p>
@@ -218,7 +208,7 @@
 
             <div
               id="total_reserva_display"
-              class="mb-3 text-center p-3 rounded-4 bg-success bg-opacity-10 border border-success border-opacity-25"
+              class="mb-3 text-center p-3 rounded-4 bg-light border border-light shadow-sm"
               data-aos="fade-up"
               data-aos-delay="400"
             >

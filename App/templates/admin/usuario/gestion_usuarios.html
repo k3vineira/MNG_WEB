@@ -2,14 +2,14 @@
 
 {% block content %}
 {% include "partials/breadcrumbs.html" with current_title="Gestión Integral de Usuarios" current_icon="bi bi-people-fill" %}
-<div class="container-fluid py-4">
+<div class="container-fluid py-4 page-admin-neutral">
 
     <!-- 1. Encabezado -->
-    <div class="card bg-success bg-opacity-10 border-0 shadow-sm p-4 mb-4 rounded-4">
+    <div class="card bg-light border border-light-subtle shadow-sm p-4 mb-4 rounded-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <h1 class="h3 text-success fw-bold mb-1 d-flex align-items-center">
-                    <i class="bi bi-people-fill me-2"></i>Gestión Integral de Usuarios
+                <h1 class="h3 text-dark fw-bold mb-1 d-flex align-items-center">
+                    <i class="bi bi-people-fill me-2 text-secondary"></i>Gestión Integral de Usuarios
                 </h1>
                 <p class="text-muted mb-0 small">Administra los usuarios de la plataforma, roles, datos de contacto y estado de activación.</p>
             </div>
@@ -65,9 +65,9 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                 <div class="d-flex flex-wrap align-items-center gap-2">
                     <span class="text-muted fw-semibold small d-none d-sm-inline-flex align-items-center me-1">
-                        <i class="bi bi-funnel text-success fs-5 me-1"></i>Filtrar por rol:
+                        <i class="bi bi-funnel text-secondary fs-5 me-1"></i>Filtrar por rol:
                     </span>
-                    <a href="{% url 'gestion_usuarios' %}" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if not filtro_actual %}btn-success text-white{% else %}btn-outline-secondary{% endif %}">
+                    <a href="{% url 'gestion_usuarios' %}" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if not filtro_actual %}btn-secondary text-white{% else %}btn-outline-secondary{% endif %}">
                         <i class="bi bi-people me-1"></i>Todos
                     </a>
                     <a href="{% url 'gestion_usuarios' %}?filtro=ADMIN" class="btn btn-sm rounded-pill px-3 fw-semibold shadow-sm {% if filtro_actual == 'ADMIN' %}btn-primary text-white{% else %}btn-outline-primary{% endif %}">
@@ -90,7 +90,7 @@
                     {% endif %}
                     <div class="input-group shadow-sm rounded-pill overflow-hidden border w-100">
                         <input type="text" name="q" class="form-control border-0 ps-3 shadow-none small" placeholder="Buscar por nombre, email o doc..." value="{{ request.GET.q|default:'' }}">
-                        <button class="btn btn-success px-3" type="submit" title="Buscar"><i class="bi bi-search"></i></button>
+                        <button class="btn btn-secondary px-3" type="submit" title="Buscar"><i class="bi bi-search"></i></button>
                     </div>
                     {% if request.GET.q %}
                         <a href="{% url 'gestion_usuarios' %}{% if filtro_actual %}?filtro={{ filtro_actual }}{% endif %}" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0 flex-shrink-0" style="width: 36px; height: 36px;" title="Limpiar búsqueda">
@@ -193,7 +193,7 @@
                         <td class="text-center pe-4 py-3 text-nowrap" style="min-width: 320px;">
                             <div class="d-inline-flex align-items-center justify-content-center gap-2">
                                 <!-- 1. Detalles -->
-                                <button type="button" class="btn btn-sm btn-outline-success px-3 rounded-pill fw-semibold shadow-sm text-nowrap" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetallesUsuario{{ u.id }}" title="Ver Detalles">
+                                <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill fw-semibold shadow-sm text-nowrap" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetallesUsuario{{ u.id }}" title="Ver Detalles">
                                     <i class="bi bi-eye me-1"></i>Detalles
                                 </button>
                                 <!-- 2. Editar -->
@@ -208,7 +208,7 @@
                                         <i class="bi bi-slash-circle me-1"></i>Inactivar
                                     </button>
                                     {% else %}
-                                    <button type="submit" class="btn btn-sm btn-outline-success px-3 rounded-pill fw-semibold shadow-sm text-nowrap" title="Activar usuario">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary px-3 rounded-pill fw-semibold shadow-sm text-nowrap" title="Activar usuario">
                                         <i class="bi bi-check-circle me-1"></i>Activar
                                     </button>
                                     {% endif %}
