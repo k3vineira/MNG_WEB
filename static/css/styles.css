@@ -350,18 +350,22 @@ main .breadcrumb-item.active {
 .bg-image {
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    background-repeat: no-repeat;
     z-index: 1;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 @keyframes smoothZoom {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.1); }
+    0% { transform: scale(1) translateZ(0); }
+    100% { transform: scale(1.08) translateZ(0); }
 }
 
 .bg-zoom-anim {
-    animation: smoothZoom 12s ease-in-out infinite alternate;
+    animation: smoothZoom 14s ease-in-out infinite alternate;
     will-change: transform;
+    transform-origin: center center;
 }
 
 .canvas-container {
